@@ -969,6 +969,16 @@ SitemapController.prototype = {
 						}
 					}
 				},
+				"requestIntervalRandomness": {
+					validators: {
+						notEmpty: {
+							message: 'The request interval randomness is required and cannot be empty'
+						},
+						numeric: {
+							message: 'The request interval randomness must be numeric'
+						},
+					}
+				},
 				"pageLoadDelay": {
 					validators: {
 						notEmpty: {
@@ -1042,7 +1052,7 @@ SitemapController.prototype = {
 			$("#viewport").html(dataPanel);
 
 			// display data
-			// Doing this the long way so there aren't xss vulnerubilites 
+			// Doing this the long way so there aren't xss vulnerubilites
 			// while working with data or with the selector titles
 			var $tbody = $("#sitemap-data tbody");
 			data.forEach(function (row) {
@@ -1407,7 +1417,7 @@ SitemapController.prototype = {
 			// remove from validator
 			var validator = this.getFormValidator();
 			validator.removeField($block.find("input"));
-			
+
 			$block.remove();
 		}
 	}
