@@ -321,6 +321,7 @@ SitemapController.prototype = {
 							message: 'The start URL is required and cannot be empty'
 						},
 						uri: {
+							allowLocal: true,
 							message: 'The start URL is not a valid URL'
 						}
 					}
