@@ -66,18 +66,16 @@ Sitemap.prototype = {
 			startUrls = [startUrls];
 		}
 
-		var urls = [];
-		startUrls.forEach(function(startUrl) {
-
-			// zero padding helper
-			var lpad = function(str, length) {
+		var nextUrls = function(url){
+	        	var urls = [];
+	        	var lpad = function(str, length) {
 				while (str.length < length)
 					str = "0" + str;
 				return str;
 			};
-
+	
 			var re = /^(.*?)\[(\d+)\-(\d+)(:(\d+))?\](.*)$/;
-			var matches = startUrl.match(re);
+			var matches = url.match(re);
 			if(matches) {
 				var startStr = matches[2];
 				var endStr = matches[3];
@@ -88,21 +86,32 @@ Sitemap.prototype = {
 				if(matches[5] !== undefined) {
 					incremental = parseInt(matches[5]);
 				}
+				var nextSet = nextUrls(matches[6]);
 				for (var i = start; i <= end; i+=incremental) {
-
+	                
+					
+					var current;
 					// with zero padding
 					if(startStr.length === endStr.length) {
-						urls.push(matches[1]+lpad(i.toString(), startStr.length)+matches[6]);
+					    
+						current = matches[1]+lpad(i.toString(), startStr.length);
 					}
 					else {
-						urls.push(matches[1]+i+matches[6]);
+						current = matches[1]+i;
 					}
+					nextSet.forEach(function(next){
+	                    			urls.push(current+next);
+				    	});
 				}
-				return urls;
+			}else {
+				urls.push(url);
 			}
-			else {
-				urls.push(startUrl);
-			}
+			return urls;
+		};
+		var urls = [];
+	
+		startUrls.forEach(function(startUrl) {
+        		urls.concat(nextUrls(startUrl));
 		});
 
 		return urls;
