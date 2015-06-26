@@ -111,7 +111,7 @@ Sitemap.prototype = {
 		var urls = [];
 	
 		startUrls.forEach(function(startUrl) {
-        		urls.concat(nextUrls(startUrl));
+        		urls = urls.concat(nextUrls(startUrl));
 		});
 
 		return urls;
