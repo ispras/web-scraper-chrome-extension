@@ -174,12 +174,19 @@ Sitemap.prototype = {
 
 		return columns;
 	},
-	getDataExportCsvBlob: function (data) {
+	getDataExportCsvBlob: function (data, option) {
 
-		var columns = this.getDataColumns(),
-			delimiter = ',',
-			newline = "\n",
-			csvData = ['\ufeff']; // utf-8 bom char
+        var delimiterKey = "delimiter";
+        var newlineKey = "newline";
+        var containBomKey = "containBom";
+
+        var columns = this.getDataColumns(),
+            // default delimiter is comma
+            delimiter = option.hasOwnProperty(delimiterKey) ? option[delimiterKey] : ',',
+            // per default, new line is included at end of lines
+            newline = option.hasOwnProperty(newlineKey) ? (option[newlineKey] == true ? "\n" : "") : "\n",
+            // per default, utf8 BOM is included at the beginning.
+            csvData = option.hasOwnProperty(containBomKey) ? (option[containBomKey] == true ? ['\ufeff'] : []) : ['\ufeff']; // utf-8 bom char
 
 		// header
 		csvData.push(columns.join(delimiter) + newline)
