@@ -37,8 +37,14 @@ var SelectorText = {
 			var text = $element_clone.text();
 			if (this.regex !== undefined && this.regex.length) {
 				var matches = text.match(new RegExp(this.regex));
+				
+				regexgrp=0;
+				if (this.regexgroup !== undefined) {
+					regexgrp=this.regexgroup;
+				}
+				
 				if (matches !== null) {
-					text = matches[0];
+					text = matches[regexgrp];
 				}
 				else {
 					text = null;
@@ -64,6 +70,6 @@ var SelectorText = {
 	},
 
 	getFeatures: function () {
-		return ['multiple', 'regex', 'delay']
+		return ['multiple', 'regex', 'delay', 'regexgroup']
 	}
 };
