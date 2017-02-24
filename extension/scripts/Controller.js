@@ -1074,8 +1074,10 @@ SitemapController.prototype = {
 		$(".download-button").hide();
 		this.store.getSitemapData(sitemap, function (data) {
 			var blob = sitemap.getDataExportCsvBlob(data);
+            $("#console").append("<p>").append("A").append("</p>");
 			$(".download-button a").attr("href", window.URL.createObjectURL(blob));
-			$(".download-button a").attr("download", sitemap._id + ".csv");
+            $("#console").append("<p>").append("B").append("</p>");
+            $(".download-button a").attr("download", sitemap._id + ".json");
 			$(".download-button").show();
 		}.bind(this));
 
