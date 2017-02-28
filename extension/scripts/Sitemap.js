@@ -209,9 +209,9 @@ Sitemap.prototype = {
 
         $("#console").append("<p>").append("Array size: ").append(foo.length).append("</p>");
         $("#console").append("<p>").append("Is Array: ").append(Array.isArray(foo)).append("</p>");
-        $("#console").append("<p>").append(JSON.stringify(foo)).append("</p>");
+        $("#console").append("<p>").append(Papa.unparse(foo)).append("</p>");
 
-		return new Blob([JSON.stringify(foo)], {type: 'application/json'});
+		return new Blob([Papa.unparse(foo)], {type: 'text/csv'});
 	},
 	getSelectorById: function (selectorId) {
 		return this.selectors.getSelectorById(selectorId);

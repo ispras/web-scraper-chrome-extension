@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
-	"version": "0.2.0.10",
-	"name": "Web Scraper",
-	"short_name": "Web Scraper",
+	"version": "0.2.1.0",
+	"name": "Web Scraper Dev",
+	"short_name": "Web Scraper Dev",
 	"description": "Tool for data extraction from websites",
 	"permissions": ["<all_urls>", "tabs", "notifications", "storage", "unlimitedStorage", "downloads"],
 	"icons": {
@@ -24,7 +24,9 @@
 	"background": {
 		"scripts": [
 			"assets/jquery-2.0.3.js",
+			"assets/papaparse.min.js",
 			"assets/jquery.whencallsequentially.js",
+			"assets/papaparse.min.js",
 			"assets/pouchdb-nightly.min.js",
 			"assets/base64.js",
 			"scripts/Selector.js",
@@ -64,9 +66,9 @@
 			"matches": ["*://*/*"],
 			"js": [
 				"assets/jquery-2.0.3.js",
+				"assets/papaparse.min.js",
 				"assets/jquery.whencallsequentially.js",
 				"assets/sugar-1.4.1.js",
-				"assets/css-selector/lib/CssSelector.js",
 				"assets/base64.js",
 				"scripts/DataExtractor.js",
 				"scripts/ContentSelector.js",

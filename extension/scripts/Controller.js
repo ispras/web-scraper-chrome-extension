@@ -1077,7 +1077,7 @@ SitemapController.prototype = {
             $("#console").append("<p>").append("A").append("</p>");
 			$(".download-button a").attr("href", window.URL.createObjectURL(blob));
             $("#console").append("<p>").append("B").append("</p>");
-            $(".download-button a").attr("download", sitemap._id + ".json");
+            $(".download-button a").attr("download", sitemap._id + ".csv");
 			$(".download-button").show();
 		}.bind(this));
 
