@@ -176,19 +176,12 @@ Sitemap.prototype = {
 	},
 	getDataExportCsvBlob: function (data) {
 
-		var columns = this.getDataColumns(),
-			delimiter = ',',
-			newline = "\n",
-			csvData = ['\ufeff']; // utf-8 bom char
-
-		// header
-		csvData.push(columns.join(delimiter) + newline);
+		var columns = this.getDataColumns();
 
 		var foo = [];
 
 		// data
 		data.forEach(function (row) {
-			var rowData = [];
 			var reihe = {};
 			columns.forEach(function (column) {
 				var cellData = row[column];
@@ -200,16 +193,9 @@ Sitemap.prototype = {
 				}
 
                 reihe[column] = cellData;
-
-				rowData.push('"' + cellData.replace(/"/g, '""').trim() + '"');
 			});
             foo.push(reihe);
-			csvData.push(rowData.join(delimiter) + newline);
 		});
-
-        $("#console").append("<p>").append("Array size: ").append(foo.length).append("</p>");
-        $("#console").append("<p>").append("Is Array: ").append(Array.isArray(foo)).append("</p>");
-        $("#console").append("<p>").append(Papa.unparse(foo)).append("</p>");
 
 		return new Blob([Papa.unparse(foo)], {type: 'text/csv'});
 	},
