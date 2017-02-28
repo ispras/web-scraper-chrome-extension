@@ -22,8 +22,10 @@ var SelectorElementScroll = {
 		window.scrollTo(0,document.body.scrollHeight);
 	},
 	_getData: function (parentElement) {
-
-		var delay = parseInt(this.delay) || 0;
+            
+                var paginationLimit = parseInt(this.paginationLimit);
+                var paginationCount = 1;
+                var delay = parseInt(this.delay) || 0;
 		var deferredResponse = $.Deferred();
 		var foundElements = [];
 
@@ -41,12 +43,13 @@ var SelectorElementScroll = {
 			}
 
 			var elements = this.getDataElements(parentElement);
-			// no new elements found
-			if(elements.length === foundElements.length) {
+			// no new elements found or pagination limit
+			if(elements.length === foundElements.length || paginationCount >= paginationLimit) {
 				clearInterval(interval);
 				deferredResponse.resolve(jQuery.makeArray(elements));
 			}
 			else {
+                                paginationCount++;
 				// continue scrolling and add delay
 				foundElements = elements;
 				this.scrollToBottom();
@@ -63,6 +66,6 @@ var SelectorElementScroll = {
 	},
 
 	getFeatures: function () {
-		return ['multiple', 'delay']
+		return ['multiple', 'delay', 'paginationLimit'];
 	}
 };
