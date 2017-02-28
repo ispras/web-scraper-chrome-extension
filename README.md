@@ -34,6 +34,11 @@ LGPLv3
 
 ## Changelog
 
+### v0.3
+ * Added date pattern in start urls
+ * Added limit pagination in Element click selector and Element scroll down selector
+ * Fixed little bug
+
 ### v0.2
  * Added Element click selector
  * Added Element scroll down selector
