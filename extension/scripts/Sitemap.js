@@ -178,11 +178,11 @@ Sitemap.prototype = {
 
 		var columns = this.getDataColumns();
 
-		var foo = [];
+		var jsonData = [];
 
 		// data
 		data.forEach(function (row) {
-			var reihe = {};
+			var jsonRow = {};
 			columns.forEach(function (column) {
 				var cellData = row[column];
 				if (cellData === undefined) {
@@ -192,12 +192,12 @@ Sitemap.prototype = {
 					cellData = JSON.stringify(cellData);
 				}
 
-                reihe[column] = cellData;
+                jsonRow[column] = cellData;
 			});
-            foo.push(reihe);
+            jsonData.push(jsonRow);
 		});
 
-		return new Blob([Papa.unparse(foo)], {type: 'text/csv'});
+		return new Blob([Papa.unparse(jsonData)], {type: 'text/csv'});
 	},
 	getSelectorById: function (selectorId) {
 		return this.selectors.getSelectorById(selectorId);
