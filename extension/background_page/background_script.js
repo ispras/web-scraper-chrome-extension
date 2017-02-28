@@ -86,7 +86,7 @@ chrome.runtime.onMessage.addListener(
 				});
 			}
 			catch (e) {
-				console.log("Scraper execution cancelled".e);
+				console.log("Scraper execution cancelled", e);
 			}
 
 			return true;

@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
-	"version": "0.2.0.10",
-	"name": "Web Scraper",
-	"short_name": "Web Scraper",
+	"version": "0.3.0.00",
+	"name": "Web Scraper (Codoff's mod)",
+	"short_name": "Web Scraper (Codoff's mod)",
 	"description": "Tool for data extraction from websites",
 	"permissions": ["<all_urls>", "tabs", "notifications", "storage", "unlimitedStorage", "downloads"],
 	"icons": {
@@ -49,7 +49,11 @@
 			"scripts/Store.js",
 			"scripts/ContentScript.js",
 			"scripts/BackgroundScript.js",
-			"background_page/background_script.js"
+			"background_page/background_script.js",
+
+			"scripts/DateUtils/SimpleDateFormatter.js",
+			"scripts/DateUtils/DateRoller.js",
+			"scripts/DateUtils/DatePatternSupport.js"
 		]
 	},
 	"web_accessible_resources": [
