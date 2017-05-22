@@ -31,7 +31,8 @@ describe("Table Selector", function () {
         var columns = selector.getTableHeaderColumns($table);
         expect(columns).toEqual({
             a: {
-                index: 1
+                index: 1,
+				isVerticalHeader: false
             }
         });
     });
@@ -362,7 +363,7 @@ describe("Table Selector", function () {
     it("should get header column from html", function () {
 
         var html = "<table><tr><th>header1</th><th>header2</th></tr><tr><td>data1</td><td>data2</td></tr></table>";
-        var tableHeaderSelector = "tr:nth-of-type(2)";
+        var tableHeaderSelector = "tr:nth-of-type(1)";
         var headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderSelector, html);
 
         expect(headerColumns).toEqual([

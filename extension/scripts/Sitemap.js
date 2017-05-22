@@ -180,17 +180,13 @@ Sitemap.prototype = {
 	},
 	getDataExportCsvBlob: function (data) {
 
-		var columns = this.getDataColumns(),
-			delimiter = ',',
-			newline = "\n",
-			csvData = ['\ufeff']; // utf-8 bom char
+		var columns = this.getDataColumns();
 
-		// header
-		csvData.push(columns.join(delimiter) + newline)
+		var jsonData = [];
 
 		// data
 		data.forEach(function (row) {
-			var rowData = [];
+			var jsonRow = {};
 			columns.forEach(function (column) {
 				var cellData = row[column];
 				if (cellData === undefined) {
@@ -200,12 +196,12 @@ Sitemap.prototype = {
 					cellData = JSON.stringify(cellData);
 				}
 
-				rowData.push('"' + cellData.replace(/"/g, '""').trim() + '"');
+                jsonRow[column] = cellData;
 			});
-			csvData.push(rowData.join(delimiter) + newline);
+            jsonData.push(jsonRow);
 		});
 
-		return new Blob(csvData, {type: 'text/csv'});
+		return new Blob([Papa.unparse(jsonData)], {type: 'text/csv'});
 	},
 	getSelectorById: function (selectorId) {
 		return this.selectors.getSelectorById(selectorId);

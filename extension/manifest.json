@@ -24,7 +24,9 @@
 	"background": {
 		"scripts": [
 			"assets/jquery-2.0.3.js",
+			"assets/papaparse.min.js",
 			"assets/jquery.whencallsequentially.js",
+			"assets/papaparse.min.js",
 			"assets/pouchdb-nightly.min.js",
 			"assets/base64.js",
 			"scripts/Selector.js",
@@ -67,9 +69,9 @@
 			"matches": ["*://*/*"],
 			"js": [
 				"assets/jquery-2.0.3.js",
+				"assets/papaparse.min.js",
 				"assets/jquery.whencallsequentially.js",
 				"assets/sugar-1.4.1.js",
-				"assets/css-selector/lib/CssSelector.js",
 				"assets/base64.js",
 				"scripts/DataExtractor.js",
 				"scripts/ContentSelector.js",

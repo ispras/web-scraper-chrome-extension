@@ -2,126 +2,130 @@
           "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Jasmine Spec Runner</title>
+	<title>Jasmine Spec Runner</title>
 
-    <link rel="shortcut icon" type="image/png" href="../jasmine-standalone/lib/jasmine-1.3.1/jasmine_favicon.png">
-    <link rel="stylesheet" type="text/css" href="../jasmine-standalone/lib/jasmine-1.3.1/jasmine.css">
-    <script type="text/javascript" src="../jasmine-standalone/lib/jasmine-1.3.1/jasmine.js"></script>
-    <script type="text/javascript" src="../jasmine-standalone/lib/jasmine-1.3.1/jasmine-html.js"></script>
+	<link rel="shortcut icon" type="image/png" href="../jasmine-standalone/lib/jasmine-1.3.1/jasmine_favicon.png">
+	<link rel="stylesheet" type="text/css" href="../jasmine-standalone/lib/jasmine-1.3.1/jasmine.css">
+	<script type="text/javascript" src="../jasmine-standalone/lib/jasmine-1.3.1/jasmine.js"></script>
+	<script type="text/javascript" src="../jasmine-standalone/lib/jasmine-1.3.1/jasmine-html.js"></script>
 
-    <script type="text/javascript" src="../extension/assets/jquery-2.0.3.js"></script>
-    <script src="../extension/assets/jquery.whencallsequentially.js"></script>
-    <script>
-        // breaks sugar.js
-        // The actual problem was that <div id="global"></div> also would be turned into a global variable "global"
-        // this broke down content scripts where the page had an element with id #global
-        var global = null;
-    </script>
-    <script type="text/javascript" src="../extension/assets/sugar-1.4.1.js"></script>
-    <script type="text/javascript" src="../extension/assets/pouchdb-nightly.min.js"></script>
-    <script type="text/javascript" src="../extension/assets/base64.js"></script>
+	<script type="text/javascript" src="../extension/assets/jquery-2.0.3.js"></script>
+	<script type="text/javascript" src="../extension/assets/papaparse.min.js"></script>
+	<script src="../extension/assets/jquery.whencallsequentially.js"></script>
+	<script>
+		// breaks sugar.js
+		// The actual problem was that <div id="global"></div> also would be turned into a global variable "global"
+		// this broke down content scripts where the page had an element with id #global
+		var global = null;
+	</script>
+	<script type="text/javascript" src="../extension/assets/sugar-1.4.1.js"></script>
+	<script type="text/javascript" src="../extension/assets/pouchdb-nightly.min.js"></script>
+	<script type="text/javascript" src="../extension/assets/base64.js"></script>
 
-    <!-- include source files here... -->
-    <script type="text/javascript" src="../extension/scripts/Config.js"></script>
-    <script type="text/javascript" src="../extension/scripts/Store.js"></script>
-    <script type="text/javascript" src="../extension/scripts/Job.js"></script>
-    <script type="text/javascript" src="../extension/scripts/Queue.js"></script>
-    <script type="text/javascript" src="../extension/scripts/Scraper.js"></script>
-    <script type="text/javascript" src="../extension/scripts/SelectorList.js"></script>
-    <script type="text/javascript" src="../extension/scripts/Selector.js"></script>
-    <script type="text/javascript" src="../extension/scripts/ContentScript.js"></script>
-    <script type="text/javascript" src="../extension/scripts/BackgroundScript.js"></script>
-    <script type="text/javascript" src="../extension/scripts/ElementQuery.js"></script>
-    <script type="text/javascript" src="../extension/scripts/UniqueElementList.js"></script>
-    <script src="../extension/scripts/Selector/SelectorText.js"></script>
-    <script src="../extension/scripts/Selector/SelectorElement.js"></script>
-    <script src="../extension/scripts/Selector/SelectorLink.js"></script>
-    <script src="../extension/scripts/Selector/SelectorPopupLink.js"></script>
-    <script src="../extension/scripts/Selector/SelectorGroup.js"></script>
-    <script src="../extension/scripts/Selector/SelectorImage.js"></script>
-    <script src="../extension/scripts/Selector/SelectorHTML.js"></script>
-    <script src="../extension/scripts/Selector/SelectorElementAttribute.js"></script>
-    <script src="../extension/scripts/Selector/SelectorTable.js"></script>
-    <script src="../extension/scripts/Selector/SelectorElementScroll.js"></script>
-    <script src="../extension/scripts/Selector/SelectorElementClick.js"></script>
-    <script type="text/javascript" src="../extension/scripts/Sitemap.js"></script>
-    <script type="text/javascript" src="../extension/scripts/ChromePopupBrowser.js"></script>
-    <!-- content script -->
-    <script type="text/javascript" src="../extension/assets/css-selector/lib/CssSelector.js"></script>
-    <script type="text/javascript" src="../extension/scripts/DataExtractor.js"></script>
-    <script type="text/javascript" src="../extension/scripts/ContentSelector.js"></script>
+	<!-- include source files here... -->
+	<script type="text/javascript" src="../extension/scripts/Config.js"></script>
+	<script type="text/javascript" src="../extension/scripts/Store.js"></script>
+	<script type="text/javascript" src="../extension/scripts/Job.js"></script>
+	<script type="text/javascript" src="../extension/scripts/Queue.js"></script>
+	<script type="text/javascript" src="../extension/scripts/Scraper.js"></script>
+	<script type="text/javascript" src="../extension/scripts/SelectorList.js"></script>
+	<script type="text/javascript" src="../extension/scripts/Selector.js"></script>
+	<script type="text/javascript" src="../extension/scripts/ContentScript.js"></script>
+	<script type="text/javascript" src="../extension/scripts/BackgroundScript.js"></script>
+	<script type="text/javascript" src="../extension/scripts/ElementQuery.js"></script>
+	<script type="text/javascript" src="../extension/scripts/UniqueElementList.js"></script>
+	<script src="../extension/scripts/Selector/SelectorText.js"></script>
+	<script src="../extension/scripts/Selector/SelectorElement.js"></script>
+	<script src="../extension/scripts/Selector/SelectorLink.js"></script>
+	<script src="../extension/scripts/Selector/SelectorPopupLink.js"></script>
+	<script src="../extension/scripts/Selector/SelectorGroup.js"></script>
+	<script src="../extension/scripts/Selector/SelectorImage.js"></script>
+	<script src="../extension/scripts/Selector/SelectorHTML.js"></script>
+	<script src="../extension/scripts/Selector/SelectorElementAttribute.js"></script>
+	<script src="../extension/scripts/Selector/SelectorTable.js"></script>
+	<script src="../extension/scripts/Selector/SelectorElementScroll.js"></script>
+	<script src="../extension/scripts/Selector/SelectorElementClick.js"></script>
+	<script src="../extension/scripts/DateUtils/SimpleDateFormatter.js"></script>
+	<script src="../extension/scripts/DateUtils/DateRoller.js"></script>
+	<script src="../extension/scripts/DateUtils/DatePatternSupport.js"></script>
+	
+	<script type="text/javascript" src="../extension/scripts/Sitemap.js"></script>
+	<script type="text/javascript" src="../extension/scripts/ChromePopupBrowser.js"></script>
+	<!-- content script -->
+	<script type="text/javascript" src="../extension/assets/css-selector/lib/CssSelector.js"></script>
+	<script type="text/javascript" src="../extension/scripts/DataExtractor.js"></script>
+	<script type="text/javascript" src="../extension/scripts/ContentSelector.js"></script>
 
-    <script type="text/javascript" src="FakeStore.js"></script>
+	<script type="text/javascript" src="FakeStore.js"></script>
 
 
-    <!-- global chrome api -->
-    <script type="text/javascript" src="ChromeAPI.js"></script>
-    <script type="text/javascript">
-        window.chromeAPI = new ChromeAPI();
-    </script>
-    <script src="../extension/background_page/background_script.js"></script>
-    <script src="../extension/content_script/content_script.js"></script>
-    <script type="text/javascript">
-        console.log(window.chromeAPI);
-    </script>
+	<!-- global chrome api -->
+	<script type="text/javascript" src="ChromeAPI.js"></script>
+	<script type="text/javascript">
+		window.chromeAPI = new ChromeAPI();
+	</script>
+	<script src="../extension/background_page/background_script.js"></script>
+	<script src="../extension/content_script/content_script.js"></script>
+	<script type="text/javascript">
+		console.log(window.chromeAPI);
+	</script>
 
-    <script type="text/javascript" src="Matchers.js"></script>
-    <!-- include spec files here... -->
-    <script type="text/javascript" src="spec/jquery.whencallsequentiallySpec.js"></script>
-    <script type="text/javascript" src="spec/JobSpec.js"></script>
-    <script type="text/javascript" src="spec/QueueSpec.js"></script>
-    <script type="text/javascript" src="spec/DataExtractSpec.js"></script>
-    <script type="text/javascript" src="spec/ScraperSpec.js"></script>
-    <script type="text/javascript" src="spec/ContentSelectorSpec.js"></script>
-    <script type="text/javascript" src="spec/SelectorListSpec.js"></script>
-    <script type="text/javascript" src="spec/SitemapSpec.js"></script>
-    <script type="text/javascript" src="spec/BackgroundScriptSpec.js"></script>
-    <script type="text/javascript" src="spec/ContentScriptSpec.js"></script>
-    <script type="text/javascript" src="spec/SelectorSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorTextSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorGroupSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorElementSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorLinkSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorPopupLinkSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorImageSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorHTMLSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorElementAttributeSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorTableSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorElementScrollSpec.js"></script>
-    <script type="text/javascript" src="spec/Selector/SelectorElementClickSpec.js"></script>
-    <script type="text/javascript" src="spec/ChromePopupBrowserSpec.js"></script>
-    <script type="text/javascript" src="spec/ElementQuerySpec.js"></script>
-    <script type="text/javascript" src="spec/UniqueElementListSpec.js"></script>
+	<script type="text/javascript" src="Matchers.js"></script>
+	<!-- include spec files here... -->
+	<script type="text/javascript" src="spec/jquery.whencallsequentiallySpec.js"></script>
+	<script type="text/javascript" src="spec/JobSpec.js"></script>
+	<script type="text/javascript" src="spec/QueueSpec.js"></script>
+	<script type="text/javascript" src="spec/DataExtractSpec.js"></script>
+	<script type="text/javascript" src="spec/ScraperSpec.js"></script>
+	<script type="text/javascript" src="spec/ContentSelectorSpec.js"></script>
+	<script type="text/javascript" src="spec/SelectorListSpec.js"></script>
+	<script type="text/javascript" src="spec/SitemapSpec.js"></script>
+	<script type="text/javascript" src="spec/BackgroundScriptSpec.js"></script>
+	<script type="text/javascript" src="spec/ContentScriptSpec.js"></script>
+	<script type="text/javascript" src="spec/SelectorSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorTextSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorGroupSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorElementSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorLinkSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorPopupLinkSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorImageSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorHTMLSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorElementAttributeSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorTableSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorElementScrollSpec.js"></script>
+	<script type="text/javascript" src="spec/Selector/SelectorElementClickSpec.js"></script>
+	<script type="text/javascript" src="spec/ChromePopupBrowserSpec.js"></script>
+	<script type="text/javascript" src="spec/ElementQuerySpec.js"></script>
+	<script type="text/javascript" src="spec/UniqueElementListSpec.js"></script>
 
-    <script type="text/javascript">
-        (function () {
-            var jasmineEnv = jasmine.getEnv();
-            jasmineEnv.updateInterval = 1000;
+	<script type="text/javascript">
+		(function () {
+			var jasmineEnv = jasmine.getEnv();
+			jasmineEnv.updateInterval = 1000;
 
-            var htmlReporter = new jasmine.HtmlReporter();
+			var htmlReporter = new jasmine.HtmlReporter();
 
-            jasmineEnv.addReporter(htmlReporter);
+			jasmineEnv.addReporter(htmlReporter);
 
-            jasmineEnv.specFilter = function (spec) {
-                return htmlReporter.specFilter(spec);
-            };
+			jasmineEnv.specFilter = function (spec) {
+				return htmlReporter.specFilter(spec);
+			};
 
-            var currentWindowOnload = window.onload;
+			var currentWindowOnload = window.onload;
 
-            window.onload = function () {
-                if (currentWindowOnload) {
-                    currentWindowOnload();
-                }
-                execJasmine();
-            };
+			window.onload = function () {
+				if (currentWindowOnload) {
+					currentWindowOnload();
+				}
+				execJasmine();
+			};
 
-            function execJasmine() {
-                jasmineEnv.execute();
-            }
+			function execJasmine() {
+				jasmineEnv.execute();
+			}
 
-        })();
-    </script>
-
+		})();
+	</script>
 </head>
 
 <body>
