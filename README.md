@@ -34,6 +34,18 @@ LGPLv3
 
 ## Changelog
 
+### v0.3
+ * Added support for vertical tables (@jwillmer)
+ * Added random delay function between requests (@Euphorbium)
+ * Start URL can now also be a local URL (@3flex)
+ * Added CSV export options (@mohamnag)
+ * Added Regex group for select (@RuneHL)
+ * JSON export/import of settings (@haisi)
+ * Added date and number pattern in URL (@codoff)
+ * Added pagination selector limit (@codoff)
+ * Improved CSV export (@haisi)
+ * Added click limit option (@panna-ahmed)
+
 ### v0.2
  * Added Element click selector
  * Added Element scroll down selector
