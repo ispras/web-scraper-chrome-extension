@@ -81,49 +81,7 @@ describe("Table Selector", function () {
             { header: 'head1', name: 'head1', extract: true },
             { header: 'head2', name: 'head2', extract: true }]);
     });
-
-    //it("should extract vertical table header columns", function () {
-    //    var selector = new Selector({
-    //        id: 'a',
-    //        type: 'SelectorTable',
-    //        multiple: false,
-    //        selector: "table",
-    //        columns: [
-    //            {
-    //                header: "header1",
-    //                name: "h1",
-    //                extract: true
-    //            },
-    //            {
-    //                header: "header2",
-    //                name: "h2",
-    //                extract: true
-    //            }
-    //        ]
-    //    });
-
-    //    selector.getTableDataRowSelectorFromTableHTML($("#selector-table-vertical-table"));
-    //    var dataDeferred = selector.getData($("#selector-table-vertical-table"));
-
-    //    waitsFor(function () {
-    //        return dataDeferred.state() === 'resolved';
-    //    }, "wait for data extraction", 5000);
-
-    //    runs(function () {
-    //        dataDeferred.done(function (data) {
-    //            expect(data).toEqual([
-    //                {
-    //                    h1: "value1",
-    //                    h2: "value2"
-    //                }
-    //            ]);
-    //        });
-    //    });
-    //});
-
-
-
-
+    
     it("should extract single text record from one table", function () {
 
         var selector = new Selector({
