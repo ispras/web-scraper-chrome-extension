@@ -1110,13 +1110,25 @@ SitemapController.prototype = {
 		var exportPanel = ich.SitemapExportDataCSV(sitemap);
 		$("#viewport").html(exportPanel);
 
+		$(".result").hide();
+
 		// generate data
-		$(".download-button").hide();
-		this.store.getSitemapData(sitemap, function (data) {
-			var blob = sitemap.getDataExportCsvBlob(data);
-			$(".download-button a").attr("href", window.URL.createObjectURL(blob));
-            $(".download-button a").attr("download", sitemap._id + ".csv");
-			$(".download-button").show();
+		$("#generate-csv").click(function () {
+			$(".result").show();
+			$(".download-button").hide();
+
+			var options = {
+				"delimiter": $("#delimiter").val(),
+				"newline": $("#newline").prop('checked'),
+				"containBom": $("#utf-bom").prop('checked')
+			};
+
+			this.store.getSitemapData(sitemap, function (data) {
+				var blob = sitemap.getDataExportCsvBlob(data, options);
+				$(".download-button a").attr("href", window.URL.createObjectURL(blob));
+				$(".download-button a").attr("download", sitemap._id + ".csv");
+				$(".download-button").show();
+			}.bind(this));
 		}.bind(this));
 
 		return true;

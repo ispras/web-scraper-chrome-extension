@@ -178,11 +178,27 @@ Sitemap.prototype = {
 
 		return columns;
 	},
-	getDataExportCsvBlob: function (data) {
+	getDataExportCsvBlob: function (data, option) {
 
-		var columns = this.getDataColumns();
+        var delimiterKey = "delimiter";
+        var newlineKey = "newline";
+        var containBomKey = "containBom";
 
-		var jsonData = [];
+        var columns = this.getDataColumns(),
+            // default delimiter is comma
+            delimiter = option.hasOwnProperty(delimiterKey) ? option[delimiterKey] : ',',
+            // per default, new line is included at end of lines
+            newline = option.hasOwnProperty(newlineKey) ? (option[newlineKey] == true ? "\r\n" : "") : "\r\n",
+            // per default, utf8 BOM is included at the beginning.
+            prepend = option.hasOwnProperty(containBomKey) ? (option[containBomKey] == true ? '\ufeff' : '') : '\ufeff', // utf-8 bom char
+			options = {
+				quotes: false,
+				quoteChar: '"',
+				delimiter: delimiter,
+				header: true,
+				newline: "\r\n" // between value rows
+			},
+			jsonData = [];
 
 		// data
 		data.forEach(function (row) {
@@ -201,7 +217,7 @@ Sitemap.prototype = {
             jsonData.push(jsonRow);
 		});
 
-		return new Blob([Papa.unparse(jsonData)], {type: 'text/csv'});
+		return new Blob([prepend + Papa.unparse(jsonData, options) + newline], {type: 'text/csv'});
 	},
 	getSelectorById: function (selectorId) {
 		return this.selectors.getSelectorById(selectorId);

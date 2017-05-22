@@ -151,6 +151,12 @@ ChromeAPI.prototype = {
 					addListener: this.downloadsOnChangedAddListener.bind(this),
 					removeListener: this.downloadsOnChangedRemoveListener.bind(this)
 				}
+			},
+			notifications: {
+				create: function(notificationId, options, callback) {
+					console.log("Chrome notification with id \"" + notificationId + "\" was called!");
+					callback(notificationId);
+				}				
 			}
 		};
 
