@@ -693,6 +693,22 @@ SitemapController.prototype = {
 						}
 					}
 				},
+				paginationLimit: {
+					validators: {
+						numeric: {
+							message: 'Pagination limit must be numeric or empty'
+						},
+                                                callback: {
+							message: 'Pagination limit must be 1 at least',
+							callback: function(value, validator) {
+                                                                if(!value) {
+									return true;
+								}
+								return value >= 1;
+							}
+						}
+					}
+				},
 				parentSelectors: {
 					validators: {
 						notEmpty: {
@@ -857,6 +873,7 @@ SitemapController.prototype = {
 		var type = $("#edit-selector [name=type]").val();
 		var clickElementUniquenessType = $("#edit-selector [name=clickElementUniquenessType]").val();
 		var clickType = $("#edit-selector [name=clickType]").val();
+		var paginationLimit = $("#edit-selector [name=paginationLimit]").val();
 		var discardInitialElements = $("#edit-selector [name=discardInitialElements]").is(":checked");
 		var multiple = $("#edit-selector [name=multiple]").is(":checked");
 		var downloadImage = $("#edit-selector [name=downloadImage]").is(":checked");
@@ -889,6 +906,7 @@ SitemapController.prototype = {
 			clickElementSelector: clickElementSelector,
 			clickElementUniquenessType: clickElementUniquenessType,
 			clickType: clickType,
+			paginationLimit: paginationLimit,
 			discardInitialElements: discardInitialElements,
 			type: type,
 			multiple: multiple,
@@ -1345,7 +1363,7 @@ SitemapController.prototype = {
 		chrome.runtime.sendMessage(request, function (response) {
 
 			if (response.length === 0) {
-				return
+				return;
 			}
 			var dataColumns = Object.keys(response[0]);
 

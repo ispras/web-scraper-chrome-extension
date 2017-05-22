@@ -37,6 +37,63 @@
 				</div>
 			</div>
 		{{/startUrl.push}}
+		
+		<div class="col-lg-10 col-lg-offset-1">
+			Supported URL patterns:<br>
+			1. <b>Numeric</b> with optional step and zero padding – [<i>START</i>-<i>END</i>:<i>STEP</i>] – [001-010:10]<br>
+			2. <b>Date interval</b> – [date&lt;<i>PATTERN</i>&gt;&lt;<i>START</i>&gt;&lt;<i>END</i>&gt;] – [date&lt;dd.MM.yyyy&gt;&lt;01.01.2017&gt;&lt;now&gt;]<br>	
+			<ul>
+				date placeholder may be <b>yesterday</b> / <b>now</b> / <b>tomorrow</b><br>
+				other template components (in Java style)
+				<ul>
+					<table border="0">
+						<tbody>
+							<tr>
+								<td>yyyy</td>
+								<td>full year (4 digits)</td>
+							</tr>
+							<tr>
+								<td>yy</td>
+								<td>last 2 digits of year</td>
+							</tr>
+							<tr>
+								<td>MMM &emsp;</td>
+								<td>Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec</td>
+							</tr>
+							<tr>
+								<td>MM</td>
+								<td>month number (01-12)</td>
+							</tr>
+							<tr>
+								<td>dd</td>
+								<td>day of month</td>
+							</tr>
+<!--							<tr>
+								<td></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>hh</td>
+								<td>hours</td>
+							</tr>
+							<tr>
+								<td>mm</td>
+								<td>minutes</td>
+							</tr>
+							<tr>
+								<td>ss</td>
+								<td>seconds</td>
+							</tr>
+							<tr>
+								<td>sss</td>
+								<td>milliseconds</td>
+							</tr>-->
+						</tbody>
+					</table>
+				</ul>
+			</ul>
+		</div>
+
 		<div class="form-group">
 			<div class="col-lg-offset-1 col-lg-10">
 				<button type="submit" class="btn btn-primary" id="submit-edit-sitemap">Save Sitemap</button>

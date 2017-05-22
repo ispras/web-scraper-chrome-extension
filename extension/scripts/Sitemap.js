@@ -1,3 +1,5 @@
+/* global DatePatternSupport */
+
 var Sitemap = function (sitemapObj) {
 	this.initData(sitemapObj);
 };
@@ -65,6 +67,8 @@ Sitemap.prototype = {
 		if(this.startUrl.push === undefined) {
 			startUrls = [startUrls];
 		}
+
+		startUrls = DatePatternSupport.expandUrl(startUrls);
 
 		var urls = [];
 		startUrls.forEach(function(startUrl) {

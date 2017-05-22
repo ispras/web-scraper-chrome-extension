@@ -49,7 +49,10 @@
 			"scripts/Store.js",
 			"scripts/ContentScript.js",
 			"scripts/BackgroundScript.js",
-			"background_page/background_script.js"
+			"scripts/DateUtils/SimpleDateFormatter.js",
+			"scripts/DateUtils/DateRoller.js",
+			"scripts/DateUtils/DatePatternSupport.js",
+			"background_page/background_script.js"			
 		]
 	},
 	"web_accessible_resources": [
