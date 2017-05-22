@@ -5,6 +5,7 @@ Scraper = function (options) {
 	this.browser = options.browser;
 	this.resultWriter = null; // db instance for scraped data writing
 	this.requestInterval = parseInt(options.requestInterval);
+	this.requestIntervalRandomness = parseInt(options.requestIntervalRandomness);
 	this.pageLoadDelay = parseInt(options.pageLoadDelay);
 };
 
@@ -187,7 +188,7 @@ Scraper.prototype = {
 
 					var now = (new Date()).getTime();
 					// delay next job if needed
-					this._timeNextScrapeAvailable = now + this.requestInterval;
+					this._timeNextScrapeAvailable = now + this.requestInterval + Math.random()*this.requestIntervalRandomness;
 					if(now >= this._timeNextScrapeAvailable) {
 						this._run();
 					}
