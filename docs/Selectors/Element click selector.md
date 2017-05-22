@@ -18,6 +18,7 @@ events triggered by the button.
  be clicked to load more elements.
  * click type - type of how the selector knows when there will be no new
  elements and clicking should stop.
+ * click limit - the number of clicks you want the selector to perform.
  * click element uniqueness - type of how selector knows which buttons are 
  already clicked.
  * multiple - multiple records are being extracted (almost always should be

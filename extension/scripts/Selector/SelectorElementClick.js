@@ -84,6 +84,7 @@ var SelectorElementClick = {
 		var paginationLimit = parseInt(this.paginationLimit);
                 var paginationCount = 1;
 		var delay = parseInt(this.delay) || 0;
+		var clickLimit = parseInt(this.clickLimit) || 1;
 		var deferredResponse = $.Deferred();
 		var foundElements = new UniqueElementList('uniqueHTMLText');
 		var clickElements = this.getClickElements(parentElement);
@@ -111,7 +112,7 @@ var SelectorElementClick = {
 		
 		// infinitely scroll down and find all items
 		var interval = setInterval(function() {
-
+			
 			// find those click elements that are not in the black list
 			var allClickElements = this.getClickElements(parentElement);
 			clickElements = [];
@@ -147,7 +148,7 @@ var SelectorElementClick = {
 			// continue clicking and add delay, but if there is nothing
 			// more to click the finish
 			//console.log("total buttons", clickElements.length)
-			if(clickElements.length === 0 || paginationCount >= paginationLimit) {
+			if(clickElements.length === 0 || paginationCount >= paginationLimit || clickLimit < 1) {
 				clearInterval(interval);
 				deferredResponse.resolve(foundElements);
 			}
@@ -161,6 +162,7 @@ var SelectorElementClick = {
 				}
 				this.triggerButtonClick(currentClickElement);
 				nextElementSelection = now+delay;
+				clickLimit--;
 			}
 		}.bind(this), 50);
 
@@ -174,6 +176,6 @@ var SelectorElementClick = {
     getFeatures: function () {
         return ['multiple', 'delay', 'clickElementSelector', 'clickType',
             'discardInitialElements', 'clickElementUniquenessType',
-            'paginationLimit'];
+            'paginationLimit', 'clickLimit'];
     }
 };

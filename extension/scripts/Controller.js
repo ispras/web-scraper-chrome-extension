@@ -698,14 +698,21 @@ SitemapController.prototype = {
 						numeric: {
 							message: 'Pagination limit must be numeric or empty'
 						},
-                                                callback: {
+                        callback: {
 							message: 'Pagination limit must be 1 at least',
 							callback: function(value, validator) {
-                                                                if(!value) {
+                                if(!value) {
 									return true;
 								}
 								return value >= 1;
 							}
+						}
+					}
+				},							
+				clickLimit: {
+					validators: {
+						numeric: {
+							message: 'Click limit must be numeric'
 						}
 					}
 				},
@@ -846,7 +853,7 @@ SitemapController.prototype = {
 		var sitemap = this.state.currentSitemap;
 		var selector = this.state.currentSelector;
 		var newSelector = this.getCurrentlyEditedSelector();
-
+				
 		// cancel submit if invalid form
 		if(!this.isValidForm()) {
 			return false;
@@ -880,6 +887,7 @@ SitemapController.prototype = {
 		var clickPopup = $("#edit-selector [name=clickPopup]").is(":checked");
 		var regex = $("#edit-selector [name=regex]").val();
 		var delay = $("#edit-selector [name=delay]").val();
+		var clickLimit = $("#edit-selector [name=clickLimit]").val();
 		var extractAttribute = $("#edit-selector [name=extractAttribute]").val();
 		var parentSelectors = $("#edit-selector [name=parentSelectors]").val();
 		var columns = [];
@@ -916,7 +924,8 @@ SitemapController.prototype = {
 			extractAttribute:extractAttribute,
 			parentSelectors: parentSelectors,
 			columns:columns,
-			delay:delay
+			delay:delay,
+			clickLimit:clickLimit
 		});
 		return newSelector;
 	},
@@ -1032,7 +1041,7 @@ SitemapController.prototype = {
 
 		var requestInterval = $("input[name=requestInterval]").val();
 		var pageLoadDelay = $("input[name=pageLoadDelay]").val();
-
+		
 		var sitemap = this.state.currentSitemap;
 		var request = {
 			scrapeSitemap: true,
