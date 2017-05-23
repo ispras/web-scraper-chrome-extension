@@ -48,6 +48,7 @@ UniqueElementList.prototype.push = function(element) {
 		this.addedElements[elementUniqueId] = true;
 		var clone = $(element).clone(true)[0];	
 
+		// clone computed styles (to extract images from background)		
 		var items = element.getElementsByTagName("*");
 		var itemsCloned = clone.getElementsByTagName("*");		
 		$(items).each(function(i, item) {

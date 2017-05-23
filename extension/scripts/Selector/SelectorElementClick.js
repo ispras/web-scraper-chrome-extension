@@ -82,6 +82,7 @@ var SelectorElementClick = {
 	_getData: function(parentElement) {
 
 		var paginationLimit = parseInt(this.paginationLimit);
+        var paginationCount = 1;
 		var delay = parseInt(this.delay) || 0;
 		var clickLimit = parseInt(this.clickLimit) || 1;
 		var deferredResponse = $.Deferred();
