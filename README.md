@@ -5,7 +5,11 @@ should be traversed and what should be extracted. Using these sitemaps the
 Web Scraper will navigate the site accordingly and extract all data. Scraped 
 data later can be exported as CSV.
 
-Install the extension from [Chrome store] [chrome-store]
+#### Chrome Store Version
+You can find a version of this extension in the [Chrome store][chrome-store]. Please compare the Chrome store version with the version history in this readme to find out which features are supported.
+
+#### Latest Version
+To run the latest version you need to download the project to your system and [follow the description on Google][get-started-chrome]) (select the `extension` folder).
 
 ### Features
 
@@ -17,14 +21,6 @@ Install the extension from [Chrome store] [chrome-store]
  6. Export scraped data as CSV
  7. Import, Export sitemaps
  8. Depends only on Chrome browser
-
-### Help
-
- Documentation and tutorials are available on [webscraper.io] [webscraper.io]
- 
- Ask for help, submit bugs, suggest features on [google groups] [google-groups]
- 
- Submit bugs and suggest features on [bug tracker] [github-issues]
  
 #### Bugs
 When submitting a bug please attach an exported sitemap if possible.
@@ -35,16 +31,17 @@ LGPLv3
 ## Changelog
 
 ### v0.3
- * Added support for vertical tables (@jwillmer)
- * Added random delay function between requests (@Euphorbium)
- * Start URL can now also be a local URL (@3flex)
- * Added CSV export options (@mohamnag)
- * Added Regex group for select (@RuneHL)
- * JSON export/import of settings (@haisi)
- * Added date and number pattern in URL (@codoff)
- * Added pagination selector limit (@codoff)
- * Improved CSV export (@haisi)
- * Added click limit option (@panna-ahmed)
+ * Added image improvements to find images in div background (by [@jwillmer](https://github.com/jwillmer))
+ * Added support for vertical tables (by [@jwillmer](https://github.com/jwillmer))
+ * Added random delay function between requests (by [@Euphorbium](https://github.com/Euphorbium))
+ * Start URL can now also be a local URL (by [@3flex](https://github.com/3flex))
+ * Added CSV export options (by [@mohamnag](https://github.com/mohamnag))
+ * Added Regex group for select (by [@RuneHL](https://github.com/RuneHL))
+ * JSON export/import of settings (by [@haisi](https://github.com/haisi))
+ * Added date and number pattern in URL (by [@codoff](https://github.com/codoff))
+ * Added pagination selector limit (by [@codoff](https://github.com/codoff))
+ * Improved CSV export (by [@haisi](https://github.com/haisi))
+ * Added click limit option (by [@panna-ahmed](https://github.com/panna-ahmed))
 
 ### v0.2
  * Added Element click selector
@@ -71,3 +68,4 @@ LGPLv3
  [webscraper.io]: http://webscraper.io/
  [google-groups]: https://groups.google.com/forum/#!forum/web-scraper
  [github-issues]: https://github.com/martinsbalodis/web-scraper-chrome-extension/issues
+ [get-started-chrome]: https://developer.chrome.com/extensions/getstarted#unpacked
