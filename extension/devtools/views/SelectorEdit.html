@@ -1,17 +1,17 @@
 <form class="form-horizontal" role="form" id="edit-selector">
 
 	<div class="form-group">
-		<label for="selectorId" class="col-lg-1 control-label">Id</label>
+		<label for="selectorId" class="col-sm-2 control-label">Id</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<input type="text" class="form-control" name="id" id="selectorId" placeholder="Selector Id" value="{{selector.id}}">
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="type" class="col-lg-1 control-label">Type</label>
+		<label for="type" class="col-sm-2 control-label">Type</label>
 
-		<div class="input-group col-lg-10">
+		<div class="input-group col-sm-8">
 			<select class="form-control" id="type" name="type">
 				{{#selectorTypes}}
 				<option value="{{type}}">{{title}}</option>
@@ -21,9 +21,9 @@
 	</div>
 
 	<div class="form-group">
-		<label for="selector" class="col-lg-1 control-label">Selector</label>
+		<label for="selector" class="col-sm-2 control-label">Selector</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<div class="input-group">
 				  <span class="input-group-btn">
 					<button class="btn btn-default" action="select-selector" type="button">Select</button>
@@ -36,9 +36,9 @@
 	</div>
 
 	<div class="form-group feature feature-clickElementSelector">
-		<label for="clickElementSelector" class="col-lg-1 control-label">Click selector</label>
+		<label for="clickElementSelector" class="col-sm-2 control-label">Click selector</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<div class="input-group">
 				  <span class="input-group-btn">
 					<button class="btn btn-default" action="select-selector" type="button">Select</button>
@@ -51,8 +51,8 @@
 
 	<!-- tableHeaderSelector -->
 	<div class="form-group feature feature-tableHeaderRowSelector">
-		<label for="tableHeaderRowSelector" class="col-lg-1 control-label">Header row selector</label>
-		<div class="col-lg-10">
+		<label for="tableHeaderRowSelector" class="col-sm-2 control-label">Header row selector</label>
+		<div class="col-sm-8">
 			<div class="input-group">
 				  <span class="input-group-btn">
 					<button class="btn btn-default" action="select-table-header-row-selector" type="button">Select</button>
@@ -65,8 +65,8 @@
 
 	<!-- tableRowSelector -->
 	<div class="form-group feature feature-tableDataRowSelector">
-		<label for="tableDataRowSelector" class="col-lg-1 control-label">Data rows selector</label>
-		<div class="col-lg-10">
+		<label for="tableDataRowSelector" class="col-sm-2 control-label">Data rows selector</label>
+		<div class="col-sm-8">
 			<div class="input-group">
 				  <span class="input-group-btn">
 					<button class="btn btn-default" action="select-table-data-row-selector" type="button">Select</button>
@@ -79,9 +79,9 @@
 
         <!-- ClickType -->
         <div class="form-group feature feature-clickType">
-            <label for="clickType" class="col-lg-1 control-label">Click type</label>
+            <label for="clickType" class="col-sm-2 control-label">Click type</label>
 
-            <div class="input-group col-lg-10">
+            <div class="input-group col-sm-8">
                 <select class="form-control" id="clickType" name="clickType">
                     <option value="clickOnce">Click once (pagination, tabs)</option>
                     <option value="clickMore">Click more (click to load more elements. Stops when no new elements with unique text content are found.)</option>
@@ -91,9 +91,9 @@
         
         <!-- Pagination Limit -->
         <div class="form-group feature feature-paginationLimit">
-		<label for="paginationLimit" class="col-lg-1 control-label">Pagination limit</label>
+		<label for="paginationLimit" class="col-sm-2 control-label">Pagination limit</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<input type="text" class="form-control" name="paginationLimit" id="paginationLimit"
 				   placeholder="empty = unlimited" value="{{selector.paginationLimit}}">
 		</div>
@@ -101,17 +101,17 @@
 
 	<!-- ClickLimit -->
 	<div class="form-group feature feature-clickLimit">
-		<label for="clickLimit" class="col-lg-1 control-label">Click Limit</label>
+		<label for="clickLimit" class="col-sm-2 control-label">Click Limit</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<input type="text" class="form-control" name="clickLimit" id="clickLimit" placeholder="clickLimit" value="{{selector.clickLimit}}">
 		</div>
 	</div>
 
 	<!-- clickElementUniquenessType -->
 	<div class="form-group feature feature-clickElementUniquenessType">
-		<label for="clickElementUniquenessType" class="col-lg-1 control-label">Click element uniqueness</label>
-		<div class="input-group col-lg-10">
+		<label for="clickElementUniquenessType" class="col-sm-2 control-label">Click element uniqueness</label>
+		<div class="input-group col-sm-8">
 			<select class="form-control" id="clickElementUniquenessType" name="clickElementUniquenessType">
 				<option value="uniqueText">Unique Text</option>
 				<option value="uniqueHTMLText">Unique HTML+Text</option>
@@ -122,10 +122,11 @@
 	</div>
 
 	<div class="form-group feature feature-multiple">
-		<div class="col-lg-offset-1 col-lg-10">
+    <label for="multiple" class="col-sm-2 control-label">Multiple Values</label>
+		<div class="col-sm-8">
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" name="multiple" {{#selector.multiple}}checked="checked"{{/selector.multiple}}> Multiple
+					<input type="checkbox" name="multiple" {{#selector.multiple}}checked="checked"{{/selector.multiple}}>
 				</label>
 			</div>
 		</div>
@@ -133,7 +134,8 @@
 
 	<!-- discardInitialElements -->
 	<div class="form-group feature feature-discardInitialElements">
-		<div class="col-lg-offset-1 col-lg-10">
+        <label for="discardInitialElements" class="col-sm-2 control-label">Discard elements</label>
+		<div class="col-sm-8">
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" name="discardInitialElements" {{#selector.discardInitialElements}}checked="checked"{{/selector.discardInitialElements}}>
@@ -145,52 +147,52 @@
 
 	<!-- downloadImage -->
 	<div class="form-group feature feature-downloadImage">
-		<div class="col-lg-offset-1 col-lg-10">
+        <label for="downloadImage" class="col-sm-2 control-label">Download image</label>
+		<div class="col-sm-8">
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" name="downloadImage" {{#selector.downloadImage}}checked="checked"{{/selector.downloadImage}}> Download image
+					<input type="checkbox" name="downloadImage" {{#selector.downloadImage}}checked="checked"{{/selector.downloadImage}}>
 				</label>
 			</div>
 		</div>
 	</div>
 
 	<div class="form-group feature feature-regex">
-		<label for="regex" class="col-lg-1 control-label">Regex</label>
+		<label for="regex" class="col-sm-2 control-label">Regex</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<input type="text" class="form-control" name="regex" id="regex" placeholder="regex" value="{{selector.regex}}">
 		</div>
 	</div>
 
 	<div class="form-group feature feature-regexgroup">
-		<label for="regexgroup" class="col-lg-1 control-label">Regex group</label>
+		<label for="regexgroup" class="col-sm-2 control-label">Regex group</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<input type="text" class="form-control" name="regexgroup" id="regexgroup" placeholder="regexgroup" value="{{selector.regexgroup}}">
 		</div>
-	</div>
-
+	</div>    
 	
 	<div class="form-group feature feature-extractAttribute">
-		<label for="extractAttribute" class="col-lg-1 control-label">Attribute name</label>
+		<label for="extractAttribute" class="col-sm-2 control-label">Attribute name</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<input type="text" class="form-control" name="extractAttribute" id="extractAttribute" placeholder="Attribute name to extract" value="{{selector.extractAttribute}}">
 		</div>
 	</div>
 
 	<div class="form-group feature feature-delay">
-		<label for="delay" class="col-lg-1 control-label">Delay (ms)</label>
+		<label for="delay" class="col-sm-2 control-label">Delay (ms)</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<input type="text" class="form-control" name="delay" id="delay" placeholder="delay" value="{{selector.delay}}">
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="parentSelectors" class="col-lg-1 control-label">Parent Selectors</label>
+		<label for="parentSelectors" class="col-sm-2 control-label">Parent Selectors</label>
 
-		<div class="input-group col-lg-10">
+		<div class="input-group col-sm-8">
 			<select multiple class="form-control" id="parentSelectors" name="parentSelectors">
 				{{#selectorIds}}
 				<option value="{{.}}">{{.}}</option>
@@ -200,9 +202,9 @@
 	</div>
 
 	<div class="form-group feature feature-columns">
-		<label class="col-lg-1 control-label">Table columns</label>
+		<label class="col-sm-2 control-label">Table columns</label>
 
-		<div class="col-lg-10">
+		<div class="col-sm-8">
 			<table class="table table-bordered table-condensed">
 				<thead>
 					<tr>
@@ -225,13 +227,13 @@
 	</div>
 
 	<div class="form-group">
-		<div class="col-lg-offset-1 col-lg-10">
+		<div class="col-sm-offset-1 col-sm-8">
 			<button class="btn btn-primary" action="save-selector">Save selector</button> <button action="cancel-selector-editing" class="btn btn-default">Cancel</button>
 		</div>
 	</div>
 
 	<div class="form-group">
-		<div class="col-lg-offset-1 col-lg-10">
+		<div class="col-sm-offset-1 col-sm-8">
 
 		</div>
 	</div>
