@@ -70,6 +70,6 @@ var SelectorText = {
 	},
 
 	getFeatures: function () {
-		return ['multiple', 'regex', 'delay', 'regexgroup']
+        return ['multiple', 'regex', 'delay', 'regexgroup', 'textmanipulation']
 	}
 };

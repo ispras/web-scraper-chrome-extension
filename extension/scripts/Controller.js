@@ -200,7 +200,7 @@ SitemapController.prototype = {
 				},
 				"button.remove-start-url": {
 					click: this.removeStartUrl
-				}
+                }
 			});
 			this.showSitemaps();
 		}.bind(this));
@@ -693,7 +693,7 @@ SitemapController.prototype = {
 							message: 'Delay must be numeric'
 						}
 					}
-				},
+                },
 				paginationLimit: {
 					validators: {
 						numeric: {
@@ -744,7 +744,7 @@ SitemapController.prototype = {
 
 		var selector = this.getCurrentlyEditedSelector();
 		$(".currently-edited").val(selector.id).text(selector.id);
-	},
+    },
 	_editSelector: function (selector) {
 
 		var sitemap = this.state.currentSitemap;
@@ -895,7 +895,15 @@ SitemapController.prototype = {
 		var columns = [];
 		var $columnHeaders = $("#edit-selector .column-header");
 		var $columnNames = $("#edit-selector .column-name");
-		var $columnExtracts = $("#edit-selector .column-extract");
+        var $columnExtracts = $("#edit-selector .column-extract");
+        var textmanipulation = {
+            removeHtml: $("#edit-selector [name=removeHtml]").is(":checked"),
+            trimText: $("#edit-selector [name=trimText]").is(":checked"),
+            replaceText: $("#edit-selector [name=replaceText]").val(),
+            replacementText: $("#edit-selector [name=replacementText]").val(),
+            textPrefix: $("#edit-selector [name=textPrefix]").val(),
+            textSuffix: $("#edit-selector [name=textSuffix]").val()
+        };
 
 		$columnHeaders.each(function(i){
 			var header = $($columnHeaders[i]).val();
@@ -928,7 +936,8 @@ SitemapController.prototype = {
 			parentSelectors: parentSelectors,
 			columns:columns,
 			delay:delay,
-			clickLimit:clickLimit
+            clickLimit: clickLimit,
+            textmanipulation: textmanipulation
 		});
 		return newSelector;
 	},
