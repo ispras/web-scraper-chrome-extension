@@ -82,7 +82,6 @@ var SelectorElementClick = {
 	_getData: function(parentElement) {
 
 		var paginationLimit = parseInt(this.paginationLimit);
-                var paginationCount = 1;
 		var delay = parseInt(this.delay) || 0;
 		var clickLimit = parseInt(this.clickLimit) || 1;
 		var deferredResponse = $.Deferred();
@@ -93,7 +92,7 @@ var SelectorElementClick = {
 		// add elements that are available before clicking
 		var elements = this.getDataElements(parentElement);
 		elements.forEach(foundElements.push.bind(foundElements));
-
+		
 		// discard initial elements
 		if(this.discardInitialElements) {
 			foundElements = new UniqueElementList('uniqueText');
