@@ -27,17 +27,25 @@ var SelectorImage = {
 		$(elements).each(function(i, element) {
 			deferredDataCalls.push(function() {
 
-				var deferredData = $.Deferred();
+                var deferredData = $.Deferred(),
+                    data = {},
+                    src = element.src;
 
-				var data = {};
-				data[this.id + '-src'] = element.src;
+                // get url from style
+                if (src == null) {
+                    src = $(element).css("background-image");
+                    src = /^url\((['"]?)(.*)\1\)$/.exec(src);
+                    src = src ? src[2] : "";
+                }  
+
+                data[this.id + '-src'] = src;
 
 				// download image if required
 				if(!this.downloadImage) {
 					deferredData.resolve(data);
 				}
 				else {
-					var deferredImageBase64 = this.downloadImageBase64(element.src);
+                    var deferredImageBase64 = this.downloadImageBase64(src);
 
 					deferredImageBase64.done(function(imageResponse) {
 
@@ -118,6 +126,6 @@ var SelectorImage = {
 	},
 
 	getItemCSSSelector: function() {
-		return "img";
+		return ["img", "div"];
 	}
 };

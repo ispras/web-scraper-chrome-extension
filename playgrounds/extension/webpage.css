@@ -14,3 +14,8 @@
 	padding-top: 15px;
 	padding-bottom: 15px;
 }
+
+.productImage {
+    background-image: url("../../docs/images/chrome-store-logo.png");
+    height: 375px;
+}
