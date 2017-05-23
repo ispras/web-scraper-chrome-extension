@@ -29,15 +29,8 @@ var SelectorHTML = {
 			var data = {};
 			var html = $(element).html();
 
-			if (this.regex !== undefined && this.regex.length) {
-				var matches = html.match(new RegExp(this.regex));
-				if (matches !== null) {
-					html = matches[0];
-				}
-				else {
-					html = null;
-				}
-			}
+            // do something
+			
 			data[this.id] = html;
 
 			result.push(data);
@@ -58,6 +51,6 @@ var SelectorHTML = {
 	},
 
 	getFeatures: function () {
-		return ['multiple', 'regex', 'delay']
+		return ['multiple', 'textmanipulation', 'delay']
 	}
 };

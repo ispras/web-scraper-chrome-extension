@@ -665,7 +665,20 @@ SitemapController.prototype = {
 							}
 						}
 					}
-				},
+                },
+                regexgroup: {
+                    validators: {
+                        callback: {
+                            message: 'Regex group must be numeric',
+                            callback: function (value, validator) {
+                                if (value === '') {
+                                    return true;
+                                }
+                                return !isNaN(value);
+                            }
+                        }
+                    }
+                },
 				clickElementSelector: {
 					validators: {
 						notEmpty: {
@@ -886,8 +899,6 @@ SitemapController.prototype = {
 		var multiple = $("#edit-selector [name=multiple]").is(":checked");
 		var downloadImage = $("#edit-selector [name=downloadImage]").is(":checked");
 		var clickPopup = $("#edit-selector [name=clickPopup]").is(":checked");
-		var regex = $("#edit-selector [name=regex]").val();
-		var regexgroup = $("#edit-selector [name=regexgroup]").val();
 		var delay = $("#edit-selector [name=delay]").val();
 		var clickLimit = $("#edit-selector [name=clickLimit]").val();
 		var extractAttribute = $("#edit-selector [name=extractAttribute]").val();
@@ -902,7 +913,9 @@ SitemapController.prototype = {
             replaceText: $("#edit-selector [name=replaceText]").val(),
             replacementText: $("#edit-selector [name=replacementText]").val(),
             textPrefix: $("#edit-selector [name=textPrefix]").val(),
-            textSuffix: $("#edit-selector [name=textSuffix]").val()
+            textSuffix: $("#edit-selector [name=textSuffix]").val(),
+            regex: $("#edit-selector [name=regex]").val(),
+            regexgroup: $("#edit-selector [name=regexgroup]").val()
         };
 
 		$columnHeaders.each(function(i){
@@ -930,8 +943,6 @@ SitemapController.prototype = {
 			multiple: multiple,
 			downloadImage: downloadImage,
 			clickPopup: clickPopup,
-			regex: regex,
-			regexgroup: regexgroup,
 			extractAttribute:extractAttribute,
 			parentSelectors: parentSelectors,
 			columns:columns,

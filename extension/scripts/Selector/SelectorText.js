@@ -32,25 +32,8 @@ var SelectorText = {
 			var $element_clone = $(element).clone();
 			$element_clone.find("script, style").remove();
 			// <br> replace br tags with newlines
-			$element_clone.find("br").after("\n");
-
-            var text = $.trim($element_clone.text());
-			if (this.regex !== undefined && this.regex.length) {
-				var matches = text.match(new RegExp(this.regex));
-				
-				regexgrp=0;
-				if (this.regexgroup !== undefined) {
-					regexgrp=this.regexgroup;
-				}
-				
-				if (matches !== null) {
-					text = matches[regexgrp];
-				}
-				else {
-					text = null;
-				}
-			}
-            data[this.id] = text;
+			$element_clone.find("br").after("\n");            
+            data[this.id] = $element_clone.text();
 
 			result.push(data);
 		}.bind(this));
@@ -70,6 +53,6 @@ var SelectorText = {
 	},
 
 	getFeatures: function () {
-        return ['multiple', 'regex', 'delay', 'regexgroup', 'textmanipulation']
+        return ['multiple', 'delay', 'textmanipulation']
 	}
 };

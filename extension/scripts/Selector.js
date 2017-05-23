@@ -7,11 +7,31 @@ var Selector = (function () {
 
     function manipulateData(data) {
         $(data).each(function (i, element) {
-            var content = element[this.id];
+            var content = element[this.id],
                 isString = typeof content === 'string' || content instanceof String,
-                textManipulationAvailable = isString && typeof this.textmanipulation != 'undefined';
+                isUnderlyingString = $(content).text() !== '',
+                textManipulationAvailable = (isString || isUnderlyingString) && typeof this.textmanipulation != 'undefined';
 
-            if (textManipulationAvailable) {      
+            if (textManipulationAvailable) {
+                content = isString ? content : $(content).text();
+
+                if (this.textmanipulation.regex !== "") {
+                        content = $.trim(content);
+                        var matches = content.match(new RegExp(this.textmanipulation.regex)),
+                            regexgroup = 0;
+
+                        if (this.textmanipulation.regexgroup !== "") {
+                            regexgroup = this.textmanipulation.regexgroup;
+                        }
+
+                        if (matches !== null) {
+                            content = matches[regexgroup];
+                        }
+                        else {
+                            content = '';
+                        }                    
+                }
+
                 if (this.textmanipulation.removeHtml) {
                     content = $("<div/>").html(content).text();
                 }
