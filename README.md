@@ -31,6 +31,7 @@ LGPLv3
 ## Changelog
 
 ### v0.3
+ * Added text manipulation (trim, replace, prefix, suffix, remove HTML) (by [@jwillmer](https://github.com/jwillmer))
  * Added image improvements to find images in div background (by [@jwillmer](https://github.com/jwillmer))
  * Added support for vertical tables (by [@jwillmer](https://github.com/jwillmer))
  * Added random delay function between requests (by [@Euphorbium](https://github.com/Euphorbium))
