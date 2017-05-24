@@ -17,7 +17,7 @@ var Selector = (function () {
 
                 if (this.textmanipulation.regex !== "") {
                         content = $.trim(content);
-                        var matches = content.match(new RegExp(this.textmanipulation.regex)),
+                        var matches = content.match(new RegExp(this.textmanipulation.regex, 'gm')),
                             regexgroup = 0;
 
                         if (this.textmanipulation.regexgroup !== "") {
@@ -41,8 +41,11 @@ var Selector = (function () {
                 }
 
                 if (this.textmanipulation.replaceText !== "") {
-                    var replacement = this.textmanipulation.replacementText;
-                    content = content.replace(this.textmanipulation.replaceText, replacement);
+                    var regex = new RegExp(this.textmanipulation.replaceText, 'gm'),
+                        replace = regex.test(content) ? regex : this.textmanipulation.replaceText,
+                        replacement = this.textmanipulation.replacementText;
+
+                    content = content.replace(replace, replacement);
                 }
 
                 if (this.textmanipulation.textPrefix !== "") {
