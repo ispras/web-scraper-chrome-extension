@@ -10,24 +10,7 @@ You can find a version of this extension in the [Chrome store][chrome-store]. Pl
 
 #### Latest Version
 To run the latest version you need to download the project to your system and [follow the description on Google][get-started-chrome]) (select the `extension` folder).
-
-### Features
-
- 1. Scrape multiple pages
- 2. Sitemaps and scraped data are stored in browsers local storage or in CouchDB
- 3. Multiple data selection types
- 4. Extract data from dynamic pages (JavaScript+AJAX)
- 5. Browse scraped data
- 6. Export scraped data as CSV
- 7. Import, Export sitemaps
- 8. Depends only on Chrome browser
  
-#### Bugs
-When submitting a bug please attach an exported sitemap if possible.
-
-## License
-LGPLv3
-
 ## Changelog
 
 ### v0.3
@@ -65,6 +48,12 @@ LGPLv3
  * Added data preview
  * Added ranged start urls
  * Fixed bug which made selector tree not to show on some operating systems
+
+#### Bugs
+When submitting a bug please attach an exported sitemap if possible.
+
+## License
+LGPLv3
 
  [chrome-store]: https://chrome.google.com/webstore/detail/web-scraper/jnhgnonknehpejjnehehllkliplmbmhn
  [webscraper.io]: http://webscraper.io/
