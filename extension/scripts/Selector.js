@@ -15,8 +15,9 @@ var Selector = (function () {
                 var content = element[this.id],
                     isString = typeof content === 'string' || content instanceof String,
                     isUnderlyingString = !isString && $(content).text() !== '',
+                    isArray = Array.isArray(content),
                     textManipulationAvailable = (isString || isUnderlyingString) && typeof this.textmanipulation != 'undefined';
-
+                
                 if (textManipulationAvailable) {
                     content = isString ? content : $(content).text();
 
@@ -62,7 +63,10 @@ var Selector = (function () {
                     }
 
                     element[this.id] = content;
+                } else if (isArray && typeof this.textmanipulation != 'undefined') {
+                    this.manipulateData(content);                    
                 }
+
             }.bind(this));
         },
 
