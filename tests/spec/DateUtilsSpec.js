@@ -37,11 +37,13 @@ describe("DateUtils", function () {
 	});
 	
 	it("'SimpleDateFormatter.parse' pattern 'dd.MMM.yy'", function(){
-		var pattern = "dd.MMM.yy";
-		var date = "15.Aug.16";
-		var expected = new Date("2016-08-15T00:00:00.000Z");
-		var df = new SimpleDateFormatter(pattern);
-		expect(df.parse(date)).toEqual(expected);
+        var pattern = "dd.MMM.yy",
+            date = "15.Aug.16",
+            expected = new Date("2016-08-15T00:00:00.000Z"), 
+            df = new SimpleDateFormatter(pattern),
+            parsed = df.parse(date);
+		
+        expect(parsed).toEqual(expected);
 	});
 	
 	it("'SimpleDateFormatter.parse' pattern 'MM/dd/yyyy'", function(){
@@ -52,11 +54,13 @@ describe("DateUtils", function () {
 		expect(df.parse(date)).toEqual(expected);
 	});
 	
-	it("'SimpleDateFormatter.parse' pattern 'dd.MM.yyyy'", function(){
-		var pattern = "dd.MM.yyyy";
-		var date = "16.06.2016";
-		var expected = new Date("2016-06-16T00:00:00.000Z");
-		var df = new SimpleDateFormatter(pattern);
+    it("'SimpleDateFormatter.parse' pattern 'dd.MM.yyyy'", function () {
+        var pattern = "dd.MM.yyyy",
+            date = "16.06.2016",
+            expected = new Date("2016-06-16T00:00:00.000Z"),
+            df = new SimpleDateFormatter(pattern),
+            parsed = df.parse(date);
+
 		expect(df.parse(date)).toEqual(expected);
 	});
 	
