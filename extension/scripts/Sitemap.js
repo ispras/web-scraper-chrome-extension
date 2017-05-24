@@ -66,47 +66,54 @@ Sitemap.prototype = {
 		// single start url
 		if(this.startUrl.push === undefined) {
 			startUrls = [startUrls];
-		}
+        }
 
-		startUrls = DatePatternSupport.expandUrl(startUrls);
+        startUrls = DatePatternSupport.expandUrl(startUrls);
 
+        var nextUrls = function (url) {
+            var urls = [];
+            var lpad = function (str, length) {
+                while (str.length < length)
+                    str = "0" + str;
+                return str;
+            };
+
+            var re = /^(.*?)\[(\d+)\-(\d+)(:(\d+))?\](.*)$/;
+            var matches = url.match(re);
+            if (matches) {
+                var startStr = matches[2];
+                var endStr = matches[3];
+                var start = parseInt(startStr);
+                var end = parseInt(endStr);
+                var incremental = 1;
+                console.log(matches[5]);
+                if (matches[5] !== undefined) {
+                    incremental = parseInt(matches[5]);
+                }
+                var nextSet = nextUrls(matches[6]);
+                for (var i = start; i <= end; i += incremental) {
+                    var current;
+
+                    // with zero padding
+                    if (startStr.length === endStr.length) {
+                        current = matches[1] + lpad(i.toString(), startStr.length);
+                    }
+                    else {
+                        current = matches[1] + i;
+                    }
+                    nextSet.forEach(function (next) {
+                        urls.push(current + next);
+                    });
+                }
+            } else {
+                urls.push(url);
+            }
+            return urls;
+        };
 		var urls = [];
+	
 		startUrls.forEach(function(startUrl) {
-
-			// zero padding helper
-			var lpad = function(str, length) {
-				while (str.length < length)
-					str = "0" + str;
-				return str;
-			};
-
-			var re = /^(.*?)\[(\d+)\-(\d+)(:(\d+))?\](.*)$/;
-			var matches = startUrl.match(re);
-			if(matches) {
-				var startStr = matches[2];
-				var endStr = matches[3];
-				var start = parseInt(startStr);
-				var end = parseInt(endStr);
-				var incremental = 1;
-				console.log(matches[5]);
-				if(matches[5] !== undefined) {
-					incremental = parseInt(matches[5]);
-				}
-				for (var i = start; i <= end; i+=incremental) {
-
-					// with zero padding
-					if(startStr.length === endStr.length) {
-						urls.push(matches[1]+lpad(i.toString(), startStr.length)+matches[6]);
-					}
-					else {
-						urls.push(matches[1]+i+matches[6]);
-					}
-				}
-				return urls;
-			}
-			else {
-				urls.push(startUrl);
-			}
+        		urls = urls.concat(nextUrls(startUrl));
 		});
 
 		return urls;
