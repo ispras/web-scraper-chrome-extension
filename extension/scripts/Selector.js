@@ -5,17 +5,22 @@ var Selector = (function () {
         this.initType();
     };
 
-    function manipulateData(data) {
-        $(data).each(function (i, element) {
-            var content = element[this.id],
-                isString = typeof content === 'string' || content instanceof String,
-                isUnderlyingString = !isString && $(content).text() !== '',
-                textManipulationAvailable = (isString || isUnderlyingString) && typeof this.textmanipulation != 'undefined';
+    Selector.prototype = {
+        /**
+        * Manipulates return data from selector.
+        * @param data
+        */
+        manipulateData: function (data) {
+            $(data).each(function (i, element) {
+                var content = element[this.id],
+                    isString = typeof content === 'string' || content instanceof String,
+                    isUnderlyingString = !isString && $(content).text() !== '',
+                    textManipulationAvailable = (isString || isUnderlyingString) && typeof this.textmanipulation != 'undefined';
 
-            if (textManipulationAvailable) {
-                content = isString ? content : $(content).text();
+                if (textManipulationAvailable) {
+                    content = isString ? content : $(content).text();
 
-                if (this.textmanipulation.regex !== "") {
+                    if (this.textmanipulation.regex !== "") {
                         content = $.trim(content);
                         var matches = content.match(new RegExp(this.textmanipulation.regex, 'gm')),
                             regexgroup = 0;
@@ -29,39 +34,37 @@ var Selector = (function () {
                         }
                         else {
                             content = '';
-                        }                    
+                        }
+                    }
+
+                    if (this.textmanipulation.removeHtml) {
+                        content = $("<div/>").html(content).text();
+                    }
+
+                    if (this.textmanipulation.trimText) {
+                        content = content.trim();
+                    }
+
+                    if (this.textmanipulation.replaceText !== "") {
+                        var regex = new RegExp(this.textmanipulation.replaceText, 'gm'),
+                            replace = regex.test(content) ? regex : this.textmanipulation.replaceText,
+                            replacement = this.textmanipulation.replacementText;
+
+                        content = content.replace(replace, replacement);
+                    }
+
+                    if (this.textmanipulation.textPrefix !== "") {
+                        content = this.textmanipulation.textPrefix + content;
+                    }
+
+                    if (this.textmanipulation.textSuffix !== "") {
+                        content += this.textmanipulation.textPrefix;
+                    }
+
+                    element[this.id] = content;
                 }
-
-                if (this.textmanipulation.removeHtml) {
-                    content = $("<div/>").html(content).text();
-                }
-
-                if (this.textmanipulation.trimText) {
-                    content = content.trim();
-                }
-
-                if (this.textmanipulation.replaceText !== "") {
-                    var regex = new RegExp(this.textmanipulation.replaceText, 'gm'),
-                        replace = regex.test(content) ? regex : this.textmanipulation.replaceText,
-                        replacement = this.textmanipulation.replacementText;
-
-                    content = content.replace(replace, replacement);
-                }
-
-                if (this.textmanipulation.textPrefix !== "") {
-                    content = this.textmanipulation.textPrefix + content;
-                }
-
-                if (this.textmanipulation.textSuffix !== "") {
-                    content += this.textmanipulation.textPrefix;
-                }
-
-                element[this.id] = content;
-            }
-        }.bind(this));
-    }
-
-    Selector.prototype = {
+            }.bind(this));
+        },
 
         /**
          * Is this selector configured to return multiple items?
@@ -163,7 +166,7 @@ var Selector = (function () {
             if (timeout === 0) {
                 var deferredData = this._getData(parentElement);
                 deferredData.done(function (data) {
-                    manipulateData.call(this, data);
+                    this.manipulateData(data);
                     d.resolve(data);
                 }.bind(this));
             }
@@ -171,7 +174,7 @@ var Selector = (function () {
                 setTimeout(function () {
                     var deferredData = this._getData(parentElement);
                     deferredData.done(function (data) {
-                        manipulateData.call(this, data);
+                        this.manipulateData(data);
                         d.resolve(data);
                     }.bind(this));
                 }.bind(this), timeout);
