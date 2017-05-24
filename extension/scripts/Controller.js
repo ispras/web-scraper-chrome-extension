@@ -655,13 +655,12 @@ SitemapController.prototype = {
 									return true;
 								}
 
-								var matches = "".match(new RegExp(value));
-								if(matches !== null && matches[0] === "") {
-									return false;
-								}
-								else {
-									return true;
-								}
+                                try {
+                                    var matches = "".match(new RegExp(value));
+                                    return !(matches !== null && matches[0] === "");
+                                } catch(e) {
+                                    return false;
+                                }
 							}
 						}
 					}

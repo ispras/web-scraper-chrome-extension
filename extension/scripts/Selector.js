@@ -9,7 +9,7 @@ var Selector = (function () {
         $(data).each(function (i, element) {
             var content = element[this.id],
                 isString = typeof content === 'string' || content instanceof String,
-                isUnderlyingString = $(content).text() !== '',
+                isUnderlyingString = !isString && $(content).text() !== '',
                 textManipulationAvailable = (isString || isUnderlyingString) && typeof this.textmanipulation != 'undefined';
 
             if (textManipulationAvailable) {
