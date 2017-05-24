@@ -11,25 +11,40 @@ var Selector = (function () {
         * @param data
         */
         manipulateData: function (data) {
+            var validate = {
+                isDefined: function isDefined(value) {
+                    return typeof value != 'undefined' && value !== "";
+                },
+                notEmpty: function (value) {
+                    return value !== "";
+                },
+                isString: function (value) {
+                    return typeof value === 'string' || value instanceof String;
+                },
+                isNotUndefinedOrEmpty: function (value) {
+                    return this.isDefined(value) && this.notEmpty(value);
+                }
+            };
+
             $(data).each(function (i, element) {
                 var content = element[this.id],
-                    isString = typeof content === 'string' || content instanceof String,
-                    isUnderlyingString = !isString && $(content).text() !== '',
+                    isString = validate.isString(content),
+                    isUnderlyingString = !isString && validate.notEmpty($(content).text()),
                     isArray = Array.isArray(content),
-                    textManipulationAvailable = (isString || isUnderlyingString) && typeof this.textmanipulation != 'undefined';
+                    textManipulationAvailable = (isString || isUnderlyingString) && validate.isDefined(this.textmanipulation);
                 
                 if (textManipulationAvailable) {
                     content = isString ? content : $(content).text();
 
-                    if (this.textmanipulation.regex !== "") {
+                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.regex)) {
                         try {
                             content = $.trim(content);
                             var matches = content.match(new RegExp(this.textmanipulation.regex, 'gm')),
-                                regexgroup = 0;
+                                regexgroup = this.textmanipulation.regexgroup,
+                                groupDefined = validate.isNotUndefinedOrEmpty(regexgroup);
 
-                            if (this.textmanipulation.regexgroup !== "") {
-                                regexgroup = this.textmanipulation.regexgroup;
-                            }
+                            regexgroup = groupDefined ? groupDefined : 0;
+
 
                             if (matches !== null) {
                                 content = matches[regexgroup];
@@ -40,15 +55,15 @@ var Selector = (function () {
                         } catch (e) { console.log("%c Skipping regular expression: " + e.message, 'background: red; color: white;');}
                     }
 
-                    if (this.textmanipulation.removeHtml) {
+                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.removeHtml)) {
                         content = $("<div/>").html(content).text();
                     }
 
-                    if (this.textmanipulation.trimText) {
+                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.trimText)) {
                         content = content.trim();
                     }
 
-                    if (this.textmanipulation.replaceText !== "") {
+                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.replaceText)) {
                         var regex = new RegExp(this.textmanipulation.replaceText, 'gm'),
                             replace = regex.test(content) ? regex : this.textmanipulation.replaceText,
                             replacement = this.textmanipulation.replacementText;
@@ -56,16 +71,16 @@ var Selector = (function () {
                         content = content.replace(replace, replacement);
                     }
 
-                    if (this.textmanipulation.textPrefix !== "") {
+                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.textPrefix)) {
                         content = this.textmanipulation.textPrefix + content;
                     }
 
-                    if (this.textmanipulation.textSuffix !== "") {
+                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.textSuffix)) {
                         content += this.textmanipulation.textPrefix;
                     }
 
                     element[this.id] = content;
-                } else if (isArray && typeof this.textmanipulation != 'undefined') {
+                } else if (isArray && !validate.isDefined(this.textmanipulation)) {
                     element[this.id] = JSON.stringify(content);
                     this.manipulateData(element);                    
                 }

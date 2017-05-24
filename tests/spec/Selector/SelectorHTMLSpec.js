@@ -85,14 +85,14 @@ describe("HTML Selector", function () {
 		});
 	});
 
-	it("should extract null when there is no regex match", function () {
+	it("should extract empty string when there is no regex match", function () {
 
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorHTML',
 			multiple: false,
 			selector: "div",
-			regex: "wontmatch"
+            textmanipulation: { regex: "wontmatch" }
 		});
 
 		var dataDeferred = selector.getData($("#selector-html-single-html"));
@@ -105,7 +105,7 @@ describe("HTML Selector", function () {
 			dataDeferred.done(function(data) {
 				expect(data).toEqual([
 					{
-						a: null
+						a: ''
 					}
 				]);
 			});
@@ -119,7 +119,7 @@ describe("HTML Selector", function () {
 			type: 'SelectorHTML',
 			multiple: false,
 			selector: "div",
-			regex: "<b>\\w+"
+            textmanipulation: { regex: "<b>\\w+" }
 		});
 
 		var dataDeferred = selector.getData($("#selector-html-single-html"));

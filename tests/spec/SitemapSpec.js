@@ -211,7 +211,7 @@ describe("Sitemap", function () {
 		var data = [
 			{a: 'a', b: 'b', c: 'c'}
 		];
-		var blob = sitemap.getDataExportCsvBlob(data);
+        var blob = sitemap.getDataExportCsvBlob(data, {});
 		// can't access the data so I'm just checking whether this runs
 		expect(blob.toString()).toEqual("[object Blob]");
 	});

@@ -19,18 +19,12 @@ describe("Group Selector", function () {
 			return dataDeferred.state() === 'resolved';
 		}, "wait for data extraction", 5000);
 
+        // extract as JSON.stringify since we allow to use regex to modify the content in the GUI
 		runs(function () {
 			dataDeferred.done(function(data) {
 				expect(data).toEqual([
 					{
-						a: [
-							{
-								a: "a"
-							},
-							{
-								a: "b"
-							}
-						]
+                        a: '[{"a":"a"},{"a":"b"}]'
 					}
 				]);
 			});
@@ -53,20 +47,12 @@ describe("Group Selector", function () {
 			return dataDeferred.state() === 'resolved';
 		}, "wait for data extraction", 5000);
 
+        // extract as JSON.stringify since we allow to use regex to modify the content in the GUI
 		runs(function () {
 			dataDeferred.done(function(data) {
 				expect(data).toEqual([
 					{
-						a: [
-							{
-								a: "a",
-								'a-href': "http://aa/"
-							},
-							{
-								a: "b",
-								'a-href': "http://bb/"
-							}
-						]
+                        a: '[{"a":"a","a-href":"http://aa/"},{"a":"b","a-href":"http://bb/"}]'
 					}
 				]);
 			});

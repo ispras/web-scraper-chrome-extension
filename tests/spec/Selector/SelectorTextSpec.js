@@ -85,14 +85,14 @@ describe("Text Selector", function () {
 		});
 	});
 
-	it("should extract null when there is no regex match", function () {
+	it("should extract empty string when there is no regex match", function () {
 
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorText',
 			multiple: false,
 			selector: "div",
-			regex: "wontmatch"
+            textmanipulation: { regex: "wontmatch" }
 		});
 
 		var dataDeferred = selector.getData($("#selector-text-single-regex"));
@@ -105,7 +105,7 @@ describe("Text Selector", function () {
 			dataDeferred.done(function(data) {
 				expect(data).toEqual([
 					{
-						a: null
+						a: ''
 					}
 				]);
 			});
@@ -118,8 +118,8 @@ describe("Text Selector", function () {
 			id: 'a',
 			type: 'SelectorText',
 			multiple: false,
-			selector: "div",
-			regex: "\\d+"
+            selector: "div",
+            textmanipulation: { regex: "\\d+" }
 		});
 
 		var dataDeferred = selector.getData($("#selector-text-single-regex"));
@@ -157,7 +157,8 @@ describe("Text Selector", function () {
 			id: 'a',
 			type: 'SelectorText',
 			multiple: false,
-			selector: "div"
+            selector: "div",
+            textmanipulation: { trimText: true }
 		});
 
 		var dataDeferred = selector.getData($("#selector-text-ignore-script"));
