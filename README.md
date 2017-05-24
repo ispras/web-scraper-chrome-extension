@@ -31,6 +31,7 @@ LGPLv3
 ## Changelog
 
 ### v0.3
+ * Added style extraction type (by [@jwillmer](https://github.com/jwillmer))
  * Added text manipulation (trim, replace, prefix, suffix, remove HTML) (by [@jwillmer](https://github.com/jwillmer))
  * Added image improvements to find images in div background (by [@jwillmer](https://github.com/jwillmer))
  * Added support for vertical tables (by [@jwillmer](https://github.com/jwillmer))
