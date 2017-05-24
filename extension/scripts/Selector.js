@@ -22,20 +22,22 @@ var Selector = (function () {
                     content = isString ? content : $(content).text();
 
                     if (this.textmanipulation.regex !== "") {
-                        content = $.trim(content);
-                        var matches = content.match(new RegExp(this.textmanipulation.regex, 'gm')),
-                            regexgroup = 0;
+                        try {
+                            content = $.trim(content);
+                            var matches = content.match(new RegExp(this.textmanipulation.regex, 'gm')),
+                                regexgroup = 0;
 
-                        if (this.textmanipulation.regexgroup !== "") {
-                            regexgroup = this.textmanipulation.regexgroup;
-                        }
+                            if (this.textmanipulation.regexgroup !== "") {
+                                regexgroup = this.textmanipulation.regexgroup;
+                            }
 
-                        if (matches !== null) {
-                            content = matches[regexgroup];
-                        }
-                        else {
-                            content = '';
-                        }
+                            if (matches !== null) {
+                                content = matches[regexgroup];
+                            }
+                            else {
+                                content = '';
+                            }
+                        } catch (e) { console.log("%c Skipping regular expression: " + e.message, 'background: red; color: white;');}
                     }
 
                     if (this.textmanipulation.removeHtml) {
@@ -64,7 +66,8 @@ var Selector = (function () {
 
                     element[this.id] = content;
                 } else if (isArray && typeof this.textmanipulation != 'undefined') {
-                    this.manipulateData(content);                    
+                    element[this.id] = JSON.stringify(content);
+                    this.manipulateData(element);                    
                 }
 
             }.bind(this));

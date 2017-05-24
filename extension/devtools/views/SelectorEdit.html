@@ -157,6 +157,24 @@
         </div>
     </div>
 
+    <!-- extractAttribute -->
+    <div class="form-group feature feature-extractAttribute">
+        <label for="extractAttribute" class="col-sm-2 control-label">Attribute name</label>
+
+        <div class="col-sm-8">
+            <input type="text" class="form-control" name="extractAttribute" id="extractAttribute" placeholder="Attribute name to extract" value="{{selector.extractAttribute}}">
+        </div>
+    </div>
+
+    <!-- extractStyle -->
+    <div class="form-group feature feature-extractStyle">
+        <label for="extractStyle" class="col-sm-2 control-label">Style name</label>
+
+        <div class="col-sm-8">
+            <input type="text" class="form-control" name="extractStyle" id="extractStyle" placeholder="Style name to extract" value="{{selector.extractStyle}}">
+        </div>
+    </div>
+
     <div class="form-group feature feature-textmanipulation">
         <label class="col-sm-2 control-label">String Manipulation</label>
         <div class="col-sm-8">
@@ -180,15 +198,7 @@
                 <label>Text Suffix:<input type="text" class="form-control col-sm-6" name="textSuffix" id="textSuffix" placeholder="Suffix" value="{{selector.textmanipulation.textSuffix}}"></label>
             </div>
         </div>
-    </div>
-
-        <div class="form-group feature feature-extractAttribute">
-            <label for="extractAttribute" class="col-sm-2 control-label">Attribute name</label>
-
-            <div class="col-sm-8">
-                <input type="text" class="form-control" name="extractAttribute" id="extractAttribute" placeholder="Attribute name to extract" value="{{selector.extractAttribute}}">
-            </div>
-        </div>
+    </div>    
 
         <div class="form-group feature feature-delay">
             <label for="delay" class="col-sm-2 control-label">Delay (ms)</label>

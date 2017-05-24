@@ -1,4 +1,4 @@
-var SelectorElementAttribute = {
+var SelectorElementStyle = {
 	canReturnMultipleRecords: function () {
 		return true;
 	},
@@ -20,14 +20,12 @@ var SelectorElementAttribute = {
 	_getData: function (parentElement) {
 
 		var dfd = $.Deferred();
-
 		var elements = this.getDataElements(parentElement);
 
 		var result = [];
 		$(elements).each(function (k, element) {
 			var data = {};
-
-			data[this.id] = $(element).attr(this.extractAttribute);
+            data[this.id] = $(element).css(this.extractStyle);
 			result.push(data);
 		}.bind(this));
 
@@ -46,6 +44,6 @@ var SelectorElementAttribute = {
 	},
 
 	getFeatures: function () {
-        return ['multiple', 'extractAttribute', 'delay', 'textmanipulation']
+        return ['multiple', 'extractStyle', 'delay', 'textmanipulation']
 	}
 };

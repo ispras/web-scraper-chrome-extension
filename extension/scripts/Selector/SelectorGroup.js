@@ -31,9 +31,13 @@ var SelectorGroup = {
 
 			data[this.id] = $(element).text();
 
-			if(this.extractAttribute) {
-				data[this.id+'-'+this.extractAttribute] = $(element).attr(this.extractAttribute);
-			}
+            if (this.extractAttribute) {
+                data[this.id + '-' + this.extractAttribute] = $(element).attr(this.extractAttribute);
+            }
+
+            if (this.extractStyle) {
+                data[this.id + '-' + this.extractStyle] = $(element).css(this.extractStyle);
+            }
 
 			records.push(data);
 		}.bind(this));
@@ -50,6 +54,6 @@ var SelectorGroup = {
 	},
 
 	getFeatures: function () {
-        return ['delay', 'extractAttribute', 'textmanipulation']
+        return ['delay', 'extractAttribute', 'textmanipulation', 'extractStyle']
 	}
 };
