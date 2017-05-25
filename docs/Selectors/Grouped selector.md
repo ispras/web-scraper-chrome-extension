@@ -9,6 +9,11 @@ The extracted data will be stored as JSON.
  * attribute name - optionally this selector can extract an attribute of the
  selected element. If specified the extractor will also add this attribute to
  the resulting JSON.
+ * remove HTML
+ * trim text
+ * replace text - regular expression in the replace field possible
+ * text prefix/suffix
+ * delay - delay the extraction
 
 ## Use cases
 

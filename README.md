@@ -52,6 +52,9 @@ To run the latest version you need to download the project to your system and [f
 #### Bugs
 When submitting a bug please attach an exported sitemap if possible.
 
+#### Development
+Read the [Development Instructions](/docs/Development.md) before you start.
+
 ## License
 LGPLv3
 

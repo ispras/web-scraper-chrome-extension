@@ -16,6 +16,11 @@ resulting data.
  multiple checked then you might actually need
  [Element selector] [element-selector].
  * regex - regular expression to extract a substring from the result.
+ * remove HTML
+ * trim text
+ * replace text - regular expression in the replace field possible
+ * text prefix/suffix
+ * delay - delay the extraction
 
 ### Regex
 

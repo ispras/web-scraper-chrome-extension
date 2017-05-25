@@ -23,6 +23,7 @@ link selector is not working for you then you can try these workarounds:
  * selector - [CSS selector] [css-selector] for the link element from which the
  link for navigation will be extracted.
  * multiple - multiple records are being extracted. Usually should be checked.
+ * delay - delay the extraction
 
 ## Use cases
 

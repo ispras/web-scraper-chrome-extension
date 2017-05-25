@@ -6,6 +6,11 @@ inner HTML of the element will be extracted.
  * selector - [CSS selector] [css-selector] for the element whose inner HTML
  will be extracted.
  * multiple - multiple records are being extracted.
+ * remove HTML
+ * trim text
+ * replace text - regular expression in the replace field possible
+ * text prefix/suffix
+ * delay - delay the extraction
 
 ## Use cases
 See [Text selector] [text-selector] use cases.

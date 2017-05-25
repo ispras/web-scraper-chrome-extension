@@ -17,6 +17,7 @@ shows what you should select when extracting data from a table.
  * data rows selector - [CSS selector] [css-selector] for table data rows.
  * multiple - multiple records are being extracted. Usually should be
  checked for Table selector because you are extracting multiple rows.
+ * delay - delay the extraction
 
 ## Use cases
 See [Text selector] [text-selector] use cases.

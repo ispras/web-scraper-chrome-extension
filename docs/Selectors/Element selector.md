@@ -17,6 +17,7 @@ on a button then you should try these selectors:
  be used as parent elements for child selectors.
  * multiple - multiple records are being extracted (almost always should be
  checked). Multiple option for child selectors usually should not be checked.
+ * delay - delay the extraction
 
 ## Use cases
 

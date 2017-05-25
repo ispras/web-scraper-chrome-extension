@@ -15,6 +15,7 @@ report it as a bug.
  checked for Image selector.
  * download image - downloads and store images on local drive. When CouchDB
  storage back end is used the image is also stored locally.
+ * delay - delay the extraction
 
 ## Use cases
 See [Text selector] [text-selector] use cases.

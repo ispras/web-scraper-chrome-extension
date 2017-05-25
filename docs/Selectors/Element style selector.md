@@ -1,13 +1,13 @@
-# Element attribute selector
-Element attribute selector can extract an attributes value of an HTML element.
-For example you could use this selector to extract title attribute from
-this link: `<a href="#" title="my title">link<a>`.
+# Element style selector
+Element style selector can extract an style value of an HTML element.
+For example you could use this selector to extract the with attribute from
+this div: `<div style="width: 20px;"><div>`.
 
 ## Configuration options
  * selector - [CSS selector] [css-selector] for the element.
  * multiple - multiple records are being extracted.
- * attribute name - the attribute that is going to be extracted. For example
- `title`, `data-id`.
+ * style name - the attribute that is going to be extracted. For example
+ `width`, `background-image`.
  * remove HTML
  * trim text
  * replace text - regular expression in the replace field possible
