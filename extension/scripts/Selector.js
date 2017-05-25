@@ -10,77 +10,91 @@ var Selector = (function () {
         * Manipulates return data from selector.
         * @param data
         */
-        manipulateData: function (data) {
-            var validate = {
-                isDefined: function isDefined(value) {
-                    return typeof value != 'undefined' && value !== "";
-                },
-                notEmpty: function (value) {
-                    return value !== "";
-                },
-                isString: function (value) {
-                    return typeof value === 'string' || value instanceof String;
-                },
-                isNotUndefinedOrEmpty: function (value) {
-                    return this.isDefined(value) && this.notEmpty(value);
-                }
+        manipulateData: function (data) {           
+
+            var regex = function (content, regex, regexgroup) {
+                try {
+                    content = $.trim(content);
+                    var matches = content.match(new RegExp(regex, 'gm')),
+                        groupDefined = regexgroup !== "";
+
+                    regexgroup = groupDefined ? regexgroup : 0;
+
+
+                    if (matches !== null) {
+                        return matches[regexgroup];
+                    }
+                    else {
+                        return '';
+                    }
+                } catch (e) { console.log("%c Skipping regular expression: " + e.message, 'background: red; color: white;'); }
             };
+
+            var removeHtml = function (content) {
+                return $("<div/>").html(content).text();
+            }
+
+            var trimText = function (content) {
+                return content.trim();
+            }
+
+            var replaceText = function (content, replaceText, replacementText) {
+                var replace;
+                try {
+                    var regex = new RegExp(replaceText, 'gm');
+                        replace = regex.test(content) ? regex : replaceText;
+                } catch (e) { replace = replaceText;}
+
+                return content.replace(replace, replacementText);
+            }
+
+            var textPrefix = function (content, prefix) {
+                return content = prefix + content;
+            }
+
+            var textSuffix = function (content, suffix) {
+                return content += suffix;
+            }
 
             $(data).each(function (i, element) {
                 var content = element[this.id],
-                    isString = validate.isString(content),
-                    isUnderlyingString = !isString && validate.notEmpty($(content).text()),
+                    isString = typeof content === 'string' || content instanceof String,
+                    isUnderlyingString = !isString && $(content).text() !== "",
                     isArray = Array.isArray(content),
-                    textManipulationAvailable = (isString || isUnderlyingString) && validate.isDefined(this.textmanipulation);
+                    isTextmManipulationDefined = typeof this.textmanipulation != 'undefined' && this.textmanipulation !== "",
+                    textManipulationAvailable = (isString || isUnderlyingString) && isTextmManipulationDefined;
                 
                 if (textManipulationAvailable) {
                     content = isString ? content : $(content).text();
 
-                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.regex)) {
-                        try {
-                            content = $.trim(content);
-                            var matches = content.match(new RegExp(this.textmanipulation.regex, 'gm')),
-                                regexgroup = this.textmanipulation.regexgroup,
-                                groupDefined = validate.isNotUndefinedOrEmpty(regexgroup);
-
-                            regexgroup = groupDefined ? groupDefined : 0;
-
-
-                            if (matches !== null) {
-                                content = matches[regexgroup];
+                    // use key in object since unit tests might not define each property
+                    for (var key in this.textmanipulation) {
+                        if (this.textmanipulation.hasOwnProperty(key)) {
+                            var value = this.textmanipulation[key];
+                            switch (key) {
+                                case "regex":
+                                    if (value !== '') { content = regex(content, value, this.textmanipulation.regexgroup); }
+                                    break;
+                                case "removeHtml":
+                                    if (value) { content = removeHtml(content); }
+                                    break;
+                                case "trimText":
+                                    if (value) { content = trimText(content); }
+                                    break;
+                                case "replaceText":
+                                    content = replaceText(content, value, this.textmanipulation.replacementText);
+                                    break;
+                                case "textPrefix":
+                                    if (value !== '') { content = textPrefix(content, value) };
+                                    break;
+                                case "textSuffix":
+                                    if (value !== '') { content = textSuffix(content, value) };
+                                    break;
                             }
-                            else {
-                                content = '';
-                            }
-                        } catch (e) { console.log("%c Skipping regular expression: " + e.message, 'background: red; color: white;');}
+                        }
                     }
-
-                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.removeHtml)) {
-                        content = $("<div/>").html(content).text();
-                    }
-
-                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.trimText)) {
-                        content = content.trim();
-                    }
-
-                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.replaceText)) {
-                        var regex = new RegExp(this.textmanipulation.replaceText, 'gm'),
-                            replace = regex.test(content) ? regex : this.textmanipulation.replaceText,
-                            replacement = this.textmanipulation.replacementText;
-
-                        content = content.replace(replace, replacement);
-                    }
-
-                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.textPrefix)) {
-                        content = this.textmanipulation.textPrefix + content;
-                    }
-
-                    if (validate.isNotUndefinedOrEmpty(this.textmanipulation.textSuffix)) {
-                        content += this.textmanipulation.textPrefix;
-                    }
-
                     element[this.id] = content;
-                } else if (isArray && validate.isDefined(this.textmanipulation)) {
+                } else if (isArray && isTextmManipulationDefined) {
                     element[this.id] = JSON.stringify(content);
                     this.manipulateData(element);                    
                 }
