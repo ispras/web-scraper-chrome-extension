@@ -73,7 +73,9 @@ var Selector = (function () {
                             var value = this.textmanipulation[key];
                             switch (key) {
                                 case "regex":
-                                    if (value !== '') { content = regex(content, value, this.textmanipulation.regexgroup); }
+                                    var group = this.textmanipulation.regexgroup;
+                                    group = typeof group != 'undefined' ? group : "";
+                                    if (value !== '') { content = regex(content, value, group); }
                                     break;
                                 case "removeHtml":
                                     if (value) { content = removeHtml(content); }
@@ -82,7 +84,9 @@ var Selector = (function () {
                                     if (value) { content = trimText(content); }
                                     break;
                                 case "replaceText":
-                                    content = replaceText(content, value, this.textmanipulation.replacementText);
+                                    var replacement =this.textmanipulation.replacementText;
+                                    replacement = typeof replacement != 'undefined' ? replacement : "";
+                                    content = replaceText(content, value, replacement);
                                     break;
                                 case "textPrefix":
                                     if (value !== '') { content = textPrefix(content, value) };

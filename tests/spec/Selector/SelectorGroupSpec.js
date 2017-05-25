@@ -10,7 +10,8 @@ describe("Group Selector", function () {
 			id: 'a',
 			type: 'SelectorGroup',
 			multiple: false,
-			selector: "div"
+            selector: "div",
+            textmanipulation: {}
 		});
 
 		var dataDeferred = selector.getData($("#selector-group-text"));
@@ -38,7 +39,8 @@ describe("Group Selector", function () {
 			type: 'SelectorGroup',
 			multiple: false,
 			selector: "a",
-			extractAttribute: 'href'
+            extractAttribute: 'href',
+            textmanipulation: {}
 		});
 
 		var dataDeferred = selector.getData($("#selector-group-url"));
