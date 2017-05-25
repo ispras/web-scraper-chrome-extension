@@ -80,7 +80,7 @@ var Selector = (function () {
                     }
 
                     element[this.id] = content;
-                } else if (isArray && !validate.isDefined(this.textmanipulation)) {
+                } else if (isArray && validate.isDefined(this.textmanipulation)) {
                     element[this.id] = JSON.stringify(content);
                     this.manipulateData(element);                    
                 }
