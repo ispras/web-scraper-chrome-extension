@@ -16,6 +16,7 @@ infinitely then this selector will be stuck in an infinite loop.
  should usually be specified because the data won't be loaded immediately from
  the server after scrolling down. More than 2000 ms might be a good choice if
  you you don't want to loose data because the server didn't respond fast enough.
+  * pagination limit - the number of clicks you want the selector to perform.
 
 ## Use cases
 See [Element selector] [element-selector] use cases.

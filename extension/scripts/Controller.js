@@ -721,14 +721,7 @@ SitemapController.prototype = {
 							}
 						}
 					}
-				},							
-				clickLimit: {
-					validators: {
-						numeric: {
-							message: 'Click limit must be numeric'
-						}
-					}
-				},
+				},	
 				parentSelectors: {
 					validators: {
 						notEmpty: {
@@ -903,7 +896,6 @@ SitemapController.prototype = {
 		var downloadImage = $("#edit-selector [name=downloadImage]").is(":checked");
 		var clickPopup = $("#edit-selector [name=clickPopup]").is(":checked");
 		var delay = $("#edit-selector [name=delay]").val();
-		var clickLimit = $("#edit-selector [name=clickLimit]").val();
         var extractAttribute = $("#edit-selector [name=extractAttribute]").val();
         var extractStyle = $("#edit-selector [name=extractStyle]").val();        
 		var parentSelectors = $("#edit-selector [name=parentSelectors]").val();
@@ -952,7 +944,6 @@ SitemapController.prototype = {
 			parentSelectors: parentSelectors,
 			columns:columns,
 			delay:delay,
-            clickLimit: clickLimit,
             textmanipulation: textmanipulation
 		});
 		return newSelector;
