@@ -39,7 +39,7 @@ var SelectorLink = {
                 var href = element.href;
                 if (this.stringReplacement && this.stringReplacement.replaceString) {
                     var replace;
-                    var replacement = this.stringReplacement.stringReplacement || "";
+                    var replacement = this.stringReplacement.replacementString || "";
                     try {
                         var regex = new RegExp(this.stringReplacement.replaceString, 'gm');
                         replace = regex.test(href) ? regex : this.stringReplacement.replaceString;
