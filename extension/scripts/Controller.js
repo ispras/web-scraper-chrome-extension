@@ -177,12 +177,15 @@ SitemapController.prototype = {
 				"#edit-selector button[action=select-selector]": {
 					click: this.selectSelector
 				},
-				"#edit-selector button[action=select-table-header-row-selector]": {
-					click: this.selectTableHeaderRowSelector
-				},
-				"#edit-selector button[action=select-table-data-row-selector]": {
-					click: this.selectTableDataRowSelector
-				},
+                "#edit-selector button[action=select-table-header-row-selector]": {
+                    click: this.selectTableHeaderRowSelector
+                },
+                "#edit-selector button[action=refresh-header-row-selector]": {
+                    click: this.refreshTableHeaderRowSelector
+                },
+                "#edit-selector button[action=select-table-data-row-selector]": {
+                    click: this.selectTableDataRowSelector
+                },
 				"#edit-selector button[action=preview-selector]": {
 					click: this.previewSelector
 				},
@@ -1200,61 +1203,76 @@ SitemapController.prototype = {
 		return parentSelectorIds;
 	},
 
-	selectTableHeaderRowSelector: function(button) {
+    refreshTableHeaderRowSelector: function (button) {
+        var input = $(button).closest(".form-group").find("input.selector-value"),
+            value = input.val();
 
-		var input = $(button).closest(".form-group").find("input.selector-value");
-		var sitemap = this.getCurrentlyEditedSelectorSitemap();
-		var selector = this.getCurrentlyEditedSelector();
-		var currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		var parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(selector.id, currentStateParentSelectorIds);
+        this.getSelectorHTML().done(function (html) {
 
-		var deferredSelector = this.contentScript.selectSelector({
-			parentCSSSelector: parentCSSSelector,
-			allowedElements: "tr"
-		});
+            var headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(value, html);
+            this.renderTableHeaderColumns(headerColumns);
 
-		deferredSelector.done(function(result) {
+        }.bind(this));
 
-			var tableHeaderRowSelector = result.CSSSelector
-			$(input).val(tableHeaderRowSelector);
+        var validator = this.getFormValidator();
+        validator.revalidateField(input);       
+    },
 
-			this.getSelectorHTML().done(function(html) {
+    selectTableHeaderRowSelector: function (button) {
 
-				var headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderRowSelector, html);
-				this.renderTableHeaderColumns(headerColumns);
+        var input = $(button).closest(".form-group").find("input.selector-value");
+        var sitemap = this.getCurrentlyEditedSelectorSitemap();
+        var selector = this.getCurrentlyEditedSelector();
+        var currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+        var parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(selector.id, currentStateParentSelectorIds);
 
-			}.bind(this));
+        var deferredSelector = this.contentScript.selectSelector({
+            parentCSSSelector: parentCSSSelector,
+            allowedElements: "tr"
+        });
 
-			// update validation for selector field
-			var validator = this.getFormValidator();
-			validator.revalidateField(input);
+        deferredSelector.done(function (result) {
 
-		}.bind(this));
-	},
+            var tableHeaderRowSelector = result.CSSSelector
+            $(input).val(tableHeaderRowSelector);
 
-	selectTableDataRowSelector: function(button) {
+            this.getSelectorHTML().done(function (html) {
 
-		var input = $(button).closest(".form-group").find("input.selector-value");
-		var sitemap = this.getCurrentlyEditedSelectorSitemap();
-		var selector = this.getCurrentlyEditedSelector();
-		var currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		var parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(selector.id, currentStateParentSelectorIds);
+                var headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderRowSelector, html);
+                this.renderTableHeaderColumns(headerColumns);
 
-		var deferredSelector = this.contentScript.selectSelector({
-			parentCSSSelector: parentCSSSelector,
-			allowedElements: "tr"
-		});
+            }.bind(this));
 
-		deferredSelector.done(function(result) {
+            // update validation for selector field
+            var validator = this.getFormValidator();
+            validator.revalidateField(input);
 
-			$(input).val(result.CSSSelector);
+        }.bind(this));
+    },
 
-			// update validation for selector field
-			var validator = this.getFormValidator();
-			validator.revalidateField(input);
+    selectTableDataRowSelector: function (button) {
 
-		}.bind(this));
-	},
+        var input = $(button).closest(".form-group").find("input.selector-value");
+        var sitemap = this.getCurrentlyEditedSelectorSitemap();
+        var selector = this.getCurrentlyEditedSelector();
+        var currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+        var parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(selector.id, currentStateParentSelectorIds);
+
+        var deferredSelector = this.contentScript.selectSelector({
+            parentCSSSelector: parentCSSSelector,
+            allowedElements: "tr"
+        });
+
+        deferredSelector.done(function (result) {
+
+            $(input).val(result.CSSSelector);
+
+            // update validation for selector field
+            var validator = this.getFormValidator();
+            validator.revalidateField(input);
+
+        }.bind(this));
+    },
 
 	/**
 	 * update table selector column editing fields

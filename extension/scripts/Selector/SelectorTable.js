@@ -27,9 +27,13 @@ var SelectorTable = {
         if ($headerRow.length > 0) {
             if ($headerRow.length > 1) {
                 if ($headerRow[0].nodeName === "TR") {
-                    $headerRow = $headerRow.find("th:first-child")
+                    $headerRow = $headerRow.find("th:first-child");
+                    if ($headerRow.length === 0) {
+                        console.log("%c Please specify row header cell selector ", "background: red; color: white;");
+                    }
                 }
                 isVerticalRow = true;
+                
             } else if ($headerRow.find("th").length) {
                 $headerRow = $headerRow.find("th");
             } else if ($headerRow.find("td").length) {
@@ -46,6 +50,40 @@ var SelectorTable = {
         }
         return columns;
     },
+
+    getVerticalDataCells: function (table, dataSelector) {
+        var selectors = $(table).find(dataSelector),
+            isRow = selectors[0].nodeName === "TR",
+            result = [];
+
+        if (isRow) {
+            console.log("%c Please specify row data cell selector ", "background: red; color: white;");
+        } else {
+            for (var i = 0; i < (selectors.length / this.columns.length); i++) {
+                result.push({});
+            };
+
+            selectors.each(function (i, dataCell) {
+                if (dataCell.cellIndex == 0) {
+                    console.log("%c Vertical rows can't have first column as data cell ", "background: red; color: white;");
+                } else {
+                    var index = (dataCell.cellIndex - 1 | dataCell.rowIndex);
+                    var headerCellName = $(dataCell).closest('tr').find("th:first-child").text().trim();
+                    var dataCellvalue = $(dataCell).text().trim();
+                    var extractData = $.grep(this.columns, function (h) {
+                        return h.name === headerCellName && h.extract;
+                    }).length == 1;
+
+                    if (extractData) {
+                        result[index][headerCellName] = dataCellvalue;
+                    }                    
+                }
+            }.bind(this));
+        }
+
+        return result;
+    },
+
     _getData: function (parentElement) {
 
         var dfd = $.Deferred();
@@ -54,39 +92,33 @@ var SelectorTable = {
 
         var result = [];
         $(tables).each(function (k, table) {
-            var headerCells = this.getTableHeaderColumns($(table));
-            var dataSelector = this.getTableDataRowSelector();
-                       
-            var objKeys = Object.keys(headerCells);
-            if (objKeys.length && headerCells[Object.keys(headerCells)[0]].isVerticalHeader) {
-                objKeys.each(function (i) {
-                    result.push({});
-                })
+            var headerCells = this.getTableHeaderColumns($(table)),
+                dataSelector = this.getTableDataRowSelector(),
+                objKeys = Object.keys(headerCells),
+                headerCellCount = objKeys.length,
+                isVerticalHeader = headerCellCount && headerCells[Object.keys(headerCells)[0]].isVerticalHeader;
 
-                $(table).find(dataSelector).each(function (i, dataCell) {
-                    var index = (dataCell.cellIndex -1 | dataCell.rowIndex);
-                    var headerCellName = $(dataCell).closest('tr').find(":first-child").text().trim();
-                    var dataCellvalue = $(dataCell).text().trim();
-                    result[index][headerCellName] = dataCellvalue;
-                });
-            } else {
-                $(table).find(dataSelector).each(function (i, dataCell) {
-                    var data = {};
-                    this.columns.forEach(function (headerCell) {
-                        if (headerCell.extract === true) {
-                            if (headerCells[headerCell.header] === undefined) {
-                                data[headerCell.name] = null;
+                if (isVerticalHeader) {
+                    var results = this.getVerticalDataCells(table, dataSelector);
+                    result.push.apply(result, results);
+                } else {
+                    $(table).find(dataSelector).each(function (i, dataCell) {
+                        var data = {};
+                        this.columns.forEach(function (headerCell) {
+                            if (headerCell.extract === true) {
+                                if (headerCells[headerCell.header] === undefined) {
+                                    data[headerCell.name] = null;
+                                }
+                                else {
+                                    var header = headerCells[headerCell.header];
+                                    var rowText = $(dataCell).find(">:nth-child(" + header.index + ")").text().trim();
+                                    data[headerCell.name] = rowText;
+                                }
                             }
-                            else {
-                                var header = headerCells[headerCell.header];
-                                var rowText = $(dataCell).find(">:nth-child(" + header.index + ")").text().trim();
-                                data[headerCell.name] = rowText;
-                            }
-                        }
-                    });
-                    result.push(data);
-                }.bind(this));
-            }
+                        });
+                        result.push(data);
+                    }.bind(this));
+                }
         }.bind(this));
 
         dfd.resolve(result);

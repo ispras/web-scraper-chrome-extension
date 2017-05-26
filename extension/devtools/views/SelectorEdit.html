@@ -28,7 +28,7 @@
                 <span class="input-group-btn">
                     <button class="btn btn-default" action="select-selector" type="button">Select</button>
                     <button class="btn btn-default" action="preview-selector" type="button" data-toggle="button">Element preview</button>
-                    <button class="btn btn-default" action="preview-selector-data" type="button">Data preview</button>
+                    <button class="btn btn-default" action="preview-selector-data" type="button">Data preview</button>                    
                 </span>
                 <input type="text" class="form-control selector-value" id="selector" name="selector" value="{{selector.selector}}">
             </div>
@@ -57,6 +57,7 @@
                 <span class="input-group-btn">
                     <button class="btn btn-default" action="select-table-header-row-selector" type="button">Select</button>
                     <button class="btn btn-default" action="preview-table-row-selector" type="button" data-toggle="button">Element preview</button>
+                    <button class="btn btn-default" action="refresh-header-row-selector" title="Refresh if you manually changed the selector" type="button">Refresh</button>
                 </span>
                 <input type="text" class="form-control selector-value" id="tableHeaderRowSelector" name="tableHeaderRowSelector" value="{{selector.tableHeaderRowSelector}}">
             </div>
@@ -70,7 +71,7 @@
             <div class="input-group">
                 <span class="input-group-btn">
                     <button class="btn btn-default" action="select-table-data-row-selector" type="button">Select</button>
-                    <button class="btn btn-default" action="preview-table-row-selector" type="button" data-toggle="button">Element preview</button>
+                    <button class="btn btn-default" action="preview-table-row-selector" type="button" data-toggle="button">Element preview</button>  
                 </span>
                 <input type="text" class="form-control selector-value" id="tableDataRowSelector" name="tableDataRowSelector" value="{{selector.tableDataRowSelector}}">
             </div>
