@@ -36,13 +36,25 @@ var SelectorLink = {
 
 			deferredDataExtractionCalls.push(function(element) {
 
-				var deferredData = $.Deferred();
+                var href = element.href;
+                if (this.stringReplacement && this.stringReplacement.replaceString) {
+                    var replace;
+                    var replacement = this.stringReplacement.stringReplacement || "";
+                    try {
+                        var regex = new RegExp(this.stringReplacement.replaceString, 'gm');
+                        replace = regex.test(href) ? regex : this.stringReplacement.replaceString;
+                    } catch (e) { replace = this.stringReplacement.replaceString; }
 
-				var data = {};
+                    href = href.replace(replace, replacement);
+                }
+
+				var deferredData = $.Deferred();
+                var data = {};
+
 				data[this.id] = $(element).text();
 				data._followSelectorId = this.id;
-				data[this.id + '-href'] = element.href;
-				data._follow = element.href;
+				data[this.id + '-href'] = href;
+				data._follow = href;
 				deferredData.resolve(data);
 
 				return deferredData;
@@ -65,7 +77,7 @@ var SelectorLink = {
 	},
 
 	getFeatures: function () {
-		return ['multiple', 'delay']
+        return ['multiple', 'delay', 'stringReplacement']
 	},
 
 	getItemCSSSelector: function() {

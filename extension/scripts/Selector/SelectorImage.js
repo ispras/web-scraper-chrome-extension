@@ -38,6 +38,17 @@ var SelectorImage = {
                     src = src ? src[2] : "";
                 }  
 
+                if (this.stringReplacement && this.stringReplacement.replaceString) {
+                    var replace;
+                    var replacement = this.stringReplacement.stringReplacement || "";
+                    try {
+                        var regex = new RegExp(this.stringReplacement.replaceString, 'gm');
+                        replace = regex.test(src) ? regex : this.stringReplacement.replaceString;
+                    } catch (e) { replace = this.stringReplacement.replaceString; }
+
+                    src = src.replace(replace, replacement);
+                }
+
                 data[this.id + '-src'] = src;
 
 				// download image if required
@@ -122,7 +133,7 @@ var SelectorImage = {
 	},
 
 	getFeatures: function () {
-		return ['multiple', 'delay', 'downloadImage']
+        return ['multiple', 'delay', 'downloadImage', 'stringReplacement']
 	},
 
 	getItemCSSSelector: function() {

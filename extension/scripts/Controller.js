@@ -906,6 +906,10 @@ SitemapController.prototype = {
 		var $columnHeaders = $("#edit-selector .column-header");
 		var $columnNames = $("#edit-selector .column-name");
         var $columnExtracts = $("#edit-selector .column-extract");
+        var stringReplacement = {
+            replaceString: $("#edit-selector [name=replaceString]").val(),
+            replacementString: $("#edit-selector [name=replacementString]").val()
+        };
         var textmanipulation = {
             removeHtml: $("#edit-selector [name=removeHtml]").is(":checked"),
             trimText: $("#edit-selector [name=trimText]").is(":checked"),
@@ -947,7 +951,8 @@ SitemapController.prototype = {
 			parentSelectors: parentSelectors,
 			columns:columns,
 			delay:delay,
-            textmanipulation: textmanipulation
+            textmanipulation: textmanipulation,
+            stringReplacement: stringReplacement
 		});
 		return newSelector;
 	},
