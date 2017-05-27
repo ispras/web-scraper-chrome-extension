@@ -10,7 +10,7 @@ var Selector = (function () {
         * Manipulates return data from selector.
         * @param data
         */
-        manipulateData: function (data) {           
+        manipulateData: function (data) {
 
             var regex = function (content, regex, regexgroup) {
                 try {
@@ -42,8 +42,8 @@ var Selector = (function () {
                 var replace;
                 try {
                     var regex = new RegExp(replaceText, 'gm');
-                        replace = regex.test(content) ? regex : replaceText;
-                } catch (e) { replace = replaceText;}
+                    replace = regex.test(content) ? regex : replaceText;
+                } catch (e) { replace = replaceText; }
 
                 return content.replace(replace, replacementText);
             }
@@ -63,44 +63,62 @@ var Selector = (function () {
                     isArray = Array.isArray(content),
                     isTextmManipulationDefined = typeof this.textmanipulation != 'undefined' && this.textmanipulation !== "",
                     textManipulationAvailable = (isString || isUnderlyingString) && isTextmManipulationDefined;
-                
+
                 if (textManipulationAvailable) {
                     content = isString ? content : $(content).text();
 
                     // use key in object since unit tests might not define each property
+                    var keys = []
                     for (var key in this.textmanipulation) {
-                        if (this.textmanipulation.hasOwnProperty(key)) {
-                            var value = this.textmanipulation[key];
-                            switch (key) {
-                                case "regex":
-                                    var group = this.textmanipulation.regexgroup;
-                                    group = typeof group != 'undefined' ? group : "";
-                                    if (value !== '') { content = regex(content, value, group); }
-                                    break;
-                                case "removeHtml":
-                                    if (value) { content = removeHtml(content); }
-                                    break;
-                                case "trimText":
-                                    if (value) { content = trimText(content); }
-                                    break;
-                                case "replaceText":
-                                    var replacement =this.textmanipulation.replacementText;
-                                    replacement = typeof replacement != 'undefined' ? replacement : "";
-                                    content = replaceText(content, value, replacement);
-                                    break;
-                                case "textPrefix":
-                                    if (value !== '') { content = textPrefix(content, value) };
-                                    break;
-                                case "textSuffix":
-                                    if (value !== '') { content = textSuffix(content, value) };
-                                    break;
-                            }
+                        if (!this.textmanipulation.hasOwnProperty(key)) { continue; }
+                        keys.push(key)
+                    }
+
+                    function propertyIsAvailable(key) {
+                        return keys.indexOf(key) >= 0;
+                    }
+
+                    if (propertyIsAvailable("regex")) {
+                        var group = this.textmanipulation.regexgroup;
+                        var value = this.textmanipulation.regex;
+                        group = typeof group != 'undefined' ? group : "";
+                        if (value !== '') { content = regex(content, value, group); }
+                    }
+
+                    if (propertyIsAvailable("removeHtml")) {
+                        if (this.textmanipulation.removeHtml) {
+                            content = removeHtml(content);
                         }
                     }
+
+                    if (propertyIsAvailable("trimText")) {
+                        if (this.textmanipulation.trimText) {
+                            content = trimText(content);
+                        }
+                    }
+
+                    if (propertyIsAvailable("replaceText")) {
+                        var replacement = this.textmanipulation.replacementText;
+                        replacement = typeof replacement != 'undefined' ? replacement : "";
+                        content = replaceText(content, this.textmanipulation.replaceText, replacement);
+                    }
+
+                    if (propertyIsAvailable("textPrefix")) {
+                        if (this.textmanipulation.textPrefix !== '') {
+                            content = textPrefix(content, this.textmanipulation.textPrefix)
+                        };
+                    }
+
+                    if (propertyIsAvailable("textSuffix")) {
+                        if (this.textmanipulation.textSuffix !== '') {
+                            content = textSuffix(content, this.textmanipulation.textSuffix)
+                        };
+                    }
+
                     element[this.id] = content;
                 } else if (isArray && isTextmManipulationDefined) {
                     element[this.id] = JSON.stringify(content);
-                    this.manipulateData(element);                    
+                    this.manipulateData(element);
                 }
 
             }.bind(this));
