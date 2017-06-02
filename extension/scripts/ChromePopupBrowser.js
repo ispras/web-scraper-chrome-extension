@@ -75,8 +75,14 @@ ChromePopupBrowser.prototype = {
 					parentSelectorId: parentSelectorId
 				};
 
-				chrome.tabs.sendMessage(tab.id, message, function (data) {
-					console.log("extracted data from web page", data);
+				chrome.tabs.sendMessage(tab.id, message, function (data, selectors) {
+                    console.log("extracted data from web page", data);
+                    
+                    if (selectors) {
+                        // table selector can dynamically add columns (addMissingColumns Feature)
+                        scope.scraper.sitemap.selectors = selectors;
+                    }
+                    
 					callback.call(scope, data);
 				});
 			}.bind(this));

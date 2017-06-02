@@ -68,7 +68,8 @@ chrome.runtime.onMessage.addListener(
 				sitemap: sitemap,
 				browser: browser,
 				store: store,
-				requestInterval: request.requestInterval
+                requestInterval: request.requestInterval,
+                requestIntervalRandomness: request.requestIntervalRandomness
 			});
 
 			try {
@@ -81,8 +82,10 @@ chrome.runtime.onMessage.addListener(
 						message: 'Finished scraping ' + sitemap._id
 					}, function(id) {
 						// notification showed
-					});
-					sendResponse();
+                        });
+                    // table selector can dynamically add columns (addMissingColumns Feature)
+                    var selectors = sitemap.selectors; 
+                    sendResponse(selectors);
 				});
 			}
 			catch (e) {

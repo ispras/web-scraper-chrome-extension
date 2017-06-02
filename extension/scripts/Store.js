@@ -14,7 +14,27 @@ StoreScrapeResultWriter.prototype = {
 		if(docs.length === 0) {
 			callback();
 		}
-		else {
+        else {
+
+            // get all keys of the objects
+            var keys = [];
+            docs.forEach(function (doc) {
+                for (var key in doc) {
+                    if (doc.hasOwnProperty(key) && keys.indexOf(key) === -1) { keys.push(key); }
+                };
+            });
+
+            // add missing keys to objects
+            // This can happen if same element containing different properties <table>
+            docs.forEach(function (doc) {
+                var objKeys = Object.keys(doc)
+                keys.forEach(function (key) {
+                    if (!(key in doc)) {
+                        doc[key] = "";
+                    }
+                });
+            });
+
 			this.db.bulkDocs({docs:docs}, function(err, response) {
 				if(err !== null) {
 					console.log("Error while persisting scraped data to db", err);

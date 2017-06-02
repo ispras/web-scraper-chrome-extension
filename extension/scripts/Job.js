@@ -67,7 +67,9 @@ Job.prototype = {
 					}
 				}
 				this.dataItems.push(result);
-			}
+            }
+            // table selector can dynamically add columns (addMissingColumns Feature)
+            sitemap.selectors = this.scraper.sitemap.selectors;
 			console.log(job);
 			callback(job);
 		}.bind(this), this);

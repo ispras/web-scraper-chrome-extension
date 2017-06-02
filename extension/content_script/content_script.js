@@ -8,8 +8,9 @@ chrome.runtime.onMessage.addListener(
 			var extractor = new DataExtractor(request);
 			var deferredData = extractor.getData();
 			deferredData.done(function(data){
-				console.log("dataextractor data", data);
-				sendResponse(data);
+                console.log("dataextractor data", data);
+                var selectors = extractor.sitemap.selectors;
+                sendResponse(data, selectors);
 			});
 			return true;
 		}
@@ -18,8 +19,9 @@ chrome.runtime.onMessage.addListener(
 			var extractor = new DataExtractor(request);
 			var deferredData = extractor.getSingleSelectorData(request.parentSelectorIds, request.selectorId);
 			deferredData.done(function(data){
-				console.log("dataextractor data", data);
-				sendResponse(data);
+                console.log("dataextractor data", data);
+                var selectors = extractor.sitemap.selectors;
+                sendResponse(data, selectors);
 			});
 			return true;
 		}
@@ -31,8 +33,8 @@ chrome.runtime.onMessage.addListener(
 			console.log("received ContentScript request", request);
 
 			var deferredResponse = contentScript[request.fn](request.request);
-			deferredResponse.done(function(response) {
-				sendResponse(response);
+            deferredResponse.done(function (response) {
+                sendResponse(response, null);
 			});
 
 			return true;

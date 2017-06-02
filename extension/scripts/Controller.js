@@ -888,7 +888,8 @@ SitemapController.prototype = {
 		var id = $("#edit-selector [name=id]").val();
 		var selectorsSelector = $("#edit-selector [name=selector]").val();
 		var tableDataRowSelector = $("#edit-selector [name=tableDataRowSelector]").val();
-		var tableHeaderRowSelector = $("#edit-selector [name=tableHeaderRowSelector]").val();
+        var tableHeaderRowSelector = $("#edit-selector [name=tableHeaderRowSelector]").val();
+        var tableAddMissingColumns = $("#edit-selector [name=tableAddMissingColumns]").is(":checked");
 		var clickElementSelector = $("#edit-selector [name=clickElementSelector]").val();
 		var type = $("#edit-selector [name=type]").val();
 		var clickElementUniquenessType = $("#edit-selector [name=clickElementUniquenessType]").val();
@@ -935,7 +936,8 @@ SitemapController.prototype = {
 		var newSelector = new Selector({
 			id: id,
 			selector: selectorsSelector,
-			tableHeaderRowSelector: tableHeaderRowSelector,
+            tableHeaderRowSelector: tableHeaderRowSelector,
+            tableAddMissingColumns: tableAddMissingColumns,
 			tableDataRowSelector: tableDataRowSelector,
 			clickElementSelector: clickElementSelector,
 			clickElementUniquenessType: clickElementUniquenessType,
@@ -1067,14 +1069,17 @@ SitemapController.prototype = {
 		}
 
 		var requestInterval = $("input[name=requestInterval]").val();
-		var pageLoadDelay = $("input[name=pageLoadDelay]").val();
+        var pageLoadDelay = $("input[name=pageLoadDelay]").val();
+        var intervalRandomness = $("input[name=requestIntervalRandomness]").val();
+        
 		
 		var sitemap = this.state.currentSitemap;
 		var request = {
 			scrapeSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
 			requestInterval: requestInterval,
-			pageLoadDelay: pageLoadDelay
+            pageLoadDelay: pageLoadDelay,
+            requestIntervalRandomness: intervalRandomness
 		};
 
 		// show sitemap scraping panel
@@ -1083,7 +1088,9 @@ SitemapController.prototype = {
 		$("#submit-scrape-sitemap").closest(".form-group").hide();
 		$("#scrape-sitemap-config input").prop('disabled', true);
 
-		chrome.runtime.sendMessage(request, function (response) {
+        chrome.runtime.sendMessage(request, function (selectors) {
+            // table selector can dynamically add columns (addMissingColumns Feature)
+            sitemap.selectors = selectors;
 			this.browseSitemapData();
 		}.bind(this));
 		return false;
@@ -1093,7 +1100,8 @@ SitemapController.prototype = {
 		this.setStateEditSitemap(sitemap);
 		this.browseSitemapData();
 	},
-	browseSitemapData: function () {
+    browseSitemapData: function () {
+        
 		this.setActiveNavigationButton('sitemap-browse');
 		var sitemap = this.state.currentSitemap;
 		this.store.getSitemapData(sitemap, function (data) {
@@ -1437,8 +1445,8 @@ SitemapController.prototype = {
 
 			if (response.length === 0) {
 				return;
-			}
-			var dataColumns = Object.keys(response[0]);
+            }
+            var dataColumns = Object.keys(response[0]);
 
 			console.log(dataColumns);
 

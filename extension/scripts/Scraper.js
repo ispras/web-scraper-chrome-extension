@@ -183,7 +183,8 @@ Scraper.prototype = {
 
 			}.bind(this));
 
-			$.whenCallSequentially(deferredDatamanipulations).done(function() {
+            $.whenCallSequentially(deferredDatamanipulations).done(function () {
+                this.store.saveSitemap(this.sitemap, function () { });
 				this.resultWriter.writeDocs(scrapedRecords, function () {
 
 					var now = (new Date()).getTime();

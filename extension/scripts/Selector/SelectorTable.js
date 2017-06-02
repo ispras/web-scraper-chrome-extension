@@ -33,22 +33,43 @@ var SelectorTable = {
                     }
                 }
                 isVerticalRow = true;
-                
+
             } else if ($headerRow.find("th").length) {
                 $headerRow = $headerRow.find("th");
             } else if ($headerRow.find("td").length) {
                 $headerRow = $headerRow.find("td");
             }
 
-            $headerRow.each(function (i) {
-                var header = $(this).text().trim();
+            $headerRow.each(function (i, value) {
+                var header = $(value).text().trim();
                 columns[header] = {
                     index: i + 1,
                     isVerticalHeader: isVerticalRow
                 };
-            });
+            }.bind(this));
+
+            this.addMissingColumns($headerRow);
         }
         return columns;
+    },
+
+    addMissingColumns(headerRow) {
+        headerRow.each(function (i, value) {
+            if (this.tableAddMissingColumns) {
+                var header = $(value).text().trim();
+                var column = $.grep(this.columns, function (h) {
+                    return h.name === header;
+                });
+
+                if (column.length !== 1) {
+                    this.columns.push({
+                        header: header,
+                        name: header,
+                        extract: true
+                    });
+                }
+            }
+        }.bind(this));
     },
 
     getVerticalDataCells: function (table, dataSelector) {
@@ -70,13 +91,14 @@ var SelectorTable = {
                     var index = (dataCell.cellIndex - 1 | dataCell.rowIndex);
                     var headerCellName = $(dataCell).closest('tr').find("th:first-child").text().trim();
                     var dataCellvalue = $(dataCell).text().trim();
+
                     var extractData = $.grep(this.columns, function (h) {
                         return h.name === headerCellName && h.extract;
                     }).length == 1;
 
                     if (extractData) {
                         result[index][headerCellName] = dataCellvalue;
-                    }                    
+                    }
                 }
             }.bind(this));
         }
@@ -98,27 +120,28 @@ var SelectorTable = {
                 headerCellCount = objKeys.length,
                 isVerticalHeader = headerCellCount && headerCells[Object.keys(headerCells)[0]].isVerticalHeader;
 
-                if (isVerticalHeader) {
-                    var results = this.getVerticalDataCells(table, dataSelector);
-                    result.push.apply(result, results);
-                } else {
-                    $(table).find(dataSelector).each(function (i, dataCell) {
-                        var data = {};
-                        this.columns.forEach(function (headerCell) {
-                            if (headerCell.extract === true) {
-                                if (headerCells[headerCell.header] === undefined) {
-                                    data[headerCell.name] = null;
-                                }
-                                else {
-                                    var header = headerCells[headerCell.header];
-                                    var rowText = $(dataCell).find(">:nth-child(" + header.index + ")").text().trim();
-                                    data[headerCell.name] = rowText;
-                                }
+            if (isVerticalHeader) {
+                var results = this.getVerticalDataCells(table, dataSelector);
+                result.push.apply(result, results);
+            } else {
+                $(table).find(dataSelector).each(function (i, dataCell) {
+                    var data = {};
+
+                    this.columns.forEach(function (headerCell) {
+                        if (headerCell.extract === true) {
+                            if (headerCells[headerCell.header] === undefined) {
+                                data[headerCell.name] = null;
                             }
-                        });
-                        result.push(data);
-                    }.bind(this));
-                }
+                            else {
+                                var header = headerCells[headerCell.header];
+                                var rowText = $(dataCell).find(">:nth-child(" + header.index + ")").text().trim();
+                                data[headerCell.name] = rowText;
+                            }
+                        }
+                    });
+                    result.push(data);
+                }.bind(this));
+            }
         }.bind(this));
 
         dfd.resolve(result);
@@ -137,7 +160,7 @@ var SelectorTable = {
     },
 
     getFeatures: function () {
-        return ['multiple', 'columns', 'delay', 'tableDataRowSelector', 'tableHeaderRowSelector']
+        return ['multiple', 'columns', 'delay', 'tableDataRowSelector', 'tableHeaderRowSelector', 'tableAddMissingColumns']
     },
 
     getItemCSSSelector: function () {
