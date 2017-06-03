@@ -62,12 +62,7 @@ Sitemap.prototype = {
 
 	getStartUrls: function() {
 
-		var startUrls = this.startUrl;
-		// single start url
-		if(this.startUrl.push === undefined) {
-			startUrls = [startUrls];
-        }
-
+		var startUrls = this.startUrls;
         startUrls = DatePatternSupport.expandUrl(startUrls);
 
         var nextUrls = function (url) {

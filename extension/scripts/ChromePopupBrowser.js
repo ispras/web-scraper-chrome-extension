@@ -78,7 +78,7 @@ ChromePopupBrowser.prototype = {
 				chrome.tabs.sendMessage(tab.id, message, function (data, selectors) {
                     console.log("extracted data from web page", data);
                     
-                    if (selectors) {
+                    if (selectors && scope) {
                         // table selector can dynamically add columns (addMissingColumns Feature)
                         scope.scraper.sitemap.selectors = selectors;
                     }

@@ -17,7 +17,7 @@ describe("Scraper", function () {
 
 		var sitemap = new Sitemap({
 			id: 'test',
-			startUrl: 'http://test.lv/',
+			startUrls: 'http://test.lv/',
 			selectors: [
 				{
 					"id": "a",
@@ -62,7 +62,7 @@ describe("Scraper", function () {
 
 		var sitemap = new Sitemap({
 			id: 'test',
-			startUrl: 'http://test.lv/',
+			startUrls: 'http://test.lv/',
 			selectors: [
 				{
 					"id": "link",
@@ -116,7 +116,7 @@ describe("Scraper", function () {
 
 		var sitemap = new Sitemap({
 			id: 'test',
-			startUrl: 'http://test.lv/',
+			startUrls: 'http://test.lv/',
 			selectors: [
 				{
 					"id": "link-w-children",
@@ -165,7 +165,7 @@ describe("Scraper", function () {
 	it("should be able to create multiple start jobs", function () {
 
 		var sitemap = new Sitemap({
-			startUrl: 'http://test.lv/[1-100].html'
+			startUrls: 'http://test.lv/[1-100].html'
 		});
 
 		var s = new Scraper({
@@ -181,7 +181,7 @@ describe("Scraper", function () {
 	it("should create multiple start jobs if multiple urls provided", function(){
 
 		var sitemap = new Sitemap({
-			startUrl: ['http://example.com/1', 'http://example.com/2', 'http://example.com/3']
+			startUrls: ['http://example.com/1', 'http://example.com/2', 'http://example.com/3']
 		});
 
 		var s = new Scraper({
@@ -265,7 +265,7 @@ describe("Scraper", function () {
 
 		var sitemap = new Sitemap({
 			id: 'test',
-			startUrl: 'http://test.com/',
+			startUrls: 'http://test.com/',
 			selectors: [
 				{
 					"id": "test",

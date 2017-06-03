@@ -1076,7 +1076,7 @@ describe("DataExtractor", function () {
 					"selector": "td:nth-of-type(9) a"
 				}
 			],
-			"startUrl": "http://www.centos.org/modules/tinycontent/index.php?id=30",
+			"startUrls": "http://www.centos.org/modules/tinycontent/index.php?id=30",
 			"_id": "centos-mirrors2"
 		});
 

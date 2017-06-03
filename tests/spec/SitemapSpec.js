@@ -319,7 +319,7 @@ describe("Sitemap", function () {
 
 	it("Should return one start url", function(){
 		var sitemap = new Sitemap({
-			startUrl:"http://example.com/"
+			startUrls:"http://example.com/"
 		});
 		var expectedURLS = ["http://example.com/"];
 		expect(sitemap.getStartUrls()).toEqual(expectedURLS);
@@ -327,7 +327,7 @@ describe("Sitemap", function () {
 
 	it("Should return multiple start urls", function () {
 		var sitemap = new Sitemap({
-			startUrl: "http://example.com/[1-3].html"
+			startUrls: "http://example.com/[1-3].html"
 		});
 		var expectedURLS = [
 			"http://example.com/1.html",
@@ -339,7 +339,7 @@ describe("Sitemap", function () {
 
 	it("Should return multiple start urls with id at the end", function () {
 		var sitemap = new Sitemap({
-			startUrl: "http://example.com/?id=[1-3]"
+			startUrls: "http://example.com/?id=[1-3]"
 		});
 		var expectedURLS = [
 			"http://example.com/?id=1",
@@ -351,7 +351,7 @@ describe("Sitemap", function () {
 
 	it("should return multiple start urls with specified incremental", function () {
 		var sitemap = new Sitemap({
-			startUrl: "http://example.com/?id=[0-20:10]"
+			startUrls: "http://example.com/?id=[0-20:10]"
 		});
 		var expectedURLS = [
 			"http://example.com/?id=0",
@@ -363,7 +363,7 @@ describe("Sitemap", function () {
 
 	it("Should return multiple start urls with padding", function () {
 		var sitemap = new Sitemap({
-			startUrl: "http://example.com/[001-003].html"
+			startUrls: "http://example.com/[001-003].html"
 		});
 		var expectedURLS = [
 			"http://example.com/001.html",
@@ -376,7 +376,7 @@ describe("Sitemap", function () {
 	it("Should return multiple start urls when startUrl is an array", function(){
 
 		var sitemap = new Sitemap({
-			startUrl: ["http://example.com/1.html", "http://example.com/2.html", "http://example.com/3.html"]
+			startUrls: ["http://example.com/1.html", "http://example.com/2.html", "http://example.com/3.html"]
 		});
 		var expectedURLS = [
 			"http://example.com/1.html",

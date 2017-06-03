@@ -1,14 +1,9 @@
 <tr>
 	<td class="id">{{_id}}</td>
 	<td>
-		{{#startUrl.push}}
-			{{#startUrl}}
+			{{#startUrls}}
 				{{.}},
-			{{/startUrl}}
-		{{/startUrl.push}}
-		{{^startUrl.push}}
-			{{startUrl}}
-		{{/startUrl.push}}
+			{{/startUrls}}
 	</td>
 	<td>
 		<button action="browse-sitemap-data" type="button" class="btn btn-primary btn-xs">Browse</button>

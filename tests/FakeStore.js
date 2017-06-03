@@ -13,5 +13,9 @@ FakeStore.prototype = {
 
 	initSitemapDataDb: function (sitemapId, callback) {
 		callback(this);
-	}
+    },
+
+    saveSitemap: function (sitemap, callback) {
+        callback(this);
+    }
 };

@@ -37,7 +37,6 @@ SitemapController.prototype = {
 			'SitemapList',
 			'SitemapListItem',
 			'SitemapCreate',
-			'SitemapStartUrlField',
 			'SitemapImport',
 			'SitemapExport',
 			'SitemapBrowseData',
@@ -197,13 +196,7 @@ SitemapController.prototype = {
 				},
 				"#edit-selector button[action=preview-selector-data]": {
 					click: this.previewSelectorDataFromSelectorEditing
-				},
-				"button.add-extra-start-url": {
-					click: this.addStartUrl
-				},
-				"button.remove-start-url": {
-					click: this.removeStartUrl
-                }
+				}
 			});
 			this.showSitemaps();
 		}.bind(this));
@@ -245,22 +238,6 @@ SitemapController.prototype = {
 		if (navigationId.match(/^create-sitemap-/)) {
 			$("#create-sitemap-nav-button").closest("li").addClass('active');
 		}
-	},
-
-	/**
-	 * Simple info popup for sitemap start url input field
-	 */
-	initMultipleStartUrlHelper: function () {
-		$("#startUrl")
-			.popover({
-				title: 'Multiple start urls',
-				html: true,
-				content: "You can create ranged start urls like this:<br />http://example.com/[1-100].html",
-				placement: 'bottom'
-			})
-			.blur(function () {
-				$(this).popover('hide');
-			});
 	},
 
 	/**
@@ -318,14 +295,23 @@ SitemapController.prototype = {
 						}
 					}
 				},
-				"startUrl[]": {
+				"startUrls": {
 					validators: {
 						notEmpty: {
 							message: 'The start URL is required and cannot be empty'
 						},
-						uri: {
-							allowLocal: true,
-							message: 'The start URL is not a valid URL'
+                        callback: {
+                            message: 'The start URLs are not valid. Please use "," as a seperator.',
+                            callback: function (value, validator) {
+                                function isUrlValid(url) {
+                                    return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url);
+                                }
+                                var isValid = true;
+                                value.split(',').map((item) => item.trim()).each(function (url) {
+                                    isValid = isUrlValid(url) ? isValid : false;
+                                });
+                                return isValid;
+                            }							
 						}
 					}
 				}
@@ -337,7 +323,6 @@ SitemapController.prototype = {
 		this.setActiveNavigationButton('create-sitemap-create');
 		var sitemapForm = ich.SitemapCreate();
 		$("#viewport").html(sitemapForm);
-		this.initMultipleStartUrlHelper();
 		this.initSitemapValidation();
 
 		return true;
@@ -426,20 +411,11 @@ SitemapController.prototype = {
 
 		var id = $("#viewport form input[name=_id]").val();
 		var $startUrlInputs = $("#viewport form .input-start-url");
-		var startUrl;
-		if($startUrlInputs.length === 1) {
-			startUrl = $startUrlInputs.val();
-		}
-		else {
-			startUrl = [];
-			$startUrlInputs.each(function(i, element) {
-				startUrl.push($(element).val());
-			});
-		}
+        var startUrls = $startUrlInputs.val().split(',').map((item) => item.trim());
 
 		return {
 			id:id,
-			startUrl:startUrl
+			startUrls:startUrls
 		};
 	},
 
@@ -461,7 +437,7 @@ SitemapController.prototype = {
 			else {
 				var sitemap = new Sitemap({
 					_id: sitemapData.id,
-					startUrl: sitemapData.startUrl,
+					startUrls: sitemapData.startUrls,
 					selectors: []
 				});
 				this.store.createSitemap(sitemap, function (sitemap) {
@@ -508,7 +484,6 @@ SitemapController.prototype = {
 		var sitemap = this.state.currentSitemap;
 		var $sitemapMetadataForm = ich.SitemapEditMetadata(sitemap);
 		$("#viewport").html($sitemapMetadataForm);
-		this.initMultipleStartUrlHelper();
 		this.initSitemapValidation();
 
 		return true;
@@ -532,7 +507,7 @@ SitemapController.prototype = {
 			}
 
 			// change data
-			sitemap.startUrl = sitemapData.startUrl;
+			sitemap.startUrls = sitemapData.startUrls;
 
 			// just change sitemaps url
 			if (sitemapData.id === sitemap._id) {
@@ -1487,32 +1462,5 @@ SitemapController.prototype = {
 				$(this).remove();
 			});
 		});
-	},
-	/**
-	 * Add start url to sitemap creation or editing form
-	 * @param button
-	 */
-	addStartUrl: function(button) {
-
-		var $startUrlInputField = ich.SitemapStartUrlField();
-		$("#viewport .start-url-block:last").after($startUrlInputField);
-		var validator = this.getFormValidator();
-		validator.addField($startUrlInputField.find("input"));
-	},
-	/**
-	 * Remove start url from sitemap creation or editing form.
-	 * @param button
-	 */
-	removeStartUrl: function(button) {
-
-		var $block = $(button).closest(".start-url-block");
-		if($("#viewport .start-url-block").length > 1) {
-
-			// remove from validator
-			var validator = this.getFormValidator();
-			validator.removeField($block.find("input"));
-
-			$block.remove();
-		}
 	}
 };
