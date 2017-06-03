@@ -179,11 +179,15 @@ Sitemap.prototype = {
 	getDataColumns: function () {
 		var columns = [];
 		this.selectors.forEach(function (selector) {
-
 			columns = columns.concat(selector.getDataColumns());
 		});
 
-		return columns;
+        var uniqueColumns = [];
+        $.each(columns, function (i, e) {
+            if ($.inArray(e, result) == -1) result.push(e);
+        });
+
+        return uniqueColumns;
 	},
 	getDataExportCsvBlob: function (data, option) {
 

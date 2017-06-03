@@ -9,32 +9,39 @@ var StoreScrapeResultWriter = function(db) {
    this.db = db;
 };
 
+/**
+* Make sure all obj have the same properties
+* They can differe if table selector retrieves dynamic columns
+*/
+var normalizeProperties = function (docs) {
+    // get all keys of the objects
+    var keys = [];
+    docs.forEach(function (doc) {
+        for (var key in doc) {
+            if (doc.hasOwnProperty(key) && keys.indexOf(key) === -1) { keys.push(key); }
+        };
+    });
+
+    // add missing keys to objects
+    docs.forEach(function (doc) {
+        var objKeys = Object.keys(doc)
+        keys.forEach(function (key) {
+            if (!(key in doc)) {
+                doc[key] = "";
+            }
+        });
+    });
+};
+
 StoreScrapeResultWriter.prototype = {
+
     writeDocs: function(docs, callback) {
 		if(docs.length === 0) {
 			callback();
 		}
         else {
 
-            // get all keys of the objects
-            var keys = [];
-            docs.forEach(function (doc) {
-                for (var key in doc) {
-                    if (doc.hasOwnProperty(key) && keys.indexOf(key) === -1) { keys.push(key); }
-                };
-            });
-
-            // add missing keys to objects
-            // This can happen if same element containing different properties <table>
-            docs.forEach(function (doc) {
-                var objKeys = Object.keys(doc)
-                keys.forEach(function (key) {
-                    if (!(key in doc)) {
-                        doc[key] = "";
-                    }
-                });
-            });
-
+            normalizeProperties(docs);
 			this.db.bulkDocs({docs:docs}, function(err, response) {
 				if(err !== null) {
 					console.log("Error while persisting scraped data to db", err);
@@ -46,7 +53,7 @@ StoreScrapeResultWriter.prototype = {
 };
 
 Store.prototype = {
-	
+
 	sanitizeSitemapDataDbName: function(dbName) {
 		return 'sitemap-data-'+dbName.replace(/[^a-z0-9_\$\(\)\+\-/]/gi, "_");
 	},
@@ -86,7 +93,9 @@ Store.prototype = {
 
         this.sitemapDb.put(sitemapJson, function(sitemap, err, response) {
             // @TODO handle err
-            sitemap._rev = response.rev;
+            if (response) {
+                sitemap._rev = response.rev;
+            }            
             callback(sitemap);
         }.bind(this, sitemap));
     },
@@ -133,8 +142,9 @@ Store.prototype = {
                 var doc = response.rows[i].doc;
                 responseData.push(doc);
             }
+            normalizeProperties(responseData);
             callback(responseData);
-        });
+        }.bind(this));
     },
 	// @TODO make this call lighter
     sitemapExists: function (sitemapId, callback) {
