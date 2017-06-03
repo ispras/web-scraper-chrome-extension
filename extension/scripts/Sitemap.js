@@ -184,7 +184,7 @@ Sitemap.prototype = {
 
         var uniqueColumns = [];
         $.each(columns, function (i, e) {
-            if ($.inArray(e, result) == -1) result.push(e);
+            if ($.inArray(e, uniqueColumns) == -1) uniqueColumns.push(e);
         });
 
         return uniqueColumns;

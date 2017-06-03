@@ -1089,9 +1089,14 @@ SitemapController.prototype = {
 		$("#scrape-sitemap-config input").prop('disabled', true);
 
         chrome.runtime.sendMessage(request, function (selectors) {
-            // table selector can dynamically add columns (addMissingColumns Feature)
-            sitemap.selectors = selectors;
-			this.browseSitemapData();
+            // table selector can dynamically add columns
+            // replace current selector (columns) with the dynamicly created once
+            sitemap.selectors = [];
+            for (var n = 0; n < selectors.length; n++){
+                var selector = selectors[n];
+                sitemap.selectors.push(new Selector(selector));
+            }
+            this.browseSitemapData();
 		}.bind(this));
 		return false;
 	},
