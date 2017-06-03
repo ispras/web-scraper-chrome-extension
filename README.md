@@ -14,6 +14,8 @@ To run the latest version you need to download the project to your system and [f
 ## Changelog
 
 ### v0.3
+ * Enabled pasting of multible start URLs (by [@jwillmer](https://github.com/jwillmer))
+ * Added scraping of dynamic table columns (by [@jwillmer](https://github.com/jwillmer))
  * Added style extraction type (by [@jwillmer](https://github.com/jwillmer))
  * Added text manipulation (trim, replace, prefix, suffix, remove HTML) (by [@jwillmer](https://github.com/jwillmer))
  * Added image improvements to find images in div background (by [@jwillmer](https://github.com/jwillmer))
