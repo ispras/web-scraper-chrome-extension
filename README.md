@@ -9,7 +9,7 @@ data later can be exported as CSV.
 You can find a version of this extension in the [Chrome store][chrome-store]. Please compare the Chrome store version with the version history in this readme to find out which features are supported.
 
 #### Latest Version
-To run the latest version you need to download the project to your system and [follow the description on Google][get-started-chrome]) (select the `extension` folder).
+To run the latest version you need to [download the project][latest-release] to your system and [follow the description on Google][get-started-chrome]) (select the `extension` folder).
  
 ## Changelog
 
@@ -65,3 +65,5 @@ LGPLv3
  [google-groups]: https://groups.google.com/forum/#!forum/web-scraper
  [github-issues]: https://github.com/martinsbalodis/web-scraper-chrome-extension/issues
  [get-started-chrome]: https://developer.chrome.com/extensions/getstarted#unpacked
+ [issue-14]: https://github.com/jwillmer/web-scraper-chrome-extension/issues/14
+ [latest-release]: https://github.com/jwillmer/web-scraper-chrome-extension/releases/tag/0.3.1
