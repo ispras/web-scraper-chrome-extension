@@ -737,10 +737,14 @@ SitemapController.prototype = {
 			selector: selector,
 			selectorIds: selectorIds,
 			selectorTypes: [
-				{
-					type: 'SelectorText',
-					title: 'Text'
-				},
+                {
+                    type: 'SelectorText',
+                    title: 'Text'
+                },
+                {
+                    type: 'SelectorValue',
+                    title: 'Value Input'
+                },
 				{
 					type: 'SelectorLink',
 					title: 'Link'
@@ -876,7 +880,8 @@ SitemapController.prototype = {
 		var clickPopup = $("#edit-selector [name=clickPopup]").is(":checked");
 		var delay = $("#edit-selector [name=delay]").val();
         var extractAttribute = $("#edit-selector [name=extractAttribute]").val();
-        var extractStyle = $("#edit-selector [name=extractStyle]").val();        
+        var extractStyle = $("#edit-selector [name=extractStyle]").val();  
+        var insertValue = $("#edit-selector [name=insertValue]").val();  
 		var parentSelectors = $("#edit-selector [name=parentSelectors]").val();
 		var columns = [];
 		var $columnHeaders = $("#edit-selector .column-header");
@@ -925,6 +930,7 @@ SitemapController.prototype = {
 			clickPopup: clickPopup,
             extractAttribute: extractAttribute,
             extractStyle: extractStyle,
+            insertValue: insertValue,
 			parentSelectors: parentSelectors,
 			columns:columns,
 			delay:delay,

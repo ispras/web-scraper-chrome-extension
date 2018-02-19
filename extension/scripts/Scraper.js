@@ -135,7 +135,7 @@ Scraper.prototype = {
 	},
 
 	// @TODO remove recursion and add an iterative way to run these jobs.
-	_run: function () {
+    _run: function () {
 
 		var job = this.queue.getNextJob();
 		if (job === false) {
