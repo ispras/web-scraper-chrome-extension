@@ -90,6 +90,7 @@
     <script type="text/javascript" src="spec/ContentScriptSpec.js"></script>
     <script type="text/javascript" src="spec/SelectorSpec.js"></script>
     <script type="text/javascript" src="spec/Selector/SelectorTextSpec.js"></script>
+    <script type="text/javascript" src="spec/Selector/SelectorValueSpec.js"></script>
     <script type="text/javascript" src="spec/Selector/SelectorGroupSpec.js"></script>
     <script type="text/javascript" src="spec/Selector/SelectorElementSpec.js"></script>
     <script type="text/javascript" src="spec/Selector/SelectorLinkSpec.js"></script>
@@ -240,13 +241,15 @@
                     <div>aaaaaaa11113123aaaaa11111</div>
                 </div>
                 <div id="selector-text-ignore-script">
-                    <div>aaa
-                    <script>var __a = 1;</script>
-                    <style>
-                        .-no-no-test {
-                            overflow: auto
-                        }
-                    </style></div>
+                    <div>
+                        aaa
+                        <script>var __a = 1;</script>
+                        <style>
+                            .-no-no-test {
+                                overflow: auto
+                            }
+                        </style>
+                    </div>
                 </div>
                 <div id="selector-text-newlines">
                     <p>aaa<br>aaa<br />aaa<BR>aaa<BR />aaa</p>
@@ -302,6 +305,10 @@
                     <img src="http://bb/">
                 </div>
 
+            </div>
+
+            <div id="selector-value">
+                <input type="text" value="" name="value" id="selector-value-input">
             </div>
 
             <div id="selector-table">
