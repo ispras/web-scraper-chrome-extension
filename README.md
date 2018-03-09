@@ -5,9 +5,6 @@ should be traversed and what should be extracted. Using these sitemaps the
 Web Scraper will navigate the site accordingly and extract all data. Scraped 
 data later can be exported as CSV.
 
-#### Chrome Store Version
-You can find a version of this extension in the [Chrome store][chrome-store]. Please compare the Chrome store version with the version history in this readme to find out which features are supported.
-
 #### Latest Version
 To run the latest version you need to [download the project][latest-releases] to your system and [follow the description on Google][get-started-chrome]) (select the `extension` folder).
  
