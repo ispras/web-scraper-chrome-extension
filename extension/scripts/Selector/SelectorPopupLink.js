@@ -139,7 +139,7 @@ var SelectorPopupLink = {
 	},
 
 	getFeatures: function () {
-		return ['multiple', 'delay']
+		return ['selector', 'multiple', 'delay']
 	},
 
 	getItemCSSSelector: function() {

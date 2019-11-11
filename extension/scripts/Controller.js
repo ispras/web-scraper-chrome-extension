@@ -758,6 +758,10 @@ SitemapController.prototype = {
 					title: 'Image'
 				},
 				{
+					type: 'SelectorDocument',
+					title: 'Document'
+				},
+				{
 					type: 'SelectorTable',
 					title: 'Table'
 				},
@@ -877,6 +881,7 @@ SitemapController.prototype = {
 		var discardInitialElements = $("#edit-selector [name=discardInitialElements]").is(":checked");
 		var multiple = $("#edit-selector [name=multiple]").is(":checked");
 		var downloadImage = $("#edit-selector [name=downloadImage]").is(":checked");
+		var downloadDocument = $("#edit-selector [name=downloadDocument]").is(":checked");
 		var clickPopup = $("#edit-selector [name=clickPopup]").is(":checked");
 		var delay = $("#edit-selector [name=delay]").val();
         var extractAttribute = $("#edit-selector [name=extractAttribute]").val();
@@ -927,6 +932,7 @@ SitemapController.prototype = {
 			type: type,
 			multiple: multiple,
 			downloadImage: downloadImage,
+			downloadDocument: downloadDocument,
 			clickPopup: clickPopup,
             extractAttribute: extractAttribute,
             extractStyle: extractStyle,

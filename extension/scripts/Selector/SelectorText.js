@@ -53,6 +53,6 @@ var SelectorText = {
 	},
 
 	getFeatures: function () {
-        return ['multiple', 'delay', 'textmanipulation']
+        return ['selector', 'multiple', 'delay', 'textmanipulation']
 	}
 };

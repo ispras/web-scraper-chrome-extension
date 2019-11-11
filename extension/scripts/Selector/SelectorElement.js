@@ -34,6 +34,6 @@ var SelectorElement = {
 	},
 
 	getFeatures: function () {
-		return ['multiple', 'delay']
+		return ['selector','multiple', 'delay']
 	}
 };

@@ -160,7 +160,7 @@ var SelectorTable = {
     },
 
     getFeatures: function () {
-        return ['multiple', 'columns', 'delay', 'tableDataRowSelector', 'tableHeaderRowSelector', 'tableAddMissingColumns']
+        return ['selector', 'multiple', 'columns', 'delay', 'tableDataRowSelector', 'tableHeaderRowSelector', 'tableAddMissingColumns']
     },
 
     getItemCSSSelector: function () {

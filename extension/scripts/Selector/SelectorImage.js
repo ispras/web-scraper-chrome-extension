@@ -133,7 +133,7 @@ var SelectorImage = {
 	},
 
 	getFeatures: function () {
-        return ['multiple', 'delay', 'downloadImage', 'stringReplacement']
+        return ['selector', 'multiple', 'delay', 'downloadImage', 'stringReplacement']
 	},
 
 	getItemCSSSelector: function() {
