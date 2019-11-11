@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group feature feature-selector">
         <label for="selector" class="col-sm-2 control-label">Selector</label>
 
         <div class="col-sm-8">
@@ -48,6 +48,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- tableHeaderSelector -->
     <div class="form-group feature feature-tableHeaderRowSelector">
@@ -160,6 +161,17 @@
             </div>
         </div>
     </div>
+    <!-- downloadDocument-->
+    <div class="form-group feature feature-downloadDocument">
+        <label for="downloadDocument" class="col-sm-2 control-label">Download document</label>
+        <div class="col-sm-8">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="downloadDocument" {{#selector.downloadDocument}} checked="checked" {{/selector.downloadDocument}}>
+                </label>
+            </div>
+        </div>
+    </div>
 
     <!-- extractAttribute -->
     <div class="form-group feature feature-extractAttribute">
@@ -172,7 +184,7 @@
 
     <!-- insertValue -->
     <div class="form-group feature feature-insertValue">
-        <label for="insertValue" class="col-sm-2 control-label">Text value</label>
+        <label for="insertValue" class="col-sm-2 control-label">input constant</label>
 
         <div class="col-sm-8">
             <input type="text" class="form-control" name="insertValue" id="insertValue" placeholder="Text value to insert" value="{{selector.insertValue}}">

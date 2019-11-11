@@ -1,27 +1,34 @@
 {
-	"manifest_version": 2,
-	"version": "0.3.0.00",
-	"name": "Web Scraper",
-	"short_name": "Web Scraper",
-	"description": "Tool for data extraction from websites",
-	"permissions": ["<all_urls>", "tabs", "notifications", "storage", "unlimitedStorage", "downloads"],
-	"icons": {
-		"16": "assets/images/icon16.png",
-		"48": "assets/images/icon48.png",
-		"128": "assets/images/icon128.png"
-	},
-	"browser_action": {
-		"default_icon": {
-			"19": "assets/images/icon19.png",
-			"38": "assets/images/icon38.png"
-		},
-		"default_title": "Web Scraper",
-		"default_popup": "popup.html"
-	},
-	"options_page": "options_page/options.html",
-	"devtools_page": "devtools/devtools_init_page.html",
-	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-	"background": {
+  "manifest_version": 2,
+  "version": "0.3.0.00",
+  "name": "Web Scraper",
+  "short_name": "Web Scraper",
+  "description": "Tool for data extraction from websites",
+  "permissions": [
+    "<all_urls>",
+    "tabs",
+    "notifications",
+    "storage",
+    "unlimitedStorage",
+    "downloads"
+  ],
+  "icons": {
+    "16": "assets/images/icon16.png",
+    "48": "assets/images/icon48.png",
+    "128": "assets/images/icon128.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "19": "assets/images/icon19.png",
+      "38": "assets/images/icon38.png"
+    },
+    "default_title": "Web Scraper",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options_page/options.html",
+  "devtools_page": "devtools/devtools_init_page.html",
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "background": {
     "scripts": [
       "assets/jquery-2.0.3.js",
       "assets/papaparse.min.js",
@@ -37,6 +44,7 @@
       "scripts/Selector/SelectorText.js",
       "scripts/Selector/SelectorValue.js",
       "scripts/Selector/SelectorImage.js",
+      "scripts/Selector/SelectorDocument.js",
       "scripts/Selector/SelectorHTML.js",
       "scripts/Selector/SelectorElementAttribute.js",
       "scripts/Selector/SelectorElementStyle.js",
@@ -58,17 +66,19 @@
       "scripts/DateUtils/DatePatternSupport.js",
       "background_page/background_script.js"
     ]
-	},
-	"web_accessible_resources": [
-		"assets/images/icon16.png",
-		"assets/images/icon48.png",
-		"assets/images/icon128.png",
-		"assets/images/icon19.png",
-		"assets/images/icon38.png"
-	],
-	"content_scripts": [
-		{
-			"matches": ["*://*/*"],
+  },
+  "web_accessible_resources": [
+    "assets/images/icon16.png",
+    "assets/images/icon48.png",
+    "assets/images/icon128.png",
+    "assets/images/icon19.png",
+    "assets/images/icon38.png"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*"
+      ],
       "js": [
         "assets/jquery-2.0.3.js",
         "assets/papaparse.min.js",
@@ -88,6 +98,7 @@
         "scripts/Selector/SelectorText.js",
         "scripts/Selector/SelectorValue.js",
         "scripts/Selector/SelectorImage.js",
+        "scripts/Selector/SelectorDocument.js",
         "scripts/Selector/SelectorHTML.js",
         "scripts/Selector/SelectorElementAttribute.js",
         "scripts/Selector/SelectorElementStyle.js",
@@ -100,9 +111,9 @@
         "scripts/BackgroundScript.js",
         "content_script/content_script.js"
       ],
-			"css": [
-				"content_script/content_script.css"
-			]
-		}
-	]
+      "css": [
+        "content_script/content_script.css"
+      ]
+    }
+  ]
 }

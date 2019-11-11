@@ -42,7 +42,7 @@ var SelectorValue = {
     },
 
     getDataColumns: function () {
-        return [];
+        return [this.id];
     },
 
     getFeatures: function () {
