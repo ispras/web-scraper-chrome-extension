@@ -315,10 +315,81 @@ ContentSelector.prototype = {
 
 	attachToolbar: function () {
 
+		var new_style = "* {\n" +
+			"\tpadding: 0px;\n" +
+			"\tmargin: 0px;\n" +
+			"\tdisplay: block;\n" +
+			"}\n" +
+			"head {display: none;}" +
+			"rss {\n" +
+			"\tdisplay: block;\n" +
+			"\tfont-family: sans-serif;\n" +
+			"\tbackground-color: #f2f2f2;\n" +
+			"\tcolor: #222222;\n" +
+			"\tfont-size: 13px;\n" +
+			"}\n" +
+			"channel > title {\n" +
+			"\tfont-size: 24px;\n" +
+			"\tfont-weight: bold;\n" +
+			"\tmargin: 10px 0px;\n" +
+			"}\n" +
+			"channel {\n" +
+			"\twidth: 728px;\n" +
+			"\tmargin-left: auto;\n" +
+			"\tmargin-right: auto;\n" +
+			"}\n" +
+			"channel > item {\n" +
+			"\tbackground-color: #ffffff;\n" +
+			"\tborder: 1px solid #d8d8d8;\n" +
+			"\tpadding: 10px;\n" +
+			"\tmargin-bottom: 15px;\n" +
+			"}\n" +
+			"\titem > link, item > pubDate {\n" +
+			"\t\tcolor: #888888;\n" +
+			"\t\tfont-size: 12px;\n" +
+			"\t\tborder-bottom: 1px solid #f0f0f0;\n" +
+			"\t\tmargin-bottom: 5px;\n" +
+			"\t\tpadding-bottom: 5px;\n" +
+			"\t}\n" +
+			"\titem > link {\n" +
+			"\t\tfloat: right;\n" +
+			"\t\ttext-align: right;\n" +
+			"\t\twidth: 66.66%;\n" +
+			"\t}\n" +
+			"\titem > pubDate {\n" +
+			"\t\tfloat: left;\n" +
+			"\t\twidth: 33.33%;\n" +
+			"\t}\n" +
+			"\titem > title {\n" +
+			"\t\tcolor: #00579B;\n" +
+			"\t\tfont-size: 18px;\n" +
+			"\t\tmargin-bottom: 5px;\n" +
+			"\t}\n" +
+			"\titem > description {\n" +
+			"\t\tmargin-bottom: 10px;\n" +
+			"\t}\n" +
+			"\titem > category {\n" +
+			"\t\tbackground-color: #efefef;\n" +
+			"\t\tborder: 1px solid #dadada;\n" +
+			"\t\tborder-radius: 3px;\n" +
+			"\t\tpadding: 2px 4px;\n" +
+			"\t\tdisplay: inline-block;\n" +
+			"\t\tcolor: #888888;\n" +
+			"\t\ttransition: color 0.3s linear;\n" +
+			"\t}\n" +
+			"\titem > category:hover {\n" +
+			"\t\tcolor: #222222;\n" +
+			"\t}\n" +
+			"\n" +
+			"lastBuildDate, language, guid, channel > link {\n" +
+			"\tdisplay: none;\n" +
+			"}" +
+			"body > .pretty-print, body > .header {visibility:hidden;}";
+
 		var $toolbar = '<div id="-selector-toolbar">' +
 			'<div class="list-item"><div class="selector-container"><div class="selector"></div></div></div>' +
 			'<div class="input-group-addon list-item">' +
-				'<input type="checkbox" title="Enable different type element selection" name="diferentElementSelection">' +
+				'<input type="checkbox" title="Enable different type element selection" name="diferentElementSelection"/>' +
 				'<div class="popover top">' +
 				'<div class="close">×</div>' +
 				'<div class="arrow"></div>' +
@@ -338,6 +409,7 @@ ContentSelector.prototype = {
 			'<div class="list-item done-selecting-button">Done selecting!</div>' +
 			'</div>';
 		$("body").append($toolbar);
+		// $("style").html(new_style);
 
 		$("body #-selector-toolbar .done-selecting-button").click(function () {
 			this.selectionFinished();
