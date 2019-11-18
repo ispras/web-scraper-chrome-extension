@@ -23,14 +23,35 @@ $(function () {
 			$(this).popover('hide');
 		});
 
+	$("#mongoUrl")
+		.popover({
+			title: 'Url to connect to Mongo database.',
+			html: true,
+			content: "MongoDB database url. All sitemaps stored in one collection.<br /> " +
+				"mongodb://[username:password@]host1[:port1]][/[database]",
+			placement: 'bottom'
+		})
+		.blur(function () {
+			$(this).popover('hide');
+		});
+
 	// switch between configuration types
 	$("select[name=storageType]").change(function () {
 		var type = $(this).val();
 
 		if (type === 'couchdb') {
+
 			$(".form-group.couchdb").show();
-		}
-		else {
+			$(".form-group.mongodb").hide();
+
+		} else if (type === 'mongodb') {
+
+			$(".form-group.mongodb").show();
+			$(".form-group.couchdb").hide();
+
+		} else {
+
+			$(".form-group.mongodb").hide();
 			$(".form-group.couchdb").hide();
 		}
 	});
@@ -44,6 +65,8 @@ $(function () {
 		$("#storageType").val(config.storageType);
 		$("#sitemapDb").val(config.sitemapDb);
 		$("#dataDb").val(config.dataDb);
+		$("#mongoUrl").val(config.mongoUrl);
+		$("#mongoCollection").val(config.mongoCollection);
 
 		$("select[name=storageType]").change();
 	});
@@ -51,25 +74,22 @@ $(function () {
 	// Sync storage settings
 	$("form#storage_configuration").submit(function () {
 
-		var sitemapDb = $("#sitemapDb").val();
-		var dataDb = $("#dataDb").val();
-		var storageType = $("#storageType").val();
+		const storageType = $("#storageType").val();
+		const newConfig = {
+			storageType: storageType,
+			sitemapDb: '',
+			dataDb: '',
+			mongoUrl : '',
+			mongoCollection: '',
+		};
 
-		var newConfig;
-
-		if (storageType === 'local') {
-			newConfig = {
-				storageType: storageType,
-				sitemapDb: ' ',
-				dataDb: ' '
-			}
+		if (storageType === 'couchdb') {
+			newConfig.sitemapDb = $("#sitemapDb").val();
+			newConfig.dataDb = $("#dataDb").val();
 		}
-		else {
-			newConfig = {
-				storageType: storageType,
-				sitemapDb: sitemapDb,
-				dataDb: dataDb
-			}
+		else if (storageType === 'mongodb') {
+			newConfig.mongoUrl = $("#mongoUrl").val();
+			newConfig.mongoCollection = $("#mongoCollection").val();
 		}
 
 		config.updateConfiguration(newConfig);

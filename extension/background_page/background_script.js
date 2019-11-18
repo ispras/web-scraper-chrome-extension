@@ -1,14 +1,27 @@
 var config = new Config();
 var store;
+
 config.loadConfiguration(function () {
 	console.log("initial configuration", config);
-	store = new Store(config);
+	if (config.storageType === "couchdb") {
+		store = new StoreCouchDB(config);
+	} else if (config.storageType === "mongodb") {
+		store = new StoreMongoDB(config);
+	} else if (typeof store !== StoreDevtools) {
+		store = new StoreDevtools();
+	}
 });
 
 chrome.storage.onChanged.addListener(function () {
 	config.loadConfiguration(function () {
 		console.log("configuration changed", config);
-		store = new Store(config);
+		if (config.storageType === "couchdb") {
+			store = new StoreCouchDB(config);
+		} else if (config.storageType === "mongodb") {
+			store = new StoreMongoDB(config);
+		} else {
+			store = new StoreDevtools();
+		}
 	});
 });
 

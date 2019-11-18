@@ -25,6 +25,7 @@
                             <select name="storageType" id="storageType" class="form-control">
                                 <option value="local">local storage</option>
                                 <option value="couchdb">CouchDB</option>
+								<option value="mongodb">MongoDB</option>
                             </select>
                         </div>
                     </div>
@@ -44,6 +45,25 @@
 							<input type="text" class="form-control" id="dataDb" name="dataDb">
 						</div>
 					</div>
+
+
+					<div class="form-group mongodb">
+						<label for="dataDb" class="col-lg-2 control-label">Mongo Url</label>
+
+						<div class="col-lg-10">
+							<input type="text" class="form-control" id="mongoUrl" name="mongoUrl">
+						</div>
+					</div>
+
+					<div class="form-group mongodb">
+						<label for="dataDb" class="col-lg-2 control-label">Mongo Collection</label>
+
+						<div class="col-lg-10">
+							<input type="text" class="form-control" id="mongoCollection" name="mongoCollection">
+						</div>
+					</div>
+
+
 					<div class="form-group">
 						<div class="col-lg-offset-2 col-lg-10">
 							<button type="submit" class="btn btn-default">Save</button>
