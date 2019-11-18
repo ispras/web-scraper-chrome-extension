@@ -83,7 +83,7 @@ var SelectorDocument = {
     },
 
     getFeatures: function () {
-        return ['selector','multiple', 'delay']
+        return ['selector','multiple', 'delay','downloadDocument']
     }
 
     // getItemCSSSelector: function() {
