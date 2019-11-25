@@ -1,4 +1,4 @@
-var SelectorValue = {
+var ConstantValue = {
 
     canReturnMultipleRecords: function () {
         return false;
@@ -28,12 +28,12 @@ var SelectorValue = {
 
         var result = [];
         $(elements).each(function (k, element) {
-            $(element).val(this.insertValue);
+            $(element).val(this.constantValue);
         }.bind(this));
 
 
         var data = {};
-        data[this.id] = this.insertValue;
+        data[this.id] = this.constantValue;
         result.push(data);
 
 
@@ -46,6 +46,6 @@ var SelectorValue = {
     },
 
     getFeatures: function () {
-        return ['insertValue']
+        return ['constantValue']
     }
 };

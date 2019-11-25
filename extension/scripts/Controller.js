@@ -742,8 +742,8 @@ SitemapController.prototype = {
                     title: 'Text'
                 },
                 {
-                    type: 'SelectorValue',
-                    title: 'Value Input'
+                    type: 'ConstantValue',
+                    title: 'Constant value'
                 },
 				{
 					type: 'SelectorLink',
@@ -886,7 +886,8 @@ SitemapController.prototype = {
 		var delay = $("#edit-selector [name=delay]").val();
         var extractAttribute = $("#edit-selector [name=extractAttribute]").val();
         var extractStyle = $("#edit-selector [name=extractStyle]").val();  
-        var insertValue = $("#edit-selector [name=insertValue]").val();  
+        var insertValue = $("#edit-selector [name=insertValue]").val();
+		var constantValue = $("#edit-selector [name=constantValue]").val();
 		var parentSelectors = $("#edit-selector [name=parentSelectors]").val();
 		var columns = [];
 		var $columnHeaders = $("#edit-selector .column-header");
@@ -937,6 +938,7 @@ SitemapController.prototype = {
             extractAttribute: extractAttribute,
             extractStyle: extractStyle,
             insertValue: insertValue,
+			constantValue: constantValue,
 			parentSelectors: parentSelectors,
 			columns:columns,
 			delay:delay,
