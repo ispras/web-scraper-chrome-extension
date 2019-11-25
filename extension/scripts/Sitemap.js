@@ -162,8 +162,22 @@ Sitemap.prototype = {
 		return this._id.replace(/\./g, '_');
 	},
 	exportSitemap: function () {
-		var sitemapObj = JSON.parse(JSON.stringify(this));
+		function removeEmpty(obj) {
+			Object.keys(obj).forEach(
+			    function(key) {
+                    if (obj[key] && typeof obj[key] === 'object') {
+                        removeEmpty(obj[key]);
+                        if (Object.keys(obj[key]).length === 0) {
+							delete obj[key];
+						}
+					} else if (obj[key] === false || obj[key] === [] || obj[key] === '') {
+                        delete obj[key];
+                    }
+			});
+		}
+		let sitemapObj = JSON.parse(JSON.stringify(this));
 		delete sitemapObj._rev;
+		removeEmpty(sitemapObj);
 		return JSON.stringify(sitemapObj);
 	},
 	importSitemap: function (sitemapJSON) {
