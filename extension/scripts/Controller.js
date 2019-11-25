@@ -746,6 +746,10 @@ SitemapController.prototype = {
                     title: 'Constant value'
                 },
 				{
+					type: 'SelectorValue',
+					title: 'Input value'
+				},
+				{
 					type: 'SelectorLink',
 					title: 'Link'
 				},
