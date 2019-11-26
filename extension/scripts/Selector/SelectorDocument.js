@@ -60,9 +60,27 @@ var SelectorDocument = {
                 // data._followSelectorId = this.id;
                 data[this.id + '-href'] = href;
                 // data._follow = href;
-                deferredData.resolve(data);
+                // download image if required
+                if(!this.downloadDocument) {
+                    deferredData.resolve(data);
+                }
+                else {
+                    var deferredFileBase64 = this.downloadFileAsBase64(href);
 
-                return deferredData;
+                    deferredFileBase64.done(function(base64Response) {
+
+                        data['_imageBase64-'+this.id] = base64Response.imageBase64;
+                        data['_imageMimeType-'+this.id] = base64Response.mimeType;
+                        data['_documentFilename'+this.id] = base64Response.filename;
+
+                        deferredData.resolve(data);
+                    }.bind(this)).fail(function() {
+                        // failed to download image continue.
+                        // @TODO handle errror
+                        deferredData.resolve(data);
+                    });
+                }
+                return deferredData.promise();
             }.bind(this, element));
         }.bind(this));
 
@@ -78,12 +96,50 @@ var SelectorDocument = {
     },
 
 
+    downloadFileAsBlob: function(url) {
+
+        var deferredResponse = $.Deferred();
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                if(this.status == 200) {
+                    var blob = this.response;
+                    deferredResponse.resolve(blob);
+                }
+                else {
+                    deferredResponse.reject(xhr.statusText);
+                }
+            }
+        };
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+        xhr.send();
+
+        return deferredResponse.promise();
+    },
+
+    downloadImageBase64: function(url) {
+
+        var deferredResponse = $.Deferred();
+        var deferredDownload = this.downloadFileAsBlob(url);
+        deferredDownload.done(function(blob) {
+            var mimeType = blob.type;
+            var deferredBlob = Base64.blobToBase64(blob);
+            deferredBlob.done(function(imageBase64) {
+                deferredResponse.resolve({
+                    mimeType: mimeType,
+                    imageBase64: imageBase64
+                });
+            }.bind(this));
+        }.bind(this)).fail(deferredResponse.fail);
+        return deferredResponse.promise();
+    },
     getDataColumns: function () {
         return [this.id, this.id + '-href'];
     },
 
     getFeatures: function () {
-        return ['selector','multiple', 'delay','downloadDocument']
+        return ['selector','multiple', 'delay','downloadDocument','stringReplacement']
     }
 
     // getItemCSSSelector: function() {
