@@ -268,7 +268,7 @@ var Selector = (function () {
                             deferredResponse.resolve({
                                 mimeType: mimeType,
                                 imageBase64: imageBase64,
-                                filename: getFileFilename(url)
+                                filename: this.getFileFilename(url)
                             });
                         }.bind(this));
                     }
