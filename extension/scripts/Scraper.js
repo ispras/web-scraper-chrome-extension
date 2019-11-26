@@ -84,8 +84,9 @@ Scraper.prototype = {
 				deferredImageStoreCalls.push(function(selectorId) {
 
 					var imageBase64 = record['_imageBase64-'+selectorId];
-					var deferredDownloadDone = $.Deferred();
 					var documentFilename = record["_documentFilename"+selectorId];
+
+					var deferredDownloadDone = $.Deferred();
 					var deferredBlob = Base64.base64ToBlob(imageBase64, record['_imageMimeType-'+selectorId]);
 
 					delete record['_imageMimeType-'+selectorId];
@@ -95,7 +96,7 @@ Scraper.prototype = {
 					deferredBlob.done(function(blob) {
 
 						var downloadUrl =  window.URL.createObjectURL(blob);
-						var fileSavePath = this.sitemap._id+'/'+selectorId+'/'+this.getFileFilename(documentFilename);
+						var fileSavePath = this.sitemap._id+'/'+selectorId+'/'+documentFilename;
 
 						// download image using chrome api
 						var downloadRequest = {
