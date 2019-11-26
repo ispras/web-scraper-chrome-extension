@@ -239,6 +239,49 @@ var Selector = (function () {
             }
 
             return d.promise();
+        },
+
+
+        getFileFilename: function(url) {
+
+            var parts = url.split("/");
+            var filename = parts[parts.length-1];
+            filename = filename.replace(/\?/g, "");
+            if(filename.length > 130) {
+                filename = filename.substr(0, 130);
+            }
+            return filename;
+        },
+
+        downloadFileAsBase64: function(url) {
+
+            var deferredResponse = $.Deferred();
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    if(this.status == 200) {
+                        var blob = this.response;
+                        var mimeType = blob.type;
+                        var deferredBlob = Base64.blobToBase64(blob);
+
+                        deferredBlob.done(function(imageBase64) {
+                            deferredResponse.resolve({
+                                mimeType: mimeType,
+                                imageBase64: imageBase64,
+                                filename: getFileFilename(url)
+                            });
+                        }.bind(this));
+                    }
+                    else {
+                        deferredResponse.reject(xhr.statusText);
+                    }
+                }
+            };
+            xhr.open('GET', url);
+            xhr.responseType = 'blob';
+            xhr.send();
+
+            return deferredResponse.promise();
         }
     };
 

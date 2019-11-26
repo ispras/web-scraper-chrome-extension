@@ -56,12 +56,13 @@ var SelectorImage = {
 					deferredData.resolve(data);
 				}
 				else {
-                    var deferredImageBase64 = this.downloadImageBase64(src);
+                    var deferredImageBase64 = this.downloadFileAsBase64(src);
 
 					deferredImageBase64.done(function(imageResponse) {
 
 						data['_imageBase64-'+this.id] = imageResponse.imageBase64;
 						data['_imageMimeType-'+this.id] = imageResponse.mimeType;
+						data['_documentFilename'+this.id] = data[this.id+'-src'];
 
 						deferredData.resolve(data);
 					}.bind(this)).fail(function() {
@@ -89,7 +90,7 @@ var SelectorImage = {
 		return dfd.promise();
 	},
 
-	downloadFileAsBlob: function(url) {
+	downloadFileAsBase64: function(url) {
 
 		var deferredResponse = $.Deferred();
 		var xhr = new XMLHttpRequest();
@@ -97,7 +98,16 @@ var SelectorImage = {
 			if (this.readyState == 4) {
 				if(this.status == 200) {
 					var blob = this.response;
-					deferredResponse.resolve(blob);
+					var mimeType = blob.type;
+					var deferredBlob = Base64.blobToBase64(blob);
+
+					deferredBlob.done(function(imageBase64) {
+						deferredResponse.resolve({
+							mimeType: mimeType,
+							imageBase64: imageBase64
+						});
+					}.bind(this));
+					// deferredResponse.resolve(blob);
 				}
 				else {
 					deferredResponse.reject(xhr.statusText);

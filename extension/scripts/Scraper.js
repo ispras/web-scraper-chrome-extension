@@ -74,27 +74,28 @@ Scraper.prototype = {
 	 */
 	saveImages: function(record) {
 
-		var deferredResponse = $.Deferred();
-		var deferredImageStoreCalls = [];
-		var prefixLength = "_imageBase64-".length;
+		let deferredResponse = $.Deferred();
+		let deferredImageStoreCalls = [];
+		let prefixLength = "_imageBase64-".length;
 
-		for(var attr in record) {
+		for(let attr in record) {
 			if(attr.substr(0, prefixLength) === "_imageBase64-") {
 				var selectorId = attr.substring(prefixLength, attr.length);
 				deferredImageStoreCalls.push(function(selectorId) {
 
 					var imageBase64 = record['_imageBase64-'+selectorId];
 					var deferredDownloadDone = $.Deferred();
-
+					var documentFilename = record["_documentFilename"+selectorId];
 					var deferredBlob = Base64.base64ToBlob(imageBase64, record['_imageMimeType-'+selectorId]);
 
 					delete record['_imageMimeType-'+selectorId];
 					delete record['_imageBase64-'+selectorId];
+					delete record["_documentFilename"+selectorId];
 
 					deferredBlob.done(function(blob) {
 
 						var downloadUrl =  window.URL.createObjectURL(blob);
-						var fileSavePath = this.sitemap._id+'/'+selectorId+'/'+this.getFileFilename(record[selectorId+'-src']);
+						var fileSavePath = this.sitemap._id+'/'+selectorId+'/'+this.getFileFilename(documentFilename);
 
 						// download image using chrome api
 						var downloadRequest = {
@@ -133,6 +134,9 @@ Scraper.prototype = {
 
 		return deferredResponse.promise();
 	},
+
+
+
 
 	// @TODO remove recursion and add an iterative way to run these jobs.
     _run: function () {
