@@ -240,7 +240,7 @@ describe("Scraper", function () {
 			sitemap: sitemap
 		});
 
-		var deferredSave = scraper.saveImages(record);
+		var deferredSave = scraper.saveFile(record);
 		var downloadAPICalled = false;
 		chrome.downloads.onChanged.addListener(function() {
 			downloadAPICalled = true;

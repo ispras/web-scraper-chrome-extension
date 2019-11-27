@@ -57,12 +57,11 @@ var SelectorImage = {
 				}
 				else {
                     var deferredFileBase64 = this.downloadFileAsBase64(src);
-
 					deferredFileBase64.done(function(imageResponse) {
 
 						data['_fileBase64-'+this.id] = imageResponse.fileBase64;
 						data['_fileMimeType-'+this.id] = imageResponse.mimeType;
-						data['_filename'+this.id] = data[this.id+'-src'];
+						data['_filename'+this.id] = imageResponse.filename;
 
 						deferredData.resolve(data);
 					}.bind(this)).fail(function() {
