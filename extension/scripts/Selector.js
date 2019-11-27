@@ -257,6 +257,7 @@ var Selector = (function () {
 
             var deferredResponse = $.Deferred();
             var xhr = new XMLHttpRequest();
+            var fileName = this.getFileFilename(url);
             xhr.onreadystatechange = function() {
                 if (this.readyState == 4) {
                     if(this.status == 200) {
@@ -264,13 +265,13 @@ var Selector = (function () {
                         var mimeType = blob.type;
                         var deferredBlob = Base64.blobToBase64(blob);
 
-                        deferredBlob.done(function(imageBase64) {
+                        deferredBlob.done(function(fileBase64) {
                             deferredResponse.resolve({
                                 mimeType: mimeType,
-                                imageBase64: imageBase64,
-                                filename: this.getFileFilename(url)
+                                fileBase64: fileBase64,
+                                filename: fileName
                             });
-                        }.bind(this));
+                        });
                     }
                     else {
                         deferredResponse.reject(xhr.statusText);
