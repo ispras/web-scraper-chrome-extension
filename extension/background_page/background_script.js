@@ -5,8 +5,8 @@ config.loadConfiguration(function () {
 	console.log("initial configuration", config);
 	if (config.storageType === "couchdb") {
 		store = new StoreCouchDB(config);
-	} else if (config.storageType === "mongodb") {
-		store = new StoreMongoDB(config);
+	} else if (config.storageType === "rest") {
+		store = new StoreRestApi(config);
 	} else if (typeof store !== StoreDevtools) {
 		store = new StoreDevtools();
 	}
@@ -17,8 +17,8 @@ chrome.storage.onChanged.addListener(function () {
 		console.log("configuration changed", config);
 		if (config.storageType === "couchdb") {
 			store = new StoreCouchDB(config);
-		} else if (config.storageType === "mongodb") {
-			store = new StoreMongoDB(config);
+		} else if (config.storageType === "rest") {
+			store = new StoreRestApi(config);
 		} else {
 			store = new StoreDevtools();
 		}

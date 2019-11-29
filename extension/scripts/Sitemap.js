@@ -7,7 +7,12 @@ var Sitemap = function (sitemapObj) {
 Sitemap.prototype = {
 
 	initData: function (sitemapObj) {
-		for (var key in sitemapObj) {
+		if ('startUrls' in sitemapObj) {
+			sitemapObj.startUrl = sitemapObj.startUrls;
+			delete sitemapObj.startUrls;
+		}
+
+		for (let key in sitemapObj) {
 			this[key] = sitemapObj[key];
 		}
 
@@ -62,7 +67,7 @@ Sitemap.prototype = {
 
 	getStartUrls: function() {
 
-		var startUrls = this.startUrls;
+		var startUrls = this.startUrl;
         startUrls = DatePatternSupport.expandUrl(startUrls);
 
         var nextUrls = function (url) {

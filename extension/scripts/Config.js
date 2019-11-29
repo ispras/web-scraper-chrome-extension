@@ -6,10 +6,7 @@ Config.prototype = {
 
 	sitemapDb: '<use loadConfiguration()>',
 	dataDb: '<use loadConfiguration()>',
-	mongoUrl: '<use loadConfiguration()>',
-	mongoCollection: '<use loadConfiguration()>',
-	mongoUsername: '<use loadConfiguration()>',
-	mongoPassword: '<use loadConfiguration()>',
+	restUrl: '<use loadConfiguration()>',
 
 	defaults: {
 		storageType: "local",
@@ -18,8 +15,7 @@ Config.prototype = {
 		// this is where scraped data is stored.
 		// empty for local storage
 		dataDb: "",
-		mongoUrl: "",
-		mongoCollection: "sitemaps",
+		restUrl: ""
 	},
 
 	/**
@@ -28,24 +24,20 @@ Config.prototype = {
 	loadConfiguration: function (callback) {
 
 		chrome.storage.sync.get(['sitemapDb', 'dataDb', 'storageType',
-			'mongoUrl', 'mongoCollection'], function (items) {
+			'restUrl'], function (items) {
 
 			this.storageType = items.storageType || this.defaults.storageType;
 
 			this.sitemapDb = this.defaults.sitemapDb;
 			this.dataDb = this.defaults.dataDb;
-			this.mongoUrl = this.defaults.mongoUrl;
-			this.mongoCollection = this.defaults.mongoCollection;
+			this.restUrl = this.defaults.restUrl;
 
 			if (this.storageType === 'couchdb') {
 				this.sitemapDb = items.sitemapDb || this.defaults.sitemapDb;
 				this.dataDb = items.dataDb || this.defaults.dataDb;
 
-			} else if (this.storageType === 'mongodb') {
-
-				this.mongoUrl = items.mongoUrl || this.defaults.mongoUrl;
-				this.mongoCollection = items.mongoCollection || this.defaults.mongoCollection;
-
+			} else if (this.storageType === 'rest') {
+				this.restUrl = items.restUrl || this.defaults.restUrl;
 			}
 
 			callback();

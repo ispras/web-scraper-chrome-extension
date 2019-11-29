@@ -295,7 +295,7 @@ SitemapController.prototype = {
 						}
 					}
 				},
-				"startUrls": {
+				"startUrl": {
 					validators: {
 						notEmpty: {
 							message: 'The start URL is required and cannot be empty'
@@ -411,11 +411,11 @@ SitemapController.prototype = {
 
 		var id = $("#viewport form input[name=_id]").val();
 		var $startUrlInputs = $("#viewport form .input-start-url");
-        var startUrls = $startUrlInputs.val().split(',').map((item) => item.trim());
+        var startUrl = $startUrlInputs.val().split(',').map((item) => item.trim());
 
 		return {
 			id:id,
-			startUrls:startUrls
+			startUrl:startUrl
 		};
 	},
 
@@ -437,7 +437,7 @@ SitemapController.prototype = {
 			else {
 				var sitemap = new Sitemap({
 					_id: sitemapData.id,
-					startUrls: sitemapData.startUrls,
+					startUrl: sitemapData.startUrl,
 					selectors: []
 				});
 				this.store.createSitemap(sitemap, function (sitemap) {
@@ -507,7 +507,7 @@ SitemapController.prototype = {
 			}
 
 			// change data
-			sitemap.startUrls = sitemapData.startUrls;
+			sitemap.startUrl = sitemapData.startUrl;
 
 			// just change sitemaps url
 			if (sitemapData.id === sitemap._id) {

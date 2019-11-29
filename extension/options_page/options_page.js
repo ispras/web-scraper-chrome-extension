@@ -23,12 +23,11 @@ $(function () {
 			$(this).popover('hide');
 		});
 
-	$("#mongoUrl")
+	$("#restUrl")
 		.popover({
-			title: 'Url to connect to Mongo database.',
+			title: 'Url to push your sitemaps.',
 			html: true,
-			content: "MongoDB database url. All sitemaps stored in one collection.<br /> " +
-				"mongodb://[username:password@]host1[:port1]][/[database]",
+			content: "Rest api url.",
 			placement: 'bottom'
 		})
 		.blur(function () {
@@ -42,16 +41,16 @@ $(function () {
 		if (type === 'couchdb') {
 
 			$(".form-group.couchdb").show();
-			$(".form-group.mongodb").hide();
+			$(".form-group.rest").hide();
 
-		} else if (type === 'mongodb') {
+		} else if (type === 'rest') {
 
-			$(".form-group.mongodb").show();
+			$(".form-group.rest").show();
 			$(".form-group.couchdb").hide();
 
 		} else {
 
-			$(".form-group.mongodb").hide();
+			$(".form-group.rest").hide();
 			$(".form-group.couchdb").hide();
 		}
 	});
@@ -65,8 +64,7 @@ $(function () {
 		$("#storageType").val(config.storageType);
 		$("#sitemapDb").val(config.sitemapDb);
 		$("#dataDb").val(config.dataDb);
-		$("#mongoUrl").val(config.mongoUrl);
-		$("#mongoCollection").val(config.mongoCollection);
+		$("#restUrl").val(config.restUrl);
 
 		$("select[name=storageType]").change();
 	});
@@ -79,17 +77,15 @@ $(function () {
 			storageType: storageType,
 			sitemapDb: '',
 			dataDb: '',
-			mongoUrl : '',
-			mongoCollection: '',
+			restUrl : '',
 		};
 
 		if (storageType === 'couchdb') {
 			newConfig.sitemapDb = $("#sitemapDb").val();
 			newConfig.dataDb = $("#dataDb").val();
 		}
-		else if (storageType === 'mongodb') {
-			newConfig.mongoUrl = $("#mongoUrl").val();
-			newConfig.mongoCollection = $("#mongoCollection").val();
+		else if (storageType === 'rest') {
+			newConfig.restUrl = $("#restUrl").val();
 		}
 
 		config.updateConfiguration(newConfig);
