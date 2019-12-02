@@ -39,28 +39,14 @@ var SelectorDocument = {
 
             deferredDataExtractionCalls.push(function (element) {
 
-                var href = element.href;
-                if (this.stringReplacement && this.stringReplacement.replaceString) {
-                    var replace;
-                    var replacement = this.stringReplacement.replacementString || "";
-                    try {
-                        var regex = new RegExp(this.stringReplacement.replaceString, 'gm');
-                        replace = regex.test(href) ? regex : this.stringReplacement.replaceString;
-                    } catch (e) {
-                        replace = this.stringReplacement.replaceString;
-                    }
-
-                    href = href.replace(replace, replacement);
-                }
-
+                var  href = this.StringReplacement(element.href, this.stringReplacement);
                 var deferredData = $.Deferred();
                 var data = {};
 
                 data[this.id] = $(element).text();
-                // data._followSelectorId = this.id;
+
                 data[this.id + '-href'] = href;
-                // data._follow = href;
-                // download image if required
+
                 if(!this.downloadDocument) {
                     deferredData.resolve(data);
                 }
@@ -75,8 +61,7 @@ var SelectorDocument = {
 
                         deferredData.resolve(data);
                     }.bind(this)).fail(function() {
-                        // failed to download image continue.
-                        // @TODO handle errror
+
                         deferredData.resolve(data);
                     });
                 }
@@ -104,7 +89,5 @@ var SelectorDocument = {
         return ['selector','multiple', 'delay','downloadDocument','stringReplacement']
     }
 
-    // getItemCSSSelector: function() {
-    // 	return ["img", "div"];
-    // }
+
 };
