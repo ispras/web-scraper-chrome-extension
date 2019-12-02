@@ -22,12 +22,11 @@ var ConstantValue = {
 
     _getData: function (parentElement) {
 
-        var dfd = $.Deferred();
-        var result = [];
-        var data = {};
+        let dfd = $.Deferred();
+        let data = {};
         data[this.id] = this.insertValue;
-        result.push(data);
-        dfd.resolve(result);
+
+        dfd.resolve([data]);
         return dfd.promise();
     },
 

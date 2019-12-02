@@ -50,7 +50,7 @@ var SelectorDocument = {
                 if(!this.downloadDocument) {
                     deferredData.resolve(data);
                 }
-                else {
+                else if (href) {
                     var deferredFileBase64 = this.downloadFileAsBase64(href);
 
                     deferredFileBase64.done(function(base64Response) {
@@ -64,6 +64,8 @@ var SelectorDocument = {
 
                         deferredData.resolve(data);
                     });
+                } else {
+                    deferredData.resolve(data);
                 }
                 return deferredData.promise();
             }.bind(this, element));

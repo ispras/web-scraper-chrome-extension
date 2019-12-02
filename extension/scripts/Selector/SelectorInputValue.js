@@ -46,6 +46,6 @@ var SelectorInputValue = {
     },
 
     getFeatures: function () {
-        return ['insertValue','selector']
+        return ['insertValue', 'selector']
     }
 };
