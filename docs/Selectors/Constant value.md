@@ -1,6 +1,6 @@
 # Constant value
-Value selector is input constant wich will be added to parent selector, like column with name selector "id" and contain "input constant"
+Value selector is input constant wich will be added to parent selector, like column with name selector "Id" and contain "Value"
 
 ## Configuration options
- * "id" - name of colomn and selector
- * "input constant" - value will be inserted
+ * "Id" - name of colomn and selector
+ * "Value" - value will be inserted

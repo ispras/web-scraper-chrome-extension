@@ -214,6 +214,7 @@ var Selector = (function () {
                 return [];
             }
         },
+
         StringReplacement: function(url, stringReplacement){
 
             if (stringReplacement && stringReplacement.replaceString) {
@@ -221,15 +222,14 @@ var Selector = (function () {
                 var replacement = stringReplacement.replacementString || "";
                 try {
                     var regex = new RegExp(stringReplacement.replaceString, 'gm');
-                    replace = regex.test(href) ? regex : stringReplacement.replaceString;
+                    replace = regex.test(url) ? regex : stringReplacement.replaceString;
                 } catch (e) {
                     replace = stringReplacement.replaceString;
                 }
 
-               return url.replace(replace, replacement);
+                return url.replace(replace, replacement);
             } else {
                 return url;
-
             }
 
         },

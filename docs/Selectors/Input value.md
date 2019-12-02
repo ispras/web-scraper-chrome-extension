@@ -1,6 +1,6 @@
 # Value input
-Value input is input constant wich will be added to parent selector, like column with name selector "id" and contain "input constant"
+Value input is insert custom value into page element, e.g. search form
 
 ## Configuration options
- * "id" - name of colomn and selector
- * "input constant" - value will be inserted
+ * "selector" [CSS selector] [css-selector] to insert a value 
+ * "value" - value will be inserted
