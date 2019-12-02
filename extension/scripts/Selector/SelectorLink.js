@@ -35,19 +35,7 @@ var SelectorLink = {
 		$(elements).each(function (k, element) {
 
 			deferredDataExtractionCalls.push(function(element) {
-
-                var href = element.href;
-                if (this.stringReplacement && this.stringReplacement.replaceString) {
-                    var replace;
-                    var replacement = this.stringReplacement.replacementString || "";
-                    try {
-                        var regex = new RegExp(this.stringReplacement.replaceString, 'gm');
-                        replace = regex.test(href) ? regex : this.stringReplacement.replaceString;
-                    } catch (e) { replace = this.stringReplacement.replaceString; }
-
-                    href = href.replace(replace, replacement);
-                }
-
+				var  href = this.StringReplacement(element.href, this.stringReplacement);
 				var deferredData = $.Deferred();
                 var data = {};
 

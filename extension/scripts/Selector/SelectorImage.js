@@ -36,18 +36,9 @@ var SelectorImage = {
                     src = $(element).css("background-image");
                     src = /^url\((['"]?)(.*)\1\)$/.exec(src);
                     src = src ? src[2] : "";
-                }  
-
-                if (this.stringReplacement && this.stringReplacement.replaceString) {
-                    var replace;
-                    var replacement = this.stringReplacement.replacementString || "";
-                    try {
-                        var regex = new RegExp(this.stringReplacement.replaceString, 'gm');
-                        replace = regex.test(src) ? regex : this.stringReplacement.replaceString;
-                    } catch (e) { replace = this.stringReplacement.replaceString; }
-
-                    src = src.replace(replace, replacement);
                 }
+
+				src = this.StringReplacement(src, this.stringReplacement);
 
                 data[this.id + '-src'] = src;
 

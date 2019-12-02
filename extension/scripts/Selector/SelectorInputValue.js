@@ -1,4 +1,4 @@
-var SelectorValue = {
+var SelectorInputValue = {
 
     canReturnMultipleRecords: function () {
         return false;
@@ -46,6 +46,6 @@ var SelectorValue = {
     },
 
     getFeatures: function () {
-        return ['insertValue']
+        return ['insertValue','selector']
     }
 };

@@ -5,11 +5,11 @@ var ConstantValue = {
     },
 
     canHaveChildSelectors: function () {
-        return true;
+        return false;
     },
 
     canHaveLocalChildSelectors: function () {
-        return true;
+        return false;
     },
 
     canCreateNewJobs: function () {
@@ -23,20 +23,10 @@ var ConstantValue = {
     _getData: function (parentElement) {
 
         var dfd = $.Deferred();
-
-        var elements = this.getDataElements(parentElement);
-
         var result = [];
-        $(elements).each(function (k, element) {
-            $(element).val(this.constantValue);
-        }.bind(this));
-
-
         var data = {};
-        data[this.id] = this.constantValue;
+        data[this.id] = this.insertValue;
         result.push(data);
-
-
         dfd.resolve(result);
         return dfd.promise();
     },
@@ -46,6 +36,6 @@ var ConstantValue = {
     },
 
     getFeatures: function () {
-        return ['constantValue']
+        return ['insertValue']
     }
 };

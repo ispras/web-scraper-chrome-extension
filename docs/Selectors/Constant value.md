@@ -1,4 +1,4 @@
-# Value selector
+# Constant value
 Value selector is input constant wich will be added to parent selector, like column with name selector "id" and contain "input constant"
 
 ## Configuration options

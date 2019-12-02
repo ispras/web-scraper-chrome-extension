@@ -214,6 +214,25 @@ var Selector = (function () {
                 return [];
             }
         },
+        StringReplacement: function(url, stringReplacement){
+
+            if (stringReplacement && stringReplacement.replaceString) {
+                var replace;
+                var replacement = stringReplacement.replacementString || "";
+                try {
+                    var regex = new RegExp(stringReplacement.replaceString, 'gm');
+                    replace = regex.test(href) ? regex : stringReplacement.replaceString;
+                } catch (e) {
+                    replace = stringReplacement.replaceString;
+                }
+
+               return url.replace(replace, replacement);
+            } else {
+                return url;
+
+            }
+
+        },
 
         getData: function (parentElement) {
 
