@@ -215,7 +215,7 @@ var Selector = (function () {
             }
         },
 
-        StringReplacement: function(url, stringReplacement){
+        stringReplace: function(url, stringReplacement){
 
             if (stringReplacement && stringReplacement.replaceString) {
                 var replace;
@@ -261,7 +261,7 @@ var Selector = (function () {
         },
 
 
-        getFileFilename: function(url) {
+        getFilenameFromUrl: function(url) {
 
             var parts = url.split("/");
             var filename = parts[parts.length-1];
@@ -276,7 +276,7 @@ var Selector = (function () {
 
             var deferredResponse = $.Deferred();
             var xhr = new XMLHttpRequest();
-            var fileName = this.getFileFilename(url);
+            var fileName = this.getFilenameFromUrl(url);
             xhr.onreadystatechange = function() {
                 if (this.readyState == 4) {
                     if(this.status == 200) {
