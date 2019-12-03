@@ -24,7 +24,7 @@ var ConstantValue = {
 
         let dfd = $.Deferred();
         let data = {};
-        data[this.id] = this.insertValue;
+        data[this.id] = this.value;
 
         dfd.resolve([data]);
         return dfd.promise();
@@ -35,6 +35,6 @@ var ConstantValue = {
     },
 
     getFeatures: function () {
-        return ['insertValue']
+        return ['value']
     }
 };
