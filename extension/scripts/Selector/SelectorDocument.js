@@ -39,7 +39,7 @@ var SelectorDocument = {
 
             deferredDataExtractionCalls.push(function (element) {
 
-                var  href = this.StringReplacement(element.href, this.stringReplacement);
+                var  href = this.stringReplace(element.href, this.stringReplacement);
                 var deferredData = $.Deferred();
                 var data = {};
 

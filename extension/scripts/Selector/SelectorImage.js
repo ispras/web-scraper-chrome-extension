@@ -38,7 +38,7 @@ var SelectorImage = {
                     src = src ? src[2] : "";
                 }
 
-				src = this.StringReplacement(src, this.stringReplacement);
+				src = this.stringReplace(src, this.stringReplacement);
 
                 data[this.id + '-src'] = src;
 
