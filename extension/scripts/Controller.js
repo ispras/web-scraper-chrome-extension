@@ -890,7 +890,7 @@ SitemapController.prototype = {
 		var delay = $("#edit-selector [name=delay]").val();
         var extractAttribute = $("#edit-selector [name=extractAttribute]").val();
         var extractStyle = $("#edit-selector [name=extractStyle]").val();  
-        var insertValue = $("#edit-selector [name=insertValue]").val();
+        var value = $("#edit-selector [name=value]").val();
 
 		var parentSelectors = $("#edit-selector [name=parentSelectors]").val();
 		var columns = [];
@@ -941,7 +941,7 @@ SitemapController.prototype = {
 			clickPopup: clickPopup,
             extractAttribute: extractAttribute,
             extractStyle: extractStyle,
-            insertValue: insertValue,
+            value: value,
 			parentSelectors: parentSelectors,
 			columns:columns,
 			delay:delay,

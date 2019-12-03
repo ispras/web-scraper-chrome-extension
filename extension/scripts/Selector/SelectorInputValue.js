@@ -28,12 +28,12 @@ var SelectorInputValue = {
 
         var result = [];
         $(elements).each(function (k, element) {
-            $(element).val(this.insertValue);
+            $(element).val(this.value);
         }.bind(this));
 
 
         var data = {};
-        data[this.id] = this.insertValue;
+        data[this.id] = this.value;
         result.push(data);
 
 
@@ -46,6 +46,6 @@ var SelectorInputValue = {
     },
 
     getFeatures: function () {
-        return ['insertValue', 'selector']
+        return ['value', 'selector']
     }
 };
