@@ -172,7 +172,7 @@ var SelectorElementClick = {
 	},
 
     getFeatures: function () {
-        return ['multiple', 'delay', 'clickElementSelector', 'clickType',
+        return ['selector', 'multiple', 'delay', 'clickElementSelector', 'clickType',
             'discardInitialElements', 'clickElementUniquenessType',
             'paginationLimit'];
     }

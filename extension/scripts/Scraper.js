@@ -69,34 +69,36 @@ Scraper.prototype = {
 	},
 
 	/**
-	 * Save images for user if the records contains them
+	 * Save files for user if the records contains them
 	 * @param record
 	 */
-	saveImages: function(record) {
+	saveFile: function(record) {
 
-		var deferredResponse = $.Deferred();
-		var deferredImageStoreCalls = [];
-		var prefixLength = "_imageBase64-".length;
+		let deferredResponse = $.Deferred();
+		let deferredFileStoreCalls = [];
+		let prefixLength = "_fileBase64-".length;
 
-		for(var attr in record) {
-			if(attr.substr(0, prefixLength) === "_imageBase64-") {
+		for(let attr in record) {
+			if(attr.substr(0, prefixLength) === "_fileBase64-") {
 				var selectorId = attr.substring(prefixLength, attr.length);
-				deferredImageStoreCalls.push(function(selectorId) {
+				deferredFileStoreCalls.push(function(selectorId) {
 
-					var imageBase64 = record['_imageBase64-'+selectorId];
+					var fileBase64 = record['_fileBase64-'+selectorId];
+					var documentFilename = record["_filename"+selectorId];
+
 					var deferredDownloadDone = $.Deferred();
+					var deferredBlob = Base64.base64ToBlob(fileBase64, record['_fileMimeType-'+selectorId]);
 
-					var deferredBlob = Base64.base64ToBlob(imageBase64, record['_imageMimeType-'+selectorId]);
-
-					delete record['_imageMimeType-'+selectorId];
-					delete record['_imageBase64-'+selectorId];
+					delete record['_fileMimeType-'+selectorId];
+					delete record['_fileBase64-'+selectorId];
+					delete record["_filename"+selectorId];
 
 					deferredBlob.done(function(blob) {
 
 						var downloadUrl =  window.URL.createObjectURL(blob);
-						var fileSavePath = this.sitemap._id+'/'+selectorId+'/'+this.getFileFilename(record[selectorId+'-src']);
+						var fileSavePath = this.sitemap._id+'/'+selectorId+'/'+documentFilename;
 
-						// download image using chrome api
+						// download file using chrome api
 						var downloadRequest = {
 							url: downloadUrl,
 							filename: fileSavePath
@@ -127,12 +129,15 @@ Scraper.prototype = {
 			}
 		}
 
-		$.whenCallSequentially(deferredImageStoreCalls).done(function() {
+		$.whenCallSequentially(deferredFileStoreCalls).done(function() {
 			deferredResponse.resolve();
 		});
 
 		return deferredResponse.promise();
 	},
+
+
+
 
 	// @TODO remove recursion and add an iterative way to run these jobs.
     _run: function () {
@@ -153,7 +158,7 @@ Scraper.prototype = {
 			records.forEach(function (record) {
 				//var record = JSON.parse(JSON.stringify(rec));
 
-				deferredDatamanipulations.push(this.saveImages.bind(this, record));
+				deferredDatamanipulations.push(this.saveFile.bind(this, record));
 
 				// @TODO refactor job exstraction to a seperate method
 				if (this.recordCanHaveChildJobs(record)) {

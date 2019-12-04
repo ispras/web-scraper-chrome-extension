@@ -742,9 +742,13 @@ SitemapController.prototype = {
                     title: 'Text'
                 },
                 {
-                    type: 'SelectorValue',
-                    title: 'Value Input'
+                    type: 'ConstantValue',
+                    title: 'Constant value'
                 },
+				{
+					type: 'SelectorInputValue',
+					title: 'Input value'
+				},
 				{
 					type: 'SelectorLink',
 					title: 'Link'
@@ -756,6 +760,10 @@ SitemapController.prototype = {
 				{
 					type: 'SelectorImage',
 					title: 'Image'
+				},
+				{
+					type: 'SelectorDocument',
+					title: 'Document'
 				},
 				{
 					type: 'SelectorTable',
@@ -877,11 +885,13 @@ SitemapController.prototype = {
 		var discardInitialElements = $("#edit-selector [name=discardInitialElements]").is(":checked");
 		var multiple = $("#edit-selector [name=multiple]").is(":checked");
 		var downloadImage = $("#edit-selector [name=downloadImage]").is(":checked");
+		var downloadDocument = $("#edit-selector [name=downloadDocument]").is(":checked");
 		var clickPopup = $("#edit-selector [name=clickPopup]").is(":checked");
 		var delay = $("#edit-selector [name=delay]").val();
         var extractAttribute = $("#edit-selector [name=extractAttribute]").val();
         var extractStyle = $("#edit-selector [name=extractStyle]").val();  
-        var insertValue = $("#edit-selector [name=insertValue]").val();  
+        var value = $("#edit-selector [name=value]").val();
+
 		var parentSelectors = $("#edit-selector [name=parentSelectors]").val();
 		var columns = [];
 		var $columnHeaders = $("#edit-selector .column-header");
@@ -927,10 +937,11 @@ SitemapController.prototype = {
 			type: type,
 			multiple: multiple,
 			downloadImage: downloadImage,
+			downloadDocument: downloadDocument,
 			clickPopup: clickPopup,
             extractAttribute: extractAttribute,
             extractStyle: extractStyle,
-            insertValue: insertValue,
+            value: value,
 			parentSelectors: parentSelectors,
 			columns:columns,
 			delay:delay,

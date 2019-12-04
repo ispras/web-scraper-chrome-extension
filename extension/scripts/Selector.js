@@ -215,6 +215,25 @@ var Selector = (function () {
             }
         },
 
+        stringReplace: function(url, stringReplacement){
+
+            if (stringReplacement && stringReplacement.replaceString) {
+                var replace;
+                var replacement = stringReplacement.replacementString || "";
+                try {
+                    var regex = new RegExp(stringReplacement.replaceString, 'gm');
+                    replace = regex.test(url) ? regex : stringReplacement.replaceString;
+                } catch (e) {
+                    replace = stringReplacement.replaceString;
+                }
+
+                return url.replace(replace, replacement);
+            } else {
+                return url;
+            }
+
+        },
+
         getData: function (parentElement) {
 
             var d = $.Deferred();
@@ -239,6 +258,50 @@ var Selector = (function () {
             }
 
             return d.promise();
+        },
+
+
+        getFilenameFromUrl: function(url) {
+
+            var parts = url.split("/");
+            var filename = parts[parts.length-1];
+            filename = filename.replace(/\?/g, "");
+            if(filename.length > 130) {
+                filename = filename.substr(0, 130);
+            }
+            return filename;
+        },
+
+        downloadFileAsBase64: function(url) {
+
+            var deferredResponse = $.Deferred();
+            var xhr = new XMLHttpRequest();
+            var fileName = this.getFilenameFromUrl(url);
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    if(this.status == 200) {
+                        var blob = this.response;
+                        var mimeType = blob.type;
+                        var deferredBlob = Base64.blobToBase64(blob);
+
+                        deferredBlob.done(function(fileBase64) {
+                            deferredResponse.resolve({
+                                mimeType: mimeType,
+                                fileBase64: fileBase64,
+                                filename: fileName
+                            });
+                        });
+                    }
+                    else {
+                        deferredResponse.reject(xhr.statusText);
+                    }
+                }
+            };
+            xhr.open('GET', url);
+            xhr.responseType = 'blob';
+            xhr.send();
+
+            return deferredResponse.promise();
         }
     };
 

@@ -54,6 +54,6 @@ var SelectorGroup = {
 	},
 
 	getFeatures: function () {
-        return ['delay', 'extractAttribute', 'textmanipulation', 'extractStyle']
+        return ['selector', 'delay', 'extractAttribute', 'textmanipulation', 'extractStyle']
 	}
 };

@@ -66,6 +66,6 @@ var SelectorElementScroll = {
 	},
 
 	getFeatures: function () {
-		return ['multiple', 'delay', 'paginationLimit'];
+		return ['selector', 'multiple', 'delay', 'paginationLimit'];
 	}
 };

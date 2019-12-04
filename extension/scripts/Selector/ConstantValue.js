@@ -1,15 +1,15 @@
-var SelectorValue = {
+var ConstantValue = {
 
     canReturnMultipleRecords: function () {
         return false;
     },
 
     canHaveChildSelectors: function () {
-        return true;
+        return false;
     },
 
     canHaveLocalChildSelectors: function () {
-        return true;
+        return false;
     },
 
     canCreateNewJobs: function () {
@@ -22,30 +22,19 @@ var SelectorValue = {
 
     _getData: function (parentElement) {
 
-        var dfd = $.Deferred();
+        let dfd = $.Deferred();
+        let data = {};
+        data[this.id] = this.value;
 
-        var elements = this.getDataElements(parentElement);
-
-        var result = [];
-        $(elements).each(function (k, element) {
-            $(element).val(this.insertValue);
-        }.bind(this));
-
-
-        var data = {};
-        data[this.id] = this.insertValue;
-        result.push(data);
-
-
-        dfd.resolve(result);
+        dfd.resolve([data]);
         return dfd.promise();
     },
 
     getDataColumns: function () {
-        return [];
+        return [this.id];
     },
 
     getFeatures: function () {
-        return ['insertValue']
+        return ['value']
     }
 };
