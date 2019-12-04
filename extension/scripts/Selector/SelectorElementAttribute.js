@@ -46,6 +46,6 @@ var SelectorElementAttribute = {
 	},
 
 	getFeatures: function () {
-        return ['multiple', 'extractAttribute', 'delay', 'textmanipulation']
+        return ['selector', 'multiple', 'extractAttribute', 'delay', 'textmanipulation']
 	}
 };
