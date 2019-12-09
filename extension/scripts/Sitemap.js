@@ -7,8 +7,13 @@ var Sitemap = function (sitemapObj) {
 Sitemap.prototype = {
 
 	initData: function (sitemapObj) {
-		for (var key in sitemapObj) {
+		for (let key in sitemapObj) {
 			this[key] = sitemapObj[key];
+		}
+
+		if (!Array.isArray(this.startUrls)) {
+			let startUrl = this.startUrls;
+			this.startUrls = startUrl ? [startUrl] : [];
 		}
 
 		var selectors = this.selectors;

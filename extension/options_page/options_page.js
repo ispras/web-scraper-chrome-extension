@@ -23,14 +23,34 @@ $(function () {
 			$(this).popover('hide');
 		});
 
+	$("#restUrl")
+		.popover({
+			title: 'Url to push your sitemaps.',
+			html: true,
+			content: "Rest api url.",
+			placement: 'bottom'
+		})
+		.blur(function () {
+			$(this).popover('hide');
+		});
+
 	// switch between configuration types
 	$("select[name=storageType]").change(function () {
 		var type = $(this).val();
 
 		if (type === 'couchdb') {
+
 			$(".form-group.couchdb").show();
-		}
-		else {
+			$(".form-group.rest").hide();
+
+		} else if (type === 'rest') {
+
+			$(".form-group.rest").show();
+			$(".form-group.couchdb").hide();
+
+		} else {
+
+			$(".form-group.rest").hide();
 			$(".form-group.couchdb").hide();
 		}
 	});
@@ -44,6 +64,7 @@ $(function () {
 		$("#storageType").val(config.storageType);
 		$("#sitemapDb").val(config.sitemapDb);
 		$("#dataDb").val(config.dataDb);
+		$("#restUrl").val(config.restUrl);
 
 		$("select[name=storageType]").change();
 	});
@@ -51,25 +72,20 @@ $(function () {
 	// Sync storage settings
 	$("form#storage_configuration").submit(function () {
 
-		var sitemapDb = $("#sitemapDb").val();
-		var dataDb = $("#dataDb").val();
-		var storageType = $("#storageType").val();
+		const storageType = $("#storageType").val();
+		const newConfig = {
+			storageType: storageType,
+			sitemapDb: '',
+			dataDb: '',
+			restUrl : '',
+		};
 
-		var newConfig;
-
-		if (storageType === 'local') {
-			newConfig = {
-				storageType: storageType,
-				sitemapDb: ' ',
-				dataDb: ' '
-			}
+		if (storageType === 'couchdb') {
+			newConfig.sitemapDb = $("#sitemapDb").val();
+			newConfig.dataDb = $("#dataDb").val();
 		}
-		else {
-			newConfig = {
-				storageType: storageType,
-				sitemapDb: sitemapDb,
-				dataDb: dataDb
-			}
+		else if (storageType === 'rest') {
+			newConfig.restUrl = $("#restUrl").val();
 		}
 
 		config.updateConfiguration(newConfig);

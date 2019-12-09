@@ -6,6 +6,7 @@ Config.prototype = {
 
 	sitemapDb: '<use loadConfiguration()>',
 	dataDb: '<use loadConfiguration()>',
+	restUrl: '<use loadConfiguration()>',
 
 	defaults: {
 		storageType: "local",
@@ -13,7 +14,8 @@ Config.prototype = {
 		sitemapDb: "scraper-sitemaps",
 		// this is where scraped data is stored.
 		// empty for local storage
-		dataDb: ""
+		dataDb: "",
+		restUrl: ""
 	},
 
 	/**
@@ -21,16 +23,21 @@ Config.prototype = {
 	 */
 	loadConfiguration: function (callback) {
 
-		chrome.storage.sync.get(['sitemapDb', 'dataDb', 'storageType'], function (items) {
+		chrome.storage.sync.get(['sitemapDb', 'dataDb', 'storageType',
+			'restUrl'], function (items) {
 
 			this.storageType = items.storageType || this.defaults.storageType;
-			if (this.storageType === 'local') {
-				this.sitemapDb = this.defaults.sitemapDb;
-				this.dataDb = this.defaults.dataDb;
-			}
-			else {
+
+			this.sitemapDb = this.defaults.sitemapDb;
+			this.dataDb = this.defaults.dataDb;
+			this.restUrl = this.defaults.restUrl;
+
+			if (this.storageType === 'couchdb') {
 				this.sitemapDb = items.sitemapDb || this.defaults.sitemapDb;
 				this.dataDb = items.dataDb || this.defaults.dataDb;
+
+			} else if (this.storageType === 'rest') {
+				this.restUrl = items.restUrl || this.defaults.restUrl;
 			}
 
 			callback();

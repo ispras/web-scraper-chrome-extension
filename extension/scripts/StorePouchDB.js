@@ -1,4 +1,4 @@
-var Store = function (config) {
+var StorePouchDB = function (config) {
     this.config = config;
 
     // configure couchdb
@@ -52,7 +52,7 @@ StoreScrapeResultWriter.prototype = {
     }
 };
 
-Store.prototype = {
+StorePouchDB.prototype = {
 
 	sanitizeSitemapDataDbName: function(dbName) {
 		return 'sitemap-data-'+dbName.replace(/[^a-z0-9_\$\(\)\+\-/]/gi, "_");

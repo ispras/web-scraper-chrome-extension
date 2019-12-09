@@ -42,7 +42,7 @@
     <script src="../../extension/scripts/Sitemap.js"></script>
     <script src="../../extension/scripts/SelectorGraph.js"></script>
     <script src="../../extension/scripts/SelectorGraphv2.js"></script>
-    <script src="../../extension/scripts/Store.js"></script>
+    <script src="../../extension/scripts/StoreCouchDB.js"></script>
     <script src="../../extension/scripts/StoreDevtools.js"></script>
     <script src="../../extension/assets/css-selector/lib/CssSelector.js"></script>
     <script src="../../extension/scripts/ContentSelector.js"></script>
@@ -70,7 +70,7 @@
 
             var config = new Config();
             config.loadConfiguration(function () {
-                var store = new Store(config);
+                var store = new StorePouchDB(config);
                 new SitemapController({
                     store: store,
                     templateDir: '../../extension/devtools/views/'

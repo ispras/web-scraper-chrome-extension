@@ -1,121 +1,123 @@
 {
-  "manifest_version": 2,
-  "version": "0.3.0.00",
-  "name": "Web Scraper",
-  "short_name": "Web Scraper",
-  "description": "Tool for data extraction from websites",
-  "permissions": [
-    "<all_urls>",
-    "tabs",
-    "notifications",
-    "storage",
-    "unlimitedStorage",
-    "downloads"
-  ],
-  "icons": {
-    "16": "assets/images/icon16.png",
-    "48": "assets/images/icon48.png",
-    "128": "assets/images/icon128.png"
-  },
-  "browser_action": {
-    "default_icon": {
-      "19": "assets/images/icon19.png",
-      "38": "assets/images/icon38.png"
-    },
-    "default_title": "Web Scraper",
-    "default_popup": "popup.html"
-  },
-  "options_page": "options_page/options.html",
-  "devtools_page": "devtools/devtools_init_page.html",
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-  "background": {
-    "scripts": [
-      "assets/jquery-2.0.3.js",
-      "assets/papaparse.min.js",
-      "assets/jquery.whencallsequentially.js",
-      "assets/papaparse.min.js",
-      "assets/pouchdb-nightly.min.js",
-      "assets/base64.js",
-      "scripts/Selector.js",
-      "scripts/Selector/SelectorElement.js",
-      "scripts/Selector/SelectorGroup.js",
-      "scripts/Selector/SelectorLink.js",
-      "scripts/Selector/SelectorPopupLink.js",
-      "scripts/Selector/SelectorText.js",
-      "scripts/Selector/SelectorInputValue.js",
-      "scripts/Selector/ConstantValue.js",
-      "scripts/Selector/SelectorImage.js",
-      "scripts/Selector/SelectorDocument.js",
-      "scripts/Selector/SelectorHTML.js",
-      "scripts/Selector/SelectorElementAttribute.js",
-      "scripts/Selector/SelectorElementStyle.js",
-      "scripts/Selector/SelectorTable.js",
-      "scripts/Selector/SelectorElementScroll.js",
-      "scripts/Selector/SelectorElementClick.js",
-      "scripts/SelectorList.js",
-      "scripts/Sitemap.js",
-      "scripts/Queue.js",
-      "scripts/Job.js",
-      "scripts/Scraper.js",
-      "scripts/ChromePopupBrowser.js",
-      "scripts/Config.js",
-      "scripts/Store.js",
-      "scripts/ContentScript.js",
-      "scripts/BackgroundScript.js",
-      "scripts/DateUtils/SimpleDateFormatter.js",
-      "scripts/DateUtils/DateRoller.js",
-      "scripts/DateUtils/DatePatternSupport.js",
-      "background_page/background_script.js"
-    ]
-  },
-  "web_accessible_resources": [
-    "assets/images/icon16.png",
-    "assets/images/icon48.png",
-    "assets/images/icon128.png",
-    "assets/images/icon19.png",
-    "assets/images/icon38.png"
-  ],
-  "content_scripts": [
-    {
-      "matches": [
-        "*://*/*"
-      ],
-      "js": [
-        "assets/jquery-2.0.3.js",
-        "assets/papaparse.min.js",
-        "assets/jquery.whencallsequentially.js",
-        "assets/sugar-1.4.1.js",
-        "assets/css-selector/lib/CssSelector.js",
-        "assets/base64.js",
-        "scripts/DataExtractor.js",
-        "scripts/ContentSelector.js",
-        "scripts/Selector.js",
-        "scripts/ElementQuery.js",
-        "scripts/UniqueElementList.js",
-        "scripts/Selector/SelectorElement.js",
-        "scripts/Selector/SelectorGroup.js",
-        "scripts/Selector/SelectorLink.js",
-        "scripts/Selector/SelectorPopupLink.js",
-        "scripts/Selector/SelectorText.js",
-        "scripts/Selector/SelectorInputValue.js",
-        "scripts/Selector/ConstantValue.js",
-        "scripts/Selector/SelectorImage.js",
-        "scripts/Selector/SelectorDocument.js",
-        "scripts/Selector/SelectorHTML.js",
-        "scripts/Selector/SelectorElementAttribute.js",
-        "scripts/Selector/SelectorElementStyle.js",
-        "scripts/Selector/SelectorTable.js",
-        "scripts/Selector/SelectorElementScroll.js",
-        "scripts/Selector/SelectorElementClick.js",
-        "scripts/SelectorList.js",
-        "scripts/Sitemap.js",
-        "scripts/ContentScript.js",
-        "scripts/BackgroundScript.js",
-        "content_script/content_script.js"
-      ],
-      "css": [
-        "content_script/content_script.css"
-      ]
-    }
-  ]
+	"manifest_version": 2,
+	"version": "0.3.1.00",
+	"name": "Web Scraper",
+	"short_name": "Web Scraper",
+	"description": "Tool for data extraction from websites",
+	"permissions": [
+		"<all_urls>",
+		"tabs",
+        "notifications",
+		"storage",
+		"unlimitedStorage",
+		"downloads"
+	],
+	"icons": {
+		"16": "assets/images/icon16.png",
+		"48": "assets/images/icon48.png",
+		"128": "assets/images/icon128.png"
+	},
+	"browser_action": {
+		"default_icon": {
+			"19": "assets/images/icon19.png",
+			"38": "assets/images/icon38.png"
+		},
+		"default_title": "Web Scraper",
+		"default_popup": "popup.html"
+	},
+	"options_page": "options_page/options.html",
+	"devtools_page": "devtools/devtools_init_page.html",
+	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+	"background": {
+		"scripts": [
+			"assets/jquery-2.0.3.js",
+			"assets/papaparse.min.js",
+			"assets/jquery.whencallsequentially.js",
+			"assets/papaparse.min.js",
+			"assets/pouchdb-nightly.min.js",
+			"assets/base64.js",
+			"scripts/Selector.js",
+			"scripts/Selector/SelectorElement.js",
+			"scripts/Selector/SelectorGroup.js",
+			"scripts/Selector/SelectorLink.js",
+			"scripts/Selector/SelectorPopupLink.js",
+			"scripts/Selector/SelectorText.js",
+			"scripts/Selector/SelectorInputValue.js",
+			"scripts/Selector/ConstantValue.js",
+			"scripts/Selector/SelectorImage.js",
+			"scripts/Selector/SelectorDocument.js",
+			"scripts/Selector/SelectorHTML.js",
+			"scripts/Selector/SelectorElementAttribute.js",
+			"scripts/Selector/SelectorElementStyle.js",
+			"scripts/Selector/SelectorTable.js",
+			"scripts/Selector/SelectorElementScroll.js",
+			"scripts/Selector/SelectorElementClick.js",
+			"scripts/SelectorList.js",
+			"scripts/Sitemap.js",
+			"scripts/Queue.js",
+			"scripts/Job.js",
+			"scripts/Scraper.js",
+			"scripts/ChromePopupBrowser.js",
+			"scripts/Config.js",
+			"scripts/StorePouchDB.js",
+			"scripts/StoreRestApi.js",
+			"scripts/StoreDevtools.js",
+			"scripts/ContentScript.js",
+			"scripts/BackgroundScript.js",
+			"scripts/DateUtils/SimpleDateFormatter.js",
+			"scripts/DateUtils/DateRoller.js",
+			"scripts/DateUtils/DatePatternSupport.js",
+			"background_page/background_script.js"
+		]
+	},
+	"web_accessible_resources": [
+		"assets/images/icon16.png",
+		"assets/images/icon48.png",
+		"assets/images/icon128.png",
+		"assets/images/icon19.png",
+		"assets/images/icon38.png"
+	],
+	"content_scripts": [
+		{
+			"matches": [
+				"*://*/*"
+			],
+			"js": [
+				"assets/jquery-2.0.3.js",
+				"assets/papaparse.min.js",
+				"assets/jquery.whencallsequentially.js",
+				"assets/sugar-1.4.1.js",
+				"assets/css-selector/lib/CssSelector.js",
+				"assets/base64.js",
+				"scripts/DataExtractor.js",
+				"scripts/ContentSelector.js",
+				"scripts/Selector.js",
+				"scripts/ElementQuery.js",
+				"scripts/UniqueElementList.js",
+				"scripts/Selector/SelectorElement.js",
+				"scripts/Selector/SelectorGroup.js",
+				"scripts/Selector/SelectorLink.js",
+				"scripts/Selector/SelectorPopupLink.js",
+				"scripts/Selector/SelectorText.js",
+				"scripts/Selector/SelectorInputValue.js",
+				"scripts/Selector/ConstantValue.js",
+				"scripts/Selector/SelectorImage.js",
+				"scripts/Selector/SelectorDocument.js",
+				"scripts/Selector/SelectorHTML.js",
+				"scripts/Selector/SelectorElementAttribute.js",
+				"scripts/Selector/SelectorElementStyle.js",
+				"scripts/Selector/SelectorTable.js",
+				"scripts/Selector/SelectorElementScroll.js",
+				"scripts/Selector/SelectorElementClick.js",
+				"scripts/SelectorList.js",
+				"scripts/Sitemap.js",
+				"scripts/ContentScript.js",
+				"scripts/BackgroundScript.js",
+				"content_script/content_script.js"
+			],
+			"css": [
+				"content_script/content_script.css"
+			]
+		}
+	]
 }

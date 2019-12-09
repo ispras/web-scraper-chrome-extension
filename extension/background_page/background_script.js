@@ -1,14 +1,23 @@
 var config = new Config();
 var store;
+
 config.loadConfiguration(function () {
 	console.log("initial configuration", config);
-	store = new Store(config);
+	if (config.storageType === "rest") {
+		store = new StoreRestApi(config);
+	} else {
+		store = new StorePouchDB(config);
+	}
 });
 
 chrome.storage.onChanged.addListener(function () {
 	config.loadConfiguration(function () {
 		console.log("configuration changed", config);
-		store = new Store(config);
+		if (config.storageType === "rest") {
+			store = new StoreRestApi(config);
+		} else {
+			store = new StorePouchDB(config);
+		}
 	});
 });
 
