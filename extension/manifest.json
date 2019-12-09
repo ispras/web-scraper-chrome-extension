@@ -59,7 +59,7 @@
 			"scripts/Scraper.js",
 			"scripts/ChromePopupBrowser.js",
 			"scripts/Config.js",
-			"scripts/StoreCouchDB.js",
+			"scripts/StorePouchDB.js",
 			"scripts/StoreRestApi.js",
 			"scripts/StoreDevtools.js",
 			"scripts/ContentScript.js",

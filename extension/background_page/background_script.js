@@ -3,24 +3,20 @@ var store;
 
 config.loadConfiguration(function () {
 	console.log("initial configuration", config);
-	if (config.storageType === "couchdb") {
-		store = new StoreCouchDB(config);
-	} else if (config.storageType === "rest") {
+	if (config.storageType === "rest") {
 		store = new StoreRestApi(config);
-	} else if (typeof store !== StoreDevtools) {
-		store = new StoreDevtools();
+	} else {
+		store = new StorePouchDB(config);
 	}
 });
 
 chrome.storage.onChanged.addListener(function () {
 	config.loadConfiguration(function () {
 		console.log("configuration changed", config);
-		if (config.storageType === "couchdb") {
-			store = new StoreCouchDB(config);
-		} else if (config.storageType === "rest") {
+		if (config.storageType === "rest") {
 			store = new StoreRestApi(config);
 		} else {
-			store = new StoreDevtools();
+			store = new StorePouchDB(config);
 		}
 	});
 });

@@ -70,7 +70,7 @@
 
             var config = new Config();
             config.loadConfiguration(function () {
-                var store = new StoreCouchDB(config);
+                var store = new StorePouchDB(config);
                 new SitemapController({
                     store: store,
                     templateDir: '../../extension/devtools/views/'
