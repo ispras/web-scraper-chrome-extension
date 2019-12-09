@@ -1,5 +1,6 @@
 var StoreRestApi = function (config) {
     this.uri = config.restUrl;
+    this.localDataStore = new StorePouchDB(config);
 };
 
 StoreRestApi.prototype = {
@@ -70,25 +71,6 @@ StoreRestApi.prototype = {
             contentType : "application/json"
         });
     },
-    getSitemapData: function (sitemap, callback) {
-        $.ajax({
-            type : "GET",
-            url : this.uri + '/sitemaps/',
-            success : function (data) {
-                let sitemap;
-                for (let i in response) {
-                    if (data[i]._id === sitemap._id){
-                        sitemap = new Sitemap(data[i]);
-                    }
-                }
-                callback(sitemap);
-            },
-            error : function(jqXHR, textStatus, errorThrown) {
-                alert("StoreApi: Could not get all sitemaps.")
-            },
-            contentType : "application/json"
-        });
-    },
     sitemapExists: function (sitemapId, callback) {
         $.ajax({
             type : "GET",
@@ -107,5 +89,11 @@ StoreRestApi.prototype = {
             },
             contentType : "application/json"
         });
+    },
+    initSitemapDataDb: function(sitemapId, callback) {
+        this.localDataStore.initSitemapDataDb(sitemapId, callback);
+    },
+    getSitemapData: function (sitemap, callback) {
+        this.localDataStore.getSitemapData(sitemap, callback);
     }
 };
