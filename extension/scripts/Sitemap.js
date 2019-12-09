@@ -7,13 +7,13 @@ var Sitemap = function (sitemapObj) {
 Sitemap.prototype = {
 
 	initData: function (sitemapObj) {
-		if ('startUrls' in sitemapObj) {
-			sitemapObj.startUrl = sitemapObj.startUrls;
-			delete sitemapObj.startUrls;
-		}
-
 		for (let key in sitemapObj) {
 			this[key] = sitemapObj[key];
+		}
+
+		if (!Array.isArray(this.startUrls)) {
+			let startUrl = this.startUrls;
+			this.startUrls = startUrl ? [startUrl] : [];
 		}
 
 		var selectors = this.selectors;
@@ -67,7 +67,7 @@ Sitemap.prototype = {
 
 	getStartUrls: function() {
 
-		var startUrls = this.startUrl;
+		var startUrls = this.startUrls;
         startUrls = DatePatternSupport.expandUrl(startUrls);
 
         var nextUrls = function (url) {
