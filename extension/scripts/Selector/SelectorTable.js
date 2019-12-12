@@ -160,14 +160,14 @@ var SelectorTable = {
     },
 
     getFeatures: function () {
-        return ['selector', 'multiple', 'columns', 'delay', 'tableDataRowSelector', 'tableHeaderRowSelector', 'tableAddMissingColumns']
+        return ['selector', 'multiple', 'columns', 'delay', 'tableDataRowSelector', 'tableHeaderRowSelector', 'tableAddMissingColumns','verticalTable']
     },
 
     getItemCSSSelector: function () {
         return "table";
     },
 
-    getTableHeaderRowSelectorFromTableHTML: function (html) {
+    getTableHeaderRowSelectorFromTableHTML: function (html,verticalTable) {
         var $table = $(html);
         var firstRow = $table.find("tr:first-child");
         var rowCount = $table.find("tr").length;
@@ -183,10 +183,12 @@ var SelectorTable = {
                 return "thead tr:nth-of-type(" + (rowIndex + 1) + ")";
             }
         }
+
+
         else if (firstRow.find("th:not(:empty)").length > 1) {
             return "tr:nth-of-type(1)";
         }
-        else if (firstRow.find("th:first-child:not(:empty)").length == 1 && firstRow.children().length > 1) {
+        else if (firstRow.find("th:first-child:not(:empty)").length === 1 && firstRow.children().length > 1) {
             return "tr";
         }
         else if ($table.find("tr td:not(:empty), tr th:not(:empty)").length) {
@@ -198,24 +200,32 @@ var SelectorTable = {
         else {
             return "";
         }
+
     },
 
-    getTableDataRowSelectorFromTableHTML: function (html) {
+    getTableDataRowSelectorFromTableHTML: function (html,verticalTable) {
 
         var $table = $(html);
         if ($table.find("thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))").length) {
 
             return "tbody tr";
         }
+
+
         else if ($table.find("tr td:not(:empty), tr th:not(:empty)").length) {
             var $rows = $table.find("tr");
             // first row with data
             var rowIndex = $rows.index($rows.filter(":has(td:not(:empty)),:has(th:not(:empty))")[0]);
-            return "tr:nth-of-type(n+" + (rowIndex + 2) + ")";
-        }
-        else {
-            return "";
-        }
+            if (!verticalTable) {return "tr:nth-of-type(n+" + (rowIndex + 2) + ")";
+            } else {
+                if ($table.find("th").length>0){
+                return "tr>td"
+                }
+                else {
+                    return "tr>td:nth-of-type(n+2)"
+                }}
+
+    } else return ""
     },
 
     getTableHeaderRowSelector: function () {

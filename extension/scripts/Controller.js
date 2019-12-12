@@ -877,7 +877,8 @@ SitemapController.prototype = {
 		var tableDataRowSelector = $("#edit-selector [name=tableDataRowSelector]").val();
         var tableHeaderRowSelector = $("#edit-selector [name=tableHeaderRowSelector]").val();
         var tableAddMissingColumns = $("#edit-selector [name=tableAddMissingColumns]").is(":checked");
-		var clickElementSelector = $("#edit-selector [name=clickElementSelector]").val();
+		var verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
+        var clickElementSelector = $("#edit-selector [name=clickElementSelector]").val();
 		var type = $("#edit-selector [name=type]").val();
 		var clickElementUniquenessType = $("#edit-selector [name=clickElementUniquenessType]").val();
 		var clickType = $("#edit-selector [name=clickType]").val();
@@ -936,6 +937,7 @@ SitemapController.prototype = {
 			discardInitialElements: discardInitialElements,
 			type: type,
 			multiple: multiple,
+			verticalTable:verticalTable,
 			downloadImage: downloadImage,
 			downloadDocument: downloadDocument,
 			clickPopup: clickPopup,
@@ -1190,9 +1192,9 @@ SitemapController.prototype = {
 			if(selector.type === 'SelectorTable') {
 
 				this.getSelectorHTML().done(function(html) {
-
-					var tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html);
-					var tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html);
+					var verticalTable = $("#edit-selector [name=verticalTable]").is(":checked")
+					var tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html,verticalTable);
+					var tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html,verticalTable);
 					$("input[name=tableHeaderRowSelector]").val(tableHeaderRowSelector);
 					$("input[name=tableDataRowSelector]").val(tableDataRowSelector);
 
