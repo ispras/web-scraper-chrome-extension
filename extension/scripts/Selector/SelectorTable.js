@@ -22,7 +22,7 @@ var SelectorTable = {
         var columns = {};
         var headerRowSelector = this.getTableHeaderRowSelector();
         var $headerRow = $table.find(headerRowSelector);
-        var isVerticalRow = verticalTable;
+        var isVerticalRow = this.verticalTable;
 
         if ($headerRow.length > 0) {
             if ($headerRow.length > 1) {
