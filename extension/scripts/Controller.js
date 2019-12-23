@@ -1192,7 +1192,7 @@ SitemapController.prototype = {
 			if(selector.type === 'SelectorTable') {
 
 				this.getSelectorHTML().done(function(html) {
-					var verticalTable = $("#edit-selector [name=verticalTable]").is(":checked")
+					var verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
 					var tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html,verticalTable);
 					var tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html,verticalTable);
 					$("input[name=tableHeaderRowSelector]").val(tableHeaderRowSelector);

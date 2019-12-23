@@ -18,11 +18,11 @@ var SelectorTable = {
     willReturnElements: function () {
         return false;
     },
-    getTableHeaderColumns: function ($table) {
+    getTableHeaderColumns: function ($table,verticalTable) {
         var columns = {};
         var headerRowSelector = this.getTableHeaderRowSelector();
         var $headerRow = $table.find(headerRowSelector);
-        var isVerticalRow = false;
+        var isVerticalRow = verticalTable;
 
         if ($headerRow.length > 0) {
             if ($headerRow.length > 1) {
@@ -32,7 +32,7 @@ var SelectorTable = {
                         console.log("%c Please specify row header cell selector ", "background: red; color: white;");
                     }
                 }
-                isVerticalRow = true;
+
 
             } else if ($headerRow.find("th").length) {
                 $headerRow = $headerRow.find("th");
@@ -111,16 +111,18 @@ var SelectorTable = {
         var dfd = $.Deferred();
 
         var tables = this.getDataElements(parentElement);
-
+        var verticalTable = this.verticalTable;
+        if (this.verticalTable === undefined) {
+            verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
+        }
         var result = [];
         $(tables).each(function (k, table) {
-            var headerCells = this.getTableHeaderColumns($(table)),
-                dataSelector = this.getTableDataRowSelector(),
-                objKeys = Object.keys(headerCells),
-                headerCellCount = objKeys.length,
-                isVerticalHeader = headerCellCount && headerCells[Object.keys(headerCells)[0]].isVerticalHeader;
+            var headerCells = this.getTableHeaderColumns($(table),verticalTable);
+            var dataSelector = this.getTableDataRowSelector();
 
-            if (isVerticalHeader) {
+
+
+            if (verticalTable) {
                 var results = this.getVerticalDataCells(table, dataSelector);
                 result.push.apply(result, results);
             } else {
@@ -159,105 +161,8 @@ var SelectorTable = {
         return dataColumns;
     },
 
-    getFeatures: function () {
-        return ['selector', 'multiple', 'columns', 'delay', 'tableDataRowSelector', 'tableHeaderRowSelector', 'tableAddMissingColumns','verticalTable']
-    },
-
-    getItemCSSSelector: function () {
-        return "table";
-    },
-
-    getTableHeaderRowSelectorFromTableHTML: function (html,verticalTable) {
-        var $table = $(html);
-        var firstRow = $table.find("tr:first-child");
-        var rowCount = $table.find("tr").length;
-        if ($table.find("thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))").length) {
-
-            if ($table.find("thead tr").length === 1) {
-                return "thead tr";
-            }
-            else {
-                var $rows = $table.find("thead tr");
-                // first row with data
-                var rowIndex = $rows.index($rows.filter(":has(td:not(:empty)),:has(th:not(:empty))")[0]);
-                return "thead tr:nth-of-type(" + (rowIndex + 1) + ")";
-            }
-        }
-            else {
-                if (!verticalTable) {
-                if (firstRow.find("th:not(:empty)").length > 1) {
-                        return "tr:nth-of-type(1)";
-                    } else if (firstRow.find("th:first-child:not(:empty)").length === 1 && firstRow.children().length > 1) {
-                        return "tr";
-                    } else if ($table.find("tr td:not(:empty), tr th:not(:empty)").length) {
-                        var $rows = $table.find("tr");
-                        // first row with data
-                        var rowIndex = $rows.index($rows.filter(":has(td:not(:empty)),:has(th:not(:empty))")[0]);
-                        return "tr:nth-of-type(" + (rowIndex + 1) + ")";
-                    } else {
-                        return "";
-                    }
-            }
-                else {
-                    if (firstRow.find("th").length>0) return "tr>th";
-                     else return "tr>td:nth-of-type(1)";
-                }
 
 
-
-
-
-            }
-
-
-    },
-
-    getTableDataRowSelectorFromTableHTML: function (html,verticalTable) {
-
-        var $table = $(html);
-        if ($table.find("thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))").length) {
-
-            return "tbody tr";
-        }
-
-
-        else if ($table.find("tr td:not(:empty), tr th:not(:empty)").length) {
-            var $rows = $table.find("tr");
-            // first row with data
-            var rowIndex = $rows.index($rows.filter(":has(td:not(:empty)),:has(th:not(:empty))")[0]);
-            if (!verticalTable) {return "tr:nth-of-type(n+" + (rowIndex + 2) + ")";
-            } else {
-                if ($table.find("th").length>0){
-                return "tr>td"
-                }
-                else {
-                    return "tr>td:nth-of-type(n+2)"
-                }}
-
-    } else return ""
-    },
-
-    getTableHeaderRowSelector: function () {
-
-        // handle legacy selectors
-        if (this.tableHeaderRowSelector === undefined) {
-            return "thead tr";
-        }
-        else {
-            return this.tableHeaderRowSelector;
-        }
-    },
-
-    getTableDataRowSelector: function () {
-
-        // handle legacy selectors
-        if (this.tableDataRowSelector === undefined) {
-            return "tbody tr";
-        }
-        else {
-            return this.tableDataRowSelector;
-        }
-    },
 
     /**
      * Extract table header column info from html
@@ -290,5 +195,119 @@ var SelectorTable = {
             }
         });
         return columns;
+    },
+
+
+
+    /**
+     * Рабочие методы
+     */
+
+    getTableHeaderRowSelectorFromTableHTML: function (html) {
+        var $table = $(html);
+        var firstRow = $table.find("tr:first-child");
+        var rowCount = $table.find("tr").length;
+        var verticalTable = this.verticalTable;
+        if (this.verticalTable === undefined) {
+            verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
+        }
+        if ($table.find("thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))").length) {
+
+            if ($table.find("thead tr").length === 1) {
+                return "thead tr";
+            }
+            else {
+                var $rows = $table.find("thead tr");
+                // first row with data
+                var rowIndex = $rows.index($rows.filter(":has(td:not(:empty)),:has(th:not(:empty))")[0]);
+                return "thead tr:nth-of-type(" + (rowIndex + 1) + ")";
+            }
+        }
+        else {
+            if (!verticalTable) {
+                if (firstRow.find("th:not(:empty)").length > 1) {
+                    return "tr:nth-of-type(1)";
+                } else if (firstRow.find("th:first-child:not(:empty)").length === 1 && firstRow.children().length > 1) {
+                    return "tr";
+                } else if ($table.find("tr td:not(:empty), tr th:not(:empty)").length) {
+                    var $rows = $table.find("tr");
+                    // first row with data
+                    var rowIndex = $rows.index($rows.filter(":has(td:not(:empty)),:has(th:not(:empty))")[0]);
+                    return "tr:nth-of-type(" + (rowIndex + 1) + ")";
+                } else {
+                    return "";
+                }
+            }
+            else {
+                if (firstRow.find("th").length>0) return "tr>th";
+                else return "tr>td:nth-of-type(1)";
+            }
+
+
+
+
+
+        }
+
+
+    },
+    getTableDataRowSelectorFromTableHTML: function (html) {
+        var verticalTable = this.verticalTable;
+        if (this.verticalTable === undefined) {
+            verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
+        }
+        var $table = $(html);
+        if ($table.find("thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))").length) {
+
+            return "tbody tr";
+        } else {
+            if (!verticalTable) {
+                if ($table.find("tr td:not(:empty), tr th:not(:empty)").length) {
+                    var $rows = $table.find("tr");
+                    // first row with data
+                    var rowIndex = $rows.index($rows.filter(":has(td:not(:empty)),:has(th:not(:empty))")[0]);
+                    return "tr:nth-of-type(n+" + (rowIndex + 2) + ")";
+                }
+
+            }
+            if (verticalTable) {
+                if ($table.find("th").length > 0) return "tr>td";
+                else return "tr>td:nth-of-type(1)";
+            }
+
+        }
+
+
+    },
+
+    getFeatures: function () {
+        return ['selector', 'multiple', 'columns', 'delay', 'tableDataRowSelector', 'tableHeaderRowSelector', 'tableAddMissingColumns','verticalTable']
+    },
+    getItemCSSSelector: function () {
+        return "table";
+    },
+    getTableHeaderRowSelector: function () {
+
+        // handle legacy selectors
+        if (this.tableHeaderRowSelector === undefined) {
+            return "thead tr";
+        }
+        else {
+            return this.tableHeaderRowSelector;
+        }
+    },
+
+    getTableDataRowSelector: function () {
+
+        // handle legacy selectors
+        if (this.tableDataRowSelector === undefined) {
+            return "tbody tr";
+        }
+        else {
+            return this.tableDataRowSelector;
+        }
     }
+
+
+
 };
