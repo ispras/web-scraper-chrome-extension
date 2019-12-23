@@ -272,7 +272,7 @@ var SelectorTable = {
             }
             if (verticalTable) {
                 if ($table.find("th").length > 0) return "tr>td";
-                else return "tr>td:nth-of-type(1)";
+                else return "tr>td:nth-of-type(n+2)";
             }
 
         }
