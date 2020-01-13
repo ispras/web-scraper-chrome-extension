@@ -150,7 +150,7 @@ SitemapController.prototype = {
 					click: this.editSelector
 				},
 				'#edit-selector select[name=type]': {
-					change: this.selectorTypeChanged
+					change: function(){ this.selectorTypeChanged(true) }
 				},
 				'#edit-selector button[action=save-selector]': {
 					click: this.saveSelector
@@ -811,6 +811,7 @@ SitemapController.prototype = {
 		if(selector.clickType) {
 			$editSelectorForm.find("[name=clickType]").val(selector.clickType);
 		}
+
 		// set clickElementUniquenessType
 		if(selector.clickElementUniquenessType) {
 			$editSelectorForm.find("[name=clickElementUniquenessType]").val(selector.clickElementUniquenessType);
@@ -823,16 +824,21 @@ SitemapController.prototype = {
 		});
 
 		this.state.currentSelector = selector;
-		this.selectorTypeChanged();
+		this.selectorTypeChanged(false);
 		this.initSelectorValidation();
 	},
-	selectorTypeChanged: function () {
+
+	selectorTypeChanged: function (changeTrigger) {
 		var type = $("#edit-selector select[name=type]").val();
 		var features = window[type].getFeatures();
 		$("#edit-selector .feature").hide();
 		features.forEach(function (feature) {
 			$("#edit-selector .feature-" + feature).show();
 		});
+
+		if (changeTrigger && type === "SelectorLink"){
+			$("#edit-selector [name=extractAttribute]").val("href");
+		}
 
 		// add this selector to possible parent selector
 		var selector = this.getCurrentlyEditedSelector();
