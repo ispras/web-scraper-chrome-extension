@@ -14,9 +14,11 @@ var SelectorLink = {
 	canCreateNewJobs: function () {
 		return true;
 	},
+
 	willReturnElements: function () {
 		return false;
 	},
+
 	_getData: function (parentElement) {
 		var elements = this.getDataElements(parentElement);
 
@@ -35,14 +37,21 @@ var SelectorLink = {
 		$(elements).each(function (k, element) {
 
 			deferredDataExtractionCalls.push(function(element) {
-				var  href = this.stringReplace(element.href, this.stringReplacement);
 				var deferredData = $.Deferred();
-                var data = {};
+				var data = {};
+
+				var extracted_value;
+				if (this.extractAttribute) {
+					extracted_value = element[this.extractAttribute];
+				} else {
+					extracted_value = $(element).text();
+				}
+				extracted_value = this.stringReplace(extracted_value, this.stringReplacement);
 
 				data[this.id] = $(element).text();
-				data._followSelectorId = this.id;
-				data[this.id + '-href'] = href;
-				data._follow = href;
+				data[this.id + '-href'] = extracted_value;
+				data._followSelectorId= this.id;
+				data._follow = extracted_value;
 				deferredData.resolve(data);
 
 				return deferredData;
@@ -65,7 +74,7 @@ var SelectorLink = {
 	},
 
 	getFeatures: function () {
-        return ['selector', 'multiple', 'delay', 'stringReplacement']
+        return ['selector', 'extractAttribute', 'multiple', 'delay', 'stringReplacement']
 	},
 
 	getItemCSSSelector: function() {
