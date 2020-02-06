@@ -18,7 +18,7 @@ var SelectorTable = {
     willReturnElements: function () {
         return false;
     },
-    getTableHeaderColumns: function ($table,verticalTable) {
+    getTableHeaderColumns: function ($table) {
         var columns = {};
         var headerRowSelector = this.getTableHeaderRowSelector();
         var $headerRow = $table.find(headerRowSelector);
@@ -82,14 +82,13 @@ var SelectorTable = {
         } else {
             for (var i = 0; i < (selectors.length / this.columns.length); i++) {
                 result.push({});
-            };
-
+            }
             selectors.each(function (i, dataCell) {
                 if (dataCell.cellIndex == 0) {
                     console.log("%c Vertical rows can't have first column as data cell ", "background: red; color: white;");
                 } else {
-                    var index = (dataCell.cellIndex - 1 | dataCell.rowIndex);
-                    var headerCellName = $(dataCell).closest('tr').find("th:first-child").text().trim();
+                    var index = i;
+                    var headerCellName = $(dataCell).closest('tr').find("td:first-child").text().trim();
                     var dataCellvalue = $(dataCell).text().trim();
 
                     var extractData = $.grep(this.columns, function (h) {
@@ -117,7 +116,7 @@ var SelectorTable = {
         }
         var result = [];
         $(tables).each(function (k, table) {
-            var headerCells = this.getTableHeaderColumns($(table),verticalTable);
+            var headerCells = this.getTableHeaderColumns($(table));
             var dataSelector = this.getTableDataRowSelector();
 
 
