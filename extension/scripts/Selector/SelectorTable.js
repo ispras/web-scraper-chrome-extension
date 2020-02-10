@@ -80,24 +80,21 @@ var SelectorTable = {
         if (isRow) {
             console.log("%c Please specify row data cell selector ", "background: red; color: white;");
         } else {
-            for (var i = 0; i < (selectors.length / this.columns.length); i++) {
+            for (var i = 0; i < (table.rows.length); i++) {
                 result.push({});
             }
             selectors.each(function (i, dataCell) {
                 if (dataCell.cellIndex == 0) {
                     console.log("%c Vertical rows can't have first column as data cell ", "background: red; color: white;");
                 } else {
-                    var index = i;
-                    var headerCellName = $(dataCell).closest('tr').find("td:first-child").text().trim();
-                    var dataCellvalue = $(dataCell).text().trim();
 
-                    var extractData = $.grep(this.columns, function (h) {
-                        return h.name === headerCellName && h.extract;
-                    }).length == 1;
+                    var headerCellName = $(dataCell).closest('tr').find("th:first-child")[0];
+                    if (!headerCellName) headerCellName=$(dataCell).closest('tr').find("td:first-child")[0].innerText;
+                    else headerCellName = headerCellName.innerText;
+                    var dataCellvalue = dataCell.innerText;
 
-                    if (extractData) {
-                        result[index][headerCellName] = dataCellvalue;
-                    }
+                    result[dataCell.cellIndex-1][headerCellName] = dataCellvalue;
+
                 }
             }.bind(this));
         }
@@ -105,6 +102,14 @@ var SelectorTable = {
         return result;
     },
 
+    isEmptyObject: function (obj) {
+    for (var i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            return false;
+        }
+    }
+    return true;
+    },
     _getData: function (parentElement) {
 
         var dfd = $.Deferred();
@@ -123,8 +128,10 @@ var SelectorTable = {
 
             if (verticalTable) {
                 var results = this.getVerticalDataCells(table, dataSelector);
-                result.push.apply(result, results);
-            } else {
+                for (i = 0;i<results.length;i++) {
+                    if (!this.isEmptyObject(results[i])) result.push(results[i]);
+                }
+                } else {
                 $(table).find(dataSelector).each(function (i, dataCell) {
                     var data = {};
 
