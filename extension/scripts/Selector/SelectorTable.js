@@ -89,8 +89,15 @@ var SelectorTable = {
                 } else {
 
                     var headerCellName = $(dataCell).closest('tr').find("th:first-child")[0];
-                    if (!headerCellName) headerCellName=$(dataCell).closest('tr').find("td:first-child")[0].innerText;
-                    else headerCellName = headerCellName.innerText;
+                    if (!headerCellName) {
+                        headerCellName=$(dataCell).closest('tr').find("td:first-child")[0].innerText;
+                    }
+                    else {
+                        headerCellName = headerCellName.innerText;
+                    }
+
+                    // headerCellName = dict[rawHeaderCellName]
+
                     var dataCellvalue = dataCell.innerText;
 
                     result[dataCell.cellIndex-1][headerCellName] = dataCellvalue;
@@ -175,7 +182,6 @@ var SelectorTable = {
      * @param html
      */
     getTableHeaderColumnsFromHTML: function (headerRowSelector, html) {
-
         var $table = $(html);
         var $headerRowColumns = $table.find(headerRowSelector);
 
@@ -186,11 +192,23 @@ var SelectorTable = {
         } else if ($headerRowColumns.find("td").length) {
             $headerRowColumns = $headerRowColumns.find("td");
         }
-
+        verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
         var columns = [];
-
-        $headerRowColumns.each(function (i, columnEl) {
-            var header = $(columnEl).text().trim();
+        if (verticalTable){
+            $headerRowColumns.prevObject.each(function (i, columnEl) {
+                var header = columnEl.innerText;
+                var name = header;
+                if (header.length !== 0) {
+                    columns.push({
+                        header: header,
+                        name: name,
+                        extract: true
+                    });
+                }
+            });
+        } else {
+            $headerRowColumns.each(function (i, columnEl) {
+            var header = columnEl.innerText;
             var name = header;
             if (header.length !== 0) {
                 columns.push({
@@ -200,6 +218,7 @@ var SelectorTable = {
                 });
             }
         });
+        }
         return columns;
     },
 
