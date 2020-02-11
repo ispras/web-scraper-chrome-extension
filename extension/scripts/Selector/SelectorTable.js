@@ -64,7 +64,7 @@ var SelectorTable = {
                 if (column.length !== 1) {
                     this.columns.push({
                         header: header,
-                        name: header,
+                        name: name,
                         extract: true
                     });
                 }
@@ -77,6 +77,7 @@ var SelectorTable = {
             isRow = selectors[0].nodeName === "TR",
             result = [];
 
+        var headerCells = this.getDataColumns();
         if (isRow) {
             console.log("%c Please specify row data cell selector ", "background: red; color: white;");
         } else {
@@ -97,11 +98,20 @@ var SelectorTable = {
                     }
 
                     // headerCellName = dict[rawHeaderCellName]
+                    mark = false;
+                    headerCells.forEach(function (headerCell) {
+                        if (headerCell === headerCellName ) {
+                            mark = true;
+                        }
 
+                    });
+
+
+                    //end
                     var dataCellvalue = dataCell.innerText;
-
-                    result[dataCell.cellIndex-1][headerCellName] = dataCellvalue;
-
+                    if (mark) {
+                        result[dataCell.cellIndex - 1][headerCellName] = dataCellvalue;
+                    }
                 }
             }.bind(this));
         }
@@ -143,20 +153,18 @@ var SelectorTable = {
                     var data = {};
 
                     this.columns.forEach(function (headerCell) {
-                        if (headerCell.extract === true) {
-                            if (headerCells[headerCell.header] === undefined) {
-                                data[headerCell.name] = null;
-                            }
-                            else {
-                                var header = headerCells[headerCell.header];
+                                var header = headerCells[headerCell.header.replace(/^\s*/,'').replace(/\s*$/,'')];
                                 var rowText = $(dataCell).find(">:nth-child(" + header.index + ")").text().trim();
-                                data[headerCell.name] = rowText;
-                            }
-                        }
+                                if (headerCell.extract){
+                                    data[headerCell.name.replace(/^\s*/,'').replace(/\s*$/,'')] = rowText;
+                                }
+
+
                     });
                     result.push(data);
                 }.bind(this));
             }
+
         }.bind(this));
 
         dfd.resolve(result);
@@ -168,7 +176,7 @@ var SelectorTable = {
         var dataColumns = [];
         this.columns.forEach(function (column) {
             if (column.extract === true) {
-                dataColumns.push(column.name);
+                dataColumns.push(column.name.replace(/^\s*/,'').replace(/\s*$/,''));
             }
         });
         return dataColumns;
