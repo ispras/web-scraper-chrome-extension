@@ -18,11 +18,11 @@ var SelectorTable = {
     willReturnElements: function () {
         return false;
     },
-    getTableHeaderColumns: function ($table) {
+    getTableHeaderColumns: function ($table, verticalTable) {
         var columns = {};
         var headerRowSelector = this.getTableHeaderRowSelector();
         var $headerRow = $table.find(headerRowSelector);
-        var isVerticalRow = this.verticalTable;
+
 
         if ($headerRow.length > 0) {
             if ($headerRow.length > 1) {
@@ -44,7 +44,7 @@ var SelectorTable = {
                 var header = $(value).text().trim();
                 columns[header] = {
                     index: i + 1,
-                    isVerticalHeader: isVerticalRow
+                    isVerticalHeader: verticalTable
                 };
             }.bind(this));
 
@@ -109,15 +109,12 @@ var SelectorTable = {
         return result;
     },
 
-    _getData: function (parentElement) {
+    _getData: function (parentElement,verticalTable) {
 
         var dfd = $.Deferred();
 
         var tables = this.getDataElements(parentElement);
-        var verticalTable = this.verticalTable;
-        if (this.verticalTable === undefined) {
-            verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
-        }
+
         var result = [];
         $(tables).each(function (k, table) {
             var headerCells = this.getTableHeaderColumns($(table));
@@ -183,7 +180,7 @@ var SelectorTable = {
      * Extract table header column info from html
      * @param html
      */
-    getTableHeaderColumnsFromHTML: function (headerRowSelector, html) {
+    getTableHeaderColumnsFromHTML: function (headerRowSelector, html, verticalTable) {
         var $table = $(html);
         var $headerRowColumns = $table.find(headerRowSelector);
 
@@ -194,7 +191,6 @@ var SelectorTable = {
         } else if ($headerRowColumns.find("td").length) {
             $headerRowColumns = $headerRowColumns.find("td");
         }
-        verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
         var columns = [];
         if (verticalTable){
             $headerRowColumns.prevObject.each(function (i, columnEl) {
@@ -226,18 +222,11 @@ var SelectorTable = {
 
 
 
-    /**
-     * Рабочие методы
-     */
-
-    getTableHeaderRowSelectorFromTableHTML: function (html) {
+    getTableHeaderRowSelectorFromTableHTML: function (html, verticalTable) {
         var $table = $(html);
         var firstRow = $table.find("tr:first-child");
         var rowCount = $table.find("tr").length;
-        var verticalTable = this.verticalTable;
-        if (this.verticalTable === undefined) {
-            verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
-        }
+
         if ($table.find("thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))").length) {
 
             if ($table.find("thead tr").length === 1) {
@@ -278,11 +267,8 @@ var SelectorTable = {
 
 
     },
-    getTableDataRowSelectorFromTableHTML: function (html) {
-        var verticalTable = this.verticalTable;
-        if (this.verticalTable === undefined) {
-            verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
-        }
+    getTableDataRowSelectorFromTableHTML: function (html, verticalTable) {
+
         var $table = $(html);
         if ($table.find("thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))").length) {
 
