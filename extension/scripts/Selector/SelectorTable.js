@@ -77,7 +77,7 @@ var SelectorTable = {
             isRow = selectors[0].nodeName === "TR",
             result = [];
 
-        var headerCells = this.getDataColumns();
+
         if (isRow) {
             console.log("%c Please specify row data cell selector ", "background: red; color: white;");
         } else {
@@ -97,21 +97,11 @@ var SelectorTable = {
                         headerCellName = headerCellName.innerText;
                     }
 
-                    // headerCellName = dict[rawHeaderCellName]
-                    mark = false;
-                    headerCells.forEach(function (headerCell) {
-                        if (headerCell === headerCellName ) {
-                            mark = true;
-                        }
-
-                    });
-
-
-                    //end
                     var dataCellvalue = dataCell.innerText;
-                    if (mark) {
-                        result[dataCell.cellIndex - 1][headerCellName] = dataCellvalue;
+                    if (this.isExtractedDataColumns(headerCellName)) {
+                        result[dataCell.cellIndex - 1][this.isExtractedDataColumns(headerCellName)] = dataCellvalue;
                     }
+
                 }
             }.bind(this));
         }
@@ -119,14 +109,6 @@ var SelectorTable = {
         return result;
     },
 
-    isEmptyObject: function (obj) {
-    for (var i in obj) {
-        if (obj.hasOwnProperty(i)) {
-            return false;
-        }
-    }
-    return true;
-    },
     _getData: function (parentElement) {
 
         var dfd = $.Deferred();
@@ -145,18 +127,22 @@ var SelectorTable = {
 
             if (verticalTable) {
                 var results = this.getVerticalDataCells(table, dataSelector);
-                for (i = 0;i<results.length;i++) {
-                    if (!this.isEmptyObject(results[i])) result.push(results[i]);
-                }
+                var headerCells = this.getDataColumns();
+                results.forEach(function(resulti){
+                    if (!$.isEmptyObject(resulti)){
+                        result.push(resulti)
+                    }
+
+                });
                 } else {
                 $(table).find(dataSelector).each(function (i, dataCell) {
                     var data = {};
 
                     this.columns.forEach(function (headerCell) {
-                                var header = headerCells[headerCell.header.replace(/^\s*/,'').replace(/\s*$/,'')];
+                                var header = headerCells[headerCell.header.trim()];
                                 var rowText = $(dataCell).find(">:nth-child(" + header.index + ")").text().trim();
                                 if (headerCell.extract){
-                                    data[headerCell.name.replace(/^\s*/,'').replace(/\s*$/,'')] = rowText;
+                                    data[headerCell.name] = rowText;
                                 }
 
 
@@ -176,12 +162,20 @@ var SelectorTable = {
         var dataColumns = [];
         this.columns.forEach(function (column) {
             if (column.extract === true) {
-                dataColumns.push(column.name.replace(/^\s*/,'').replace(/\s*$/,''));
+                dataColumns.push(column.name);
             }
         });
         return dataColumns;
     },
-
+    isExtractedDataColumns: function (header) {
+        answer = undefined;
+        this.columns.forEach(function (column) {
+            if (column.extract === true && header === column.header.trim()) {
+                answer = column.name;
+            }
+        });
+        return answer;
+    },
 
 
 
