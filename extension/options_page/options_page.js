@@ -88,7 +88,19 @@ $(function () {
 			newConfig.restUrl = $("#restUrl").val();
 		}
 
-		config.updateConfiguration(newConfig);
+		config.updateConfiguration(newConfig, function(){
+			if (chrome.runtime.lastError){
+				$(".alert")
+					.attr("id", "error")
+					.text( "Failed to save options " + chrome.runtime.lastError.message)
+					.show();
+			} else{
+				$(".alert")
+					.attr("id", "success")
+					.text( "Options successfully updated." )
+					.show();
+			}
+		});
 		return false;
 	});
 });

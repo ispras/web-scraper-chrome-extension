@@ -8,6 +8,22 @@
 		<script src="../assets/bootstrap-3.0.0/js/bootstrap.min.js"></script>
 		<script src="../scripts/Config.js"></script>
 		<script src="options_page.js"></script>
+		<style>
+			.alert {
+				padding: 20px;
+				color: white;
+				display: none;
+				margin-bottom: 15px;
+			}
+
+			#error {
+				background-color: #f44336;
+			}
+
+			#success {
+				background-color: #4CAF50;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="container">
@@ -58,6 +74,7 @@
 
 					<div class="form-group">
 						<div class="col-lg-offset-2 col-lg-10">
+							<div class="alert"></div>
 							<button type="submit" class="btn btn-default">Save</button>
 						</div>
 					</div>
