@@ -64,7 +64,6 @@ var SelectorTable = {
                 if (column.length !== 1) {
                     this.columns.push({
                         header: header,
-                        name: name,
                         extract: true
                     });
                 }
@@ -109,10 +108,10 @@ var SelectorTable = {
         return result;
     },
 
-    _getData: function (parentElement,verticalTable) {
+    _getData: function (parentElement) {
 
         var dfd = $.Deferred();
-
+        var verticalTable = this.verticalTable;
         var tables = this.getDataElements(parentElement);
 
         var result = [];

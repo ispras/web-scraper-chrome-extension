@@ -1172,7 +1172,6 @@ SitemapController.prototype = {
 		var selector = this.getCurrentlyEditedSelector();
 		var currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
 		var parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(currentStateParentSelectorIds);
-		var verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
 		var deferredSelector = this.contentScript.selectSelector({
 			parentCSSSelector: parentCSSSelector,
 			allowedElements: selector.getItemCSSSelector()
@@ -1192,6 +1191,7 @@ SitemapController.prototype = {
 			if(selector.type === 'SelectorTable') {
 
 				this.getSelectorHTML().done(function(html) {
+					var verticalTable = $("#edit-selector [name=verticalTable]").is(":checked");
 					var tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html,verticalTable);
 					var tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html,verticalTable);
 					$("input[name=tableHeaderRowSelector]").val(tableHeaderRowSelector);
@@ -1217,7 +1217,7 @@ SitemapController.prototype = {
     refreshTableHeaderRowSelector: function (button) {
         var input = $(button).closest(".form-group").find("input.selector-value"),
             value = input.val();
-		verticalTable = this.verticalTable;
+		var verticalTable = this.getCurrentlyEditedSelector().verticalTable;
         this.getSelectorHTML().done(function (html) {
 
             var headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(value, html, verticalTable);
@@ -1249,7 +1249,7 @@ SitemapController.prototype = {
 
             this.getSelectorHTML().done(function (html) {
 
-                var headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderRowSelector, html, this.verticalTable);
+                var headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderRowSelector, html, this.getCurrentlyEditedSelector().verticalTable);
                 this.renderTableHeaderColumns(headerColumns);
 
             }.bind(this));

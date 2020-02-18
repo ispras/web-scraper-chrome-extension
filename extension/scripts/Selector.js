@@ -241,7 +241,7 @@ var Selector = (function () {
 
             // this works much faster because $.whenCallSequentially isn't running next data extraction immediately
             if (timeout === 0) {
-                var deferredData = this._getData(parentElement, this.verticalTable);
+                var deferredData = this._getData(parentElement);
                 deferredData.done(function (data) {
                     this.manipulateData(data);
                     d.resolve(data);
@@ -249,7 +249,7 @@ var Selector = (function () {
             }
             else {
                 setTimeout(function () {
-                    var deferredData = this._getData(parentElement, this.verticalTable);
+                    var deferredData = this._getData(parentElement);
                     deferredData.done(function (data) {
                         this.manipulateData(data);
                         d.resolve(data);
