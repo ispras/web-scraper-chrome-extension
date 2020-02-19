@@ -43,8 +43,7 @@ var SelectorTable = {
             $headerRow.each(function (i, value) {
                 var header = $(value).text().trim();
                 columns[header] = {
-                    index: i + 1,
-                    isVerticalHeader: verticalTable
+                    index: i + 1
                 };
             }.bind(this));
 
@@ -80,25 +79,19 @@ var SelectorTable = {
         if (isRow) {
             console.log("%c Please specify row data cell selector ", "background: red; color: white;");
         } else {
-            for (var i = 0; i < (table.rows.length); i++) {
+            for (var i = 0; i < (selectors.length); i++) {
                 result.push({});
             }
             selectors.each(function (i, dataCell) {
-                if (dataCell.cellIndex == 0) {
+                if (dataCell.cellIndex === 0) {
                     console.log("%c Vertical rows can't have first column as data cell ", "background: red; color: white;");
                 } else {
+                    var headerCellName = $(dataCell).closest('tr').find("th, td")[0].innerText;
 
-                    var headerCellName = $(dataCell).closest('tr').find("th:first-child")[0];
-                    if (!headerCellName) {
-                        headerCellName=$(dataCell).closest('tr').find("td:first-child")[0].innerText;
-                    }
-                    else {
-                        headerCellName = headerCellName.innerText;
-                    }
-
+                    var listDataColumnName = this.getDataColumnName(headerCellName);
                     var dataCellvalue = dataCell.innerText;
-                    if (this.isExtractedDataColumns(headerCellName)) {
-                        result[dataCell.cellIndex - 1][this.isExtractedDataColumns(headerCellName)] = dataCellvalue;
+                    if (listDataColumnName) {
+                        result[dataCell.cellIndex - 1][listDataColumnName] = dataCellvalue;
                     }
 
                 }
@@ -116,29 +109,28 @@ var SelectorTable = {
 
         var result = [];
         $(tables).each(function (k, table) {
-            var headerCells = this.getTableHeaderColumns($(table));
             var dataSelector = this.getTableDataRowSelector();
 
 
 
             if (verticalTable) {
-                var results = this.getVerticalDataCells(table, dataSelector);
-                var headerCells = this.getDataColumns();
-                results.forEach(function(resulti){
-                    if (!$.isEmptyObject(resulti)){
-                        result.push(resulti)
+                var columnsList = this.getVerticalDataCells(table, dataSelector);
+                columnsList.forEach(function(column){
+                    if (!$.isEmptyObject(column)){
+                        result.push(column)
                     }
 
                 });
                 } else {
+                var columnIndices= this.getTableHeaderColumns($(table));
                 $(table).find(dataSelector).each(function (i, dataCell) {
                     var data = {};
 
-                    this.columns.forEach(function (headerCell) {
-                                var header = headerCells[headerCell.header.trim()];
+                    this.columns.forEach(function (column) {
+                                var header = columnIndices[column.header.trim()];
                                 var rowText = $(dataCell).find(">:nth-child(" + header.index + ")").text().trim();
-                                if (headerCell.extract){
-                                    data[headerCell.name] = rowText;
+                                if (column.extract){
+                                    data[column.name] = rowText;
                                 }
 
 
@@ -163,14 +155,15 @@ var SelectorTable = {
         });
         return dataColumns;
     },
-    isExtractedDataColumns: function (header) {
-        answer = undefined;
-        this.columns.forEach(function (column) {
-            if (column.extract === true && header === column.header.trim()) {
-                answer = column.name;
-            }
+    getDataColumnName: function (header) {
+
+       var answer = this.columns.find(function (column) {
+            return (column.extract && header === column.header.trim())
         });
-        return answer;
+        if (answer){
+            return answer.name;
+        }
+
     },
 
 
@@ -183,39 +176,26 @@ var SelectorTable = {
         var $table = $(html);
         var $headerRowColumns = $table.find(headerRowSelector);
 
-        if ($headerRowColumns.length > 1) {
-            $headerRowColumns = $headerRowColumns.find("th:first-child")
-        } else if ($headerRowColumns.find("th").length) {
-            $headerRowColumns = $headerRowColumns.find("th");
-        } else if ($headerRowColumns.find("td").length) {
-            $headerRowColumns = $headerRowColumns.find("td");
-        }
         var columns = [];
-        if (verticalTable){
-            $headerRowColumns.prevObject.each(function (i, columnEl) {
-                var header = columnEl.innerText;
-                var name = header;
-                if (header.length !== 0) {
-                    columns.push({
-                        header: header,
-                        name: name,
-                        extract: true
-                    });
-                }
-            });
-        } else {
-            $headerRowColumns.each(function (i, columnEl) {
+        if (!verticalTable){
+            if ($headerRowColumns.length > 1) {
+                $headerRowColumns = $headerRowColumns.find("th:first-child")
+            } else if ($headerRowColumns.find("th").length) {
+                $headerRowColumns = $headerRowColumns.find("th");
+            } else if ($headerRowColumns.find("td").length) {
+                $headerRowColumns = $headerRowColumns.find("td");
+            }
+        }
+        $headerRowColumns.each(function (i, columnEl) {
             var header = columnEl.innerText;
-            var name = header;
-            if (header.length !== 0) {
+            if (header) {
                 columns.push({
                     header: header,
-                    name: name,
+                    name: header,
                     extract: true
                 });
             }
         });
-        }
         return columns;
     },
 
@@ -254,8 +234,11 @@ var SelectorTable = {
                 }
             }
             else {
-                if (firstRow.find("th").length>0) return "tr>th";
-                else return "tr>td:nth-of-type(1)";
+                if (firstRow.find("th").length) {
+                    return "tr>th";
+                }else {
+                    return "tr>td:nth-of-type(1)";
+                }
             }
 
 
@@ -281,9 +264,8 @@ var SelectorTable = {
                     return "tr:nth-of-type(n+" + (rowIndex + 2) + ")";
                 }
 
-            }
-            if (verticalTable) {
-                if ($table.find("th").length > 0) return "tr>td";
+            }else{
+                if ($table.find("th").length) return "tr>td";
                 else return "tr>td:nth-of-type(n+2)";
             }
 
