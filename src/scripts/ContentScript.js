@@ -1,4 +1,5 @@
 import getBackgroundScript from './BackgroundScript';
+import ContentSelector from './ContentSelector';
 
 /**
  * ContentScript that can be called from anywhere within the extension

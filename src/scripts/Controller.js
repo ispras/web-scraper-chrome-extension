@@ -1,11 +1,9 @@
 import getBackgroundScript from './BackgroundScript';
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
-// import Selector from './Selector';
-// import SelectorGraphv2 from "./SelectorGraphv2";
+import SelectorGraphv2 from './SelectorGraphv2';
 import * as ich from 'icanhaz/ICanHaz';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
-import '../libs/jquery.bootstrapvalidator/bootstrapValidator.css';
 import SelectorList from './SelectorList';
 
 export default class SitemapController {
@@ -490,17 +488,16 @@ export default class SitemapController {
 			sitemap._id = id;
 		}
 		// check whether sitemap with this id already exist
-		this.store.sitemapExists(sitemapData.id).then(
+		this.store.sitemapExists(sitemap.id).then(
 			function(sitemapExists) {
 				if (sitemapExists) {
 					let validator = this.getFormValidator();
 					validator.updateStatus('_id', 'INVALID', 'callback');
 				} else {
-					this.store.createSitemap(
-						sitemap,
+					this.store.createSitemap(sitemap).then(
 						function(sitemap) {
 							this._editSitemap(sitemap, ['_root']);
-						}.bind(this, sitemap)
+						}.bind(this)
 					);
 				}
 			}.bind(this)
@@ -862,8 +859,11 @@ export default class SitemapController {
 	}
 
 	selectorTypeChanged(changeTrigger) {
-		let type = $('#edit-selector select[name=type]').val();
-		let features = this.state.currentSelector.getFeatures();
+		// let type = $('#edit-selector select[name=type]').val();
+		// add this selector to possible parent selector
+		let selector = this.getCurrentlyEditedSelector();
+		// this.state.currentSelector = selector;
+		let features = selector.getFeatures();
 		$('#edit-selector .feature').hide();
 		features.forEach(function(feature) {
 			$('#edit-selector .feature-' + feature).show();
@@ -873,8 +873,6 @@ export default class SitemapController {
 			$('#edit-selector [name=extractAttribute]').val('href');
 		}
 
-		// add this selector to possible parent selector
-		let selector = this.getCurrentlyEditedSelector();
 		if (selector.canHaveChildSelectors()) {
 			if ($('#edit-selector #parentSelectors .currently-edited').length === 0) {
 				let $option = $('<option class="currently-edited"></option>');
@@ -901,7 +899,6 @@ export default class SitemapController {
 		this.contentScript.removeCurrentContentSelector().done(
 			function() {
 				sitemap.updateSelector(selector, newSelector);
-
 				this.store.saveSitemap(sitemap).then(
 					function() {
 						this.showSitemapSelectorList();
@@ -965,7 +962,7 @@ export default class SitemapController {
 			});
 		});
 
-		let newSelector = SelectorList.createSelector({
+		return SelectorList.createSelector({
 			id: id,
 			selector: selectorsSelector,
 			tableHeaderRowSelector: tableHeaderRowSelector,
@@ -990,7 +987,6 @@ export default class SitemapController {
 			textmanipulation: textmanipulation,
 			stringReplacement: stringReplacement,
 		});
-		return newSelector;
 	}
 	/**
 	 * @returns {Sitemap|*} Cloned Sitemap with currently edited selector
@@ -1125,8 +1121,7 @@ export default class SitemapController {
 			.hide();
 		$('#scrape-sitemap-config input').prop('disabled', true);
 
-		browser.runtime.sendMessage(
-			request,
+		browser.runtime.sendMessage(request).then(
 			function(selectors) {
 				// table selector can dynamically add columns
 				// replace current selector (columns) with the dynamicly created once
@@ -1486,7 +1481,7 @@ export default class SitemapController {
 			parentSelectorIds: parentSelectorIds,
 			selectorId: selectorId,
 		};
-		browser.runtime.sendMessage(request, function(response) {
+		browser.runtime.sendMessage(request).then(function(response) {
 			if (response.length === 0) {
 				return;
 			}

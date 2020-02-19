@@ -1,14 +1,53 @@
 import Selector from './Selector';
 import ConstantValue from './Selector/ConstantValue';
 import SelectorText from './Selector/SelectorText';
+import SelectorDocument from './Selector/SelectorDocument';
+import SelectorPopupLink from './Selector/SelectorPopupLink';
+import SelectorInputValue from './Selector/SelectorInputValue';
+import SelectorElement from './Selector/SelectorElement';
+import SelectorLink from './Selector/SelectorLink';
+import SelectorImage from './Selector/SelectorImage';
+import SelectorHTML from './Selector/SelectorHTML';
+import SelectorGroup from './Selector/SelectorGroup';
+import SelectorElementStyle from './Selector/SelectorElementStyle';
+import SelectorElementClick from './Selector/SelectorElementClick';
+import SelectorElementScroll from './Selector/SelectorElementScroll';
+import SelectorElementAttribute from './Selector/SelectorElementAttribute';
+import SelectorTable from './Selector/SelectorTable';
 
 export default class SelectorList extends Array {
 	static createSelector(options) {
 		switch (options.type) {
-			case 'SelectorText':
-				return new SelectorText(options);
 			case 'ConstantValue':
 				return new ConstantValue(options);
+			case 'SelectorDocument':
+				return new SelectorDocument(options);
+			case 'SelectorElement':
+				return new SelectorElement(options);
+			case 'SelectorElementAttribute':
+				return new SelectorElementAttribute(options);
+			case 'SelectorElementScroll':
+				return new SelectorElementScroll(options);
+			case 'SelectorElementClick':
+				return new SelectorElementClick(options);
+			case 'SelectorElementStyle':
+				return new SelectorElementStyle(options);
+			case 'SelectorGroup':
+				return new SelectorGroup(options);
+			case 'SelectorHTML':
+				return new SelectorHTML(options);
+			case 'SelectorImage':
+				return new SelectorImage(options);
+			case 'SelectorInputValue':
+				return new SelectorInputValue(options);
+			case 'SelectorLink':
+				return new SelectorLink(options);
+			case 'SelectorPopupLink':
+				return new SelectorPopupLink(options);
+			case 'SelectorTable':
+				return new SelectorTable(options);
+			case 'SelectorText':
+				return new SelectorText(options);
 			default:
 				return new SelectorText(options);
 		}

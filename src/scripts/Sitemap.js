@@ -1,6 +1,6 @@
 import DatePatternSupport from './DateUtils/DatePatternSupport';
 import SelectorList from './SelectorList';
-import Selector from './Selector';
+import * as Papa from 'papaparse';
 
 export default class Sitemap {
 	constructor(sitemapObj) {
@@ -121,7 +121,7 @@ export default class Sitemap {
 	updateSelector(selector, selectorData) {
 		// selector is undefined when creating a new one
 		if (selector === undefined) {
-			selector = new Selector(selectorData);
+			selector = SelectorList.createSelector(selectorData);
 		}
 
 		// update child selectors
@@ -137,7 +137,7 @@ export default class Sitemap {
 			}
 		}
 
-		selector.updateData(selectorData);
+		selector.updateData(selectorData, selectorData.getFeatures());
 
 		if (this.getSelectorIds().indexOf(selector.id) === -1) {
 			this.selectors.push(selector);
@@ -249,7 +249,6 @@ export default class Sitemap {
 	 */
 	clone() {
 		let clonedJSON = JSON.parse(JSON.stringify(this));
-		let sitemap = new Sitemap(clonedJSON);
-		return sitemap;
+		return new Sitemap(clonedJSON);
 	}
 }

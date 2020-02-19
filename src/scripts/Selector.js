@@ -1,18 +1,4 @@
-// import ConstantValue from './Selector/ConstantValue';
-// import 'Selector/SelectorDocument';
-// import 'Selector/SelectorElement';
-// import 'Selector/SelectorElementAttribute';
-// import 'Selector/SelectorElementClick';
-// import 'Selector/SelectorElementScroll';
-// import 'Selector/SelectorElementStyle';
-// import 'Selector/SelectorGroup';
-// import 'Selector/SelectorHTML';
-// import 'Selector/SelectorImage';
-// import 'Selector/SelectorInputValue';
-// import 'Selector/SelectorLink';
-// import 'Selector/SelectorPopupLink';
-// import 'Selector/SelectorTable';
-// import 'Selector/SelectorText';
+import ElementQuery from './ElementQuery';
 
 export default class Selector {
 	constructor(selector) {

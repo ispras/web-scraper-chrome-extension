@@ -2,6 +2,9 @@ import Config from '../scripts/Config';
 import StorePouchDB from '../scripts/StorePouchDB';
 import StoreRestApi from '../scripts/StoreRestApi';
 import Sitemap from '../scripts/Sitemap';
+import Queue from '../scripts/Queue';
+import ChromePopupBrowser from '../scripts/ChromePopupBrowser';
+import Scraper from '../scripts/Scraper';
 import getBackgroundScript from '../scripts/BackgroundScript';
 
 const config = new Config();
@@ -72,57 +75,53 @@ browser.runtime.onMessage.addListener((request, sender) => {
 			store: store,
 			requestInterval: request.requestInterval,
 			requestIntervalRandomness: request.requestIntervalRandomness,
+			pageLoadDelay: request.pageLoadDelay,
 		});
 
-		let response = new Promise(() => {
+		return new Promise(resolve => {
 			try {
 				scraper.run(function() {
 					browser_tab.close();
-					let notification = browser.notifications
-						.create('scraping-finished', {
-							type: 'basic',
-							iconUrl: 'assets/images/icon128.png',
-							title: 'Scraping finished!',
-							message: 'Finished scraping ' + sitemap._id,
-						})
-						.then(function(id) {
-							// notification showed
-						});
+					browser.notifications.create('scraping-finished', {
+						type: 'basic',
+						iconUrl: 'assets/images/icon128.png',
+						title: 'Scraping finished!',
+						message: 'Finished scraping ' + sitemap._id,
+					});
 					// table selector can dynamically add columns (addMissingColumns Feature)
-					let selectors = sitemap.selectors;
-					response.resolve(selectors);
+					resolve(sitemap.selectors);
 				});
 			} catch (e) {
 				console.log('Scraper execution cancelled', e);
 			}
 		});
-
-		return response;
 	} else if (request.previewSelectorData) {
-		browser.tabs
-			.query({
-				active: true,
-				currentWindow: true,
-			})
-			.then(function(tabs) {
-				if (tabs.length < 1) {
-					this.console.log("couldn't find active tab");
-					return Promise.resolve();
-				} else {
-					let tab = tabs[0];
-					return browser.tabs.sendMessage(tab.id, request);
-				}
-			});
+		return new Promise(resolve => {
+			browser.tabs
+				.query({
+					active: true,
+					currentWindow: true,
+				})
+				.then(function(tabs) {
+					if (tabs.length < 1) {
+						this.console.log("couldn't find active tab");
+						return resolve();
+					} else {
+						let tab = tabs[0];
+						browser.tabs.sendMessage(tab.id, request).then(extractedData => {
+							resolve(extractedData);
+						});
+					}
+				});
+		});
 	} else if (request.backgroundScriptCall) {
-		let backgroundScript = getBackgroundScript('BackgroundScript');
-		let deferredResponse = backgroundScript[request.fn](request.request);
-
-		let response = new Promise(() => {
+		return new Promise(resolve => {
+			let backgroundScript = getBackgroundScript('BackgroundScript');
+			//TODO change to promises
+			let deferredResponse = backgroundScript[request.fn](request.request);
 			deferredResponse.done(function(resp) {
-				response.resolve(response);
+				resolve(resp);
 			});
 		});
-
-		return response;
 	}
 });

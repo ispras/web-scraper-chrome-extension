@@ -1,7 +1,7 @@
-import 'bootstrap/dist/js/bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
+import '../libs/jquery.bootstrapvalidator/bootstrapValidator.css';
 import '../devtools/panel.css';
-
+import 'bootstrap/dist/js/bootstrap';
 import StoreDevtools from './StoreDevtools';
 import SitemapController from './Controller';
 

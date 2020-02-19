@@ -5,7 +5,7 @@ export default class ChromePopupBrowser {
 	}
 
 	_initPopupWindow(callback, scope) {
-		var browser = this;
+		let popup_browser = this;
 		if (this.window !== undefined) {
 			console.log(JSON.stringify(this.window));
 			// check if tab exists
@@ -19,10 +19,16 @@ export default class ChromePopupBrowser {
 			return;
 		}
 
-		browser.windows.create({ type: 'popup', width: 1042, height: 768, focused: true, url: 'browser://newtab' }).then(function(window) {
-			browser.window = window;
-			browser.tab = window.tabs[0];
+		let createWindowOptions = {
+			type: 'popup',
+			width: 1042,
+			height: 768,
+			url: 'browser://newtab',
+		};
 
+		browser.windows.create(createWindowOptions).then(function(window) {
+			popup_browser.window = window;
+			popup_browser.tab = window.tabs[0];
 			callback.call(scope);
 		});
 	}
@@ -53,12 +59,12 @@ export default class ChromePopupBrowser {
 	}
 
 	fetchData(url, sitemap, parentSelectorId, callback, scope) {
-		var browser = this;
+		var current_browser = this;
 
 		this._initPopupWindow(function() {
-			var tab = browser.tab;
+			var tab = current_browser.tab;
 
-			browser.loadUrl(
+			current_browser.loadUrl(
 				url,
 				function() {
 					var message = {

@@ -1,3 +1,6 @@
+import CssSelector from '../libs/css-selector/lib/CssSelector';
+import ElementQuery from './ElementQuery';
+
 export default class ContentSelector {
 	/**
 	 * @param options.parentCSSSelector	Elements can be only selected within this element

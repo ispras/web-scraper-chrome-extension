@@ -73,15 +73,21 @@ export default class StorePouchDB {
 	 * @returns {undefined}
 	 */
 	initSitemapDataDb(sitemapId) {
-		let dbLocation = this.getSitemapDataDbLocation(sitemapId);
+		// let dbLocation = this.getSitemapDataDbLocation(sitemapId);
 		let store = this;
+		let db = this.getSitemapDataDb(sitemapId);
 
 		return new Promise(resolve => {
-			PouchDB.destroy(dbLocation, function() {
-				let db = store.getSitemapDataDb(sitemapId);
-				let dbWriter = new StoreScrapeResultWriter(db);
-				resolve(dbWriter);
-			});
+			db.destroy()
+				.then(() => {
+					let db = store.getSitemapDataDb(sitemapId);
+					let dbWriter = new StoreScrapeResultWriter(db);
+					resolve(dbWriter);
+				})
+				.catch(reason => {
+					console.log(reason);
+					resolve();
+				});
 		});
 	}
 
