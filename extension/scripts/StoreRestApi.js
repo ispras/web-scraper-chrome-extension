@@ -1,5 +1,5 @@
 var StoreRestApi = function (config) {
-    this.uri = config.restUrl;
+    this.base_uri = config.restUrl;
     this.localDataStore = new StorePouchDB(config);
 };
 
@@ -9,13 +9,13 @@ StoreRestApi.prototype = {
         this.saveSitemap(sitemap, callback);
     },
     saveSitemap: function (sitemap, callback) {
-        url = this.uri;
+        base_uri = this.base_uri;
         this.sitemapExists(sitemap._id, function (exists) {
             if (exists) {
                 //update sitemap
                 $.ajax({
                     type : "PUT",
-                    url: url + '/sitemaps/' + sitemap._id,
+                    url: new URL('/sitemaps/' + sitemap._id, base_uri).href,
                     data: new Sitemap(sitemap).exportSitemap(),
                     success : function() {
                         callback(sitemap)
@@ -30,7 +30,7 @@ StoreRestApi.prototype = {
                 //create new sitemap
                 $.ajax({
                     type : "POST",
-                    url: url + '/sitemaps/',
+                    url: new URL('/sitemaps/', base_uri).href,
                     data: new Sitemap(sitemap).exportSitemap(),
                     success : function() {
                         callback(sitemap)
@@ -46,7 +46,7 @@ StoreRestApi.prototype = {
     deleteSitemap: function (sitemap, callback) {
         $.ajax({
             type : "DELETE",
-            url: this.uri + '/sitemaps/' + sitemap._id,
+            url: new URL('/sitemaps/' + sitemap._id, this.base_uri).href,
             success : callback,
             error : function(jqXHR, textStatus, errorThrown) {
                 alert("StoreApi: Error deleting sitemap.")
@@ -57,7 +57,7 @@ StoreRestApi.prototype = {
     getAllSitemaps: function (callback) {
         $.ajax({
             type : "GET",
-            url : this.uri + '/sitemaps/',
+            url : new URL('/sitemaps/', this.base_uri).href,
             success : function (data) {
                 let sitemaps = [];
                 for (let i in data) {
@@ -74,7 +74,7 @@ StoreRestApi.prototype = {
     sitemapExists: function (sitemapId, callback) {
         $.ajax({
             type : "GET",
-            url : this.uri + '/sitemaps/',
+            url : new URL('/sitemaps/', this.base_uri).href,
             success : function (data) {
                 let exists = false;
                 for (let i in data) {
