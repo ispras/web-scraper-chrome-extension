@@ -5,6 +5,7 @@ import SelectorGraphv2 from './SelectorGraphv2';
 import * as ich from 'icanhaz/ICanHaz';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import SelectorList from './SelectorList';
+import SelectorTable from './Selector/SelectorTable';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -916,6 +917,7 @@ export default class SitemapController {
 		let tableDataRowSelector = $('#edit-selector [name=tableDataRowSelector]').val();
 		let tableHeaderRowSelector = $('#edit-selector [name=tableHeaderRowSelector]').val();
 		let tableAddMissingColumns = $('#edit-selector [name=tableAddMissingColumns]').is(':checked');
+		var verticalTable = $('#edit-selector [name=verticalTable]').is(':checked');
 		let clickElementSelector = $('#edit-selector [name=clickElementSelector]').val();
 		let type = $('#edit-selector [name=type]').val();
 		let clickElementUniquenessType = $('#edit-selector [name=clickElementUniquenessType]').val();
@@ -930,7 +932,6 @@ export default class SitemapController {
 		let extractAttribute = $('#edit-selector [name=extractAttribute]').val();
 		let extractStyle = $('#edit-selector [name=extractStyle]').val();
 		let value = $('#edit-selector [name=value]').val();
-
 		let parentSelectors = $('#edit-selector [name=parentSelectors]').val();
 		let columns = [];
 		let $columnHeaders = $('#edit-selector .column-header');
@@ -1185,6 +1186,7 @@ export default class SitemapController {
 		$('#viewport').html(exportPanel);
 
 		$('.result').hide();
+		$('.download-button').hide();
 
 		// generate data
 		$('#generate-csv').click(
@@ -1201,9 +1203,11 @@ export default class SitemapController {
 				this.store.getSitemapData(sitemap).then(
 					function(data) {
 						let blob = sitemap.getDataExportCsvBlob(data, options);
-						$('.download-button a').attr('href', window.URL.createObjectURL(blob));
-						$('.download-button a').attr('download', sitemap._id + '.csv');
+						let button_a = $('.download-button a');
+						button_a.attr('href', window.URL.createObjectURL(blob));
+						button_a.attr('download', sitemap._id + '.csv');
 						$('.download-button').show();
+						$('.result').hide();
 					}.bind(this)
 				);
 			}.bind(this)
@@ -1240,12 +1244,13 @@ export default class SitemapController {
 				if (selector.type === 'SelectorTable') {
 					this.getSelectorHTML().done(
 						function(html) {
-							let tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html);
-							let tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html);
+							let verticalTable = this.getCurrentlyEditedSelector().verticalTable;
+							let tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html, verticalTable);
+							let tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html, verticalTable);
 							$('input[name=tableHeaderRowSelector]').val(tableHeaderRowSelector);
 							$('input[name=tableDataRowSelector]').val(tableDataRowSelector);
 
-							let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderRowSelector, html);
+							let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderRowSelector, html, verticalTable);
 							this.renderTableHeaderColumns(headerColumns);
 						}.bind(this)
 					);
@@ -1264,12 +1269,17 @@ export default class SitemapController {
 
 	refreshTableHeaderRowSelector(button) {
 		let input = $(button)
-				.closest('.form-group')
-				.find('input.selector-value'),
-			value = input.val();
+			.closest('.form-group')
+			.find('input.selector-value');
+		let value = input.val();
 
 		this.getSelectorHTML().done(
 			function(html) {
+				let verticalTable = this.getCurrentlyEditedSelector().verticalTable;
+				let tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html, verticalTable);
+				let tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html, verticalTable);
+				$('input[name=tableHeaderRowSelector]').val(tableHeaderRowSelector);
+				$('input[name=tableDataRowSelector]').val(tableDataRowSelector);
 				let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(value, html);
 				this.renderTableHeaderColumns(headerColumns);
 			}.bind(this)
