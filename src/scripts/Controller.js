@@ -2,10 +2,12 @@ import getBackgroundScript from './BackgroundScript';
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
-import * as ich from 'icanhaz/ICanHaz';
-import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
+import * as ich from 'icanhaz/ICanHaz';
+import 'jquery-flexdatalist/jquery.flexdatalist.css';
+import 'jquery-flexdatalist/jquery.flexdatalist';
+import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import * as browser from 'webextension-polyfill';
 
 export default class SitemapController {
@@ -14,6 +16,68 @@ export default class SitemapController {
 		this.templateDir = templateDir;
 		this.backgroundScript = getBackgroundScript('DevTools');
 		this.contentScript = getContentScript('DevTools');
+		this.selectorTypes = [
+			{
+				type: 'SelectorText',
+				title: 'Text',
+			},
+			{
+				type: 'ConstantValue',
+				title: 'Constant value',
+			},
+			{
+				type: 'SelectorInputValue',
+				title: 'Input value',
+			},
+			{
+				type: 'SelectorLink',
+				title: 'Link',
+			},
+			{
+				type: 'SelectorPopupLink',
+				title: 'Popup Link',
+			},
+			{
+				type: 'SelectorImage',
+				title: 'Image',
+			},
+			{
+				type: 'SelectorDocument',
+				title: 'Document',
+			},
+			{
+				type: 'SelectorTable',
+				title: 'Table',
+			},
+			{
+				type: 'SelectorElementAttribute',
+				title: 'Element attribute',
+			},
+			{
+				type: 'SelectorElementStyle',
+				title: 'Element style',
+			},
+			{
+				type: 'SelectorHTML',
+				title: 'HTML',
+			},
+			{
+				type: 'SelectorElement',
+				title: 'Element',
+			},
+			{
+				type: 'SelectorElementScroll',
+				title: 'Element scroll down',
+			},
+			{
+				type: 'SelectorElementClick',
+				title: 'Element click',
+			},
+			{
+				type: 'SelectorGroup',
+				title: 'Grouped',
+			},
+		];
 		this.init();
 	}
 
@@ -438,10 +502,11 @@ export default class SitemapController {
 			.val()
 			.split(',')
 			.map(item => item.trim());
-
+		let model = $('#viewport .input-sitemapModel').val();
 		return {
 			id: id,
 			startUrls: startUrls,
+			model: JSON.parse(model),
 		};
 	}
 
@@ -484,8 +549,10 @@ export default class SitemapController {
 		// load data from form
 		let sitemapJSON = $('[name=sitemapJSON]').val();
 		let id = $('input[name=_id]').val();
+		let model = $('#viewport .input-sitemapModel').val();
 		let sitemap = new Sitemap();
 		sitemap.importSitemap(sitemapJSON);
+		sitemap.model = JSON.parse(model);
 		if (id.length) {
 			sitemap._id = id;
 		}
@@ -537,6 +604,7 @@ export default class SitemapController {
 
 				// change data
 				sitemap.startUrls = sitemapData.startUrls;
+				sitemap.model = sitemapData.model;
 
 				// just change sitemaps url
 				if (sitemapData.id === sitemap._id) {
@@ -768,70 +836,13 @@ export default class SitemapController {
 		let $editSelectorForm = ich.SelectorEdit({
 			selector: selector,
 			selectorIds: selectorIds,
-			selectorTypes: [
-				{
-					type: 'SelectorText',
-					title: 'Text',
-				},
-				{
-					type: 'ConstantValue',
-					title: 'Constant value',
-				},
-				{
-					type: 'SelectorInputValue',
-					title: 'Input value',
-				},
-				{
-					type: 'SelectorLink',
-					title: 'Link',
-				},
-				{
-					type: 'SelectorPopupLink',
-					title: 'Popup Link',
-				},
-				{
-					type: 'SelectorImage',
-					title: 'Image',
-				},
-				{
-					type: 'SelectorDocument',
-					title: 'Document',
-				},
-				{
-					type: 'SelectorTable',
-					title: 'Table',
-				},
-				{
-					type: 'SelectorElementAttribute',
-					title: 'Element attribute',
-				},
-				{
-					type: 'SelectorElementStyle',
-					title: 'Element style',
-				},
-				{
-					type: 'SelectorHTML',
-					title: 'HTML',
-				},
-				{
-					type: 'SelectorElement',
-					title: 'Element',
-				},
-				{
-					type: 'SelectorElementScroll',
-					title: 'Element scroll down',
-				},
-				{
-					type: 'SelectorElementClick',
-					title: 'Element click',
-				},
-				{
-					type: 'SelectorGroup',
-					title: 'Grouped',
-				},
-			],
+			selectorTypes: this.selectorTypes,
+			model: sitemap.model,
 		});
 		$('#viewport').html($editSelectorForm);
+
+		$('#selectorId').flexdatalist({ minLength: 1 });
+
 		// mark initially opened selector as currently edited
 		$('#edit-selector #parentSelectors option').each(function(i, element) {
 			if ($(element).val() === selector.id) {
