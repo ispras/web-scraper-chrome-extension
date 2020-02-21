@@ -149,7 +149,7 @@ SitemapController.prototype = {
                 },
                 "#selector-tree .breadcrumb a": {
                     click: this.treeNavigationshowSitemapSelectorList
-                
+		},
                 "#selector-tree tr button[action=edit-selector]": {
                     click: this.editSelector
                 },
