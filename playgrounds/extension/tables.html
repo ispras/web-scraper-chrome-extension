@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <link rel="stylesheet" href="../../extension/assets/bootstrap-3.0.0/css/bootstrap.css">
     <link rel="stylesheet" href="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.css">
     <link rel="stylesheet" href="../../extension/devtools/devtools_scraper_panel.css">
@@ -42,7 +43,7 @@
     <script src="../../extension/scripts/Sitemap.js"></script>
     <script src="../../extension/scripts/SelectorGraph.js"></script>
     <script src="../../extension/scripts/SelectorGraphv2.js"></script>
-    <script src="../../extension/scripts/StoreCouchDB.js"></script>
+    <script src="../../extension/scripts/StorePouchDB.js"></script>
     <script src="../../extension/scripts/StoreDevtools.js"></script>
     <script src="../../extension/assets/css-selector/lib/CssSelector.js"></script>
     <script src="../../extension/scripts/ContentSelector.js"></script>
@@ -162,7 +163,7 @@
         <hr />
         <br />
 
-        <h3>Table with vertical headers and multible values</h3>
+        <h3>Table with vertical headers</h3>
         <table class="table">
             <tr>
                 <th>Names</th>
@@ -185,23 +186,105 @@
         <hr />
         <br />
 
-        <h3>Table with vertical headers</h3>
+        <h3>Table with vertical headers but without th</h3>
         <table class="table">
             <tr>
-                <th>Name</th>
+                <td>Name</td>
                 <td>Ben</td>
+                <td>Gena</td>
             </tr>
             <tr>
-                <th>Fruit</th>
+                <td>Fruit</td>
                 <td>Cherry</td>
+                <td>Banana</td>
             </tr>
             <tr>
-                <th>Animal</th>
+                <td>Animal</td>
                 <td>Cat</td>
+                <td>Cheburashka</td>
             </tr>
         </table>
 
+        <br />
+        <hr />
+        <br />
 
+        <h3>Table with horizontal headers but without th</h3>
+        <table class="table">
+            <tr>
+                <td>Names</td>
+                <td>Fruits</td>
+                <td>Animals</td>
+            </tr>
+            <tr>
+                <td>Ben</td>
+                <td>Cherry</td>
+                <td>Cat</td>
+            </tr>
+            <tr>
+                <td>Bruno</td>
+                <td>Clementine</td>
+                <td>Catfish</td>
+            </tr>
+        </table>
+
+        <br />
+        <hr />
+        <br />
+
+
+        <h3>Table without headers</h3>
+        <table class="table">
+            <tr>
+                <td>A1</td>
+                <td>A2</td>
+                <td>A3</td>
+            </tr>
+            <tr>
+                <td>B1</td>
+                <td>B2</td>
+                <td>B3</td>
+            </tr>
+            <tr>
+                <td>C1</td>
+                <td>C2</td>
+                <td>C3</td>
+            </tr>
+        </table>
+        <br />
+        <hr />
+        <br />
+        <style type="text/css">
+            table {
+                border-collapse: collapse;
+            }
+            table th,
+            table td {
+                padding: 0 5px;
+                border: 1px solid #000;
+                text-align: center;
+            }
+        </style>
+        <table class="table">
+            <tr>
+                <td rowspan="2"></td>
+                <td colspan="2">flowers</td>
+            </tr>
+            <tr>
+                <td>color</td>
+                <td>size</td>
+            </tr>
+            <tr>
+                <td>rose</td>
+                <td>red</td>
+                <td>20</td>
+            </tr>
+            <tr>
+                <td>vanila</td>
+                <td>white</td>
+                <td>30</td>
+            </tr>
+        </table>
 
     </div>
 </body>
