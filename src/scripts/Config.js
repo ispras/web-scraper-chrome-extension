@@ -42,7 +42,7 @@ export default class Config {
 	/**
 	 * Saves configuration to chrome extension sync storage
 	 * @param {type} items
-	 * @returns {undefined} Promise
+	 * @returns {Promise<void>} Promise
 	 */
 	updateConfiguration(items) {
 		return browser.storage.sync.set(items);

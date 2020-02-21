@@ -1,3 +1,7 @@
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap';
+import Config from '../scripts/Config';
+
 $(function() {
 	// popups for Storage setting input fields
 	$('#sitemapDb')
@@ -53,7 +57,7 @@ $(function() {
 	var config = new Config();
 
 	// load previously synced data
-	config.loadConfiguration(function() {
+	config.loadConfiguration().then(() => {
 		$('#storageType').val(config.storageType);
 		$('#sitemapDb').val(config.sitemapDb);
 		$('#dataDb').val(config.dataDb);
@@ -79,19 +83,20 @@ $(function() {
 			newConfig.restUrl = $('#restUrl').val();
 		}
 
-		config.updateConfiguration(newConfig, function() {
-			if (chrome.runtime.lastError) {
-				$('.alert')
-					.attr('id', 'error')
-					.text('Failed to save options ' + chrome.runtime.lastError.message)
-					.show();
-			} else {
+		config
+			.updateConfiguration(newConfig)
+			.then(() => {
 				$('.alert')
 					.attr('id', 'success')
 					.text('Options successfully updated.')
 					.show();
-			}
-		});
+			})
+			.catch(() => {
+				$('.alert')
+					.attr('id', 'error')
+					.text('Failed to save options ' + chrome.runtime.lastError.message)
+					.show();
+			});
 		return false;
 	});
 });
