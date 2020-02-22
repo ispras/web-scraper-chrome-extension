@@ -1,3 +1,0 @@
-[submodule "src/libs/css-selector"]
-	path = src/libs/css-selector
-	url = https://github.com/martinsbalodis/css-selector.git

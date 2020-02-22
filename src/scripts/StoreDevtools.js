@@ -1,4 +1,5 @@
 import Sitemap from './Sitemap';
+import * as browser from 'webextension-polyfill';
 
 /**
  * From devtools panel there is no possibility to execute XHR requests. So all requests to a remote CouchDb must be

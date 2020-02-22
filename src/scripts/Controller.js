@@ -6,6 +6,7 @@ import * as ich from 'icanhaz/ICanHaz';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
+import * as browser from 'webextension-polyfill';
 
 export default class SitemapController {
 	constructor(store, templateDir) {

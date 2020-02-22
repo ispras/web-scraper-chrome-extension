@@ -1,4 +1,5 @@
 import PouchDB from 'pouchdb';
+import * as browser from 'webextension-polyfill';
 
 /**
  * Make sure all obj have the same properties

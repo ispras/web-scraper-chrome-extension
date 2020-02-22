@@ -91,9 +91,6 @@ const config = {
 			{ from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
 			{ from: 'devtools/panel.html', to: 'devtools/panel.html', transform: transformHtml },
 			{ from: 'devtools/devtools.html', to: 'devtools/devtools.html', transform: transformHtml },
-			// XXX Dont like this solution to add web browser polyfills but this is recommended by guide:
-			// https://www.npmjs.com/package/webextension-polyfill#usage-with-webpack-without-bundling
-			{ from: '../node_modules/webextension-polyfill/dist/browser-polyfill.js', to: 'browser-polyfill.js' },
 			{
 				from: 'manifest.json',
 				to: 'manifest.json',

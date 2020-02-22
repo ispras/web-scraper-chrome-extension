@@ -1,3 +1,5 @@
+import * as browser from 'webextension-polyfill';
+
 export default class Config {
 	constructor() {
 		this.sitemapDb = '<use loadConfiguration()>';

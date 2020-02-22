@@ -1,3 +1,5 @@
+import * as browser from 'webextension-polyfill';
+
 export default class ChromePopupBrowser {
 	constructor(options) {
 		this.pageLoadDelay = options.pageLoadDelay;

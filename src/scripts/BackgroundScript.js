@@ -1,3 +1,5 @@
+import * as browser from 'webextension-polyfill';
+
 /**
  * ContentScript that can be called from anywhere within the extension
  */

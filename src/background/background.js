@@ -6,6 +6,7 @@ import Queue from '../scripts/Queue';
 import ChromePopupBrowser from '../scripts/ChromePopupBrowser';
 import Scraper from '../scripts/Scraper';
 import getBackgroundScript from '../scripts/BackgroundScript';
+import * as browser from 'webextension-polyfill';
 
 const config = new Config();
 let store;

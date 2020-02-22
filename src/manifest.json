@@ -26,13 +26,13 @@
 	"devtools_page": "devtools/devtools.html",
 	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 	"background": {
-		"scripts": ["browser-polyfill.js", "background/background.js"]
+		"scripts": ["background/background.js"]
 	},
 	"web_accessible_resources": ["icons/icon16.png", "icons/icon19.png", "icons/icon38.png", "icons/icon48.png", "icons/icon128.png"],
 	"content_scripts": [
 		{
 			"matches": ["*://*/*"],
-			"js": ["browser-polyfill.js", "content_script/content_script.js"],
+			"js": ["content_script/content_script.js"],
 			"css": ["content_script/content_script.css"]
 		}
 	],

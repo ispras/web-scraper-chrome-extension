@@ -1,5 +1,6 @@
 import getContentScript from '../scripts/ContentScript';
 import DataExtractor from '../scripts/DataExtractor';
+import * as browser from 'webextension-polyfill';
 import './content_script.css';
 
 browser.runtime.onMessage.addListener(request => {

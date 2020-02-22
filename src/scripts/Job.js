@@ -50,10 +50,10 @@ export default class Job {
 		return childMatches[1] + childMatches[2] + childMatches[5] + childMatches[6] + childMatches[7];
 	}
 
-	execute(browser, callback, scope) {
+	execute(popupBrowser, callback, scope) {
 		let sitemap = this.scraper.sitemap;
 		let job = this;
-		browser.fetchData(
+		popupBrowser.fetchData(
 			this.url,
 			sitemap,
 			this.parentSelector,
