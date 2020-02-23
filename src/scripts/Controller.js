@@ -942,11 +942,24 @@ export default class SitemapController {
 		this.state.currentSelector = selector;
 		this.selectorTypeChanged(false);
 
+		//TODO move this check to Model class
+		let data = [];
+		let idInData = false;
+		for (let field of sitemap.model) {
+			data.push(field);
+			if (field.field_name === selector.id) {
+				idInData = true;
+			}
+		}
+		if (!idInData && selector.id) {
+			data.push({ field: '', entity: '', field_name: selector.id });
+		}
+
 		$('#selectorId').flexdatalist({
 			init: this.initSelectorValidation(),
 			textProperty: '{field_name}',
 			valueProperty: 'field_name',
-			data: sitemap.model,
+			data: data,
 			searchIn: ['entity', 'field'],
 			visibleProperties: ['entity', 'field'],
 			groupBy: 'entity',
@@ -967,7 +980,7 @@ export default class SitemapController {
 			$('#edit-selector .feature-' + feature).show();
 		});
 
-		if (changeTrigger && type === 'SelectorLink') {
+		if (changeTrigger && selector.type === 'SelectorLink') {
 			$('#edit-selector [name=extractAttribute]').val('href');
 		}
 
