@@ -5,7 +5,6 @@ import SelectorGraphv2 from './SelectorGraphv2';
 import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import * as ich from 'icanhaz/ICanHaz';
-import 'jquery-flexdatalist/jquery.flexdatalist.css';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import * as browser from 'webextension-polyfill';
@@ -216,9 +215,6 @@ export default class SitemapController {
 					'#sitemaps button[action=browse-sitemap-data]': {
 						click: this.sitemapListBrowseSitemapData,
 					},
-					'#sitemaps button[action=csv-download-sitemap-data]': {
-						click: this.downloadSitemapData,
-					},
 					// @TODO move to tr
 					'#selector-tree tbody tr': {
 						click: this.showChildSelectors,
@@ -232,7 +228,7 @@ export default class SitemapController {
 					'#edit-selector select[name=type]': {
 						change: function() {
 							this.selectorTypeChanged(true);
-						},
+						}.bind(this),
 					},
 					'#edit-selector button[action=save-selector]': {
 						click: this.saveSelector,
@@ -330,8 +326,7 @@ export default class SitemapController {
 	 * Returns bootstrapValidator object for current form in viewport
 	 */
 	getFormValidator() {
-		let validator = $('#viewport form').data('bootstrapValidator');
-		return validator;
+		return $('#viewport form').data('bootstrapValidator');
 	}
 
 	/**
@@ -347,8 +342,7 @@ export default class SitemapController {
 			validator.validateField(field);
 		}
 
-		let valid = validator.isValid();
-		return valid;
+		return validator.isValid();
 	}
 
 	/**
@@ -364,7 +358,7 @@ export default class SitemapController {
 						},
 						stringLength: {
 							min: 3,
-							message: 'The sitemap id should be atleast 3 characters long',
+							message: 'The sitemap id should be at least 3 characters long',
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
@@ -373,9 +367,9 @@ export default class SitemapController {
 						// placeholder for sitemap id existance validation
 						callback: {
 							message: 'Sitemap with this id already exists',
-							callback: function(value, validator) {
+							callback: function() {
 								return true;
-							}.bind(this),
+							},
 						},
 					},
 				},
@@ -386,12 +380,13 @@ export default class SitemapController {
 						},
 						callback: {
 							message: 'The start URLs are not valid. Please use "," as a seperator.',
-							callback: function(value, validator) {
+							callback: function(value) {
 								function isUrlValid(url) {
 									return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(
 										url
 									);
 								}
+
 								let isValid = true;
 								$.each(
 									value.split(',').map(item => item.trim()),
@@ -404,20 +399,74 @@ export default class SitemapController {
 						},
 					},
 				},
+				// XXX something wrong happening when turning on this validator
+				// model: {
+				// 	validators: {
+				// 		callback: {
+				// 			callback: function(value) {
+				// 				if (value) {
+				// 					return {
+				// 						message: 'Empty value is possible model',
+				// 						valid: true,
+				// 					};
+				// 				}
+				// 				try {
+				// 					let model = JSON.parse(value);
+				// 					if (!Array.isArray(model)) {
+				// 						return {
+				// 							valid: false,
+				// 							message: 'JSON must be array',
+				// 						};
+				// 					}
+				// 					for (let field_rule of model) {
+				// 						if (!('entity' in field_rule) || !('field' in field_rule) || !('field_name' in field_rule)) {
+				// 							return {
+				// 								valid: false,
+				// 								message: 'Each object in JSON array must contain keys entity, field, field_name.',
+				// 							};
+				// 						}
+				// 					}
+				// 				} catch (e) {
+				// 					return {
+				// 						valid: false,
+				// 						message: 'JSON is not valid',
+				// 					};
+				// 				}
+				//
+				// 				return {
+				// 					message: 'Valid model',
+				// 					valid: true,
+				// 				};
+				// 			},
+				// 		},
+				// 	},
+				// },
 			},
 		});
 	}
 
 	showCreateSitemap() {
 		this.setActiveNavigationButton('create-sitemap-create');
-		let sitemapForm = ich.SitemapCreate();
+		let sitemapForm = ich.SitemapCreate({
+			model_example: JSON.stringify(
+				[
+					{
+						entity: 'EntityName',
+						field: 'FieldName',
+						field_name: 'Expected Field Id',
+					},
+				],
+				null,
+				4
+			),
+		});
 		$('#viewport').html(sitemapForm);
 		this.initSitemapValidation();
 
 		return true;
 	}
 
-	initImportStiemapValidation() {
+	initImportSitemapValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
 				_id: {
@@ -465,7 +514,7 @@ export default class SitemapController {
 		this.setActiveNavigationButton('create-sitemap-import');
 		let sitemapForm = ich.SitemapImport();
 		$('#viewport').html(sitemapForm);
-		this.initImportStiemapValidation();
+		this.initImportSitemapValidation();
 		return true;
 	}
 
@@ -502,15 +551,22 @@ export default class SitemapController {
 			.val()
 			.split(',')
 			.map(item => item.trim());
-		let model = $('#viewport .input-sitemapModel').val();
-		return {
-			id: id,
-			startUrls: startUrls,
-			model: JSON.parse(model),
-		};
+		let model = $('#viewport .input-model').val();
+		if (model) {
+			return {
+				id: id,
+				startUrls: startUrls,
+				model: JSON.parse(model),
+			};
+		} else {
+			return {
+				id: id,
+				startUrls: startUrls,
+			};
+		}
 	}
 
-	createSitemap(form) {
+	createSitemap() {
 		// cancel submit if invalid form
 		if (!this.isValidForm()) {
 			return false;
@@ -528,6 +584,7 @@ export default class SitemapController {
 					let sitemap = new Sitemap({
 						_id: sitemapData.id,
 						startUrls: sitemapData.startUrls,
+						model: sitemapData.model,
 						selectors: [],
 					});
 					this.store.createSitemap(sitemap).then(
@@ -549,15 +606,13 @@ export default class SitemapController {
 		// load data from form
 		let sitemapJSON = $('[name=sitemapJSON]').val();
 		let id = $('input[name=_id]').val();
-		let model = $('#viewport .input-sitemapModel').val();
 		let sitemap = new Sitemap();
 		sitemap.importSitemap(sitemapJSON);
-		sitemap.model = JSON.parse(model);
 		if (id.length) {
 			sitemap._id = id;
 		}
 		// check whether sitemap with this id already exist
-		this.store.sitemapExists(sitemap.id).then(
+		this.store.sitemapExists(sitemap._id).then(
 			function(sitemapExists) {
 				if (sitemapExists) {
 					let validator = this.getFormValidator();
@@ -577,6 +632,20 @@ export default class SitemapController {
 		this.setActiveNavigationButton('sitemap-edit-metadata');
 
 		let sitemap = this.state.currentSitemap;
+		if (sitemap.model) {
+			sitemap.model = JSON.stringify(sitemap.model, null, 4);
+		}
+		sitemap.model_example = JSON.stringify(
+			[
+				{
+					entity: 'EntityName',
+					field: 'FieldName',
+					field_name: 'Expected Field Id',
+				},
+			],
+			null,
+			4
+		);
 		let $sitemapMetadataForm = ich.SitemapEditMetadata(sitemap);
 		$('#viewport').html($sitemapMetadataForm);
 		this.initSitemapValidation();
@@ -641,12 +710,14 @@ export default class SitemapController {
 		let sitemap = $(tr).data('sitemap');
 		this._editSitemap(sitemap);
 	}
+
 	_editSitemap(sitemap) {
 		this.setStateEditSitemap(sitemap);
 		this.setActiveNavigationButton('sitemap');
 
 		this.showSitemapSelectorList();
 	}
+
 	showSitemapSelectorList() {
 		this.setActiveNavigationButton('sitemap-selector-list');
 
@@ -667,6 +738,7 @@ export default class SitemapController {
 
 		return true;
 	}
+
 	showSitemapSelectorGraph() {
 		this.setActiveNavigationButton('sitemap-selector-graph');
 		let sitemap = this.state.currentSitemap;
@@ -677,6 +749,7 @@ export default class SitemapController {
 		graph.draw(graphDiv, $(document).width(), 200);
 		return true;
 	}
+
 	showChildSelectors(tr) {
 		let selector = $(tr).data('selector');
 		let parentSelectors = this.state.editSitemapBreadcumbsSelectors;
@@ -699,7 +772,7 @@ export default class SitemapController {
 	}
 
 	initSelectorValidation() {
-		$('#viewport form').bootstrapValidator({
+		return $('#viewport form').bootstrapValidator({
 			fields: {
 				id: {
 					validators: {
@@ -817,18 +890,21 @@ export default class SitemapController {
 			},
 		});
 	}
+
 	editSelector(button) {
 		let selector = $(button)
 			.closest('tr')
 			.data('selector');
 		this._editSelector(selector);
 	}
+
 	updateSelectorParentListOnIdChange() {
 		let selector = this.getCurrentlyEditedSelector();
 		$('.currently-edited')
 			.val(selector.id)
 			.text(selector.id);
 	}
+
 	_editSelector(selector) {
 		let sitemap = this.state.currentSitemap;
 		let selectorIds = sitemap.getPossibleParentSelectorIds();
@@ -837,11 +913,8 @@ export default class SitemapController {
 			selector: selector,
 			selectorIds: selectorIds,
 			selectorTypes: this.selectorTypes,
-			model: sitemap.model,
 		});
 		$('#viewport').html($editSelectorForm);
-
-		$('#selectorId').flexdatalist({ minLength: 1 });
 
 		// mark initially opened selector as currently edited
 		$('#edit-selector #parentSelectors option').each(function(i, element) {
@@ -868,7 +941,19 @@ export default class SitemapController {
 
 		this.state.currentSelector = selector;
 		this.selectorTypeChanged(false);
-		this.initSelectorValidation();
+
+		$('#selectorId').flexdatalist({
+			init: this.initSelectorValidation(),
+			textProperty: '{field_name}',
+			valueProperty: 'field_name',
+			data: sitemap.model,
+			searchIn: ['entity', 'field'],
+			visibleProperties: ['entity', 'field'],
+			groupBy: 'entity',
+			searchContain: true,
+			noResultsText: '',
+			minLength: 1,
+		});
 	}
 
 	selectorTypeChanged(changeTrigger) {
@@ -898,6 +983,7 @@ export default class SitemapController {
 			$('#edit-selector #parentSelectors .currently-edited').remove();
 		}
 	}
+
 	saveSelector(button) {
 		let sitemap = this.state.currentSitemap;
 		let selector = this.state.currentSelector;
@@ -920,6 +1006,7 @@ export default class SitemapController {
 			}.bind(this)
 		);
 	}
+
 	/**
 	 * Get selector from selector editing form
 	 */
@@ -929,7 +1016,7 @@ export default class SitemapController {
 		let tableDataRowSelector = $('#edit-selector [name=tableDataRowSelector]').val();
 		let tableHeaderRowSelector = $('#edit-selector [name=tableHeaderRowSelector]').val();
 		let tableAddMissingColumns = $('#edit-selector [name=tableAddMissingColumns]').is(':checked');
-		var verticalTable = $('#edit-selector [name=verticalTable]').is(':checked');
+		let verticalTable = $('#edit-selector [name=verticalTable]').is(':checked');
 		let clickElementSelector = $('#edit-selector [name=clickElementSelector]').val();
 		let type = $('#edit-selector [name=type]').val();
 		let clickElementUniquenessType = $('#edit-selector [name=clickElementUniquenessType]').val();
@@ -980,6 +1067,7 @@ export default class SitemapController {
 			selector: selectorsSelector,
 			tableHeaderRowSelector: tableHeaderRowSelector,
 			tableAddMissingColumns: tableAddMissingColumns,
+			verticalTable: verticalTable,
 			tableDataRowSelector: tableDataRowSelector,
 			clickElementSelector: clickElementSelector,
 			clickElementUniquenessType: clickElementUniquenessType,
@@ -1001,6 +1089,7 @@ export default class SitemapController {
 			stringReplacement: stringReplacement,
 		});
 	}
+
 	/**
 	 * @returns {Sitemap|*} Cloned Sitemap with currently edited selector
 	 */
@@ -1011,6 +1100,7 @@ export default class SitemapController {
 		sitemap.updateSelector(selector, newSelector);
 		return sitemap;
 	}
+
 	cancelSelectorEditing(button) {
 		// cancel possible element selection
 		this.contentScript.removeCurrentContentSelector().done(
@@ -1019,6 +1109,7 @@ export default class SitemapController {
 			}.bind(this)
 		);
 	}
+
 	addSelector() {
 		let parentSelectorId = this.state.currentParentSelectorId;
 		let sitemap = this.state.currentSitemap;
@@ -1031,6 +1122,7 @@ export default class SitemapController {
 
 		this._editSelector(selector, sitemap);
 	}
+
 	deleteSelector(button) {
 		let sitemap = this.state.currentSitemap;
 		let selector = $(button)
@@ -1044,6 +1136,7 @@ export default class SitemapController {
 			}.bind(this)
 		);
 	}
+
 	deleteSitemap(button) {
 		let sitemap = $(button)
 			.closest('tr')
@@ -1053,6 +1146,7 @@ export default class SitemapController {
 			controller.showSitemaps();
 		});
 	}
+
 	initScrapeSitemapConfigValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
@@ -1101,6 +1195,7 @@ export default class SitemapController {
 			},
 		});
 	}
+
 	showScrapeSitemapConfigPanel() {
 		this.setActiveNavigationButton('sitemap-scrape');
 		let scrapeConfigPanel = ich.SitemapScrapeConfig();
@@ -1108,6 +1203,7 @@ export default class SitemapController {
 		this.initScrapeSitemapConfigValidation();
 		return true;
 	}
+
 	scrapeSitemap() {
 		if (!this.isValidForm()) {
 			return false;
@@ -1148,6 +1244,7 @@ export default class SitemapController {
 		);
 		return false;
 	}
+
 	sitemapListBrowseSitemapData(button) {
 		let sitemap = $(button)
 			.closest('tr')
@@ -1155,6 +1252,7 @@ export default class SitemapController {
 		this.setStateEditSitemap(sitemap);
 		this.browseSitemapData();
 	}
+
 	browseSitemapData() {
 		this.setActiveNavigationButton('sitemap-browse');
 		let sitemap = this.state.currentSitemap;
@@ -1384,6 +1482,7 @@ export default class SitemapController {
 
 		return deferredHTML;
 	}
+
 	previewSelector(button) {
 		if (!$(button).hasClass('preview')) {
 			let sitemap = this.getCurrentlyEditedSelectorSitemap();
@@ -1403,6 +1502,7 @@ export default class SitemapController {
 			$(button).removeClass('preview');
 		}
 	}
+
 	previewClickElementSelector(button) {
 		if (!$(button).hasClass('preview')) {
 			let sitemap = this.state.currentSitemap;
@@ -1423,6 +1523,7 @@ export default class SitemapController {
 			$(button).removeClass('preview');
 		}
 	}
+
 	previewTableRowSelector(button) {
 		if (!$(button).hasClass('preview')) {
 			let sitemap = this.getCurrentlyEditedSelectorSitemap();
@@ -1447,6 +1548,7 @@ export default class SitemapController {
 			$(button).removeClass('preview');
 		}
 	}
+
 	previewSelectorFromSelectorTree(button) {
 		if (!$(button).hasClass('preview')) {
 			let sitemap = this.state.currentSitemap;
@@ -1468,6 +1570,7 @@ export default class SitemapController {
 			$(button).removeClass('preview');
 		}
 	}
+
 	previewSelectorDataFromSelectorTree(button) {
 		let sitemap = this.state.currentSitemap;
 		let selector = $(button)
@@ -1475,6 +1578,7 @@ export default class SitemapController {
 			.data('selector');
 		this.previewSelectorData(sitemap, selector.id);
 	}
+
 	previewSelectorDataFromSelectorEditing() {
 		let sitemap = this.state.currentSitemap.clone();
 		let selector = sitemap.getSelectorById(this.state.currentSelector.id);
@@ -1482,6 +1586,7 @@ export default class SitemapController {
 		sitemap.updateSelector(selector, newSelector);
 		this.previewSelectorData(sitemap, newSelector.id);
 	}
+
 	/**
 	 * Returns a list of selector ids that the user has opened
 	 * @returns {Array}
@@ -1493,6 +1598,7 @@ export default class SitemapController {
 		});
 		return parentSelectorIds;
 	}
+
 	previewSelectorData(sitemap, selectorId) {
 		// data preview will be base on how the selector tree is opened
 		let parentSelectorIds = this.getStateParentSelectorIds();

@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
+import 'jquery-flexdatalist/jquery.flexdatalist.css';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator.css';
 import '../devtools/panel.css';
 import 'bootstrap/dist/js/bootstrap';

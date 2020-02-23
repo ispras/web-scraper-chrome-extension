@@ -1,14 +1,8 @@
 <form class="form-horizontal" role="form" id="edit-selector">
 	<div class="form-group">
 		<label for="selectorId" class="col-sm-2 control-label">Id</label>
-
 		<div class="col-sm-8">
-			<input type="text" list="model" class="form-control" name="id" id="selectorId" placeholder="Selector Id" value="{{selector.id}}" data-min-length="1" />
-			<datalist id="model">
-				{{#model}}
-				<option value="{{title}}">{{type}}</option>
-				{{/model}}
-			</datalist>
+			<input type="text" class="form-control" name="id" id="selectorId" placeholder="Selector Id" value="{{selector.id}}" />
 		</div>
 	</div>
 
