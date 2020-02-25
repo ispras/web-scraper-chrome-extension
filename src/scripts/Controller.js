@@ -399,48 +399,47 @@ export default class SitemapController {
 						},
 					},
 				},
-				// XXX something wrong happening when turning on this validator
-				// model: {
-				// 	validators: {
-				// 		callback: {
-				// 			callback: function(value) {
-				// 				if (!value) {
-				// 					return {
-				// 						message: 'Empty value is possible model',
-				// 						valid: true,
-				// 					};
-				// 				}
-				// 				try {
-				// 					let model = JSON.parse(value);
-				// 					if (!Array.isArray(model)) {
-				// 						return {
-				// 							valid: false,
-				// 							message: 'JSON must be array',
-				// 						};
-				// 					}
-				// 					for (let field_rule of model) {
-				// 						if (!('entity' in field_rule) || !('field' in field_rule) || !('field_name' in field_rule)) {
-				// 							return {
-				// 								valid: false,
-				// 								message: 'Each object in JSON array must contain keys entity, field, field_name.',
-				// 							};
-				// 						}
-				// 					}
-				// 				} catch (e) {
-				// 					return {
-				// 						valid: false,
-				// 						message: 'JSON is not valid',
-				// 					};
-				// 				}
-				//
-				// 				return {
-				// 					message: 'Valid model',
-				// 					valid: true,
-				// 				};
-				// 			}.bind(this),
-				// 		},
-				// 	},
-				// },
+				model: {
+					validators: {
+						callback: {
+							callback: function(value) {
+								if (!value) {
+									return {
+										message: 'Empty value is possible model',
+										valid: true,
+									};
+								}
+								try {
+									let model = JSON.parse(value);
+									if (!Array.isArray(model)) {
+										return {
+											valid: false,
+											message: 'JSON must be array',
+										};
+									}
+									for (let field_rule of model) {
+										if (!('entity' in field_rule) || !('field' in field_rule) || !('field_name' in field_rule)) {
+											return {
+												valid: false,
+												message: 'Each object in JSON array must contain keys entity, field, field_name.',
+											};
+										}
+									}
+								} catch (e) {
+									return {
+										valid: false,
+										message: 'JSON is not valid',
+									};
+								}
+
+								return {
+									message: 'Valid model',
+									valid: true,
+								};
+							}.bind(this),
+						},
+					},
+				},
 			},
 		});
 	}
@@ -462,6 +461,10 @@ export default class SitemapController {
 		});
 		$('#viewport').html(sitemapForm);
 		this.initSitemapValidation();
+
+		//XXX quickFix for new sitemap creation bug
+		let validator = this.getFormValidator();
+		validator.updateStatus('model', 'VALID', 'callback');
 
 		return true;
 	}
@@ -916,32 +919,6 @@ export default class SitemapController {
 		});
 		$('#viewport').html($editSelectorForm);
 
-		// mark initially opened selector as currently edited
-		$('#edit-selector #parentSelectors option').each(function(i, element) {
-			if ($(element).val() === selector.id) {
-				$(element).addClass('currently-edited');
-			}
-		});
-
-		// set clickType
-		if (selector.clickType) {
-			$editSelectorForm.find('[name=clickType]').val(selector.clickType);
-		}
-
-		// set clickElementUniquenessType
-		if (selector.clickElementUniquenessType) {
-			$editSelectorForm.find('[name=clickElementUniquenessType]').val(selector.clickElementUniquenessType);
-		}
-
-		// handle selects seperately
-		$editSelectorForm.find('[name=type]').val(selector.type);
-		selector.parentSelectors.forEach(function(parentSelectorId) {
-			$editSelectorForm.find("#parentSelectors [value='" + parentSelectorId + "']").attr('selected', 'selected');
-		});
-
-		this.state.currentSelector = selector;
-		this.selectorTypeChanged(false);
-
 		//TODO move this check to Model class
 		let data = [];
 		let idInData = false;
@@ -969,6 +946,32 @@ export default class SitemapController {
 			noResultsText: '',
 			minLength: 1,
 		});
+
+		// mark initially opened selector as currently edited
+		$('#edit-selector #parentSelectors option').each(function(i, element) {
+			if ($(element).val() === selector.id) {
+				$(element).addClass('currently-edited');
+			}
+		});
+
+		// set clickType
+		if (selector.clickType) {
+			$editSelectorForm.find('[name=clickType]').val(selector.clickType);
+		}
+
+		// set clickElementUniquenessType
+		if (selector.clickElementUniquenessType) {
+			$editSelectorForm.find('[name=clickElementUniquenessType]').val(selector.clickElementUniquenessType);
+		}
+
+		// handle selects seperately
+		$editSelectorForm.find('[name=type]').val(selector.type);
+		selector.parentSelectors.forEach(function(parentSelectorId) {
+			$editSelectorForm.find("#parentSelectors [value='" + parentSelectorId + "']").attr('selected', 'selected');
+		});
+
+		this.state.currentSelector = selector;
+		this.selectorTypeChanged(false);
 	}
 
 	selectorTypeChanged(changeTrigger) {
