@@ -404,7 +404,7 @@ export default class SitemapController {
 				// 	validators: {
 				// 		callback: {
 				// 			callback: function(value) {
-				// 				if (value) {
+				// 				if (!value) {
 				// 					return {
 				// 						message: 'Empty value is possible model',
 				// 						valid: true,
@@ -437,7 +437,7 @@ export default class SitemapController {
 				// 					message: 'Valid model',
 				// 					valid: true,
 				// 				};
-				// 			},
+				// 			}.bind(this),
 				// 		},
 				// 	},
 				// },
@@ -945,10 +945,12 @@ export default class SitemapController {
 		//TODO move this check to Model class
 		let data = [];
 		let idInData = false;
-		for (let field of sitemap.model) {
-			data.push(field);
-			if (field.field_name === selector.id) {
-				idInData = true;
+		if (sitemap.model) {
+			for (let field of sitemap.model) {
+				data.push(field);
+				if (field.field_name === selector.id) {
+					idInData = true;
+				}
 			}
 		}
 		if (!idInData && selector.id) {
@@ -1398,11 +1400,11 @@ export default class SitemapController {
 
 		this.getSelectorHTML().done(
 			function(html) {
-				let verticalTable = this.getCurrentlyEditedSelector().verticalTable;
-				let tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html, verticalTable);
-				let tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html, verticalTable);
-				$('input[name=tableHeaderRowSelector]').val(tableHeaderRowSelector);
-				$('input[name=tableDataRowSelector]').val(tableDataRowSelector);
+				// let verticalTable = this.getCurrentlyEditedSelector().verticalTable;
+				// let tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html, verticalTable);
+				// let tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html, verticalTable);
+				// $('input[name=tableHeaderRowSelector]').val(tableHeaderRowSelector);
+				// $('input[name=tableDataRowSelector]').val(tableDataRowSelector);
 				let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(value, html);
 				this.renderTableHeaderColumns(headerColumns);
 			}.bind(this)
