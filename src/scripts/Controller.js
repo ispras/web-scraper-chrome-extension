@@ -1232,11 +1232,7 @@ export default class SitemapController {
 			function(selectors) {
 				// table selector can dynamically add columns
 				// replace current selector (columns) with the dynamicly created once
-				sitemap.selectors = [];
-				for (let n = 0; n < selectors.length; n++) {
-					let selector = selectors[n];
-					sitemap.selectors.push(SelectorList.createSelector(selector));
-				}
+				sitemap.selectors = new SelectorList(selectors);
 				this.browseSitemapData();
 			}.bind(this)
 		);
