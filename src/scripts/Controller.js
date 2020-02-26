@@ -691,6 +691,9 @@ export default class SitemapController {
 					let newSitemap = new Sitemap(sitemap);
 					let oldSitemap = sitemap;
 					newSitemap._id = sitemapData.id;
+					if (newSitemap._rev) {
+						delete newSitemap._rev;
+					}
 					this.store.createSitemap(newSitemap).then(
 						function(newSitemap) {
 							this.store.deleteSitemap(oldSitemap).then(
