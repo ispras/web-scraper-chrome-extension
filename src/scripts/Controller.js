@@ -446,19 +446,7 @@ export default class SitemapController {
 
 	showCreateSitemap() {
 		this.setActiveNavigationButton('create-sitemap-create');
-		let sitemapForm = ich.SitemapCreate({
-			model_example: JSON.stringify(
-				[
-					{
-						entity: 'EntityName',
-						field: 'FieldName',
-						field_name: 'Expected Field Id',
-					},
-				],
-				null,
-				4
-			),
-		});
+		let sitemapForm = ich.SitemapCreate();
 		$('#viewport').html(sitemapForm);
 		this.initSitemapValidation();
 
@@ -638,17 +626,6 @@ export default class SitemapController {
 		if (sitemap.model) {
 			sitemap.model = JSON.stringify(sitemap.model, null, 4);
 		}
-		sitemap.model_example = JSON.stringify(
-			[
-				{
-					entity: 'EntityName',
-					field: 'FieldName',
-					field_name: 'Expected Field Id',
-				},
-			],
-			null,
-			4
-		);
 		let $sitemapMetadataForm = ich.SitemapEditMetadata(sitemap);
 		$('#viewport').html($sitemapMetadataForm);
 		this.initSitemapValidation();
