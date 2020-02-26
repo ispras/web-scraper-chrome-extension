@@ -25,16 +25,37 @@ export default class SelectorTable extends Selector {
 	willReturnElements() {
 		return false;
 	}
-
+	columnsMaker($headerRow, columns, tr_num, col_num, name, k, limit_col) {
+		if (col_num < limit_col) {
+			if ($headerRow[tr_num].children[col_num].colSpan < 2) {
+				let header = name + ' ' + $headerRow[tr_num].children[col_num].innerText;
+				columns[header.trim()] = k + 1;
+				delete $headerRow[tr_num].children[col_num];
+				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, k + 1, limit_col);
+			} else {
+				columns = this.columnsMaker(
+					$headerRow,
+					columns,
+					tr_num + 1,
+					0,
+					name + ' ' + $headerRow[tr_num].children[col_num].innerText,
+					k,
+					$headerRow[tr_num].children[col_num].colSpan
+				);
+				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, Object.keys(columns).length, limit_col);
+			}
+		}
+		return columns;
+	}
 	getTableHeaderColumns($table) {
 		let columns = {};
 		let headerRowSelector = this.getTableHeaderRowSelector();
 		let $headerRow = $table.find(headerRowSelector);
-
+		let $headerRowCopy = $headerRow;
 		if ($headerRow.length > 0) {
 			if ($headerRow.length > 1) {
 				if ($headerRow[0].nodeName === 'TR') {
-					$headerRow = $headerRow.find('th:first-child');
+					$headerRow = $headerRow.find('th');
 					if ($headerRow.length === 0) {
 						console.log('%c Please specify row header cell selector ', 'background: red; color: white;');
 					}
@@ -44,17 +65,18 @@ export default class SelectorTable extends Selector {
 			} else if ($headerRow.find('td').length) {
 				$headerRow = $headerRow.find('td');
 			}
-
-			$headerRow.each(
-				function(i, value) {
-					let header = $(value)
-						.text()
-						.trim();
-					columns[header] = {
-						index: i + 1,
-					};
-				}.bind(this)
-			);
+			var limit = $headerRowCopy[0].cells.length;
+			columns = this.columnsMaker($headerRowCopy, columns, 0, 0, '', 0, limit);
+			// $headerRow.each(
+			// 	function(i, value) {
+			// 		let header = $(value)
+			// 			.text()
+			// 			.trim();
+			// 		columns[header] = {
+			// 			index: i + 1,
+			// 		};
+			// 	}.bind(this)
+			// );
 
 			this.addMissingColumns($headerRow);
 		}
@@ -142,10 +164,7 @@ export default class SelectorTable extends Selector {
 
 								this.columns.forEach(function(column) {
 									let header = columnIndices[column.header.trim()];
-									let rowText = $(dataCell)
-										.find('>:nth-child(' + header.index + ')')
-										.text()
-										.trim();
+									let rowText = $(dataCell)[0].children[header].innerText.trim();
 									if (column.extract) {
 										data[column.name] = rowText;
 									}
@@ -211,7 +230,7 @@ export default class SelectorTable extends Selector {
 		let firstRow = $table.find('tr:first-child');
 
 		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length) {
-			if ($table.find('thead tr').length === 1) {
+			if ($table.find('thead tr').length) {
 				return 'thead tr';
 			} else {
 				let $rows = $table.find('thead tr');
@@ -275,7 +294,7 @@ export default class SelectorTable extends Selector {
 		let columns = [];
 		if (!verticalTable) {
 			if ($headerRowColumns.length > 1) {
-				$headerRowColumns = $headerRowColumns.find('th:first-child');
+				$headerRowColumns = $headerRowColumns.find('th');
 			} else if ($headerRowColumns.find('th').length) {
 				$headerRowColumns = $headerRowColumns.find('th');
 			} else if ($headerRowColumns.find('td').length) {
