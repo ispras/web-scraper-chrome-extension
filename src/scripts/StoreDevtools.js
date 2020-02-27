@@ -7,20 +7,16 @@ import * as browser from 'webextension-polyfill';
  * @constructor
  */
 export default class StoreDevtools {
-	createSitemap(sitemap) {
-		var request = {
+
+	async createSitemap(sitemap) {
+		let request = {
 			createSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
 		};
 
-		return new Promise(resolve => {
-			browser.runtime.sendMessage(request).then(
-				function(originalSitemap, newSitemap) {
-					originalSitemap._rev = newSitemap._rev;
-					resolve(originalSitemap);
-				}.bind(this, sitemap)
-			);
-		});
+		let newSitemap = await browser.runtime.sendMessage(request);
+		sitemap._rev = newSitemap._rev;
+		return sitemap;
 	}
 
 	saveSitemap(sitemap) {
@@ -28,32 +24,29 @@ export default class StoreDevtools {
 	}
 
 	deleteSitemap(sitemap) {
-		var request = {
+		let request = {
 			deleteSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
 		};
 		return browser.runtime.sendMessage(request);
 	}
 
-	getAllSitemaps() {
-		var request = {
+	async getAllSitemaps() {
+		let request = {
 			getAllSitemaps: true,
 		};
-
-		return new Promise(resolve => {
-			browser.runtime.sendMessage(request).then(function(response) {
-				var sitemaps = [];
-
-				for (var i in response) {
-					sitemaps.push(new Sitemap(response[i]));
-				}
-				return resolve(sitemaps);
-			});
+		let response = await browser.runtime.sendMessage(request);
+		return Array.from(response, sitemapObj => {
+			let sitemap = Sitemap.sitemapFromObj(sitemapObj);
+			if (sitemapObj._rev){
+				sitemap._rev = sitemapObj._rev;
+			}
+			return sitemap;
 		});
 	}
 
 	getSitemapData(sitemap) {
-		var request = {
+		let request = {
 			getSitemapData: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
 		};
@@ -62,7 +55,7 @@ export default class StoreDevtools {
 	}
 
 	sitemapExists(sitemapId) {
-		var request = {
+		let request = {
 			sitemapExists: true,
 			sitemapId: sitemapId,
 		};

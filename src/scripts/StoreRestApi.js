@@ -20,7 +20,7 @@ export default class StoreRestApi {
 					$.ajax({
 						type: 'PUT',
 						url: new URL('/sitemaps/' + sitemap._id, base_uri).href,
-						data: new Sitemap(sitemap).exportSitemap(),
+						data: Sitemap.sitemapFromObj(sitemap).exportSitemap(),
 						success: function() {
 							resolve(sitemap);
 						},
@@ -34,7 +34,7 @@ export default class StoreRestApi {
 					$.ajax({
 						type: 'POST',
 						url: new URL('/sitemaps/', base_uri).href,
-						data: new Sitemap(sitemap).exportSitemap(),
+						data: Sitemap.sitemapFromObj(sitemap).exportSitemap(),
 						success: function() {
 							resolve(sitemap);
 						},
@@ -72,7 +72,7 @@ export default class StoreRestApi {
 				success: function(data) {
 					let sitemaps = [];
 					for (let i in data) {
-						sitemaps.push(new Sitemap(data[i]));
+						sitemaps.push(Sitemap.sitemapFromObj(data[i]));
 					}
 					resolve(sitemaps);
 				},

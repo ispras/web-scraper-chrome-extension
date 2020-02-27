@@ -74,118 +74,75 @@ export default class StorePouchDB {
 	 * @param {type} sitemapId
 	 * @returns {undefined}
 	 */
-	initSitemapDataDb(sitemapId) {
-		// let dbLocation = this.getSitemapDataDbLocation(sitemapId);
+	async initSitemapDataDb(sitemapId) {
 		let store = this;
 		let db = this.getSitemapDataDb(sitemapId);
-
-		return new Promise(resolve => {
-			db.destroy()
-				.then(() => {
-					let db = store.getSitemapDataDb(sitemapId);
-					let dbWriter = new StoreScrapeResultWriter(db);
-					resolve(dbWriter);
-				})
-				.catch(reason => {
-					console.log(reason);
-					resolve();
-				});
-		});
+		try {
+			await db.destroy();
+			db = store.getSitemapDataDb(sitemapId);
+			return new StoreScrapeResultWriter(db);
+		} catch (reason) {
+			console.log(reason);
+		}
 	}
 
-	createSitemap(sitemap) {
+	async createSitemap(sitemap) {
 		let sitemapJson = JSON.parse(JSON.stringify(sitemap));
 
 		if (!sitemap._id) {
 			console.log('cannot save sitemap without an id', sitemap);
 		}
 
-		return new Promise(resolve => {
-			this.sitemapDb.put(
-				sitemapJson,
-				function(sitemap, err, response) {
-					// @TODO handle err
-					if (response) {
-						sitemap._rev = response.rev;
-					}
-					// this.initSitemapDataDb(sitemap._id).then(function () {
-					resolve(sitemap);
-					// });
-				}.bind(this, sitemap)
-			);
-		});
+		let response = await this.sitemapDb.put(sitemapJson);
+		sitemap._rev = response.rev;
+		return sitemap;
 	}
 
 	saveSitemap(sitemap) {
-		// @TODO remove
 		return this.createSitemap(sitemap);
 	}
 
-	deleteSitemap(sitemap) {
-		sitemap = JSON.parse(JSON.stringify(sitemap));
-		return new Promise(resolve => {
-			this.sitemapDb.remove(
-				sitemap,
-				function(err, response) {
-					// @TODO handle err
-
-					// delete sitemap data db
-					let dbLocation = this.getSitemapDataDbLocation(sitemap._id);
-					// PouchDB.destroy(dbLocation, function () {
-					resolve();
-					// }.bind(this));
-				}.bind(this)
-			);
-		});
+	async deleteSitemap(sitemap) {
+		let sitemapJson = JSON.parse(JSON.stringify(sitemap));
+		await this.sitemapDb.remove(sitemapJson);
+		let db = this.getSitemapDataDb(sitemap._id);
+		await db.destroy();
 	}
 
-	getAllSitemaps() {
-		return new Promise(resolve => {
-			this.sitemapDb.allDocs({ include_docs: true }, function(err, response) {
-				let sitemaps = [];
-				for (let i in response.rows) {
-					let sitemap = response.rows[i].doc;
-					if (!browser.extension) {
-						sitemap = new Sitemap(sitemap);
-					}
-
-					sitemaps.push(sitemap);
+	async getAllSitemaps() {
+		let result = await this.sitemapDb.allDocs({ include_docs: true });
+		return Array.from(result.rows, row => {
+			let sitemapObj = row.doc;
+			if (!!browser.extension) {
+				return sitemapObj;
+			} else {
+				let sitemap = Sitemap.sitemapFromObj(sitemapObj);
+				if (sitemapObj._rev) {
+					sitemap._rev = sitemapObj._rev;
 				}
-				resolve(sitemaps);
-			});
+				return sitemap;
+			}
 		});
 	}
 
-	getSitemapData(sitemap) {
-		return new Promise(resolve => {
-			let db = this.getSitemapDataDb(sitemap._id);
-			db.allDocs(
-				{ include_docs: true },
-				function(err, response) {
-					let responseData = [];
-					for (let i in response.rows) {
-						let doc = response.rows[i].doc;
-						responseData.push(doc);
-					}
-					normalizeProperties(responseData);
-					resolve(responseData);
-				}.bind(this)
-			);
+	async getSitemapData(sitemap) {
+		let db = this.getSitemapDataDb(sitemap._id);
+		let response = await db.allDocs({ include_docs: true });
+
+		let responseData = Array.from(response.rows, row => {
+			return row.doc;
 		});
+		return normalizeProperties(responseData);
 	}
 
-	// @TODO make this call lighter
-	sitemapExists(sitemapId) {
-		return new Promise(resolve => {
-			this.getAllSitemaps().then(function(sitemaps) {
-				let sitemapFound = false;
-				for (let i in sitemaps) {
-					if (sitemaps[i]._id === sitemapId) {
-						sitemapFound = true;
-					}
-				}
-				resolve(sitemapFound);
+	async sitemapExists(sitemapId) {
+		return this.sitemapDb
+			.get(sitemapId)
+			.then(() => {
+				return Promise.resolve(true);
+			})
+			.catch(() => {
+				return Promise.resolve(false);
 			});
-		});
 	}
 }

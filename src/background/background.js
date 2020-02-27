@@ -61,9 +61,9 @@ browser.runtime.onMessage.addListener((request, sender) => {
 	} else if (request.sitemapExists) {
 		return store.sitemapExists(request.sitemapId);
 	} else if (request.getSitemapData) {
-		return store.getSitemapData(new Sitemap(request.sitemap));
+		return store.getSitemapData(Sitemap.sitemapFromObj(request.sitemap));
 	} else if (request.scrapeSitemap) {
-		let sitemap = new Sitemap(request.sitemap);
+		let sitemap = Sitemap.sitemapFromObj(request.sitemap);
 		let queue = new Queue();
 		let browser_tab = new ChromePopupBrowser({
 			pageLoadDelay: request.pageLoadDelay,

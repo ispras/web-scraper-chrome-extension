@@ -596,22 +596,15 @@ export default class SitemapController {
 			.val()
 			.split(',')
 			.map(item => item.trim());
-		let model = $('#viewport .input-model').val();
-		if (model) {
-			return {
-				id: id,
-				startUrls: startUrls,
-				model: JSON.parse(model),
-			};
-		} else {
-			return {
-				id: id,
-				startUrls: startUrls,
-			};
-		}
+		let modelStr = $('#viewport .input-model').val();
+		return {
+			id: id,
+			startUrls: startUrls,
+			model: modelStr ? JSON.parse(modelStr) : undefined,
+		};
 	}
 
-	createSitemap() {
+	async createSitemap() {
 		// cancel submit if invalid form
 
 		if (!this.isValidForm()) {
@@ -621,29 +614,18 @@ export default class SitemapController {
 		let sitemapData = this.getSitemapFromMetadataForm();
 
 		// check whether sitemap with this id already exist
-		this.store.sitemapExists(sitemapData.id).then(
-			function(sitemapExists) {
-				if (sitemapExists) {
-					let validator = this.getFormValidator();
-					validator.updateStatus('_id', 'INVALID', 'callback');
-				} else {
-					let sitemap = new Sitemap({
-						_id: sitemapData.id,
-						startUrls: sitemapData.startUrls,
-						model: sitemapData.model,
-						selectors: [],
-					});
-					this.store.createSitemap(sitemap).then(
-						function(sitemap) {
-							this._editSitemap(sitemap, ['_root']);
-						}.bind(this, sitemap)
-					);
-				}
-			}.bind(this)
-		);
+		let sitemapExists = await this.store.sitemapExists(sitemapData.id);
+		if (sitemapExists) {
+			let validator = this.getFormValidator();
+			validator.updateStatus('_id', 'INVALID', 'callback');
+		} else {
+			let sitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, []);
+			sitemap = await this.store.createSitemap(sitemap);
+			this._editSitemap(sitemap, ['_root']);
+		}
 	}
 
-	importSitemap() {
+	async importSitemap() {
 		// cancel submit if invalid form
 
 		if (!this.isValidForm()) {
@@ -652,36 +634,31 @@ export default class SitemapController {
 
 		// load data from form
 		let sitemapJSON = $('[name=sitemapJSON]').val();
+		let sitemapObj = JSON.parse(sitemapJSON);
+
 		let id = $('input[name=_id]').val();
-		let sitemap = new Sitemap();
-		sitemap.importSitemap(sitemapJSON);
-		if (id.length) {
-			sitemap._id = id;
+		if (!id) {
+			id = sitemapObj._id;
 		}
 
 		// check whether sitemap with this id already exist
-		this.store.sitemapExists(sitemap._id).then(
-			function(sitemapExists) {
-				if (sitemapExists) {
-					let validator = this.getFormValidator();
-					validator.updateStatus('_id', 'INVALID', 'callback');
-				} else {
-					this.store.createSitemap(sitemap).then(
-						function(sitemap) {
-							this._editSitemap(sitemap, ['_root']);
-						}.bind(this)
-					);
-				}
-			}.bind(this)
-		);
+		let sitemapExists = this.store.sitemapExists(id);
+		if (sitemapExists) {
+			let validator = this.getFormValidator();
+			validator.updateStatus('_id', 'INVALID', 'callback');
+		} else {
+			let sitemap = new Sitemap(sitemapObj._id, sitemapObj.startUrls, sitemapObj.model, sitemapObj.selectors);
+			sitemap = await this.store.createSitemap(sitemap);
+			this._editSitemap(sitemap, ['_root']);
+		}
 	}
 
-	editSitemapMetadata(button) {
+	editSitemapMetadata() {
 		this.setActiveNavigationButton('sitemap-edit-metadata');
 
 		let sitemap = this.state.currentSitemap.clone();
 		if (sitemap.model) {
-			sitemap.model = JSON.stringify(sitemap.model, null, 4);
+			sitemap.model = sitemap.model.toString();
 		}
 		let $sitemapMetadataForm = ich.SitemapEditMetadata(sitemap);
 		$('#viewport').html($sitemapMetadataForm);
@@ -690,7 +667,7 @@ export default class SitemapController {
 		return true;
 	}
 
-	editSitemapMetadataSave(button) {
+	async editSitemapMetadataSave() {
 		let sitemap = this.state.currentSitemap;
 		let sitemapData = this.getSitemapFromMetadataForm();
 
@@ -700,47 +677,32 @@ export default class SitemapController {
 		}
 
 		// check whether sitemap with this id already exist
-		this.store.sitemapExists(sitemapData.id).then(
-			function(sitemapExists) {
-				if (sitemap._id !== sitemapData.id && sitemapExists) {
-					let validator = this.getFormValidator();
-					validator.updateStatus('_id', 'INVALID', 'callback');
-					return;
-				}
+		let sitemapExists = await this.store.sitemapExists(sitemapData.id);
 
-				// change data
-				sitemap.startUrls = sitemapData.startUrls;
-				sitemap.model = sitemapData.model;
+		if (sitemap._id !== sitemapData.id && sitemapExists) {
+			let validator = this.getFormValidator();
+			validator.updateStatus('_id', 'INVALID', 'callback');
+			return;
+		}
 
-				// just change sitemaps url
-				if (sitemapData.id === sitemap._id) {
-					this.store.saveSitemap(sitemap).then(
-						function(sitemap) {
-							this.showSitemapSelectorList();
-						}.bind(this)
-					);
-				}
-				// id changed. we need to delete the old one and create a new one
-				else {
-					let newSitemap = new Sitemap(sitemap);
-					let oldSitemap = sitemap;
-					newSitemap._id = sitemapData.id;
-					if (newSitemap._rev) {
-						delete newSitemap._rev;
-					}
-					this.store.createSitemap(newSitemap).then(
-						function(newSitemap) {
-							this.store.deleteSitemap(oldSitemap).then(
-								function() {
-									this.state.currentSitemap = newSitemap;
-									this.showSitemapSelectorList();
-								}.bind(this)
-							);
-						}.bind(this)
-					);
-				}
-			}.bind(this)
-		);
+		// just change sitemaps url
+		if (sitemapData.id === sitemap._id) {
+			// change data
+			sitemap.startUrls = sitemapData.startUrls;
+			sitemap.model = new Model(sitemapData.model);
+			await this.store.saveSitemap(sitemap);
+		} else {
+			// id changed. we need to delete the old one and create a new one
+			let oldSitemap = sitemap;
+			let newSitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, sitemap.selectors);
+			if (newSitemap._rev) {
+				delete newSitemap._rev;
+			}
+			await this.store.createSitemap(newSitemap);
+			await this.store.deleteSitemap(oldSitemap);
+			this.state.currentSitemap = newSitemap;
+		}
+		this.showSitemapSelectorList();
 	}
 
 	/**
@@ -957,26 +919,11 @@ export default class SitemapController {
 		});
 		$('#viewport').html($editSelectorForm);
 
-		//TODO move this check to Model class
-		let data = [];
-		let idInData = false;
-		if (sitemap.model) {
-			for (let field of sitemap.model) {
-				data.push(field);
-				if (field.field_name === selector.id) {
-					idInData = true;
-				}
-			}
-		}
-		if (!idInData && selector.id) {
-			data.push({ field: '', entity: '', field_name: selector.id });
-		}
-
 		$('#selectorId').flexdatalist({
 			init: this.initSelectorValidation(),
 			textProperty: '{field_name}',
 			valueProperty: 'field_name',
-			data: data,
+			data: sitemap.model.getDataForSelector(selector.id),
 			searchIn: ['entity', 'field'],
 			visibleProperties: ['entity', 'field'],
 			groupBy: 'entity',
