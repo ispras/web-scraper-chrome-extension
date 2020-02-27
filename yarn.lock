@@ -3651,10 +3651,17 @@ isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
   integrity sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
 
-jquery@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.1.0.tgz#1c9a8c971d2b53dae10d72e16cbb5a1df16a4ace"
-  integrity sha1-HJqMlx0rU9rhDXLhbLtaHfFqSs4=
+jquery-flexdatalist@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/jquery-flexdatalist/-/jquery-flexdatalist-2.2.4.tgz#7f7c3a6a5212f54bd3e91edce7c29e4ea9da2986"
+  integrity sha1-f3w6alIS9UvT6R7c58KeTqnaKYY=
+  dependencies:
+    jquery ">=1.8"
+
+jquery@>=1.8, jquery@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
+  integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
 
 js-base64@^2.1.8:
   version "2.5.2"
@@ -5677,6 +5684,14 @@ schema-utils@^1.0.0:
     ajv-errors "^1.0.0"
     ajv-keywords "^3.1.0"
 
+schema-utils@^2.6.1:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/schema-utils/-/schema-utils-2.6.4.tgz#a27efbf6e4e78689d91872ee3ccfa57d7bdd0f53"
+  integrity sha512-VNjcaUxVnEeun6B2fiiUDjXXBtD4ZSH7pdbfIu1pOFwgptDPLMo/z9jr4sUfsjFVPqDCEin/F7IYlq7/E6yDbQ==
+  dependencies:
+    ajv "^6.10.2"
+    ajv-keywords "^3.4.1"
+
 scss-tokenizer@^0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/scss-tokenizer/-/scss-tokenizer-0.2.3.tgz#8eb06db9a9723333824d3f5530641149847ce5d1"
@@ -6484,6 +6499,14 @@ v8-compile-cache@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/v8-compile-cache/-/v8-compile-cache-2.0.3.tgz#00f7494d2ae2b688cfe2899df6ed2c54bef91dbe"
   integrity sha512-CNmdbwQMBjwr9Gsmohvm0pbL954tJrNzf6gWL3K+QMQf00PF7ERGrEiLgjuU3mKreLC2MeGhUsNV9ybTbLgd3w==
+
+val-loader@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/val-loader/-/val-loader-2.1.0.tgz#2e5f50b6d78b318a441f17fb680ec1ddc901a934"
+  integrity sha512-eZmzjMSDiRJygGwEqMav043IJ6TjZE7ofMSRi6CDkeN/tSeTqObC/R43NkrkRTE9jlZO8oLPPJ8pONBf9PApPw==
+  dependencies:
+    loader-utils "^1.2.3"
+    schema-utils "^2.6.1"
 
 validate-npm-package-license@^3.0.1:
   version "3.0.4"

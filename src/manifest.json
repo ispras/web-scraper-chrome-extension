@@ -1,6 +1,6 @@
 {
 	"manifest_version": 2,
-	"version": "0.3.2.00",
+	"version": "0.3.4.00",
 	"name": "Web Scraper Webpack",
 	"short_name": "Web Scraper Webpack",
 	"description": "Tool for data extraction from websites",

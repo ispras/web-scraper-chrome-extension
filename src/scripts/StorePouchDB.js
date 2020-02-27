@@ -1,5 +1,6 @@
 import PouchDB from 'pouchdb';
 import * as browser from 'webextension-polyfill';
+import Sitemap from './Sitemap';
 
 /**
  * Make sure all obj have the same properties

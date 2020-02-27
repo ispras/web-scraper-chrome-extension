@@ -120,7 +120,7 @@ export default class Sitemap {
 
 	updateSelector(selector, selectorData) {
 		// selector is undefined when creating a new one
-		if (selector === undefined) {
+		if (selector === undefined || selector.type !== selectorData.type) {
 			selector = SelectorList.createSelector(selectorData);
 		}
 
@@ -139,8 +139,12 @@ export default class Sitemap {
 
 		selector.updateData(selectorData, selectorData.getFeatures());
 
-		if (this.getSelectorIds().indexOf(selector.id) === -1) {
+		let index = this.getSelectorIds().indexOf(selector.id);
+		if (index === -1) {
 			this.selectors.push(selector);
+		} else {
+			//XXX Hot fix for replacing old selector with another type.
+			this.selectors.splice(index - 1, 1, selector);
 		}
 	}
 	deleteSelector(selectorToDelete) {

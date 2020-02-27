@@ -49,10 +49,6 @@ const config = {
 				use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader?indentedSyntax'],
 			},
 			{
-				test: /[\/\\]node_modules[\/\\]bootstrap-validator[\/\\]index\.js$/,
-				loader: 'imports-loader?define=>false',
-			},
-			{
 				test: /\.(png|jpg|jpeg|gif|svg|ico)$/,
 				loader: 'file-loader',
 				options: {
