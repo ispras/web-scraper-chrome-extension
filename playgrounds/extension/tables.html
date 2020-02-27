@@ -1,291 +1,288 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="../../extension/assets/bootstrap-3.0.0/css/bootstrap.css">
-    <link rel="stylesheet" href="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.css">
-    <link rel="stylesheet" href="../../extension/devtools/devtools_scraper_panel.css">
-    <link rel="stylesheet" href="../../extension/content_script/content_script.css">
-    <link rel="stylesheet" href="webpage.css">
-    <script src="../../extension/assets/jquery-2.0.3.js"></script>
-    <script src="../../extension/assets/papaparse.min.js"></script>
-    <script src="../../extension/assets/pouchdb-nightly.min.js"></script>
-    <script src="../../extension/assets/bootstrap-3.0.0/js/bootstrap.js"></script>
-    <script src="../../extension/assets/d3.v3.js"></script>
-    <script src="../../extension/assets/ICanHaz.js"></script>
-    <script src="../../extension/assets/sugar-1.4.1.js"></script>
-    <script src="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.js"></script>
-    <script src="../../extension/assets/jquery.whencallsequentially.js"></script>
-    <script src="../../extension/assets/base64.js"></script>
-    <script src="../../extension/scripts/ContentScript.js"></script>
-    <script src="../../extension/scripts/BackgroundScript.js"></script>
-    <script src="../../extension/scripts/Config.js"></script>
-    <script src="../../extension/scripts/Selector.js"></script>
-    <script src="../../extension/scripts/SelectorList.js"></script>
-    <script src="../../extension/scripts/ElementQuery.js"></script>
-    <script src="../../extension/scripts/UniqueElementList.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorLink.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorPopupLink.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorImage.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorGroup.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElement.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorText.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorInputValue.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorHTML.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElementAttribute.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElementStyle.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorTable.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElementScroll.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElementClick.js"></script>
-    <script src="../../extension/scripts/DateUtils/SimpleDateFormatter.js"></script>
-    <script src="../../extension/scripts/DateUtils/DateRoller.js"></script>
-    <script src="../../extension/scripts/DateUtils/DatePatternSupport.js"></script>
-    <script src="../../extension/scripts/Sitemap.js"></script>
-    <script src="../../extension/scripts/SelectorGraph.js"></script>
-    <script src="../../extension/scripts/SelectorGraphv2.js"></script>
-    <script src="../../extension/scripts/StorePouchDB.js"></script>
-    <script src="../../extension/scripts/StoreDevtools.js"></script>
-    <script src="../../extension/assets/css-selector/lib/CssSelector.js"></script>
-    <script src="../../extension/scripts/ContentSelector.js"></script>
-    <script src="../../extension/scripts/Queue.js"></script>
-    <script src="../../extension/scripts/Job.js"></script>
-    <script src="../../extension/scripts/DataExtractor.js"></script>
-    <script src="../../extension/scripts/ChromePopupBrowser.js"></script>
-    <script src="../../extension/scripts/Scraper.js"></script>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="../../extension/assets/bootstrap-3.0.0/css/bootstrap.css" />
+		<link rel="stylesheet" href="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.css" />
+		<link rel="stylesheet" href="../../extension/devtools/devtools_scraper_panel.css" />
+		<link rel="stylesheet" href="../../extension/content_script/content_script.css" />
+		<link rel="stylesheet" href="webpage.css" />
+		<script src="../../extension/assets/jquery-2.0.3.js"></script>
+		<script src="../../extension/assets/papaparse.min.js"></script>
+		<script src="../../extension/assets/pouchdb-nightly.min.js"></script>
+		<script src="../../extension/assets/bootstrap-3.0.0/js/bootstrap.js"></script>
+		<script src="../../extension/assets/d3.v3.js"></script>
+		<script src="../../extension/assets/ICanHaz.js"></script>
+		<script src="../../extension/assets/sugar-1.4.1.js"></script>
+		<script src="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.js"></script>
+		<script src="../../extension/assets/jquery.whencallsequentially.js"></script>
+		<script src="../../extension/assets/base64.js"></script>
+		<script src="../../extension/scripts/ContentScript.js"></script>
+		<script src="../../extension/scripts/BackgroundScript.js"></script>
+		<script src="../../extension/scripts/Config.js"></script>
+		<script src="../../extension/scripts/Selector.js"></script>
+		<script src="../../extension/scripts/SelectorList.js"></script>
+		<script src="../../extension/scripts/ElementQuery.js"></script>
+		<script src="../../extension/scripts/UniqueElementList.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorLink.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorPopupLink.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorImage.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorGroup.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElement.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorText.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorInputValue.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorHTML.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElementAttribute.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElementStyle.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorTable.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElementScroll.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElementClick.js"></script>
+		<script src="../../extension/scripts/DateUtils/SimpleDateFormatter.js"></script>
+		<script src="../../extension/scripts/DateUtils/DateRoller.js"></script>
+		<script src="../../extension/scripts/DateUtils/DatePatternSupport.js"></script>
+		<script src="../../extension/scripts/Sitemap.js"></script>
+		<script src="../../extension/scripts/SelectorGraph.js"></script>
+		<script src="../../extension/scripts/SelectorGraphv2.js"></script>
+		<script src="../../extension/scripts/StorePouchDB.js"></script>
+		<script src="../../extension/scripts/StoreDevtools.js"></script>
+		<script src="../../extension/assets/css-selector/lib/CssSelector.js"></script>
+		<script src="../../extension/scripts/ContentSelector.js"></script>
+		<script src="../../extension/scripts/Queue.js"></script>
+		<script src="../../extension/scripts/Job.js"></script>
+		<script src="../../extension/scripts/DataExtractor.js"></script>
+		<script src="../../extension/scripts/ChromePopupBrowser.js"></script>
+		<script src="../../extension/scripts/Scraper.js"></script>
 
-    <script src="../../extension/scripts/Controller.js"></script>
+		<script src="../../extension/scripts/Controller.js"></script>
 
-    <!-- Simulates chrome API -->
-    <script src="../../tests/ChromeAPI.js"></script>
-    <script>
-        new ChromeAPI();
-    </script>
+		<!-- Simulates chrome API -->
+		<script src="../../tests/ChromeAPI.js"></script>
+		<script>
+			new ChromeAPI();
+		</script>
 
-    <script src="../../extension/background_page/background_script.js"></script>
-    <script src="../../extension/content_script/content_script.js"></script>
+		<script src="../../extension/background_page/background_script.js"></script>
+		<script src="../../extension/content_script/content_script.js"></script>
 
-    <script>
-        $(function () {
-            // init bootstrap alerts
-            $(".alert").alert();
+		<script>
+			$(function() {
+				// init bootstrap alerts
+				$('.alert').alert();
 
-            var config = new Config();
-            config.loadConfiguration(function () {
-                var store = new StorePouchDB(config);
-                new SitemapController({
-                    store: store,
-                    templateDir: '../../extension/devtools/views/'
-                });
-            });
-        });
-    </script>
-</head>
-<body>
-    <div id="webpage">
+				var config = new Config();
+				config.loadConfiguration(function() {
+					var store = new StorePouchDB(config);
+					new SitemapController({
+						store: store,
+						templateDir: '../../extension/devtools/views/',
+					});
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="webpage">
+			<h3>Table in table</h3>
+			<table border="1" class="table">
+				<tr>
+					<th>#</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Username</th>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>Mark</td>
+					<td>Otto</td>
+					<td>@mdo</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>
+						<table border="1">
+							<tr>
+								<th>header 1</th>
+								<th>header 2</th>
+							</tr>
+							<tr>
+								<td>data 1</td>
+								<td>data 2</td>
+							</tr>
+						</table>
+					</td>
+					<td>Thornton</td>
+					<td>@fat</td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td>Larry</td>
+					<td>the Bird</td>
+					<td>@twitter</td>
+				</tr>
+			</table>
 
-        <h3>Table in table</h3>
-        <table border="1" class="table">
-            <tr>
-                <th>#</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Username</th>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>
-                    <table border="1">
-                        <tr>
-                            <th>header 1</th>
-                            <th>header 2</th>
-                        </tr>
-                        <tr>
-                            <td>data 1</td>
-                            <td>data 2</td>
-                        </tr>
-                    </table>
-                </td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>
-        </table>
+			<br />
+			<hr />
+			<br />
 
-        <br />
-        <hr />
-        <br />
+			<h3>Table with thead and tbody</h3>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Username</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1</td>
+						<td>Mark</td>
+						<td>Otto</td>
+						<td>@mdo</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>Jacob</td>
+						<td>Thornton</td>
+						<td>@fat</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>Larry</td>
+						<td>the Bird</td>
+						<td>@twitter</td>
+					</tr>
+				</tbody>
+			</table>
 
+			<br />
+			<hr />
+			<br />
 
-        <h3>Table with thead and tbody</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                </tr>
-            </tbody>
-        </table>
+			<h3>Table with vertical headers</h3>
+			<table class="table">
+				<tr>
+					<th>Names</th>
+					<td>Ben</td>
+					<td>Bruno</td>
+				</tr>
+				<tr>
+					<th>Fruits</th>
+					<td>Cherry</td>
+					<td>Clementine</td>
+				</tr>
+				<tr>
+					<th>Animals</th>
+					<td>Cat</td>
+					<td>Catfish</td>
+				</tr>
+			</table>
 
-        <br />
-        <hr />
-        <br />
+			<br />
+			<hr />
+			<br />
 
-        <h3>Table with vertical headers</h3>
-        <table class="table">
-            <tr>
-                <th>Names</th>
-                <td>Ben</td>
-                <td>Bruno</td>
-            </tr>
-            <tr>
-                <th>Fruits</th>
-                <td>Cherry</td>
-                <td>Clementine</td>
-            </tr>
-            <tr>
-                <th>Animals</th>
-                <td>Cat</td>
-                <td>Catfish</td>
-            </tr>
-        </table>
+			<h3>Table with vertical headers but without th</h3>
+			<table class="table">
+				<tr>
+					<td>Name</td>
+					<td>Ben</td>
+					<td>Gena</td>
+				</tr>
+				<tr>
+					<td>Fruit</td>
+					<td>Cherry</td>
+					<td>Banana</td>
+				</tr>
+				<tr>
+					<td>Animal</td>
+					<td>Cat</td>
+					<td>Cheburashka</td>
+				</tr>
+			</table>
 
-        <br />
-        <hr />
-        <br />
+			<br />
+			<hr />
+			<br />
 
-        <h3>Table with vertical headers but without th</h3>
-        <table class="table">
-            <tr>
-                <td>Name</td>
-                <td>Ben</td>
-                <td>Gena</td>
-            </tr>
-            <tr>
-                <td>Fruit</td>
-                <td>Cherry</td>
-                <td>Banana</td>
-            </tr>
-            <tr>
-                <td>Animal</td>
-                <td>Cat</td>
-                <td>Cheburashka</td>
-            </tr>
-        </table>
+			<h3>Table with horizontal headers but without th</h3>
+			<table class="table">
+				<tr>
+					<td>Names</td>
+					<td>Fruits</td>
+					<td>Animals</td>
+				</tr>
+				<tr>
+					<td>Ben</td>
+					<td>Cherry</td>
+					<td>Cat</td>
+				</tr>
+				<tr>
+					<td>Bruno</td>
+					<td>Clementine</td>
+					<td>Catfish</td>
+				</tr>
+			</table>
 
-        <br />
-        <hr />
-        <br />
+			<br />
+			<hr />
+			<br />
 
-        <h3>Table with horizontal headers but without th</h3>
-        <table class="table">
-            <tr>
-                <td>Names</td>
-                <td>Fruits</td>
-                <td>Animals</td>
-            </tr>
-            <tr>
-                <td>Ben</td>
-                <td>Cherry</td>
-                <td>Cat</td>
-            </tr>
-            <tr>
-                <td>Bruno</td>
-                <td>Clementine</td>
-                <td>Catfish</td>
-            </tr>
-        </table>
+			<h3>Table without headers</h3>
+			<table class="table">
+				<tr>
+					<td>A1</td>
+					<td>A2</td>
+					<td>A3</td>
+				</tr>
+				<tr>
+					<td>B1</td>
+					<td>B2</td>
+					<td>B3</td>
+				</tr>
+				<tr>
+					<td>C1</td>
+					<td>C2</td>
+					<td>C3</td>
+				</tr>
+			</table>
 
-        <br />
-        <hr />
-        <br />
-
-
-        <h3>Table without headers</h3>
-        <table class="table">
-            <tr>
-                <td>A1</td>
-                <td>A2</td>
-                <td>A3</td>
-            </tr>
-            <tr>
-                <td>B1</td>
-                <td>B2</td>
-                <td>B3</td>
-            </tr>
-            <tr>
-                <td>C1</td>
-                <td>C2</td>
-                <td>C3</td>
-            </tr>
-        </table>
-        <br />
-        <hr />
-        <br />
-        <style type="text/css">
-            table {
-                border-collapse: collapse;
-            }
-            table th,
-            table td {
-                padding: 0 5px;
-                border: 1px solid #000;
-                text-align: center;
-            }
-        </style>
-        <table class="table">
-            <tr>
-                <td rowspan="2"></td>
-                <td colspan="2">flowers</td>
-            </tr>
-            <tr>
-                <td>color</td>
-                <td>size</td>
-            </tr>
-            <tr>
-                <td>rose</td>
-                <td>red</td>
-                <td>20</td>
-            </tr>
-            <tr>
-                <td>vanila</td>
-                <td>white</td>
-                <td>30</td>
-            </tr>
-        </table>
-
-    </div>
-</body>
+			<br />
+			<hr />
+			<br />
+			<style type="text/css">
+				table {
+					border-collapse: collapse;
+				}
+				table th,
+				table td {
+					padding: 0 5px;
+					border: 1px solid #000;
+					text-align: center;
+				}
+			</style>
+			<table class="table">
+				<tr>
+					<td rowspan="2"></td>
+					<td colspan="2">flowers</td>
+				</tr>
+				<tr>
+					<td>color</td>
+					<td>size</td>
+				</tr>
+				<tr>
+					<td>rose</td>
+					<td>red</td>
+					<td>20</td>
+				</tr>
+				<tr>
+					<td>vanila</td>
+					<td>white</td>
+					<td>30</td>
+				</tr>
+			</table>
+		</div>
+	</body>
 </html>

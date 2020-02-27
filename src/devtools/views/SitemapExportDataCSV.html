@@ -1,0 +1,24 @@
+<div id="console">Console</div>
+
+<h2>Export {{_id}} data as CSV</h2>
+<br />
+
+<label for="delimiter">Field delimiter:</label>
+<input id="delimiter" type="text" required value="," />
+<br />
+
+<label for="newline">Add new lines at end?</label>
+<input id="newline" type="checkbox" required checked />
+<br />
+
+<label for="utf-bom">Add UTF-8 BOM?</label>
+<input id="utf-bom" type="checkbox" required checked />
+<br />
+
+<button id="generate-csv">Generate CSV</button>
+<br />
+<br />
+
+<p class="result">
+	Waiting for process to finish. > <span class="download-button" href="#"><a>Download now!</a></span>
+</p>

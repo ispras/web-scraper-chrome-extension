@@ -1,0 +1,45 @@
+{
+	"manifest_version": 2,
+	"version": "0.3.5.00",
+	"name": "Web Scraper Webpack",
+	"short_name": "Web Scraper Webpack",
+	"description": "Tool for data extraction from websites",
+	"permissions": ["<all_urls>", "tabs", "notifications", "storage", "unlimitedStorage", "downloads"],
+	"icons": {
+		"16": "icons/icon16.png",
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png"
+	},
+	"browser_action": {
+		"default_icon": {
+			"19": "icons/icon19.png",
+			"38": "icons/icon38.png"
+		},
+		"default_title": "Web Scraper",
+		"default_popup": "popup/popup.html"
+	},
+	"options_ui": {
+		"page": "options/options.html",
+		"open_in_tab": true,
+		"browser_style": false
+	},
+	"devtools_page": "devtools/devtools.html",
+	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+	"background": {
+		"scripts": ["background/background.js"]
+	},
+	"web_accessible_resources": ["icons/icon16.png", "icons/icon19.png", "icons/icon38.png", "icons/icon48.png", "icons/icon128.png"],
+	"content_scripts": [
+		{
+			"matches": ["*://*/*"],
+			"js": ["content_script/content_script.js"],
+			"css": ["content_script/content_script.css"]
+		}
+	],
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "web_scraper@extension.com",
+			"strict_min_version": "42.0"
+		}
+	}
+}
