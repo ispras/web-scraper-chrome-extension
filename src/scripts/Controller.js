@@ -391,6 +391,8 @@ export default class SitemapController {
 								$.each(
 									value.split(',').map(item => item.trim()),
 									function(i, url) {
+										url = url.replace(/\[date<(.*?)><(.*?)><(.*?)>]/g, ''); // remove date interval specs
+										url = url.replace(/\[(\d+)-(\d+)(:(\d+))?]/g, ''); // remove range patterns
 										isValid = isUrlValid(url) ? isValid : false;
 									}
 								);
