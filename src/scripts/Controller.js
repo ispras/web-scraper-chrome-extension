@@ -4,6 +4,7 @@ import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
 import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
+import Model from './Model';
 import * as ich from 'icanhaz/ICanHaz';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
@@ -381,22 +382,7 @@ export default class SitemapController {
 						callback: {
 							message: 'The start URLs are not valid. Please use "," as a seperator.',
 							callback: function(value) {
-								function isUrlValid(url) {
-									try {
-										new URL(url);
-										return true;
-									} catch (e) {
-										if (e instanceof TypeError) {
-											return false;
-										}
-										throw e;
-									}
-								}
-
-								return value
-									.split(',')
-									.map(item => item.trim())
-									.every(isUrlValid);
+								return Sitemap.validateStartUrls(value.split(','));
 							},
 						},
 					},
@@ -412,32 +398,13 @@ export default class SitemapController {
 									};
 								}
 								try {
-									let model = JSON.parse(value);
-									if (!Array.isArray(model)) {
-										return {
-											valid: false,
-											message: 'JSON must be array',
-										};
-									}
-									for (let field_rule of model) {
-										if (!('entity' in field_rule) || !('field' in field_rule) || !('field_name' in field_rule)) {
-											return {
-												valid: false,
-												message: 'Each object in JSON array must contain keys entity, field, field_name.',
-											};
-										}
-									}
+									return Model.validateModel(JSON.parse(value));
 								} catch (e) {
 									return {
 										valid: false,
 										message: 'JSON is not valid',
 									};
 								}
-
-								return {
-									message: 'Valid model',
-									valid: true,
-								};
 							}.bind(this),
 						},
 					},
@@ -452,7 +419,7 @@ export default class SitemapController {
 		$('#viewport').html(sitemapForm);
 		this.initSitemapValidation();
 
-		//XXX quickFix for new sitemap creation bug
+		// //XXX quickFix for new sitemap creation bug
 		let validator = this.getFormValidator();
 		validator.updateStatus('model', 'VALID', 'callback');
 
@@ -466,7 +433,7 @@ export default class SitemapController {
 					validators: {
 						stringLength: {
 							min: 3,
-							message: 'The sitemap id should be atleast 3 characters long',
+							message: 'The sitemap id should be at least 3 characters long',
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
@@ -476,6 +443,7 @@ export default class SitemapController {
 						callback: {
 							message: 'Sitemap with this id already exists',
 							callback: function(value, validator) {
+								validator.revalidateField('sitemapJSON');
 								return true;
 							}.bind(this),
 						},
@@ -490,11 +458,59 @@ export default class SitemapController {
 							message: 'JSON is not valid',
 							callback: function(value, validator) {
 								try {
-									JSON.parse(value);
+									let sitemap = JSON.parse(value);
+
+									let renameId = $('#viewport form [name="_id"]').val();
+									if (!renameId) {
+										if (!sitemap.hasOwnProperty('_id')) {
+											return {
+												valid: false,
+												message: 'The sitemap id is required and cannot be empty',
+											};
+										}
+										if (sitemap._id.length < 3) {
+											return {
+												valid: false,
+												message: 'The sitemap id should be at least 3 characters long',
+											};
+										}
+										if (!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-/]+$')) {
+											return {
+												valid: false,
+												message:
+													'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
+											};
+										}
+									}
+
+									//check for start urls
+									if (!sitemap.hasOwnProperty('startUrls')) {
+										return {
+											valid: false,
+											message: 'The start URL is required and cannot be empty',
+										};
+									}
+									if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
+										return {
+											valid: false,
+											message: 'The start URLs are not valid',
+										};
+									}
+
+									let result = Model.validateModel(sitemap.model);
+									if (!result.valid) {
+										return result;
+									}
 								} catch (e) {
-									return false;
+									return {
+										valid: false,
+										message: 'JSON is not valid',
+									};
 								}
-								return true;
+								return {
+									message: 'Valid sitemap',
+									valid: true,
+								};
 							}.bind(this),
 						},
 					},
