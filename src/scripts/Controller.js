@@ -384,25 +384,6 @@ export default class SitemapController {
 							callback: function(value) {
 								return Sitemap.validateStartUrls(value.split(','));
 							},
-
-								function(value) {
-								function isUrlValid(url) {
-									try {
-										new URL(url);
-										return true;
-									} catch (e) {
-										if (e instanceof TypeError) {
-											return false;
-										}
-										throw e;
-									}
-								}
-
-								return value
-									.split(',')
-									.map(item => item.trim())
-									.every(isUrlValid);
-							},
 						},
 					},
 				},
