@@ -11,13 +11,6 @@ export default class Sitemap {
 		for (let key in sitemapObj) {
 			this[key] = sitemapObj[key];
 		}
-
-		if (!Array.isArray(this.startUrls)) {
-			let startUrl = this.startUrls;
-			this.startUrls = startUrl ? [startUrl] : [];
-		}
-
-		// let selectors = this.selectors;
 		this.selectors = new SelectorList(this.selectors);
 	}
 
@@ -34,7 +27,7 @@ export default class Sitemap {
 	}
 
 	static validateStartUrls(startUrls) {
-		if (!Array.isArray(startUrls)) {
+		if (!Array.isArray(startUrls) || !startUrls.length) {
 			return false;
 		}
 		return startUrls.map(item => item.trim()).every(this.isUrlValid);

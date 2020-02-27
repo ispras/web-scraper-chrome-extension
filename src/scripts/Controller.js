@@ -461,7 +461,7 @@ export default class SitemapController {
 									let sitemap = JSON.parse(value);
 
 									let renameId = $('#viewport form [name="_id"]').val();
-									if (renameId === undefined || renameId === '') {
+									if (!renameId) {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
@@ -493,7 +493,7 @@ export default class SitemapController {
 									if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
 										return {
 											valid: false,
-											message: 'The start URLs are not valid. Please use "," as a seperator.',
+											message: 'The start URLs are not valid',
 										};
 									}
 
