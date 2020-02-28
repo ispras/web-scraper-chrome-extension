@@ -18,6 +18,7 @@
 		}
 	},
 	"dependencies": {
+		"axios": "^0.19.2",
 		"icanhaz": "0.10.3",
 		"papaparse": "^4.1.0",
 		"pouchdb": "^7.1.1",

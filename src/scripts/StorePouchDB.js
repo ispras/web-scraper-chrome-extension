@@ -4,45 +4,40 @@ import Sitemap from './Sitemap';
 
 /**
  * Make sure all obj have the same properties
- * They can differe if table selector retrieves dynamic columns
+ * They can differ if table selector retrieves dynamic columns
  */
-let normalizeProperties = function(docs) {
+function normalizeProperties(docs) {
 	// get all keys of the objects
-	let keys = [];
-	docs.forEach(function(doc) {
-		for (let key in doc) {
-			if (doc.hasOwnProperty(key) && keys.indexOf(key) === -1) {
-				keys.push(key);
-			}
-		}
-	});
+	let keys = new Set(
+		docs.flatMap(doc => {
+			return Object.keys(doc);
+		})
+	);
 
 	// add missing keys to objects
-	docs.forEach(function(doc) {
-		let objKeys = Object.keys(doc);
-		keys.forEach(function(key) {
+	docs.forEach(doc => {
+		for (let key of keys) {
 			if (!(key in doc)) {
 				doc[key] = '';
 			}
-		});
+		}
 	});
-};
+}
 
 class StoreScrapeResultWriter {
 	constructor(db) {
 		this.db = db;
 	}
 
-	writeDocs(docs, callback) {
+	writeDocs(docs) {
 		if (docs.length === 0) {
-			callback();
+			return Promise.resolve();
 		} else {
 			normalizeProperties(docs);
-			this.db.bulkDocs({ docs: docs }, function(err, response) {
+			return this.db.bulkDocs({ docs: docs }).catch(err => {
 				if (err !== null) {
 					console.log('Error while persisting scraped data to db', err);
 				}
-				callback();
 			});
 		}
 	}
