@@ -11,7 +11,7 @@ import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import * as browser from 'webextension-polyfill';
 
 export default class SitemapController {
-	constructor(store, templateDir) {
+	async constructor(store, templateDir) {
 		this.store = store;
 		this.templateDir = templateDir;
 		this.backgroundScript = getBackgroundScript('DevTools');
@@ -78,7 +78,7 @@ export default class SitemapController {
 				title: 'Grouped',
 			},
 		];
-		this.init();
+		await this.init();
 	}
 
 	control(controls) {
@@ -105,7 +105,7 @@ export default class SitemapController {
 	/**
 	 * Loads templates for ICanHaz
 	 */
-	loadTemplates(cbAllTemplatesLoaded) {
+	async loadTemplates() {
 		let templateIds = [
 			'Viewport',
 			'SitemapList',
@@ -124,165 +124,159 @@ export default class SitemapController {
 			'SitemapSelectorGraph',
 			'DataPreview',
 		];
-		let templatesLoaded = 0;
-		let cbLoaded = function(templateId, template) {
-			templatesLoaded++;
-			ich.addTemplate(templateId, template);
-			if (templatesLoaded === templateIds.length) {
-				cbAllTemplatesLoaded();
-			}
-		};
 
-		templateIds.forEach(
-			function(templateId) {
-				$.get(this.templateDir + templateId + '.html', cbLoaded.bind(this, templateId));
-			}.bind(this)
+		return Promise.all(
+			templateIds.map(templateId => {
+				return $.get(this.templateDir + templateId + '.html')
+					.promise()
+					.then(template => {
+						ich.addTemplate(templateId, template);
+					});
+			})
 		);
 	}
 
-	init() {
-		this.loadTemplates(
-			function() {
-				// currently viewed objects
-				this.clearState();
+	async init() {
+		await this.loadTemplates();
+		// function() {
+		// currently viewed objects
+		this.clearState();
 
-				// render main viewport
-				ich.Viewport().appendTo('body');
+		// render main viewport
+		ich.Viewport().appendTo('body');
 
-				// cancel all form submits
-				$('form').bind('submit', function() {
+		// cancel all form submits
+		$('form').bind('submit', function() {
+			return false;
+		});
+
+		this.control({
+			'#sitemapFiles': {
+				change: this.readBlob,
+			},
+			'#sitemaps-nav-button': {
+				click: this.showSitemaps,
+			},
+			'#create-sitemap-create-nav-button': {
+				click: this.showCreateSitemap,
+			},
+			'#create-sitemap-import-nav-button': {
+				click: this.showImportSitemapPanel,
+			},
+			'#sitemap-export-nav-button': {
+				click: this.showSitemapExportPanel,
+			},
+			'#sitemap-export-data-csv-nav-button': {
+				click: this.showSitemapExportDataCsvPanel,
+			},
+			'#submit-create-sitemap': {
+				click: this.createSitemap,
+			},
+			'#submit-import-sitemap': {
+				click: this.importSitemap,
+			},
+			'#sitemap-edit-metadata-nav-button': {
+				click: this.editSitemapMetadata,
+			},
+			'#sitemap-selector-list-nav-button': {
+				click: this.showSitemapSelectorList,
+			},
+			'#sitemap-selector-graph-nav-button': {
+				click: this.showSitemapSelectorGraph,
+			},
+			'#sitemap-browse-nav-button': {
+				click: this.browseSitemapData,
+			},
+			'button#submit-edit-sitemap': {
+				click: this.editSitemapMetadataSave,
+			},
+			'#edit-sitemap-metadata-form': {
+				submit: function() {
 					return false;
-				});
-
-				this.control({
-					'#sitemapFiles': {
-						change: this.readBlob,
-					},
-					'#sitemaps-nav-button': {
-						click: this.showSitemaps,
-					},
-					'#create-sitemap-create-nav-button': {
-						click: this.showCreateSitemap,
-					},
-					'#create-sitemap-import-nav-button': {
-						click: this.showImportSitemapPanel,
-					},
-					'#sitemap-export-nav-button': {
-						click: this.showSitemapExportPanel,
-					},
-					'#sitemap-export-data-csv-nav-button': {
-						click: this.showSitemapExportDataCsvPanel,
-					},
-					'#submit-create-sitemap': {
-						click: this.createSitemap,
-					},
-					'#submit-import-sitemap': {
-						click: this.importSitemap,
-					},
-					'#sitemap-edit-metadata-nav-button': {
-						click: this.editSitemapMetadata,
-					},
-					'#sitemap-selector-list-nav-button': {
-						click: this.showSitemapSelectorList,
-					},
-					'#sitemap-selector-graph-nav-button': {
-						click: this.showSitemapSelectorGraph,
-					},
-					'#sitemap-browse-nav-button': {
-						click: this.browseSitemapData,
-					},
-					'button#submit-edit-sitemap': {
-						click: this.editSitemapMetadataSave,
-					},
-					'#edit-sitemap-metadata-form': {
-						submit: function() {
-							return false;
-						},
-					},
-					'#sitemaps tr': {
-						click: this.editSitemap,
-					},
-					'#sitemaps button[action=delete-sitemap]': {
-						click: this.deleteSitemap,
-					},
-					'#sitemap-scrape-nav-button': {
-						click: this.showScrapeSitemapConfigPanel,
-					},
-					'#submit-scrape-sitemap-form': {
-						submit: function() {
-							return false;
-						},
-					},
-					'#submit-scrape-sitemap': {
-						click: this.scrapeSitemap,
-					},
-					'#sitemaps button[action=browse-sitemap-data]': {
-						click: this.sitemapListBrowseSitemapData,
-					},
-					// @TODO move to tr
-					'#selector-tree tbody tr': {
-						click: this.showChildSelectors,
-					},
-					'#selector-tree .breadcrumb a': {
-						click: this.treeNavigationshowSitemapSelectorList,
-					},
-					'#selector-tree tr button[action=edit-selector]': {
-						click: this.editSelector,
-					},
-					'#edit-selector select[name=type]': {
-						change: function() {
-							this.selectorTypeChanged(true);
-						}.bind(this),
-					},
-					'#edit-selector button[action=save-selector]': {
-						click: this.saveSelector,
-					},
-					'#edit-selector button[action=cancel-selector-editing]': {
-						click: this.cancelSelectorEditing,
-					},
-					'#edit-selector #selectorId': {
-						keyup: this.updateSelectorParentListOnIdChange,
-					},
-					'#selector-tree button[action=add-selector]': {
-						click: this.addSelector,
-					},
-					'#selector-tree tr button[action=delete-selector]': {
-						click: this.deleteSelector,
-					},
-					'#selector-tree tr button[action=preview-selector]': {
-						click: this.previewSelectorFromSelectorTree,
-					},
-					'#selector-tree tr button[action=data-preview-selector]': {
-						click: this.previewSelectorDataFromSelectorTree,
-					},
-					'#edit-selector button[action=select-selector]': {
-						click: this.selectSelector,
-					},
-					'#edit-selector button[action=select-table-header-row-selector]': {
-						click: this.selectTableHeaderRowSelector,
-					},
-					'#edit-selector button[action=refresh-header-row-selector]': {
-						click: this.refreshTableColumns,
-					},
-					'#edit-selector button[action=select-table-data-row-selector]': {
-						click: this.selectTableDataRowSelector,
-					},
-					'#edit-selector button[action=preview-selector]': {
-						click: this.previewSelector,
-					},
-					'#edit-selector button[action=preview-click-element-selector]': {
-						click: this.previewClickElementSelector,
-					},
-					'#edit-selector button[action=preview-table-row-selector]': {
-						click: this.previewTableRowSelector,
-					},
-					'#edit-selector button[action=preview-selector-data]': {
-						click: this.previewSelectorDataFromSelectorEditing,
-					},
-				});
-				this.showSitemaps();
-			}.bind(this)
-		);
+				},
+			},
+			'#sitemaps tr td:nth-of-type(1)': {
+				click: this.editSitemap,
+			},
+			'#sitemaps button[action=delete-sitemap]': {
+				click: this.deleteSitemap,
+			},
+			'#sitemap-scrape-nav-button': {
+				click: this.showScrapeSitemapConfigPanel,
+			},
+			'#submit-scrape-sitemap-form': {
+				submit: function() {
+					return false;
+				},
+			},
+			'#submit-scrape-sitemap': {
+				click: this.scrapeSitemap,
+			},
+			'#sitemaps button[action=browse-sitemap-data]': {
+				click: this.sitemapListBrowseSitemapData,
+			},
+			// @TODO move to tr
+			'#selector-tree tbody tr': {
+				click: this.showChildSelectors,
+			},
+			'#selector-tree .breadcrumb a': {
+				click: this.treeNavigationShowSitemapSelectorList,
+			},
+			'#selector-tree tr button[action=edit-selector]': {
+				click: this.editSelector,
+			},
+			'#edit-selector select[name=type]': {
+				change: function() {
+					this.selectorTypeChanged(true);
+				}.bind(this),
+			},
+			'#edit-selector button[action=save-selector]': {
+				click: this.saveSelector,
+			},
+			'#edit-selector button[action=cancel-selector-editing]': {
+				click: this.cancelSelectorEditing,
+			},
+			'#edit-selector #selectorId': {
+				keyup: this.updateSelectorParentListOnIdChange,
+			},
+			'#selector-tree button[action=add-selector]': {
+				click: this.addSelector,
+			},
+			'#selector-tree tr button[action=delete-selector]': {
+				click: this.deleteSelector,
+			},
+			'#selector-tree tr button[action=preview-selector]': {
+				click: this.previewSelectorFromSelectorTree,
+			},
+			'#selector-tree tr button[action=data-preview-selector]': {
+				click: this.previewSelectorDataFromSelectorTree,
+			},
+			'#edit-selector button[action=select-selector]': {
+				click: this.selectSelector,
+			},
+			'#edit-selector button[action=select-table-header-row-selector]': {
+				click: this.selectTableHeaderRowSelector,
+			},
+			'#edit-selector button[action=refresh-header-row-selector]': {
+				click: this.refreshTableColumns,
+			},
+			'#edit-selector button[action=select-table-data-row-selector]': {
+				click: this.selectTableDataRowSelector,
+			},
+			'#edit-selector button[action=preview-selector]': {
+				click: this.previewSelector,
+			},
+			'#edit-selector button[action=preview-click-element-selector]': {
+				click: this.previewClickElementSelector,
+			},
+			'#edit-selector button[action=preview-table-row-selector]': {
+				click: this.previewTableRowSelector,
+			},
+			'#edit-selector button[action=preview-selector-data]': {
+				click: this.previewSelectorDataFromSelectorEditing,
+			},
+		});
+		await this.showSitemaps();
 	}
 
 	clearState() {
@@ -309,10 +303,9 @@ export default class SitemapController {
 			.addClass('active');
 
 		if (navigationId.match(/^sitemap-/)) {
-			$('#sitemap-nav-button').removeClass('disabled');
-			$('#sitemap-nav-button')
-				.closest('li')
-				.addClass('active');
+			let navButton = $('#sitemap-nav-button');
+			navButton.removeClass('disabled');
+			navButton.closest('li').addClass('active');
 			$('#navbar-active-sitemap-id').text('(' + this.state.currentSitemap._id + ')');
 		} else {
 			$('#sitemap-nav-button').addClass('disabled');
@@ -339,8 +332,7 @@ export default class SitemapController {
 	 */
 	isValidForm() {
 		let validator = this.getFormValidator();
-
-		//validator.validate();
+		// validator.validate();
 		// validate method calls submit which is not needed in this case.
 		for (let field in validator.options.fields) {
 			validator.validateField(field);
@@ -574,19 +566,19 @@ export default class SitemapController {
 		return true;
 	}
 
-	showSitemaps() {
+	async showSitemaps() {
 		this.clearState();
 		this.setActiveNavigationButton('sitemaps');
 
-		this.store.getAllSitemaps().then(function(sitemaps) {
-			var $sitemapListPanel = ich.SitemapList();
-			sitemaps.forEach(function(sitemap) {
-				var $sitemap = ich.SitemapListItem(sitemap);
-				$sitemap.data('sitemap', sitemap);
-				$sitemapListPanel.find('tbody').append($sitemap);
-			});
-			$('#viewport').html($sitemapListPanel);
+		let sitemaps = await this.store.getAllSitemaps();
+		let $sitemapListPanel = ich.SitemapList();
+
+		sitemaps.forEach(sitemap => {
+			let $sitemap = ich.SitemapListItem(sitemap);
+			$sitemap.data('sitemap', sitemap);
+			$sitemapListPanel.find('tbody').append($sitemap);
 		});
+		$('#viewport').html($sitemapListPanel);
 	}
 
 	getSitemapFromMetadataForm() {
@@ -708,8 +700,10 @@ export default class SitemapController {
 	/**
 	 * Callback when sitemap edit button is clicked in sitemap grid
 	 */
-	editSitemap(tr) {
-		let sitemap = $(tr).data('sitemap');
+	editSitemap(td) {
+		let sitemap = $(td)
+			.parent()
+			.data('sitemap');
 		this._editSitemap(sitemap);
 	}
 
@@ -761,7 +755,7 @@ export default class SitemapController {
 		this.showSitemapSelectorList();
 	}
 
-	treeNavigationshowSitemapSelectorList(button) {
+	treeNavigationShowSitemapSelectorList(button) {
 		let parentSelectors = this.state.editSitemapBreadcumbsSelectors;
 		let controller = this;
 		$('#selector-tree .breadcrumb li a').each(function(i, parentSelectorButton) {

@@ -47,7 +47,7 @@ let sendToActiveTab = function(request, callback) {
 		});
 };
 
-browser.runtime.onMessage.addListener((request, sender) => {
+browser.runtime.onMessage.addListener(async request => {
 	console.log('browser.runtime.onMessage', request);
 
 	if (request.createSitemap) {
@@ -97,24 +97,13 @@ browser.runtime.onMessage.addListener((request, sender) => {
 			}
 		});
 	} else if (request.previewSelectorData) {
-		return new Promise(resolve => {
-			browser.tabs
-				.query({
-					active: true,
-					currentWindow: true,
-				})
-				.then(function(tabs) {
-					if (tabs.length < 1) {
-						this.console.log("couldn't find active tab");
-						return resolve();
-					} else {
-						let tab = tabs[0];
-						browser.tabs.sendMessage(tab.id, request).then(extractedData => {
-							resolve(extractedData);
-						});
-					}
-				});
-		});
+		let tabs = await browser.tabs.query({ active: true, currentWindow: true });
+		if (tabs.length < 1) {
+			this.console.log("couldn't find active tab");
+		} else {
+			let tab = tabs[0];
+			return browser.tabs.sendMessage(tab.id, request);
+		}
 	} else if (request.backgroundScriptCall) {
 		return new Promise(resolve => {
 			let backgroundScript = getBackgroundScript('BackgroundScript');

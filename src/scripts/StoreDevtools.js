@@ -7,7 +7,6 @@ import * as browser from 'webextension-polyfill';
  * @constructor
  */
 export default class StoreDevtools {
-
 	async createSitemap(sitemap) {
 		let request = {
 			createSitemap: true,
@@ -19,8 +18,15 @@ export default class StoreDevtools {
 		return sitemap;
 	}
 
-	saveSitemap(sitemap) {
-		return this.createSitemap(sitemap);
+	async saveSitemap(sitemap) {
+		let request = {
+			saveSitemap: true,
+			sitemap: JSON.parse(JSON.stringify(sitemap)),
+		};
+
+		let newSitemap = await browser.runtime.sendMessage(request);
+		sitemap._rev = newSitemap._rev;
+		return sitemap;
 	}
 
 	deleteSitemap(sitemap) {
@@ -38,7 +44,7 @@ export default class StoreDevtools {
 		let response = await browser.runtime.sendMessage(request);
 		return Array.from(response, sitemapObj => {
 			let sitemap = Sitemap.sitemapFromObj(sitemapObj);
-			if (sitemapObj._rev){
+			if (sitemapObj._rev) {
 				sitemap._rev = sitemapObj._rev;
 			}
 			return sitemap;

@@ -8,15 +8,11 @@ export default class StoreRestApi {
 		axios.defaults.baseURL = config.restUrl;
 		axios.defaults.headers.post['Content-Type'] = 'application/json';
 		axios.defaults.headers.put['Content-Type'] = 'application/json';
-		axios.defaults.headers.delete['Content-Type'] = 'application/json';
 	}
 
 	createSitemap(sitemap) {
 		return axios
-			.post({
-				url: '/sitemaps/',
-				data: Sitemap.sitemapFromObj(sitemap).exportSitemap(),
-			})
+			.post('/sitemaps/', Sitemap.sitemapFromObj(sitemap).exportSitemap())
 			.then(() => {
 				return sitemap;
 			})
@@ -29,10 +25,7 @@ export default class StoreRestApi {
 		let sitemapExists = await this.sitemapExists(sitemap._id);
 		if (sitemapExists) {
 			return axios
-				.put({
-					url: '/sitemaps/' + sitemap._id,
-					data: Sitemap.sitemapFromObj(sitemap).exportSitemap(),
-				})
+				.put('/sitemaps/' + sitemap._id, Sitemap.sitemapFromObj(sitemap).exportSitemap())
 				.then(() => {
 					return sitemap;
 				})
@@ -40,7 +33,7 @@ export default class StoreRestApi {
 					alert('StoreApi: Error updating sitemap.');
 				});
 		} else {
-			return this.saveSitemap(sitemap);
+			return this.createSitemap(sitemap);
 		}
 	}
 
@@ -48,7 +41,7 @@ export default class StoreRestApi {
 		return axios
 			.delete('/sitemaps/' + sitemap._id)
 			.then(response => {
-				return response;
+				return response.data;
 			})
 			.catch(() => {
 				alert('StoreApi: Error deleting sitemap.');
@@ -59,7 +52,7 @@ export default class StoreRestApi {
 		return axios
 			.get('/sitemaps/')
 			.then(response => {
-				return Array.from(response, sitemapObj => {
+				return Array.from(response.data, sitemapObj => {
 					return Sitemap.sitemapFromObj(sitemapObj);
 				});
 			})
