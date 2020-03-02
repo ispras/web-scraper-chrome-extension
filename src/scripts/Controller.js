@@ -1443,28 +1443,7 @@ export default class SitemapController {
 			}.bind(this)
 		);
 	}
-	columnsMaker($headerRow, columns, tr_num, col_num, name, k, limit_col) {
-		if (col_num < limit_col) {
-			if ($headerRow[tr_num].children[col_num].colSpan < 2) {
-				let header = name + ' ' + $headerRow[tr_num].children[col_num].innerText;
-				columns[header.trim()] = k + 1;
-				delete $headerRow[tr_num].children[col_num];
-				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, k + 1, limit_col);
-			} else {
-				columns = this.columnsMaker(
-					$headerRow,
-					columns,
-					tr_num + 1,
-					0,
-					name + ' ' + $headerRow[tr_num].children[col_num].innerText,
-					k,
-					$headerRow[tr_num].children[col_num].colSpan
-				);
-				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, Object.keys(columns).length, limit_col);
-			}
-		}
-		return columns;
-	}
+
 	selectTableDataRowSelector(button) {
 		let input = $(button)
 			.closest('.form-group')
