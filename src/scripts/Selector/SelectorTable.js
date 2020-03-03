@@ -26,41 +26,41 @@ export default class SelectorTable extends Selector {
 		return false;
 	}
 
-	getTableHeaderColumns($table) {
-		let columns = {};
+	getTableHeaderColumns($table, verticalTable) {
 		let headerRowSelector = this.getTableHeaderRowSelector();
 		let $headerRow = $table.find(headerRowSelector);
-		let $headerRowCopy = $headerRow;
-		if ($headerRow.length > 0) {
-			if ($headerRow.length > 1) {
-				if ($headerRow[0].nodeName === 'TR') {
-					$headerRow = $headerRow.find('th');
-					if ($headerRow.length === 0) {
-						console.log('%c Please specify row header cell selector ', 'background: red; color: white;');
+		let columns = {};
+		if (verticalTable) {
+			if ($headerRow.length > 0) {
+				if ($headerRow.length > 1) {
+					if ($headerRow[0].nodeName === 'TR') {
+						$headerRow = $headerRow.find('th:first-child');
+						if ($headerRow.length === 0) {
+							console.log('%c Please specify row header cell selector ', 'background: red; color: white;');
+						}
 					}
+				} else if ($headerRow.find('th').length) {
+					$headerRow = $headerRow.find('th');
+				} else if ($headerRow.find('td').length) {
+					$headerRow = $headerRow.find('td');
 				}
-			} else if ($headerRow.find('th').length) {
-				$headerRow = $headerRow.find('th');
-			} else if ($headerRow.find('td').length) {
-				$headerRow = $headerRow.find('td');
+				$headerRow.each(
+					function(i, value) {
+						let header = $(value)
+							.text()
+							.trim();
+						columns[header] = {
+							index: i + 1,
+						};
+					}.bind(this)
+				);
+				this.addMissingColumns($headerRow);
 			}
-
-			let limit = $headerRowCopy[0].cells.length;
-			columns = SelectorTable.columnsMaker($headerRowCopy, columns, 0, 0, '', 0, limit);
-
-			// $headerRow.each(
-			// 	function(i, value) {
-			// 		let header = $(value)
-			// 			.text()
-			// 			.trim();
-			// 		columns[header] = {
-			// 			index: i + 1,
-			// 		};
-			// 	}.bind(this)
-			// );
-
-			this.addMissingColumns($headerRow);
+		} else {
+			let limit = $headerRow[0].cells.length;
+			columns = SelectorTable.columnsMaker($headerRow, columns, 0, 0, '', 0, limit);
 		}
+
 		return columns;
 	}
 
@@ -134,7 +134,7 @@ export default class SelectorTable extends Selector {
 						}
 					});
 				} else {
-					let columnIndices = this.getTableHeaderColumns($(table));
+					let columnIndices = this.getTableHeaderColumns($(table), verticalTable);
 					$(table)
 						.find(dataSelector)
 						.each(
@@ -274,21 +274,13 @@ export default class SelectorTable extends Selector {
 	 */
 	static columnsMaker($headerRow, columns, tr_num, col_num, name, k, limit_col) {
 		if (col_num < limit_col) {
+			let header = (name ? name + ' ' : '') + $headerRow[tr_num].children[col_num].innerText;
 			if ($headerRow[tr_num].children[col_num].colSpan < 2) {
-				let header = (name ? name + ' ' : '') + $headerRow[tr_num].children[col_num].innerText;
 				columns[SelectorTable.trimHeader(header)] = k + 1;
 				// delete $headerRow[tr_num].children[col_num];
 				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, k + 1, limit_col);
 			} else {
-				columns = this.columnsMaker(
-					$headerRow,
-					columns,
-					tr_num + 1,
-					0,
-					(name ? name + ' ' : '') + $headerRow[tr_num].children[col_num].innerText,
-					k,
-					$headerRow[tr_num].children[col_num].colSpan
-				);
+				columns = this.columnsMaker($headerRow, columns, tr_num + 1, 0, header, k, $headerRow[tr_num].children[col_num].colSpan);
 				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, Object.keys(columns).length, limit_col);
 			}
 		}
@@ -298,42 +290,30 @@ export default class SelectorTable extends Selector {
 		let $table = $(html);
 		let $headerRowColumns = $table.find(headerRowSelector);
 
-		let limit = $headerRowColumns[0].cells.length;
-		let headerRows = this.columnsMaker($headerRowColumns, {}, 0, 0, '', 0, limit);
-
-		// if (!verticalTable) {
-		// 	if ($headerRowColumns.length > 1) {
-		// 		$headerRowColumns = $headerRowColumns.find('th');
-		// 	} else if ($headerRowColumns.find('th').length) {
-		// 		$headerRowColumns = $headerRowColumns.find('th');
-		// 	} else if ($headerRowColumns.find('td').length) {
-		// 		$headerRowColumns = $headerRowColumns.find('td');
-		// 	}
-		// }
-
-		// for(let columnEl of $headerRow){
-		//
-		// }
-
-		return Object.keys(headerRows).map(header => {
-			return {
-				header: SelectorTable.trimHeader(header),
-				name: SelectorTable.trimHeader(header),
-				extract: true,
-			};
-		});
-
-		// $headerRow.forEach(function(columnEl, i, array) {
-		// 	let header = columnEl;
-		// 	if (header) {
-		// 		columns.push({
-		// 			header: header,
-		// 			name: header,
-		// 			extract: true,
-		// 		});
-		// 	}
-		// });
-		//  columns;
+		if (!verticalTable) {
+			let limit = $headerRowColumns[0].cells.length;
+			let columns = this.columnsMaker($headerRowColumns, {}, 0, 0, '', 0, limit);
+			return Object.keys(columns).map(header => {
+				return {
+					header: SelectorTable.trimHeader(header),
+					name: SelectorTable.trimHeader(header),
+					extract: true,
+				};
+			});
+		} else {
+			let columns = [];
+			$headerRowColumns.each(function(i, columnEl) {
+				let header = columnEl.innerText;
+				if (header) {
+					columns.push({
+						header: SelectorTable.trimHeader(header),
+						name: SelectorTable.trimHeader(header),
+						extract: true,
+					});
+				}
+			});
+			return columns;
+		}
 	}
 
 	static trimHeader(header) {
