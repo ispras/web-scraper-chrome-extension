@@ -178,7 +178,7 @@ export default class SelectorTable extends Selector {
 	}
 
 	//TODO split this method into two: one determines table orientation, second finds header row.
-	static getTableHeaderRowSelectorFromTableHTML(html, verticalTableHint) {
+	getTableHeaderRowSelectorFromTableHTML(html) {
 		let $table = $(html);
 		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length >= 1) {
 			//rows in thead
@@ -239,7 +239,7 @@ export default class SelectorTable extends Selector {
 		}
 	}
 
-	static getTableDataRowSelectorFromTableHTML(html, verticalTable) {
+	getTableDataRowSelectorFromTableHTML(html, verticalTable) {
 		let $table = $(html);
 		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length) {
 			// rows in tbody
@@ -320,8 +320,9 @@ export default class SelectorTable extends Selector {
 		return columns;
 	}
 
-	static getHeaderColumnsIndices(table_html, headerRowSelector, verticalTable) {
-		let $headerRowColumns = $(table_html).find(headerRowSelector);
+	getHeaderColumnsIndices(table_html, headerRowSelector, verticalTable) {
+		let $table = $(table_html);
+		let $headerRowColumns = $table.find(headerRowSelector);
 		let columns;
 		if (!verticalTable) {
 			columns = this.horizontalColumnsMaker($headerRowColumns);
@@ -352,5 +353,15 @@ export default class SelectorTable extends Selector {
 
 	static trimHeader(header) {
 		return header.trim().replace(/\s+/gm, ' ');
+	}
+
+	async afterSelect(cssSelector, controller) {
+		await super.afterSelect(cssSelector, controller);
+		let html = await controller.getSelectorHTML(this);
+		this.tableHeaderRowSelector = this.getTableHeaderRowSelectorFromTableHTML(html, this.verticalTable);
+		this.tableDataRowSelector = this.getTableDataRowSelectorFromTableHTML(html, this.verticalTable);
+		let headerColumns = this.getTableHeaderColumnsFromHTML(this.tableHeaderRowSelector, html, this.verticalTable);
+		controller._editSelector(this);
+		controller.renderTableHeaderColumns(headerColumns);
 	}
 }

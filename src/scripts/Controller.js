@@ -11,7 +11,7 @@ import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import * as browser from 'webextension-polyfill';
 
 export default class SitemapController {
-	async constructor(store, templateDir) {
+	constructor(store, templateDir) {
 		this.store = store;
 		this.templateDir = templateDir;
 		this.backgroundScript = getBackgroundScript('DevTools');
@@ -78,7 +78,7 @@ export default class SitemapController {
 				title: 'Grouped',
 			},
 		];
-		await this.init();
+		this.init();
 	}
 
 	control(controls) {
@@ -1331,7 +1331,7 @@ export default class SitemapController {
 		return true;
 	}
 
-	selectSelector(button) {
+	async selectSelector(button) {
 		let input = $(button)
 			.closest('.form-group')
 			.find('input.selector-value');
@@ -1342,46 +1342,48 @@ export default class SitemapController {
 			currentStateParentSelectorIds
 		);
 
-		let deferredSelector = this.contentScript.selectSelector({
-			parentCSSSelector: parentCSSSelector,
-			allowedElements: selector.getItemCSSSelector(),
-		});
+		let result = await this.contentScript
+			.selectSelector({
+				parentCSSSelector: parentCSSSelector,
+				allowedElements: selector.getItemCSSSelector(),
+			})
+			.promise();
 
-		deferredSelector.done(
-			function(result) {
-				$(input).val(result.CSSSelector);
+		selector = this.getCurrentlyEditedSelector();
+		await selector.afterSelect(result.CSSSelector, this);
+		this.isValidForm();
 
-				// update validation for selector field
-				let validator = this.getFormValidator();
-				validator.revalidateField(input);
-
-				// @TODO how could this be encapsulated?
-				// update header row, data row selectors after selecting the table. selectors are updated based on tables
-				// inner html
-				if (selector.type === 'SelectorTable') {
-					this.getSelectorHTML().done(html => {
-						let verticalTableHint = this.getCurrentlyEditedSelector().verticalTable;
-						let detectedAttributes = SelectorTable.automaticallyDetectSelectorTableAttributes(
-							html,
-							verticalTableHint
-						);
-
-						// update form with automatically detected selector table attributes
-						$('input[name=tableHeaderRowSelector]').val(
-							detectedAttributes.tableHeaderRowSelector
-						);
-						$('input[name=tableDataRowSelector]').val(
-							detectedAttributes.tableDataRowSelector
-						);
-						$('input[name=verticalTable]').prop(
-							'checked',
-							detectedAttributes.verticalTable
-						);
-						this.renderTableHeaderColumns(detectedAttributes.headerColumns);
-					});
-				}
-			}.bind(this)
-		);
+		// 		// update validation for selector field
+		// 		let validator = this.getFormValidator();
+		// 		validator.revalidateField(input);
+		//
+		// 		// @TODO how could this be encapsulated?
+		// 		// update header row, data row selectors after selecting the table. selectors are updated based on tables
+		// 		// inner html
+		// 		if (selector.type === 'SelectorTable') {
+		// 			this.getSelectorHTML().done(html => {
+		// 				let verticalTableHint = this.getCurrentlyEditedSelector().verticalTable;
+		// 				let detectedAttributes = SelectorTable.automaticallyDetectSelectorTableAttributes(
+		// 					html,
+		// 					verticalTableHint
+		// 				);
+		//
+		// 				// update form with automatically detected selector table attributes
+		// 				$('input[name=tableHeaderRowSelector]').val(
+		// 					detectedAttributes.tableHeaderRowSelector
+		// 				);
+		// 				$('input[name=tableDataRowSelector]').val(
+		// 					detectedAttributes.tableDataRowSelector
+		// 				);
+		// 				$('input[name=verticalTable]').prop(
+		// 					'checked',
+		// 					detectedAttributes.verticalTable
+		// 				);
+		// 				this.renderTableHeaderColumns(detectedAttributes.headerColumns);
+		// 			});
+		// 		}
+		// 	}.bind(this)
+		// );
 	}
 
 	getCurrentStateParentSelectorIds() {
@@ -1498,9 +1500,7 @@ export default class SitemapController {
 			selector.id,
 			currentStateParentSelectorIds
 		);
-		let deferredHTML = this.contentScript.getHTML({ CSSSelector: CSSSelector });
-
-		return deferredHTML;
+		return this.contentScript.getHTML({ CSSSelector: CSSSelector }).promise();
 	}
 
 	previewSelector(button) {
