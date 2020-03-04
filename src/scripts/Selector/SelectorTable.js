@@ -26,11 +26,11 @@ export default class SelectorTable extends Selector {
 		return false;
 	}
 
-	getTableHeaderColumns($table, verticalTable) {
+	getTableHeaderColumns($table) {
 		let headerRowSelector = this.getTableHeaderRowSelector();
 		let $headerRow = $table.find(headerRowSelector);
 		let columns = {};
-		if (verticalTable) {
+		if (this.verticalTable) {
 			if ($headerRow.length > 0) {
 				if ($headerRow.length > 1) {
 					if ($headerRow[0].nodeName === 'TR') {
@@ -46,9 +46,7 @@ export default class SelectorTable extends Selector {
 				}
 				$headerRow.each(
 					function(i, value) {
-						let header = $(value)
-							.text()
-							.trim();
+						let header = SelectorTable.trimHeader($(value).text());
 						columns[header] = {
 							index: i + 1,
 						};
@@ -134,7 +132,7 @@ export default class SelectorTable extends Selector {
 						}
 					});
 				} else {
-					let columnIndices = this.getTableHeaderColumns($(table), verticalTable);
+					let columnIndices = this.getTableHeaderColumns($(table));
 					$(table)
 						.find(dataSelector)
 						.each(
@@ -264,13 +262,13 @@ export default class SelectorTable extends Selector {
 
 	/**
 	 * Extract table header column info from html
-	 * @param $headerRow
-	 * @param columns
-	 * @param tr_num
-	 * @param col_num
-	 * @param name
-	 * @param k
-	 * @param limit_col
+	 * @param $headerRow header's html
+	 * @param columns - answer
+	 * @param tr_num - number of layer of our header
+	 * @param col_num - number of
+	 * @param name - how we should call our column
+	 * @param k - number of columns we've just added
+	 * @param limit_col - how many children our parent have,
 	 */
 	static columnsMaker($headerRow, columns, tr_num, col_num, name, k, limit_col) {
 		if (col_num < limit_col) {
