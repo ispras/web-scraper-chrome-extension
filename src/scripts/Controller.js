@@ -158,6 +158,9 @@ export default class SitemapController {
 					'#sitemaps-nav-button': {
 						click: this.showSitemaps,
 					},
+					'#generate-json': {
+						click: this.showSitemapExportJson,
+					},
 					'#create-sitemap-create-nav-button': {
 						click: this.showCreateSitemap,
 					},
@@ -531,11 +534,31 @@ export default class SitemapController {
 		this.setActiveNavigationButton('sitemap-export');
 		let sitemap = this.state.currentSitemap;
 		let sitemapJSON = sitemap.exportSitemap();
+		let sitemapFile = 'gggg';
+
 		let sitemapExportForm = ich.SitemapExport({
 			sitemapJSON: sitemapJSON,
+			sitemapFile: sitemapFile,
 		});
+
 		$('#viewport').html(sitemapExportForm);
+		$('.result').hide();
 		return true;
+	}
+	showSitemapExportJson() {
+		let sitemap = this.state.currentSitemap;
+
+		$('.result').show();
+		$('.download-button').hide();
+
+		sitemap = sitemap.exportSitemap();
+		let blob = new Blob([sitemap], { type: 'text/json' });
+		let button_a = $('.download-button a');
+		button_a.attr('href', window.URL.createObjectURL(blob));
+		button_a.attr('download', sitemap._id + '.json');
+		$('.download-button').show();
+
+		return false;
 	}
 
 	showSitemaps() {
