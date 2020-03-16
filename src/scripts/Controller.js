@@ -158,9 +158,6 @@ export default class SitemapController {
 					'#sitemaps-nav-button': {
 						click: this.showSitemaps,
 					},
-					'#download-button': {
-						click: this.showSitemapExportJson,
-					},
 					'#create-sitemap-create-nav-button': {
 						click: this.showCreateSitemap,
 					},
@@ -534,41 +531,20 @@ export default class SitemapController {
 		this.setActiveNavigationButton('sitemap-export');
 		let sitemap = this.state.currentSitemap;
 		let sitemapJSON = sitemap.exportSitemap();
-		let sitemapFile = 'gggg';
 
-		let button_a = $('#download-button');
-		let blob = new Blob([sitemap], { type: 'text/json' });
-		button_a.attr('href', window.URL.createObjectURL(blob));
-		button_a.attr('download', sitemap._id + '.json');
-		let l = window.URL.createObjectURL(blob);
 		let sitemapExportForm = ich.SitemapExport({
 			sitemapJSON: sitemapJSON,
-			sitemapFile: sitemapFile,
-			button_href: window.URL.createObjectURL(blob),
-			button_download: sitemap._id + '.json',
 		});
+
+		let blob = new Blob([sitemapJSON], { type: 'text/json' });
 
 		$('#viewport').html(sitemapExportForm);
 
-		$('#download-button').click(function() {
-			$(this)
-				.addClass('disabled')
-				.attr('disabled', true);
-
-			$(this)
-				.filter('.disabled')
-				.removeClass('disabled')
-				.attr('disabled', false);
-		});
+		let button_a = $('#download-button');
+		button_a.attr('href', window.URL.createObjectURL(blob));
+		button_a.attr('download', sitemap._id + '.json');
 
 		return true;
-	}
-	showSitemapExportJson() {
-		$('.download-button').hide();
-		// Функция активации кнопки
-		$('.download-button').show();
-
-		return false;
 	}
 
 	showSitemaps() {
