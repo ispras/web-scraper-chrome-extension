@@ -17,6 +17,7 @@ export default class Scraper {
 		this.requestInterval = parseInt(options.requestInterval);
 		this.requestIntervalRandomness = parseInt(options.requestIntervalRandomness);
 		this.pageLoadDelay = parseInt(options.pageLoadDelay);
+		this.filesToDownload = new Set();
 	}
 
 	initFirstJobs() {
@@ -80,22 +81,26 @@ export default class Scraper {
 		for (let attr in record) {
 			if (attr.substr(0, prefixLength) === '_fileBase64-') {
 				var selectorId = attr.substring(prefixLength, attr.length);
+				var fileBase64 = record['_fileBase64-' + selectorId];
+				var filename = record['_filename' + selectorId];
+				var fileMimeType = record['_fileMimeType-' + selectorId];
+				delete record['_fileBase64-' + selectorId];
+				delete record['_filename' + selectorId];
+				delete record['_fileMimeType-' + selectorId];
+
+				if (this.filesToDownload.has(filename)) {
+					continue;
+				}
+				this.filesToDownload.add(filename);
+
 				deferredFileStoreCalls.push(
 					function(selectorId) {
-						var fileBase64 = record['_fileBase64-' + selectorId];
-						var documentFilename = record['_filename' + selectorId];
-
+						var deferredBlob = Base64.base64ToBlob(fileBase64, fileMimeType);
 						var deferredDownloadDone = $.Deferred();
-						var deferredBlob = Base64.base64ToBlob(fileBase64, record['_fileMimeType-' + selectorId]);
-
-						delete record['_fileMimeType-' + selectorId];
-						delete record['_fileBase64-' + selectorId];
-						delete record['_filename' + selectorId];
-
 						deferredBlob.done(
 							function(blob) {
 								var downloadUrl = window.URL.createObjectURL(blob);
-								var fileSavePath = this.sitemap._id + '/' + selectorId + '/' + documentFilename;
+								var fileSavePath = this.sitemap._id + '/' + selectorId + '/' + filename;
 
 								// download file using chrome api
 								var downloadRequest = {
