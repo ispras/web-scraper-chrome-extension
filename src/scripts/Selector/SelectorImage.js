@@ -40,7 +40,7 @@ export default class SelectorImage extends Selector {
 						var deferredData = $.Deferred(),
 							data = {};
 
-						src = element.src;
+						var src = element.src;
 
 						// get url from style
 						if (src == null) {
@@ -81,15 +81,17 @@ export default class SelectorImage extends Selector {
 			}.bind(this)
 		);
 
-		$.whenCallSequentially(deferredDataCalls).done(function(dataResults) {
-			if (this.multiple === false && elements.length === 0) {
-				var data = {};
-				data[this.id + '-src'] = null;
-				dataResults.push(data);
-			}
+		$.whenCallSequentially(deferredDataCalls).done(
+			function(dataResults) {
+				if (this.multiple === false && elements.length === 0) {
+					var data = {};
+					data[this.id + '-src'] = null;
+					dataResults.push(data);
+				}
 
-			dfd.resolve(dataResults);
-		});
+				dfd.resolve(dataResults);
+			}.bind(this)
+		);
 
 		return dfd.promise();
 	}
