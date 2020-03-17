@@ -1,4 +1,5 @@
 import ElementQuery from './ElementQuery';
+import Base64 from '../libs/base64';
 
 export default class Selector {
 	constructor(selector) {

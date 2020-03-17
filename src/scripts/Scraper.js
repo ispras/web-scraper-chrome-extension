@@ -1,5 +1,6 @@
 import Job from './Job';
 import '../libs/jquery.whencallsequentially';
+import Base64 from '../libs/base64';
 
 export default class Scraper {
 	/**
