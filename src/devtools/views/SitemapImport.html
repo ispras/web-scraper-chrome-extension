@@ -13,6 +13,12 @@
 			<input type="text" class="form-control" name="_id" id="edit_sitemap_id" placeholder="Sitemap name" value="{{_id}}" />
 		</div>
 	</div>
+
+	<div>
+		<label for="sitemap_file">Choose file to upload</label>
+		<input type="file" id="sitemap_file" name="sitemap_file" accept=".json, .txt" />
+	</div>
+
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-10">
 			<button class="btn btn-default" id="submit-import-sitemap">Import Sitemap</button>
