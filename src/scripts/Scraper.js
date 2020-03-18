@@ -75,15 +75,15 @@ export default class Scraper {
 	 */
 	saveFile(record) {
 		let deferredResponse = $.Deferred();
-		let deferredFileStoreCalls = [];
+		let downloads = [];
 		let prefixLength = '_fileBase64-'.length;
 
 		for (let attr in record) {
 			if (attr.substr(0, prefixLength) === '_fileBase64-') {
-				var selectorId = attr.substring(prefixLength, attr.length);
-				var fileBase64 = record['_fileBase64-' + selectorId];
-				var filename = record['_filename' + selectorId];
-				var fileMimeType = record['_fileMimeType-' + selectorId];
+				let selectorId = attr.substring(prefixLength, attr.length);
+				let fileBase64 = record['_fileBase64-' + selectorId];
+				let filename = record['_filename' + selectorId];
+				let fileMimeType = record['_fileMimeType-' + selectorId];
 				delete record['_fileBase64-' + selectorId];
 				delete record['_filename' + selectorId];
 				delete record['_fileMimeType-' + selectorId];
@@ -93,50 +93,20 @@ export default class Scraper {
 				}
 				this.filesToDownload.add(filename);
 
-				deferredFileStoreCalls.push(
-					function(selectorId) {
-						var deferredBlob = Base64.base64ToBlob(fileBase64, fileMimeType);
-						var deferredDownloadDone = $.Deferred();
-						deferredBlob.then(
-							function(blob) {
-								var downloadUrl = window.URL.createObjectURL(blob);
-								var fileSavePath = this.sitemap._id + '/' + selectorId + '/' + filename;
-
-								// download file using chrome api
-								var downloadRequest = {
-									url: downloadUrl,
-									filename: fileSavePath,
-								};
-
-								// wait for the download to finish
-								chrome.downloads.download(downloadRequest, function(downloadId) {
-									var cbDownloaded = function(downloadItem) {
-										if (downloadItem.id === downloadId && downloadItem.state) {
-											if (downloadItem.state.current === 'complete') {
-												deferredDownloadDone.resolve();
-												chrome.downloads.onChanged.removeListener(cbDownloaded);
-											} else if (downloadItem.state.current === 'interrupted') {
-												deferredDownloadDone.reject('download failed');
-												chrome.downloads.onChanged.removeListener(cbDownloaded);
-											}
-										}
-									};
-
-									chrome.downloads.onChanged.addListener(cbDownloaded);
-								});
-							}.bind(this)
-						);
-
-						return deferredDownloadDone.promise();
-					}.bind(this, selectorId)
+				downloads.push(
+					Base64.base64ToBlob(fileBase64, fileMimeType).then(blob => {
+						let downloadUrl = window.URL.createObjectURL(blob);
+						let fileSavePath = this.sitemap._id + '/' + selectorId + '/' + filename;
+						return this.browser.downloads.download({
+							url: downloadUrl,
+							filename: fileSavePath,
+						});
+					})
 				);
 			}
 		}
 
-		$.whenCallSequentially(deferredFileStoreCalls).done(function() {
-			deferredResponse.resolve();
-		});
-
+		Promise.allSettled(downloads).then(deferredResponse.resolve);
 		return deferredResponse.promise();
 	}
 
