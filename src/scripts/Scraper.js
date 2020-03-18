@@ -97,10 +97,7 @@ export default class Scraper {
 					Base64.base64ToBlob(fileBase64, fileMimeType).then(blob => {
 						let downloadUrl = window.URL.createObjectURL(blob);
 						let fileSavePath = this.sitemap._id + '/' + selectorId + '/' + filename;
-						return this.browser.downloads.download({
-							url: downloadUrl,
-							filename: fileSavePath,
-						});
+						return this.browser.downloadFile(downloadUrl, fileSavePath);
 					})
 				);
 			}
