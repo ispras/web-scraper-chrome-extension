@@ -28,71 +28,53 @@ export default class SelectorImage extends Selector {
 	}
 
 	_getData(parentElement) {
-		var dfd = $.Deferred();
+		let dfd = $.Deferred();
 
-		var elements = this.getDataElements(parentElement);
+		let elements = this.getDataElements(parentElement);
+		if (!this.multiple && !elements.length) {
+			let data = {};
+			data[this.id + '-src'] = null;
+			dfd.resolve([data]);
+			return dfd.promise();
+		}
 
-		var deferredDataCalls = [];
-		$(elements).each(
-			function(i, element) {
-				deferredDataCalls.push(
-					function() {
-						var deferredData = $.Deferred(),
-							data = {};
+		let dataPromises = elements.map(
+			element =>
+				new Promise(resolve => {
+					let data = {};
+					let src = element.src;
 
-						var src = element.src;
+					// get url from style
+					if (src == null) {
+						src = $(element).css('background-image');
+						src = /^url\((['"]?)(.*)\1\)$/.exec(src);
+						src = src ? src[2] : '';
+					}
 
-						// get url from style
-						if (src == null) {
-							src = $(element).css('background-image');
-							src = /^url\((['"]?)(.*)\1\)$/.exec(src);
-							src = src ? src[2] : '';
-						}
+					src = this.stringReplace(src, this.stringReplacement);
+					data[this.id + '-src'] = src;
 
-						src = this.stringReplace(src, this.stringReplacement);
-
-						data[this.id + '-src'] = src;
-
-						// download image if required
-						if (!this.downloadImage) {
-							deferredData.resolve(data);
-						} else {
-							var deferredFileBase64 = this.downloadFileAsBase64(src);
-							deferredFileBase64
-								.done(
-									function(imageResponse) {
-										data['_fileBase64-' + this.id] = imageResponse.fileBase64;
-										data['_fileMimeType-' + this.id] = imageResponse.mimeType;
-										data['_filename' + this.id] = imageResponse.filename;
-
-										deferredData.resolve(data);
-									}.bind(this)
-								)
-								.fail(function() {
-									// failed to download image continue.
-									// @TODO handle errror
-									deferredData.resolve(data);
-								});
-						}
-
-						return deferredData.promise();
-					}.bind(this)
-				);
-			}.bind(this)
+					// download image if required
+					if (!this.downloadImage) {
+						resolve(data);
+					} else {
+						this.downloadFileAsBase64(src)
+							.done(imageResponse => {
+								data['_fileBase64-' + this.id] = imageResponse.fileBase64;
+								data['_fileMimeType-' + this.id] = imageResponse.mimeType;
+								data['_filename' + this.id] = imageResponse.filename;
+								resolve(data);
+							})
+							.fail(() => {
+								// failed to download image continue.
+								// @TODO handle errror
+								resolve(data);
+							});
+					}
+				})
 		);
 
-		$.whenCallSequentially(deferredDataCalls).done(
-			function(dataResults) {
-				if (this.multiple === false && elements.length === 0) {
-					var data = {};
-					data[this.id + '-src'] = null;
-					dataResults.push(data);
-				}
-
-				dfd.resolve(dataResults);
-			}.bind(this)
-		);
-
+		Promise.all(dataPromises).then(dfd.resolve);
 		return dfd.promise();
 	}
 
