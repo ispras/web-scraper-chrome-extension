@@ -15,8 +15,11 @@
 	</div>
 
 	<div>
-		<label for="sitemap_file">Choose file to upload</label>
-		<input type="file" id="sitemap_file" name="sitemap_file" accept=".json, .txt" />
+		<input type="file" id="files" name="file" /> Read bytes:
+		<span class="readBytesButtons">
+			<button>entire file</button>
+		</span>
+		<div id="byte_content"></div>
 	</div>
 
 	<div class="form-group">
