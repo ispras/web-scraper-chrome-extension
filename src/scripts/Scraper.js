@@ -1,6 +1,6 @@
 import Job from './Job';
 import '../libs/jquery.whencallsequentially';
-import Base64 from '../libs/base64';
+import Base64 from './Base64';
 
 export default class Scraper {
 	/**
@@ -97,7 +97,7 @@ export default class Scraper {
 					function(selectorId) {
 						var deferredBlob = Base64.base64ToBlob(fileBase64, fileMimeType);
 						var deferredDownloadDone = $.Deferred();
-						deferredBlob.done(
+						deferredBlob.then(
 							function(blob) {
 								var downloadUrl = window.URL.createObjectURL(blob);
 								var fileSavePath = this.sitemap._id + '/' + selectorId + '/' + filename;

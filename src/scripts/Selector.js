@@ -1,5 +1,5 @@
 import ElementQuery from './ElementQuery';
-import Base64 from '../libs/base64';
+import Base64 from './Base64';
 
 export default class Selector {
 	constructor(selector) {
@@ -293,7 +293,7 @@ export default class Selector {
 					let mimeType = blob.type;
 					let deferredBlob = Base64.blobToBase64(blob);
 
-					deferredBlob.done(function(fileBase64) {
+					deferredBlob.then(function(fileBase64) {
 						deferredResponse.resolve({
 							mimeType: mimeType,
 							fileBase64: fileBase64,
