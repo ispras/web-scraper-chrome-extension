@@ -1,4 +1,5 @@
 import ElementQuery from './ElementQuery';
+import Base64 from './Base64';
 
 export default class Selector {
 	constructor(selector) {
@@ -274,9 +275,10 @@ export default class Selector {
 	getFilenameFromUrl(url) {
 		let parts = url.split('/');
 		let filename = parts[parts.length - 1];
-		filename = filename.replace(/\?/g, '');
-		if (filename.length > 130) {
-			filename = filename.substr(0, 130);
+		filename = filename.split('?', 1)[0];
+		filename = filename.split('#', 1)[0];
+		if (filename.length > 100) {
+			filename = filename.substr(0, 100);
 		}
 		return filename;
 	}
@@ -292,7 +294,7 @@ export default class Selector {
 					let mimeType = blob.type;
 					let deferredBlob = Base64.blobToBase64(blob);
 
-					deferredBlob.done(function(fileBase64) {
+					deferredBlob.then(function(fileBase64) {
 						deferredResponse.resolve({
 							mimeType: mimeType,
 							fileBase64: fileBase64,

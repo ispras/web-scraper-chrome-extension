@@ -89,4 +89,11 @@ export default class ChromePopupBrowser {
 			);
 		}, this);
 	}
+
+	downloadFile(url, savePath) {
+		return browser.downloads.download({
+			url: url,
+			filename: savePath,
+		});
+	}
 }

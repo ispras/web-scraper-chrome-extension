@@ -1,5 +1,7 @@
 import Job from './Job';
 import '../libs/jquery.whencallsequentially';
+import Base64 from './Base64';
+import * as nanoid from 'nanoid';
 
 export default class Scraper {
 	/**
@@ -16,6 +18,7 @@ export default class Scraper {
 		this.requestInterval = parseInt(options.requestInterval);
 		this.requestIntervalRandomness = parseInt(options.requestIntervalRandomness);
 		this.pageLoadDelay = parseInt(options.pageLoadDelay);
+		this.downloadPaths = new Map(); // url -> local path
 	}
 
 	initFirstJobs() {
@@ -73,64 +76,39 @@ export default class Scraper {
 	 */
 	saveFile(record) {
 		let deferredResponse = $.Deferred();
-		let deferredFileStoreCalls = [];
+		let downloads = [];
 		let prefixLength = '_fileBase64-'.length;
 
 		for (let attr in record) {
 			if (attr.substr(0, prefixLength) === '_fileBase64-') {
-				var selectorId = attr.substring(prefixLength, attr.length);
-				deferredFileStoreCalls.push(
-					function(selectorId) {
-						var fileBase64 = record['_fileBase64-' + selectorId];
-						var documentFilename = record['_filename' + selectorId];
+				let selectorId = attr.substring(prefixLength, attr.length);
+				let url = record[selectorId + '-src'] || record[selectorId + '-href'];
+				let fileBase64 = record['_fileBase64-' + selectorId];
+				let filename = record['_filename' + selectorId];
+				let fileMimeType = record['_fileMimeType-' + selectorId];
+				delete record['_fileBase64-' + selectorId];
+				delete record['_filename' + selectorId];
+				delete record['_fileMimeType-' + selectorId];
 
-						var deferredDownloadDone = $.Deferred();
-						var deferredBlob = Base64.base64ToBlob(fileBase64, record['_fileMimeType-' + selectorId]);
+				if (this.downloadPaths.has(url)) {
+					record[selectorId + '-download_path'] = this.downloadPaths.get(url);
+					continue;
+				}
 
-						delete record['_fileMimeType-' + selectorId];
-						delete record['_fileBase64-' + selectorId];
-						delete record['_filename' + selectorId];
+				let downloadPath = this.sitemap._id + '/' + selectorId + '/' + nanoid(10) + '--' + filename;
+				this.downloadPaths.set(url, downloadPath);
+				record[selectorId + '-download_path'] = downloadPath;
 
-						deferredBlob.done(
-							function(blob) {
-								var downloadUrl = window.URL.createObjectURL(blob);
-								var fileSavePath = this.sitemap._id + '/' + selectorId + '/' + documentFilename;
-
-								// download file using chrome api
-								var downloadRequest = {
-									url: downloadUrl,
-									filename: fileSavePath,
-								};
-
-								// wait for the download to finish
-								chrome.downloads.download(downloadRequest, function(downloadId) {
-									var cbDownloaded = function(downloadItem) {
-										if (downloadItem.id === downloadId && downloadItem.state) {
-											if (downloadItem.state.current === 'complete') {
-												deferredDownloadDone.resolve();
-												chrome.downloads.onChanged.removeListener(cbDownloaded);
-											} else if (downloadItem.state.current === 'interrupted') {
-												deferredDownloadDone.reject('download failed');
-												chrome.downloads.onChanged.removeListener(cbDownloaded);
-											}
-										}
-									};
-
-									chrome.downloads.onChanged.addListener(cbDownloaded);
-								});
-							}.bind(this)
-						);
-
-						return deferredDownloadDone.promise();
-					}.bind(this, selectorId)
+				downloads.push(
+					Base64.base64ToBlob(fileBase64, fileMimeType).then(blob => {
+						let downloadUrl = window.URL.createObjectURL(blob);
+						return this.browser.downloadFile(downloadUrl, downloadPath);
+					})
 				);
 			}
 		}
 
-		$.whenCallSequentially(deferredFileStoreCalls).done(function() {
-			deferredResponse.resolve();
-		});
-
+		Promise.allSettled(downloads).then(deferredResponse.resolve);
 		return deferredResponse.promise();
 	}
 
