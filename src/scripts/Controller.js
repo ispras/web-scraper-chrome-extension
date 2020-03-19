@@ -539,7 +539,7 @@ export default class SitemapController {
 					document.getElementById('sitemapJSON').innerText = evt.target.result;
 				}
 			};
-
+			$('#file_content').hide();
 			let blob = file.slice(0, file.size);
 			reader.readAsText(blob);
 		}
