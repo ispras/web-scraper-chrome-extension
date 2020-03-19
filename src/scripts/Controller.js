@@ -155,7 +155,7 @@ export default class SitemapController {
 				});
 
 				this.control({
-					'.readBytesButtons': {
+					'.enterSitemapFile': {
 						click: this.showImportSitemapFile,
 					},
 					'#sitemaps-nav-button': {
@@ -523,7 +523,7 @@ export default class SitemapController {
 	}
 	showImportSitemapFile() {
 		function readBlob() {
-			let files = document.getElementById('files').files;
+			let files = document.getElementById('sitemapFiles').files;
 			if (!files.length) {
 				alert('Please select a file!');
 				return;
@@ -535,7 +535,7 @@ export default class SitemapController {
 			reader.onloadend = function(evt) {
 				if (evt.target.readyState === FileReader.DONE) {
 					// DONE == 2
-					document.getElementById('byte_content').innerText = evt.target.result;
+					document.getElementById('file_content').innerText = evt.target.result;
 					document.getElementById('sitemapJSON').innerText = evt.target.result;
 				}
 			};
@@ -657,7 +657,7 @@ export default class SitemapController {
 		if (id.length) {
 			sitemap._id = id;
 		}
-		$('#viewport').html(sitemapJSON);
+
 		// check whether sitemap with this id already exist
 		this.store.sitemapExists(sitemap._id).then(
 			function(sitemapExists) {
