@@ -523,18 +523,14 @@ export default class SitemapController {
 	}
 	showImportSitemapFile() {
 		function readBlob() {
-			var files = document.getElementById('files').files;
+			let files = document.getElementById('files').files;
 			if (!files.length) {
 				alert('Please select a file!');
 				return;
 			}
 
-			var file = files[0];
-			var start = 0;
-			var stop = file.size - 1;
-
-			var reader = new FileReader();
-
+			let file = files[0];
+			let reader = new FileReader();
 			// If we use onloadend, we need to check the readyState.
 			reader.onloadend = function(evt) {
 				if (evt.target.readyState === FileReader.DONE) {
@@ -544,8 +540,8 @@ export default class SitemapController {
 				}
 			};
 
-			var blob = file.slice(start, stop + 1);
-			reader.readAsBinaryString(blob);
+			let blob = file.slice(0, file.size);
+			reader.readAsText(blob);
 		}
 		readBlob();
 	}
