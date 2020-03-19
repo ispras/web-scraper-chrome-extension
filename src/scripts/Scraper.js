@@ -1,6 +1,7 @@
 import Job from './Job';
 import '../libs/jquery.whencallsequentially';
 import Base64 from './Base64';
+import * as nanoid from 'nanoid';
 
 export default class Scraper {
 	/**
@@ -17,7 +18,7 @@ export default class Scraper {
 		this.requestInterval = parseInt(options.requestInterval);
 		this.requestIntervalRandomness = parseInt(options.requestIntervalRandomness);
 		this.pageLoadDelay = parseInt(options.pageLoadDelay);
-		this.filesToDownload = new Set();
+		this.downloadPaths = new Map(); // url -> local path
 	}
 
 	initFirstJobs() {
@@ -81,6 +82,7 @@ export default class Scraper {
 		for (let attr in record) {
 			if (attr.substr(0, prefixLength) === '_fileBase64-') {
 				let selectorId = attr.substring(prefixLength, attr.length);
+				let url = record[selectorId + '-src'] || record[selectorId + '-href'];
 				let fileBase64 = record['_fileBase64-' + selectorId];
 				let filename = record['_filename' + selectorId];
 				let fileMimeType = record['_fileMimeType-' + selectorId];
@@ -88,16 +90,19 @@ export default class Scraper {
 				delete record['_filename' + selectorId];
 				delete record['_fileMimeType-' + selectorId];
 
-				if (this.filesToDownload.has(filename)) {
+				if (this.downloadPaths.has(url)) {
+					record[selectorId + '-download_path'] = this.downloadPaths.get(url);
 					continue;
 				}
-				this.filesToDownload.add(filename);
+
+				let downloadPath = this.sitemap._id + '/' + selectorId + '/' + nanoid(10) + '--' + filename;
+				this.downloadPaths.set(url, downloadPath);
+				record[selectorId + '-download_path'] = downloadPath;
 
 				downloads.push(
 					Base64.base64ToBlob(fileBase64, fileMimeType).then(blob => {
 						let downloadUrl = window.URL.createObjectURL(blob);
-						let fileSavePath = this.sitemap._id + '/' + selectorId + '/' + filename;
-						return this.browser.downloadFile(downloadUrl, fileSavePath);
+						return this.browser.downloadFile(downloadUrl, downloadPath);
 					})
 				);
 			}

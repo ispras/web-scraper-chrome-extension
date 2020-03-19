@@ -79,7 +79,11 @@ export default class SelectorImage extends Selector {
 	}
 
 	getDataColumns() {
-		return [this.id + '-src'];
+		let dataColumns = [this.id + '-src'];
+		if (this.downloadImage) {
+			dataColumns.push(this.id + '-download_path');
+		}
+		return dataColumns;
 	}
 
 	getFeatures() {

@@ -275,9 +275,10 @@ export default class Selector {
 	getFilenameFromUrl(url) {
 		let parts = url.split('/');
 		let filename = parts[parts.length - 1];
-		filename = filename.replace(/\?/g, '');
-		if (filename.length > 130) {
-			filename = filename.substr(0, 130);
+		filename = filename.split('?', 1)[0];
+		filename = filename.split('#', 1)[0];
+		if (filename.length > 100) {
+			filename = filename.substr(0, 100);
 		}
 		return filename;
 	}

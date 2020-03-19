@@ -26,7 +26,8 @@
 		"bootstrap": "3.1.1",
 		"jquery": "^3.4.1",
 		"jquery-flexdatalist": "^2.2.4",
-		"webextension-polyfill": "^0.6.0"
+		"webextension-polyfill": "^0.6.0",
+		"nanoid": "^2.1.11"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.1.2",
