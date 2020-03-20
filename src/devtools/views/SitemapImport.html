@@ -6,6 +6,21 @@
 			<textarea rows="7" class="form-control" name="sitemapJSON" id="sitemapJSON"></textarea>
 		</div>
 	</div>
+
+	<div class="form-group">
+		<p>
+			<label for="sitemapFiles" class="col-lg-1 control-label">Import from file</label>
+			<input type="file" id="sitemapFiles" name="file" />
+			<button class="enterSitemapFile">Upload file</button>
+		</p>
+		<style type="text/css">
+			#sitemapFiles,
+			.enterSitemapFile {
+				display: inline-block;
+				margin-right: 5px;
+			}
+		</style>
+	</div>
 	<div class="form-group">
 		<label for="edit_sitemap_id" class="col-lg-1 control-label">Rename Sitemap (optional)</label>
 
@@ -14,15 +29,7 @@
 		</div>
 	</div>
 
-	<div>
-		<label for="sitemapFiles" class="col-lg-1 control-label">Import from file</label>
-		<input type="file" id="sitemapFiles" name="file" />
-		<span class="enterSitemapFile">
-			<button>Enter file</button>
-		</span>
-		<div id="file_content"></div>
-	</div>
-
+	<div id="file_content"></div>
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-10">
 			<button class="btn btn-default" id="submit-import-sitemap">Import Sitemap</button>
