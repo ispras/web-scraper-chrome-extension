@@ -678,7 +678,7 @@ export default class SitemapController {
 	editSitemapMetadata(button) {
 		this.setActiveNavigationButton('sitemap-edit-metadata');
 
-		let sitemap = this.state.currentSitemap.clone();
+		let sitemap = this.state.currentSitemap;
 		if (sitemap.model) {
 			sitemap.model = JSON.stringify(sitemap.model, null, 4);
 		}

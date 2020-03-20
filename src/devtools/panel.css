@@ -49,6 +49,12 @@ textarea.form-control {
 	height: auto;
 }
 
+#sitemapFiles,
+.enterSitemapFile {
+	display: inline-block;
+	margin-right: 10px;
+}
+
 form .btn {
 	font-size: 12px;
 	padding: 3px 12px;
