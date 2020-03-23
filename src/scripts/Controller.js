@@ -155,8 +155,8 @@ export default class SitemapController {
 				});
 
 				this.control({
-					'.enterSitemapFile': {
-						click: this.showImportSitemapFile,
+					'#sitemapFiles': {
+						change: this.readBlob,
 					},
 					'#sitemaps-nav-button': {
 						click: this.showSitemaps,
@@ -521,30 +521,21 @@ export default class SitemapController {
 			},
 		});
 	}
-	showImportSitemapFile() {
-		function readBlob() {
-			let files = document.getElementById('sitemapFiles').files;
-			if (!files.length) {
-				alert('Please select a file!');
-				return;
-			}
-
-			let file = files[0];
-			let reader = new FileReader();
-			// If we use onloadend, we need to check the readyState.
-			reader.onloadend = function(evt) {
-				if (evt.target.readyState === FileReader.DONE) {
-					// DONE == 2
-					document.getElementById('file_content').innerText = evt.target.result;
-					document.getElementById('sitemapJSON').innerText = evt.target.result;
-				}
-			};
-			$('#file_content').hide();
-			let blob = file.slice(0, file.size);
-			reader.readAsText(blob);
+	readBlob() {
+		let files = document.getElementById('sitemapFiles').files;
+		if (!files.length) {
+			alert('Please select a file!');
+			return;
 		}
-		readBlob();
+		let file = files[0];
+		$('#file_content').hide();
+		let blob = file.slice(0, file.size);
+		blob.text().then(function(text) {
+			document.getElementById('file_content').innerText = text;
+			document.getElementById('sitemapJSON').innerText = text;
+		});
 	}
+
 	showImportSitemapPanel() {
 		this.setActiveNavigationButton('create-sitemap-import');
 		let sitemapForm = ich.SitemapImport();
@@ -566,9 +557,9 @@ export default class SitemapController {
 
 		$('#viewport').html(sitemapExportForm);
 
-		let button_a = $('#download-button');
-		button_a.attr('href', window.URL.createObjectURL(blob));
-		button_a.attr('download', sitemap._id + '.json');
+		let downloadButton = $('#download-button');
+		downloadButton.attr('href', window.URL.createObjectURL(blob));
+		downloadButton.attr('download', sitemap._id + '.json');
 
 		return true;
 	}
@@ -678,7 +669,7 @@ export default class SitemapController {
 	editSitemapMetadata(button) {
 		this.setActiveNavigationButton('sitemap-edit-metadata');
 
-		let sitemap = this.state.currentSitemap;
+		let sitemap = this.state.currentSitemap.clone();
 		if (sitemap.model) {
 			sitemap.model = JSON.stringify(sitemap.model, null, 4);
 		}
