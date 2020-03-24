@@ -49,10 +49,13 @@ textarea.form-control {
 	height: auto;
 }
 
-#sitemapFiles,
-.enterSitemapFile {
-	display: inline-block;
-	margin-right: 10px;
+#sitemapFiles {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
 }
 
 form .btn {
