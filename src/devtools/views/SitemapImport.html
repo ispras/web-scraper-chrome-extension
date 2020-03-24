@@ -1,20 +1,18 @@
 <form class="form-horizontal form-group" role="form" xmlns="http://www.w3.org/1999/html">
 	<div class="form-group">
-		<div class="col-lg-offset-1 col-lg-10">
-			<div class="btn btn-default">
-				Import from file
-				<input type="file" id="sitemapFiles" name="file" />
-			</div>
-		</div>
-	</div>
-
-	<div class="form-group">
 		<label for="sitemapJSON" class="col-lg-1 control-label">Sitemap JSON</label>
 		<div class="col-lg-10">
 			<textarea rows="7" class="form-control" name="sitemapJSON" id="sitemapJSON"></textarea>
 		</div>
 	</div>
-
+	<div class="form-group">
+		<div class="col-lg-offset-1 col-lg-10">
+			<div class="btn btn-default">
+				Import sitemap JSON from file
+				<input type="file" id="sitemapFiles" name="file" />
+			</div>
+		</div>
+	</div>
 	<div class="form-group">
 		<label for="edit_sitemap_id" class="col-lg-1 control-label">Rename Sitemap (optional)</label>
 		<div class="col-lg-10">
@@ -26,7 +24,7 @@
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-10">
-			<button class="btn btn-default" id="submit-import-sitemap">Import Sitemap</button>
+			<button class="btn btn-default" id="submit-import-sitemap">Submit import</button>
 		</div>
 	</div>
 </form>
