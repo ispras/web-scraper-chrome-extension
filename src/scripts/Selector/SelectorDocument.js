@@ -93,7 +93,11 @@ export default class SelectorDocument extends Selector {
 	}
 
 	getDataColumns() {
-		return [this.id, this.id + '-href'];
+		let dataColumns = [this.id, this.id + '-href'];
+		if (this.downloadDocument) {
+			dataColumns.push(this.id + '-download_path');
+		}
+		return dataColumns;
 	}
 
 	getFeatures() {
