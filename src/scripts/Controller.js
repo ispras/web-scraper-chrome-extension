@@ -521,22 +521,22 @@ export default class SitemapController {
 			},
 		});
 	}
+
 	readBlob() {
-		let files = document.getElementById('sitemapFiles').files;
+		let files = $('#sitemapFiles')[0].files;
 		if (!files.length) {
 			alert('Please select a file!');
 			return;
 		}
 		let file = files[0];
-		$('#file_content').hide();
 		let validator = this.getFormValidator();
 		let blob = file.slice(0, file.size);
-		blob.text().then(function(text) {
-			document.getElementById('sitemapJSON').value = text;
-			document.getElementById('sitemapJSON').innerText = text;
+		blob.text().then(text => {
+			$('#sitemapJSON').val(text);
 			validator.revalidateField('_id');
 			validator.revalidateField('sitemapJSON');
 		});
+		return true;
 	}
 
 	showImportSitemapPanel() {
@@ -638,9 +638,7 @@ export default class SitemapController {
 
 	importSitemap() {
 		// cancel submit if invalid form
-		let validator = this.getFormValidator();
-		validator.revalidateField('_id');
-		validator.revalidateField('sitemapJSON');
+
 		if (!this.isValidForm()) {
 			return false;
 		}
