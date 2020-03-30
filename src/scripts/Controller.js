@@ -529,16 +529,14 @@ export default class SitemapController {
 		}
 		let file = files[0];
 		$('#file_content').hide();
+		let validator = this.getFormValidator();
 		let blob = file.slice(0, file.size);
 		blob.text().then(function(text) {
 			document.getElementById('sitemapJSON').value = text;
 			document.getElementById('sitemapJSON').innerText = text;
-			document.getElementById('edit_sitemap_id').value = '';
+			validator.revalidateField('_id');
+			validator.revalidateField('sitemapJSON');
 		});
-
-		let sitemapForm = ich.SitemapImport();
-		$('#viewport').html(sitemapForm);
-		this.initImportSitemapValidation();
 	}
 
 	showImportSitemapPanel() {
