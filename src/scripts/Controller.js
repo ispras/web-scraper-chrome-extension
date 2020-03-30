@@ -1036,7 +1036,8 @@ export default class SitemapController {
 		let sitemap = this.state.currentSitemap;
 		let selector = this.state.currentSelector;
 		let newSelector = this.getCurrentlyEditedSelector();
-
+		let validator = this.getFormValidator();
+		validator.revalidateField('id');
 		// cancel submit if invalid form
 		if (!this.isValidForm()) {
 			return false;
