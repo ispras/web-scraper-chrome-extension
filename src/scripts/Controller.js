@@ -814,7 +814,7 @@ export default class SitemapController {
 						},
 						stringLength: {
 							min: 3,
-							message: 'The selector id should be atleast 3 characters long',
+							message: 'The selector id should be at least 3 characters long',
 						},
 						regexp: {
 							regexp: /^[^_].*$/,
