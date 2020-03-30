@@ -778,11 +778,11 @@ export default class SitemapController {
 				id: {
 					validators: {
 						notEmpty: {
-							message: 'Sitemap id required and cannot be empty',
+							message: 'Selector id required and cannot be empty',
 						},
 						stringLength: {
 							min: 3,
-							message: 'The sitemap id should be atleast 3 characters long',
+							message: 'The selector id should be atleast 3 characters long',
 						},
 						regexp: {
 							regexp: /^[^_].*$/,
