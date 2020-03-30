@@ -531,9 +531,14 @@ export default class SitemapController {
 		$('#file_content').hide();
 		let blob = file.slice(0, file.size);
 		blob.text().then(function(text) {
-			document.getElementById('file_content').innerText = text;
-			document.getElementById('sitemapJSON').innerText = text;
+			document.getElementById('file_content').value = text;
+			document.getElementById('sitemapJSON').value = text;
+			document.getElementById('edit_sitemap_id').value = '';
 		});
+		let sitemapForm = ich.SitemapImport();
+		$('#viewport').html(sitemapForm);
+		this.initImportSitemapValidation();
+		return true;
 	}
 
 	showImportSitemapPanel() {
