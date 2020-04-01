@@ -55,8 +55,7 @@ export default class SelectorTable extends Selector {
 				this.addMissingColumns($headerRow);
 			}
 		} else {
-			let limit = $headerRow[0].cells.length;
-			columns = SelectorTable.columnsMaker($headerRow, columns, 0, 0, '', 0, limit);
+			columns = SelectorTable.columnsMaker($headerRow);
 		}
 
 		return columns;
@@ -297,16 +296,20 @@ export default class SelectorTable extends Selector {
 	 * @param k - number of columns we've just added
 	 * @param limit_col - how many children our parent have,
 	 */
-	static columnsMaker($headerRow, columns, tr_num, col_num, name, k, limit_col) {
+
+	static columnsMaker($headerRow, columns = {}, tr_num = 0, col_num = 0, name = '', limit_col = $headerRow[0].cells.length) {
 		if (col_num < limit_col) {
-			let header = (name ? name + ' ' : '') + $headerRow[tr_num].children[col_num].innerText;
+			let header = (name ? name + ' ' : '') + $($headerRow[tr_num].children[col_num]).text();
 			if ($headerRow[tr_num].children[col_num].colSpan < 2) {
-				columns[SelectorTable.trimHeader(header)] = k + 1;
-				// delete $headerRow[tr_num].children[col_num];
-				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, k + 1, limit_col);
+				columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
+				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col);
 			} else {
-				columns = this.columnsMaker($headerRow, columns, tr_num + 1, 0, header, k, $headerRow[tr_num].children[col_num].colSpan);
-				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, Object.keys(columns).length, limit_col);
+				columns = this.columnsMaker($headerRow, columns, tr_num + 1, 0, header, $headerRow[tr_num].children[col_num].colSpan);
+				if (tr_num === 0) {
+					columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col);
+				} else {
+					columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col - $headerRow[tr_num].children[col_num].colSpan + 1);
+				}
 			}
 		}
 		return columns;
@@ -316,8 +319,7 @@ export default class SelectorTable extends Selector {
 		let $headerRowColumns = $table.find(headerRowSelector);
 
 		if (!verticalTable) {
-			let limit = $headerRowColumns[0].cells.length;
-			let columns = this.columnsMaker($headerRowColumns, {}, 0, 0, '', 0, limit);
+			let columns = this.columnsMaker($headerRowColumns);
 			return Object.keys(columns).map(header => {
 				return {
 					header: SelectorTable.trimHeader(header),

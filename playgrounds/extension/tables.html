@@ -82,6 +82,84 @@
 	</head>
 	<body>
 		<div id="webpage">
+			<h3>Table with thead and tbody</h3>
+			<table class="table">
+				<thead>
+					<tr>
+						<th class="otable-col-sticky" rowspan="3">Year</th>
+						<th colspan="4">Final decision</th>
+						<th colspan="4">Score</th>
+						<th class="otable-col-head" rowspan="3">Best student</th>
+					</tr>
+					<tr>
+						<th class="otable-col-head" colspan="2">First examiner</th>
+						<th class="otable-col-head" colspan="2">Second examiner</th>
+						<th class="otable-col-head" rowspan="2">Kolya</th>
+						<th class="otable-col-head" rowspan="2">Vasya</th>
+						<th class="otable-col-head" rowspan="2">Alex</th>
+						<th class="otable-col-head" rowspan="2">Roma</th>
+					</tr>
+					<tr>
+						<th class="otable-col-head">I</th>
+						<th class="otable-col-head">II</th>
+						<th class="otable-col-head">I</th>
+						<th class="otable-col-head">II</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th class="otable-col-sticky">2019</th>
+						<td>Good</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>5</td>
+						<td>6</td>
+						<td>3</td>
+						<td>8</td>
+						<td>Roma</td>
+					</tr>
+					<tr>
+						<th class="otable-col-sticky">2018</th>
+						<td>Excellent</td>
+						<td>Excellent</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>8</td>
+						<td>7</td>
+						<td>9</td>
+						<td>6</td>
+						<td>Alex</td>
+					</tr>
+					<tr>
+						<th class="otable-col-sticky">2017</th>
+						<td>Satisfactory</td>
+						<td>Satisfactory</td>
+						<td>Bad</td>
+						<td>Bad</td>
+						<td>4</td>
+						<td>2</td>
+						<td>3</td>
+						<td>5</td>
+						<td>Roma</td>
+					</tr>
+					<tr>
+						<th class="otable-col-sticky">2016</th>
+						<td>Good</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>5</td>
+						<td>3</td>
+						<td>10</td>
+						<td>8</td>
+						<td>Alex</td>
+					</tr>
+				</tbody>
+			</table>
+			<br />
+			<hr />
+			<br />
 			<h3>Table with complicated rows</h3>
 			<table>
 				<tbody>
@@ -329,17 +407,20 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th class="otable-col-sticky" rowspan="2">Year</th>
-
-						<th class="otable-col-sticky" rowspan="2">Final decision</th>
-						<th colspan="4">Score</th>
-						<th class="otable-col-head" rowspan="2">Best student</th>
+						<th class="otable-col-sticky" rowspan="3">Year</th>
+						<th class="otable-col-sticky" rowspan="3">Final decision</th>
+						<th class="otable-col-head" colspan="5">Score</th>
+						<th class="otable-col-head" rowspan="3">Best student</th>
 					</tr>
 					<tr>
-						<th class="otable-col-head">Kolya</th>
-						<th class="otable-col-head">Vasya</th>
-						<th class="otable-col-head">Alex</th>
-						<th class="otable-col-head">Roma</th>
+						<th class="otable-col-head" rowspan="2">Kolya</th>
+						<th lass="otable-col-head" colspan="2">Vasya</th>
+						<th class="otable-col-head" rowspan="2">Alex</th>
+						<th class="otable-col-head" rowspan="2">Roma</th>
+					</tr>
+					<tr>
+						<th class="otable-col-head">Yatscov</th>
+						<th class="otable-col-head">Kozhevnykov</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -347,6 +428,7 @@
 						<th class="otable-col-sticky">2019</th>
 						<td>Good</td>
 						<td>5</td>
+						<td>6</td>
 						<td>6</td>
 						<td>3</td>
 						<td>8</td>
@@ -359,6 +441,7 @@
 
 						<td>8</td>
 						<td>7</td>
+						<td>6</td>
 						<td>9</td>
 						<td>6</td>
 						<td>Alex</td>
@@ -372,6 +455,7 @@
 						<td>2</td>
 						<td>3</td>
 						<td>5</td>
+						<td>6</td>
 						<td>Roma</td>
 					</tr>
 					<tr>
@@ -381,6 +465,7 @@
 
 						<td>5</td>
 						<td>3</td>
+						<td>6</td>
 						<td>10</td>
 						<td>8</td>
 						<td>Alex</td>
