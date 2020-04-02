@@ -1,4 +1,5 @@
 import Selector from '../Selector';
+import Model from '../Model';
 
 export default class SelectorTable extends Selector {
 	constructor(options) {
@@ -55,7 +56,7 @@ export default class SelectorTable extends Selector {
 				this.addMissingColumns($headerRow);
 			}
 		} else {
-			columns = SelectorTable.columnsMaker($headerRow);
+			columns = SelectorTable.columnsMaker_2($headerRow);
 		}
 
 		return columns;
@@ -297,29 +298,74 @@ export default class SelectorTable extends Selector {
 	 * @param limit_col - how many children our parent have,
 	 */
 
-	static columnsMaker($headerRow, columns = {}, tr_num = 0, col_num = 0, name = '', limit_col = $headerRow[0].cells.length) {
-		if (col_num < limit_col) {
-			let header = (name ? name + ' ' : '') + $($headerRow[tr_num].children[col_num]).text();
-			if ($headerRow[tr_num].children[col_num].colSpan < 2) {
-				columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
-				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col);
-			} else {
-				columns = this.columnsMaker($headerRow, columns, tr_num + 1, 0, header, $headerRow[tr_num].children[col_num].colSpan);
-				if (tr_num === 0) {
-					columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col);
-				} else {
-					columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col - $headerRow[tr_num].children[col_num].colSpan + 1);
-				}
+	static columnsMaker_2($headerRow) {
+		let columns = {};
+		let tr_num = 0;
+		let limit = 0;
+		let high = {};
+		for (let i = 0; i < $headerRow[0].cells.length; i += 1) {
+			let colSpan = $headerRow[0].cells[i].colSpan;
+			if (!colSpan) {
+				colSpan = $headerRow[0].cells[i].colSpan;
 			}
+			[columns, limit] = SelectorTable.columnsMaker($headerRow, columns, tr_num, i, '', colSpan, high);
 		}
 		return columns;
 	}
+
+	static columnsMaker($headerRow, columns = {}, tr_num = 0, col_num = 0, name = '', limit_col, high) {
+		if (tr_num + 1 > Object.keys(high).length) {
+			high[tr_num] = 0;
+		}
+		let header = (name ? name + ' ' : '') + $($headerRow[tr_num].children[col_num]).text();
+		let colSpan = $headerRow[tr_num].children[col_num].colSpan;
+		if (!colSpan) {
+			colSpan = 1;
+		}
+		if (colSpan < 2) {
+			columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
+		} else {
+			limit_col = limit_col - colSpan + 1;
+			if (tr_num + 2 > Object.keys(high).length) {
+				high[tr_num + 1] = 0;
+			}
+			let k = high[tr_num + 1];
+			for (let j = k; j < k + $headerRow[tr_num].children[col_num].colSpan; j += 1) {
+				if (j < colSpan + k) {
+					[columns, colSpan] = this.columnsMaker($headerRow, columns, tr_num + 1, j, header, colSpan, high);
+				} else {
+					break;
+				}
+			}
+		}
+		high[tr_num] += 1;
+		return [columns, limit_col];
+	}
+	//
+	// static columnsMaker($headerRow, columns = {}, tr_num = 0, col_num = 0, name = '', limit_col = $headerRow[0].cells.length) {
+	// 	if (col_num < limit_col) {
+	// 		let header = (name ? name + ' ' : '') + $($headerRow[tr_num].children[col_num]).text();
+	// 		if ($headerRow[tr_num].children[col_num].colSpan < 2) {
+	// 			columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
+	// 			columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col);
+	// 		} else {
+	// 			columns = this.columnsMaker($headerRow, columns, tr_num + 1, 0, header, $headerRow[tr_num].children[col_num].colSpan);
+	// 			if (tr_num === 0) {
+	// 				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col);
+	// 			} else {
+	// 				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col - $headerRow[tr_num].children[col_num].colSpan + 1);
+	// 			}
+	// 		}
+	// 	}
+	// 	return columns;
+	// }
+
 	static getTableHeaderColumnsFromHTML(headerRowSelector, html, verticalTable) {
 		let $table = $(html);
 		let $headerRowColumns = $table.find(headerRowSelector);
 
 		if (!verticalTable) {
-			let columns = this.columnsMaker($headerRowColumns);
+			let columns = this.columnsMaker_2($headerRowColumns);
 			return Object.keys(columns).map(header => {
 				return {
 					header: SelectorTable.trimHeader(header),
