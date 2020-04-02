@@ -56,7 +56,7 @@ export default class SelectorTable extends Selector {
 				this.addMissingColumns($headerRow);
 			}
 		} else {
-			columns = SelectorTable.columnsMaker_2($headerRow);
+			columns = SelectorTable.columnsMaker($headerRow);
 		}
 
 		return columns;
@@ -298,74 +298,57 @@ export default class SelectorTable extends Selector {
 	 * @param limit_col - how many children our parent have,
 	 */
 
-	static columnsMaker_2($headerRow) {
+	static columnsMaker($headerRow) {
 		let columns = {};
-		let tr_num = 0;
-		let limit = 0;
+		let unnecessary = 0;
 		let high = {};
+		/**
+		 * Extract table header column info from html
+		 * @param $headerRow header's html
+		 * @param columns - answer
+		 * @param tr_num - number of layer of our header
+		 * @param col_num - number of
+		 * @param name - how we should call our column
+		 * @param limit_col - how many children our parent have 1 <= limit_col <= perent.colSpan,
+		 * @param high - array of pointers for tracking movement through all tr_num's
+		 * @param colSpan - .colSpan of headers element
+		 */
+		function columnsMakerHelper($headerRow, columns = {}, tr_num = 0, col_num = 0, name = '', limit_col, high) {
+			high[tr_num] = high[tr_num] ? high[tr_num] : 0;
+			let header = (name ? name + ' ' : '') + $($headerRow[tr_num].children[col_num]).text();
+			let colSpan = $headerRow[tr_num].children[col_num].colSpan ? $headerRow[tr_num].children[col_num].colSpan : 0;
+			if (colSpan < 2) {
+				columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
+			} else {
+				limit_col = limit_col - colSpan + 1;
+				let childs_tr_num = tr_num + 1;
+				high[childs_tr_num] = high[childs_tr_num] ? high[childs_tr_num] : 0;
+				let start_point = high[childs_tr_num];
+
+				for (let current_point = start_point; current_point < start_point + $headerRow[tr_num].children[col_num].colSpan; current_point += 1) {
+					if (current_point < colSpan + start_point) {
+						[columns, colSpan] = columnsMakerHelper($headerRow, columns, childs_tr_num, current_point, header, colSpan, high);
+					} else {
+						break;
+					}
+				}
+			}
+			high[tr_num] += 1;
+			return [columns, limit_col];
+		}
 		for (let i = 0; i < $headerRow[0].cells.length; i += 1) {
 			let colSpan = $headerRow[0].cells[i].colSpan;
-			if (!colSpan) {
-				colSpan = $headerRow[0].cells[i].colSpan;
-			}
-			[columns, limit] = SelectorTable.columnsMaker($headerRow, columns, tr_num, i, '', colSpan, high);
+			[columns, unnecessary] = columnsMakerHelper($headerRow, columns, 0, i, '', colSpan, high);
 		}
 		return columns;
 	}
-
-	static columnsMaker($headerRow, columns = {}, tr_num = 0, col_num = 0, name = '', limit_col, high) {
-		if (tr_num + 1 > Object.keys(high).length) {
-			high[tr_num] = 0;
-		}
-		let header = (name ? name + ' ' : '') + $($headerRow[tr_num].children[col_num]).text();
-		let colSpan = $headerRow[tr_num].children[col_num].colSpan;
-		if (!colSpan) {
-			colSpan = 1;
-		}
-		if (colSpan < 2) {
-			columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
-		} else {
-			limit_col = limit_col - colSpan + 1;
-			if (tr_num + 2 > Object.keys(high).length) {
-				high[tr_num + 1] = 0;
-			}
-			let k = high[tr_num + 1];
-			for (let j = k; j < k + $headerRow[tr_num].children[col_num].colSpan; j += 1) {
-				if (j < colSpan + k) {
-					[columns, colSpan] = this.columnsMaker($headerRow, columns, tr_num + 1, j, header, colSpan, high);
-				} else {
-					break;
-				}
-			}
-		}
-		high[tr_num] += 1;
-		return [columns, limit_col];
-	}
-	//
-	// static columnsMaker($headerRow, columns = {}, tr_num = 0, col_num = 0, name = '', limit_col = $headerRow[0].cells.length) {
-	// 	if (col_num < limit_col) {
-	// 		let header = (name ? name + ' ' : '') + $($headerRow[tr_num].children[col_num]).text();
-	// 		if ($headerRow[tr_num].children[col_num].colSpan < 2) {
-	// 			columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
-	// 			columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col);
-	// 		} else {
-	// 			columns = this.columnsMaker($headerRow, columns, tr_num + 1, 0, header, $headerRow[tr_num].children[col_num].colSpan);
-	// 			if (tr_num === 0) {
-	// 				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col);
-	// 			} else {
-	// 				columns = this.columnsMaker($headerRow, columns, tr_num, col_num + 1, name, limit_col - $headerRow[tr_num].children[col_num].colSpan + 1);
-	// 			}
-	// 		}
-	// 	}
-	// 	return columns;
-	// }
 
 	static getTableHeaderColumnsFromHTML(headerRowSelector, html, verticalTable) {
 		let $table = $(html);
 		let $headerRowColumns = $table.find(headerRowSelector);
 
 		if (!verticalTable) {
-			let columns = this.columnsMaker_2($headerRowColumns);
+			let columns = this.columnsMaker($headerRowColumns);
 			return Object.keys(columns).map(header => {
 				return {
 					header: SelectorTable.trimHeader(header),
