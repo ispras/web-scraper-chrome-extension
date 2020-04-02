@@ -301,7 +301,7 @@ export default class SelectorTable extends Selector {
 	static columnsMaker($headerRow) {
 		let columns = {};
 		let unnecessary = 0;
-		let high = {};
+		let tr_offsets = {};
 		/**
 		 * Extract table header column info from html
 		 * @param $headerRow header's html
@@ -309,12 +309,12 @@ export default class SelectorTable extends Selector {
 		 * @param tr_num - number of layer of our header
 		 * @param col_num - number of
 		 * @param name - how we should call our column
-		 * @param limit_col - how many children our parent have 1 <= limit_col <= perent.colSpan,
-		 * @param high - array of pointers for tracking movement through all tr_num's
+		 * @param limit_col - how many children our parent have 1 <= limit_col <= parent.colSpan,
+		 * @param tr_offsets - map of pointers for tracking movement through all tr_num's
 		 * @param colSpan - .colSpan of headers element
 		 */
-		function columnsMakerHelper($headerRow, columns = {}, tr_num = 0, col_num = 0, name = '', limit_col, high) {
-			high[tr_num] = high[tr_num] ? high[tr_num] : 0;
+		function columnsMakerHelper(tr_num = 0, col_num = 0, name = '', limit_col) {
+			tr_offsets[tr_num] = tr_offsets[tr_num] ? tr_offsets[tr_num] : 0;
 			let header = (name ? name + ' ' : '') + $($headerRow[tr_num].children[col_num]).text();
 			let colSpan = $headerRow[tr_num].children[col_num].colSpan ? $headerRow[tr_num].children[col_num].colSpan : 0;
 			if (colSpan < 2) {
@@ -322,23 +322,22 @@ export default class SelectorTable extends Selector {
 			} else {
 				limit_col = limit_col - colSpan + 1;
 				let childs_tr_num = tr_num + 1;
-				high[childs_tr_num] = high[childs_tr_num] ? high[childs_tr_num] : 0;
-				let start_point = high[childs_tr_num];
-
-				for (let current_point = start_point; current_point < start_point + $headerRow[tr_num].children[col_num].colSpan; current_point += 1) {
+				tr_offsets[childs_tr_num] = tr_offsets[childs_tr_num] ? tr_offsets[childs_tr_num] : 0;
+				let start_point = tr_offsets[childs_tr_num];
+				let finish_point = start_point + $headerRow[tr_num].children[col_num].colSpan;
+				for (let current_point = start_point; current_point < finish_point; current_point += 1) {
 					if (current_point < colSpan + start_point) {
-						[columns, colSpan] = columnsMakerHelper($headerRow, columns, childs_tr_num, current_point, header, colSpan, high);
+						colSpan = columnsMakerHelper(childs_tr_num, current_point, header, colSpan);
 					} else {
 						break;
 					}
 				}
 			}
-			high[tr_num] += 1;
-			return [columns, limit_col];
+			tr_offsets[tr_num] += 1;
+			return limit_col;
 		}
 		for (let i = 0; i < $headerRow[0].cells.length; i += 1) {
-			let colSpan = $headerRow[0].cells[i].colSpan;
-			[columns, unnecessary] = columnsMakerHelper($headerRow, columns, 0, i, '', colSpan, high);
+			unnecessary = columnsMakerHelper(0, i, '', $headerRow[0].cells[i].colSpan);
 		}
 		return columns;
 	}
