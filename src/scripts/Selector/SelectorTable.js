@@ -1,5 +1,4 @@
 import Selector from '../Selector';
-import Model from '../Model';
 
 export default class SelectorTable extends Selector {
 	constructor(options) {
@@ -290,55 +289,37 @@ export default class SelectorTable extends Selector {
 	/**
 	 * Extract table header column info from html
 	 * @param $headerRow header's html
-	 * @param columns - answer
-	 * @param tr_num - number of layer of our header
-	 * @param col_num - number of
-	 * @param name - how we should call our column
-	 * @param k - number of columns we've just added
-	 * @param limit_col - how many children our parent have,
 	 */
-
 	static columnsMaker($headerRow) {
 		let columns = {};
-		let unnecessary = 0;
-		let tr_offsets = {};
+		let tableRowOffsets = {};
 		/**
-		 * Extract table header column info from html
-		 * @param $headerRow header's html
-		 * @param columns - answer
-		 * @param tr_num - number of layer of our header
-		 * @param col_num - number of
-		 * @param name - how we should call our column
-		 * @param limit_col - how many children our parent have 1 <= limit_col <= parent.colSpan,
-		 * @param tr_offsets - map of pointers for tracking movement through all tr_num's
-		 * @param colSpan - .colSpan of headers element
+		 * @param tableRowNum - number of layer of our header
+		 * @param nameAcc - accumulator for the name of our column
+		 * @param maxOffset - maximum number of columns to watch (-1 if no limits)
 		 */
-		function columnsMakerHelper(tr_num = 0, col_num = 0, name = '', limit_col) {
-			tr_offsets[tr_num] = tr_offsets[tr_num] ? tr_offsets[tr_num] : 0;
-			let header = (name ? name + ' ' : '') + $($headerRow[tr_num].children[col_num]).text();
-			let colSpan = $headerRow[tr_num].children[col_num].colSpan ? $headerRow[tr_num].children[col_num].colSpan : 0;
-			if (colSpan < 2) {
-				columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
-			} else {
-				limit_col = limit_col - colSpan + 1;
-				let childs_tr_num = tr_num + 1;
-				tr_offsets[childs_tr_num] = tr_offsets[childs_tr_num] ? tr_offsets[childs_tr_num] : 0;
-				let start_point = tr_offsets[childs_tr_num];
-				let finish_point = start_point + $headerRow[tr_num].children[col_num].colSpan;
-				for (let current_point = start_point; current_point < finish_point; current_point += 1) {
-					if (current_point < colSpan + start_point) {
-						colSpan = columnsMakerHelper(childs_tr_num, current_point, header, colSpan);
-					} else {
-						break;
-					}
+		function columnsMakerHelper(tableRowNum, nameAcc, maxOffset) {
+			let startOffset = tableRowNum in tableRowOffsets ? tableRowOffsets[tableRowNum] : 0;
+			let offset = 0;
+			for (let cell of $headerRow[tableRowNum].children) {
+				let colSpan = 'colSpan' in cell ? cell.colSpan : 1;
+				offset += colSpan;
+				if (offset < startOffset + 1) {
+					continue;
+				}
+				let header = (nameAcc ? nameAcc + ' ' : '') + $(cell).text();
+				if (colSpan < 2) {
+					columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
+				} else {
+					columnsMakerHelper(tableRowNum + 1, header, startOffset + colSpan);
+				}
+				tableRowOffsets[tableRowNum] = offset;
+				if (maxOffset > 0 && offset >= maxOffset) {
+					return;
 				}
 			}
-			tr_offsets[tr_num] += 1;
-			return limit_col;
 		}
-		for (let i = 0; i < $headerRow[0].cells.length; i += 1) {
-			unnecessary = columnsMakerHelper(0, i, '', $headerRow[0].cells[i].colSpan);
-		}
+		columnsMakerHelper(0, '', -1);
 		return columns;
 	}
 
