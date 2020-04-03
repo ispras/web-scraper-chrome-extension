@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": ["Yatskov Alexander"],
+		"last-updated": "2020-04-03",
+		"locale": "ru",
+		"message-documentation": "This is russian locale for Web Scraper Plugin"
+	},
+	"sitemaps-nav-button": "Список карт обхода",
+	"sitemap-nav-button": "Карта обхода",
+	"sitemap-selector-list-nav-button": "Селекторы",
+	"sitemap-selector-graph-nav-button": "Граф селекторов",
+	"sitemap-edit-metadata-nav-button": "Изменить метаданные",
+	"sitemap-scrape-nav-button": "Запустить тестовый сбор",
+	"sitemap-browse-nav-button": "Просмотр данных",
+	"sitemap-export-nav-button": "Выгрузить карту обхода",
+	"sitemap-export-data-csv-nav-button": "Выгрузить данные",
+	"create-sitemap-nav-button": "Добавить карту обхода",
+	"create-sitemap-create-nav-button": "Создать",
+	"create-sitemap-import-nav-button": "Загрузить",
+	"sitemaplist-id": "Идентифкатор карты",
+	"sitemaplist-starturl": "Стартовые URL",
+	"sitemaplist-actions": "Действия",
+	"browse-sitemap-data": "Просмотр",
+	"delete-sitemap": "Удалить",
+	"sitemapid-empty-message": "Идентификатор схемы сайта обязателен и не может быть пустым"
+}

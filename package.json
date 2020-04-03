@@ -27,7 +27,8 @@
 		"jquery": "^3.4.1",
 		"jquery-flexdatalist": "^2.2.4",
 		"webextension-polyfill": "^0.6.0",
-		"nanoid": "^2.1.11"
+		"nanoid": "^2.1.11",
+		"@wikimedia/jquery.i18n": "^1.0.7"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.1.2",

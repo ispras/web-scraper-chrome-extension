@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": ["Yatskov Alexander"],
+		"last-updated": "2020-04-03",
+		"locale": "en",
+		"message-documentation": "This is english locales for Web Scraper Plugin"
+	},
+	"sitemaps-nav-button": "Sitemaps",
+	"sitemap-nav-button": "Sitemap",
+	"sitemap-selector-list-nav-button": "Selectors",
+	"sitemap-selector-graph-nav-button": "Selector graph",
+	"sitemap-edit-metadata-nav-button": "Edit metadata",
+	"sitemap-scrape-nav-button": "Scrape",
+	"sitemap-browse-nav-button": "Browse",
+	"sitemap-export-nav-button": "Export Sitemap",
+	"sitemap-export-data-csv-nav-button": "Export data as CSV",
+	"create-sitemap-nav-button": "Create new sitemap",
+	"create-sitemap-create-nav-button": "Create sitemap",
+	"create-sitemap-import-nav-button": "Import sitemap",
+	"sitemaplist-id": "ID",
+	"sitemaplist-starturl": "Start URL",
+	"sitemaplist-actions": "actions",
+	"browse-sitemap-data": "Browse",
+	"delete-sitemap": "Delete",
+	"sitemapid-empty-message": "The sitemap id is required and cannot be empty"
+}

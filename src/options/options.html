@@ -27,10 +27,18 @@
 			<h1>Web Scraper</h1>
 			<p>Options page</p>
 			<br />
-
 			<form class="form-horizontal" id="storage_configuration">
 				<fieldset>
-					<legend>Storage settings</legend>
+					<legend>Plugin settings</legend>
+					<div class="form-group">
+						<label for="locale" class="col-lg-2 control-label">Language</label>
+						<div class="col-lg-10">
+							<select name="locale" id="locale" class="form-control">
+								<option value="en">English</option>
+								<option value="ru">Русский</option>
+							</select>
+						</div>
+					</div>
 					<div class="form-group">
 						<label for="storageType" class="col-lg-2 control-label">Storage type</label>
 						<div class="col-lg-10">

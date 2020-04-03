@@ -39,7 +39,7 @@ $(function() {
 
 	// switch between configuration types
 	$('select[name=storageType]').change(function() {
-		var type = $(this).val();
+		let type = $(this).val();
 
 		if (type === 'couchdb') {
 			$('.form-group.couchdb').show();
@@ -54,10 +54,11 @@ $(function() {
 	});
 
 	// Extension configuration
-	var config = new Config();
+	let config = new Config();
 
 	// load previously synced data
 	config.loadConfiguration().then(() => {
+		$('#locale').val(config.locale);
 		$('#storageType').val(config.storageType);
 		$('#sitemapDb').val(config.sitemapDb);
 		$('#dataDb').val(config.dataDb);
@@ -69,11 +70,13 @@ $(function() {
 	// Sync storage settings
 	$('form#storage_configuration').submit(function() {
 		const storageType = $('#storageType').val();
+		const locale = $('#locale').val();
 		const newConfig = {
 			storageType: storageType,
 			sitemapDb: '',
 			dataDb: '',
 			restUrl: '',
+			locale: locale,
 		};
 
 		if (storageType === 'couchdb') {

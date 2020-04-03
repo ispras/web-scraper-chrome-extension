@@ -62,6 +62,10 @@ browser.runtime.onMessage.addListener((request, sender) => {
 		return store.sitemapExists(request.sitemapId);
 	} else if (request.getSitemapData) {
 		return store.getSitemapData(new Sitemap(request.sitemap));
+	} else if (request.getLocale) {
+		return new Promise(resolve => {
+			resolve(config.locale);
+		});
 	} else if (request.scrapeSitemap) {
 		let sitemap = new Sitemap(request.sitemap);
 		let queue = new Queue();

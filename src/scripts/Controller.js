@@ -9,6 +9,12 @@ import * as ich from 'icanhaz/ICanHaz';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import * as browser from 'webextension-polyfill';
+import '@wikimedia/jquery.i18n/src/jquery.i18n';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.messagestore';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.parser';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -78,7 +84,17 @@ export default class SitemapController {
 				title: 'Grouped',
 			},
 		];
-		this.init();
+		browser.runtime.sendMessage({ getLocale: true }).then(locale => {
+			$.i18n({
+				locale: locale,
+			});
+			$.i18n()
+				.load('i18n/locales.json')
+				.promise()
+				.then(() => {
+					this.init();
+				});
+		});
 	}
 
 	control(controls) {
@@ -140,6 +156,13 @@ export default class SitemapController {
 		);
 	}
 
+	fillLocale() {
+		$('[data-i18n]').each(function() {
+			let messageKey = $(this).attr('data-i18n');
+			$(this).html($.i18n(messageKey));
+		});
+	}
+
 	init() {
 		this.loadTemplates(
 			function() {
@@ -148,6 +171,7 @@ export default class SitemapController {
 
 				// render main viewport
 				ich.Viewport().appendTo('body');
+				this.fillLocale();
 
 				// cancel all form submits
 				$('form').bind('submit', function() {
@@ -358,7 +382,7 @@ export default class SitemapController {
 				_id: {
 					validators: {
 						notEmpty: {
-							message: 'The sitemap id is required and cannot be empty',
+							message: $.i18n('sitemapid-empty-message'),
 						},
 						stringLength: {
 							min: 3,
@@ -571,15 +595,18 @@ export default class SitemapController {
 		this.clearState();
 		this.setActiveNavigationButton('sitemaps');
 
-		this.store.getAllSitemaps().then(function(sitemaps) {
-			var $sitemapListPanel = ich.SitemapList();
-			sitemaps.forEach(function(sitemap) {
-				var $sitemap = ich.SitemapListItem(sitemap);
-				$sitemap.data('sitemap', sitemap);
-				$sitemapListPanel.find('tbody').append($sitemap);
-			});
-			$('#viewport').html($sitemapListPanel);
-		});
+		this.store.getAllSitemaps().then(
+			function(sitemaps) {
+				var $sitemapListPanel = ich.SitemapList();
+				sitemaps.forEach(function(sitemap) {
+					var $sitemap = ich.SitemapListItem(sitemap);
+					$sitemap.data('sitemap', sitemap);
+					$sitemapListPanel.find('tbody').append($sitemap);
+				});
+				$('#viewport').html($sitemapListPanel);
+				this.fillLocale();
+			}.bind(this)
+		);
 	}
 
 	getSitemapFromMetadataForm() {

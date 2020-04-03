@@ -82,6 +82,7 @@ const config = {
 		}),
 		new CopyWebpackPlugin([
 			{ from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
+			{ from: 'i18n', to: 'devtools/i18n' },
 			{ from: 'devtools/views', to: 'devtools/views/', transform: transformHtml },
 			{ from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
 			{ from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
