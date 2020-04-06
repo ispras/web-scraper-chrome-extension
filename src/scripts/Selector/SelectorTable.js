@@ -81,7 +81,8 @@ export default class SelectorTable extends Selector {
 		);
 	}
 
-	getVerticalDataCells(table, dataSelector) {
+	getVerticalDataCells(table) {
+		let dataSelector = this.getTableDataRowSelector();
 		let selectors = $(table).find(dataSelector),
 			isRow = selectors[0].nodeName === 'TR',
 			result = [];
@@ -92,109 +93,85 @@ export default class SelectorTable extends Selector {
 			for (let i = 0; i < selectors.length; i++) {
 				result.push({});
 			}
-			selectors.each(
-				function(i, dataCell) {
-					if (dataCell.cellIndex === 0) {
-						console.log("%c Vertical rows can't have first column as data cell ", 'background: red; color: white;');
-					} else {
-						let headerCellName = $(dataCell)
-							.closest('tr')
-							.find('th, td')[0].innerText;
+			selectors.each((_, dataCell) => {
+				if (dataCell.cellIndex === 0) {
+					console.log("%c Vertical rows can't have first column as data cell ", 'background: red; color: white;');
+				} else {
+					let headerCellName = $(dataCell)
+						.closest('tr')
+						.find('th, td')[0].innerText;
 
-						let listDataColumnName = this.getDataColumnName(headerCellName);
-						let dataCellvalue = dataCell.innerText;
-						if (listDataColumnName) {
-							result[dataCell.cellIndex - 1][listDataColumnName] = dataCellvalue;
-						}
+					let listDataColumnName = this.getDataColumnName(headerCellName);
+					let dataCellValue = dataCell.innerText;
+					if (listDataColumnName) {
+						result[dataCell.cellIndex - 1][listDataColumnName] = dataCellValue;
 					}
-				}.bind(this)
-			);
+				}
+			});
 		}
 
+		return result.filter(column => !$.isEmptyObject(column));
+	}
+
+	getHorizontalDataCells(table) {
+		let columnIndices = this.getTableHeaderColumns($(table));
+		let rows = $(table).find(this.getTableDataRowSelector());
+		let result = [];
+		for (let i = 0; i < rows.length; i++) {
+			result.push({});
+		}
+		rows.each((rowNum, row) => {
+			//helper function
+			function getColumnIndex(column) {
+				return columnIndices[column.header] - 1;
+			}
+			let dataColumns = this.getDataColumns();
+			// count current row offsets
+			let rowOffsets = dataColumns.map(column => {
+				return dataColumns.filter(key => {
+					return getColumnIndex(key) < getColumnIndex(column) && key.header in result[rowNum];
+				}).length;
+			});
+			// extract data from row
+			dataColumns
+				.filter(column => !(column.header in result[rowNum]))
+				.forEach(column => {
+					let headerIndex = getColumnIndex(column);
+					let cell = $(row)[0].children[headerIndex - rowOffsets[headerIndex]];
+					let cellText = cell.innerText.trim();
+					if ('rowSpan' in cell && cell.rowSpan > 1) {
+						//if we have rowSpan in cell push to further rows
+						for (let i = rowNum; i < rowNum + cell.rowSpan; i++) {
+							result[i][column.name] = cellText;
+						}
+					}
+					result[rowNum][column.name] = cellText;
+				});
+		});
 		return result;
 	}
 
 	_getData(parentElement) {
-		let dfd = $.Deferred();
-		let verticalTable = this.verticalTable;
+		let data = $.Deferred();
 		let tables = this.getDataElements(parentElement);
 		let result = [];
-		$(tables).each(
-			function(k, table) {
-				let dataSelector = this.getTableDataRowSelector();
-				if (verticalTable) {
-					let columnsList = this.getVerticalDataCells(table, dataSelector);
-					columnsList.forEach(function(column) {
-						if (!$.isEmptyObject(column)) {
-							result.push(column);
-						}
-					});
-				} else {
-					let rowNum = 1;
-					let maxHigh = 1;
-					let columnIndices = this.getTableHeaderColumns($(table));
-					let rowHigh = {};
-					let dataFirst = {};
-					let rowText = '';
-					$(table)
-						.find(dataSelector)
-						.each(
-							function(i, dataCell) {
-								let data = {};
-								if (rowNum === maxHigh) {
-									rowNum = 1;
-									rowHigh = {};
-								} else {
-									rowNum += 1;
-								}
-								let tdNum = 0;
-								this.columns.forEach(function(column) {
-									let headerIndex = columnIndices[column.header] - 1;
-									if (rowNum === 1) {
-										rowText = $(dataCell)[0].children[headerIndex].innerText.trim();
-										let rowSpan = $(dataCell)[0].children[headerIndex].rowSpan;
-										rowHigh[headerIndex] = rowSpan;
-										if (maxHigh < rowSpan) {
-											maxHigh = rowSpan;
-										}
-									} else {
-										if (rowHigh[headerIndex] === 1) {
-											rowText = $(dataCell)[0].children[tdNum].innerText.trim();
-											tdNum += 1;
-										} else {
-											rowText = dataFirst[column.name];
-										}
-									}
-									if (column.extract) {
-										data[column.name] = rowText;
-									}
-								});
-								if (rowNum === 1) {
-									dataFirst = data;
-								}
-								result.push(data);
-							}.bind(this)
-						);
-				}
-			}.bind(this)
-		);
-
-		dfd.resolve(result);
-		return dfd.promise();
+		$(tables).each((_, table) => {
+			if (this.verticalTable) {
+				result = result.concat(this.getVerticalDataCells(table));
+			} else {
+				result = result.concat(this.getHorizontalDataCells(table));
+			}
+		});
+		data.resolve(result);
+		return data;
 	}
 
 	getDataColumns() {
-		let dataColumns = [];
-		this.columns.forEach(function(column) {
-			if (column.extract) {
-				dataColumns.push(column.name);
-			}
-		});
-		return dataColumns;
+		return this.columns.filter(column => column.extract);
 	}
 
 	getDataColumnName(header) {
-		let answer = this.columns.find(function(column) {
+		let answer = this.columns.find(column => {
 			return column.extract && header === column.header;
 		});
 		if (answer) {
@@ -221,7 +198,6 @@ export default class SelectorTable extends Selector {
 
 	getTableDataRowSelector() {
 		// handle legacy selectors
-
 		if (this.tableDataRowSelector === undefined) {
 			return 'tbody tr';
 		} else {
