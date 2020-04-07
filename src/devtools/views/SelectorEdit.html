@@ -55,7 +55,6 @@
 				<span class="input-group-btn">
 					<button class="btn btn-default" action="select-table-header-row-selector" type="button">Select</button>
 					<button class="btn btn-default" action="preview-table-row-selector" type="button" data-toggle="button">Element preview</button>
-					<button class="btn btn-default" action="refresh-header-row-selector" title="Refresh if you manually changed the selector" type="button">Refresh</button>
 				</span>
 				<input type="text" class="form-control selector-value" id="tableHeaderRowSelector" name="tableHeaderRowSelector" value="{{selector.tableHeaderRowSelector}}" />
 			</div>
@@ -76,6 +75,18 @@
 		</div>
 	</div>
 
+	<!-- verticalTable -->
+	<div class="form-group feature feature-verticalTable">
+		<label for="verticalTable" class="col-sm-2 control-label">This is vertical table</label>
+		<div class="col-sm-8">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" id="verticalTable" name="verticalTable" {{#selector.verticalTable}} checked="checked" {{/selector.verticalTable}}>
+				</label>
+			</div>
+		</div>
+	</div>
+
 	<!-- tableAddMissingColumns -->
 	<div class="form-group feature feature-tableAddMissingColumns">
 		<label for="tableAddMissingColumns" class="col-sm-2 control-label">Extract missing columns</label>
@@ -84,17 +95,6 @@
 				<label>
 					<input type="checkbox" id="tableAddMissingColumns" name="tableAddMissingColumns" {{#selector.tableAddMissingColumns}} checked="checked"
 					{{/selector.tableAddMissingColumns}} >
-				</label>
-			</div>
-		</div>
-	</div>
-
-	<div class="form-group feature feature-verticalTable">
-		<label for="verticalTable" class="col-sm-2 control-label">This is vertical table</label>
-		<div class="col-sm-8">
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" id="verticalTable" name="verticalTable" {{#selector.verticalTable}} checked="checked" {{/selector.verticalTable}}>
 				</label>
 			</div>
 		</div>
@@ -311,29 +311,35 @@
 	</div>
 
 	<div class="form-group feature feature-columns">
-		<label class="col-sm-2 control-label">Table columns</label>
-
-		<div class="col-sm-8">
-			<table class="table table-bordered table-condensed">
-				<thead>
-					<tr>
-						<th>Column</th>
-						<th>Result key</th>
-						<th>Include into result</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{#selector.columns}}
-					<tr>
-						<td><input class="column-header" type="hidden" name="column[header][]" value="{{header}}" />{{header}}</td>
-						<td><input class="column-name form-control" type="text" name="column[name][]" value="{{name}}" /></td>
-						<td>
-							<input class="column-extract" type="checkbox" name="column[extract][]" {{#extract}} checked="checked" {{/extract}}>
-						</td>
-					</tr>
-					{{/selector.columns}}
-				</tbody>
-			</table>
+		<div class="row">
+			<label class="col-sm-2 control-label">Table columns</label>
+		</div>
+		<div class="row">
+			<button class="col-sm-1 col-sm-offset-1 btn btn-default" action="refresh-header-row-selector" title="Refresh if you manually changed the selector" type="button">
+				Refresh
+			</button>
+			<div class="col-sm-8">
+				<table class="table table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th>Column</th>
+							<th>Result key</th>
+							<th>Include into result</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#selector.columns}}
+						<tr>
+							<td><input class="column-header" type="hidden" name="column[header][]" value="{{header}}" />{{header}}</td>
+							<td><input class="column-name form-control" type="text" name="column[name][]" value="{{name}}" /></td>
+							<td>
+								<input class="column-extract" type="checkbox" name="column[extract][]" {{#extract}} checked="checked" {{/extract}}>
+							</td>
+						</tr>
+						{{/selector.columns}}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 
