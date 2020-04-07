@@ -1364,18 +1364,16 @@ export default class SitemapController {
 				// update header row, data row selectors after selecting the table. selectors are updated based on tables
 				// inner html
 				if (selector.type === 'SelectorTable') {
-					this.getSelectorHTML().done(
-						function(html) {
-							let verticalTable = this.getCurrentlyEditedSelector().verticalTable;
-							let tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html, verticalTable);
-							let tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html, verticalTable);
-							$('input[name=tableHeaderRowSelector]').val(tableHeaderRowSelector);
-							$('input[name=tableDataRowSelector]').val(tableDataRowSelector);
+					this.getSelectorHTML().done(html => {
+						let verticalTableHelper = this.getCurrentlyEditedSelector().verticalTable;
+						let detectedAttributes = SelectorTable.automaticallyDetectSelectorTableAttributes(html, verticalTableHelper);
 
-							let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderRowSelector, html, verticalTable);
-							this.renderTableHeaderColumns(headerColumns);
-						}.bind(this)
-					);
+						// update form with automatically detected selector table attributes
+						$('input[name=tableHeaderRowSelector]').val(detectedAttributes.tableHeaderRowSelector);
+						$('input[name=tableDataRowSelector]').val(detectedAttributes.tableDataRowSelector);
+						$('input[name=verticalTable]').prop('checked', detectedAttributes.verticalTable);
+						this.renderTableHeaderColumns(detectedAttributes.headerColumns);
+					});
 				}
 			}.bind(this)
 		);
@@ -1390,25 +1388,14 @@ export default class SitemapController {
 	}
 
 	refreshTableHeaderRowSelector(button) {
-		let input = $(button)
-			.closest('.form-group')
-			.find('input.selector-value');
-		let value = input.val();
+		let selector = this.getCurrentlyEditedSelector();
+		let verticalTable = selector.verticalTable;
+		let tableHeaderRowSelector = selector.tableHeaderRowSelector;
 
-		this.getSelectorHTML().done(
-			function(html) {
-				// let verticalTable = this.getCurrentlyEditedSelector().verticalTable;
-				// let tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html, verticalTable);
-				// let tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html, verticalTable);
-				// $('input[name=tableHeaderRowSelector]').val(tableHeaderRowSelector);
-				// $('input[name=tableDataRowSelector]').val(tableDataRowSelector);
-				let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(value, html);
-				this.renderTableHeaderColumns(headerColumns);
-			}.bind(this)
-		);
-
-		let validator = this.getFormValidator();
-		validator.revalidateField(input);
+		this.getSelectorHTML().done(html => {
+			let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(html, tableHeaderRowSelector, verticalTable);
+			this.renderTableHeaderColumns(headerColumns);
+		});
 	}
 
 	selectTableHeaderRowSelector(button) {
