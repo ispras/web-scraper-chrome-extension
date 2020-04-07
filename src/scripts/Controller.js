@@ -449,7 +449,7 @@ export default class SitemapController {
 		// //XXX quickFix for new sitemap creation bug
 		let validator = this.getFormValidator();
 		validator.updateStatus('model', 'VALID', 'callback');
-
+		this.fillLocale();
 		return true;
 	}
 
@@ -568,6 +568,7 @@ export default class SitemapController {
 		let sitemapForm = ich.SitemapImport();
 		$('#viewport').html(sitemapForm);
 		this.initImportSitemapValidation();
+		this.fillLocale();
 		return true;
 	}
 
@@ -583,11 +584,11 @@ export default class SitemapController {
 		let blob = new Blob([sitemapJSON], { type: 'text/json' });
 
 		$('#viewport').html(sitemapExportForm);
-
+		this.fillLocale();
 		let downloadButton = $('#download-button');
 		downloadButton.attr('href', window.URL.createObjectURL(blob));
 		downloadButton.attr('download', sitemap._id + '.json');
-
+		this.fillLocale();
 		return true;
 	}
 
@@ -607,6 +608,7 @@ export default class SitemapController {
 				this.fillLocale();
 			}.bind(this)
 		);
+		this.fillLocale();
 	}
 
 	getSitemapFromMetadataForm() {
@@ -669,7 +671,6 @@ export default class SitemapController {
 		if (!this.isValidForm()) {
 			return false;
 		}
-
 		// load data from form
 		let sitemapJSON = $('[name=sitemapJSON]').val();
 		let id = $('input[name=_id]').val();
@@ -706,7 +707,7 @@ export default class SitemapController {
 		let $sitemapMetadataForm = ich.SitemapEditMetadata(sitemap);
 		$('#viewport').html($sitemapMetadataForm);
 		this.initSitemapValidation();
-
+		this.fillLocale();
 		return true;
 	}
 
@@ -795,7 +796,7 @@ export default class SitemapController {
 			$selectorListPanel.find('tbody').append($selector);
 		});
 		$('#viewport').html($selectorListPanel);
-
+		this.fillLocale();
 		return true;
 	}
 
@@ -1029,6 +1030,7 @@ export default class SitemapController {
 
 		this.state.currentSelector = selector;
 		this.selectorTypeChanged(false);
+		this.fillLocale();
 	}
 
 	selectorTypeChanged(changeTrigger) {
@@ -1277,6 +1279,7 @@ export default class SitemapController {
 		let scrapeConfigPanel = ich.SitemapScrapeConfig();
 		$('#viewport').html(scrapeConfigPanel);
 		this.initScrapeSitemapConfigValidation();
+		this.fillLocale();
 		return true;
 	}
 
