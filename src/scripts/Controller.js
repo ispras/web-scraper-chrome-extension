@@ -22,68 +22,6 @@ export default class SitemapController {
 		this.templateDir = templateDir;
 		this.backgroundScript = getBackgroundScript('DevTools');
 		this.contentScript = getContentScript('DevTools');
-		this.selectorTypes = [
-			{
-				type: 'SelectorText',
-				title: 'Text',
-			},
-			{
-				type: 'ConstantValue',
-				title: 'Constant value',
-			},
-			{
-				type: 'SelectorInputValue',
-				title: 'Input value',
-			},
-			{
-				type: 'SelectorLink',
-				title: 'Link',
-			},
-			{
-				type: 'SelectorPopupLink',
-				title: 'Popup Link',
-			},
-			{
-				type: 'SelectorImage',
-				title: 'Image',
-			},
-			{
-				type: 'SelectorDocument',
-				title: 'Document',
-			},
-			{
-				type: 'SelectorTable',
-				title: 'Table',
-			},
-			{
-				type: 'SelectorElementAttribute',
-				title: 'Element attribute',
-			},
-			{
-				type: 'SelectorElementStyle',
-				title: 'Element style',
-			},
-			{
-				type: 'SelectorHTML',
-				title: 'HTML',
-			},
-			{
-				type: 'SelectorElement',
-				title: 'Element',
-			},
-			{
-				type: 'SelectorElementScroll',
-				title: 'Element scroll down',
-			},
-			{
-				type: 'SelectorElementClick',
-				title: 'Element click',
-			},
-			{
-				type: 'SelectorGroup',
-				title: 'Grouped',
-			},
-		];
 		browser.runtime.sendMessage({ getLocale: true }).then(locale => {
 			$.i18n({
 				locale: locale,
@@ -95,6 +33,68 @@ export default class SitemapController {
 					this.init();
 				});
 		});
+		this.selectorTypes = [
+			{
+				type: 'SelectorText',
+				title: $.i18n('SelectorText'),
+			},
+			{
+				type: 'ConstantValue',
+				title: $.i18n('ConstantValue'),
+			},
+			{
+				type: 'SelectorInputValue',
+				title: $.i18n('SelectorInputValue'),
+			},
+			{
+				type: 'SelectorLink',
+				title: $.i18n('SelectorLink'),
+			},
+			{
+				type: 'SelectorPopupLink',
+				title: $.i18n('SelectorPopupLink'),
+			},
+			{
+				type: 'SelectorImage',
+				title: $.i18n('SelectorImage'),
+			},
+			{
+				type: 'SelectorDocument',
+				title: $.i18n('SelectorDocument'),
+			},
+			{
+				type: 'SelectorTable',
+				title: $.i18n('SelectorTable'),
+			},
+			{
+				type: 'SelectorElementAttribute',
+				title: $.i18n('SelectorElementAttribute'),
+			},
+			{
+				type: 'SelectorElementStyle',
+				title: $.i18n('SelectorElementStyle'),
+			},
+			{
+				type: 'SelectorHTML',
+				title: $.i18n('SelectorHTML'),
+			},
+			{
+				type: 'SelectorElement',
+				title: $.i18n('SelectorElement'),
+			},
+			{
+				type: 'SelectorElementScroll',
+				title: $.i18n('SelectorElementScroll'),
+			},
+			{
+				type: 'SelectorElementClick',
+				title: $.i18n('SelectorElementClick'),
+			},
+			{
+				type: 'SelectorGroup',
+				title: $.i18n('SelectorGroup'),
+			},
+		];
 	}
 
 	control(controls) {
@@ -161,6 +161,8 @@ export default class SitemapController {
 			let messageKey = $(this).attr('data-i18n');
 			$(this).html($.i18n(messageKey));
 		});
+		let a = $.i18n('SelectorText');
+		let b = a;
 	}
 
 	init() {
@@ -171,7 +173,6 @@ export default class SitemapController {
 
 				// render main viewport
 				ich.Viewport().appendTo('body');
-				this.fillLocale();
 
 				// cancel all form submits
 				$('form').bind('submit', function() {
@@ -576,15 +577,11 @@ export default class SitemapController {
 		this.setActiveNavigationButton('sitemap-export');
 		let sitemap = this.state.currentSitemap;
 		let sitemapJSON = sitemap.exportSitemap();
-
 		let sitemapExportForm = ich.SitemapExport({
 			sitemapJSON: sitemapJSON,
 		});
-
 		let blob = new Blob([sitemapJSON], { type: 'text/json' });
-
 		$('#viewport').html(sitemapExportForm);
-		this.fillLocale();
 		let downloadButton = $('#download-button');
 		downloadButton.attr('href', window.URL.createObjectURL(blob));
 		downloadButton.attr('download', sitemap._id + '.json');
@@ -1397,7 +1394,7 @@ export default class SitemapController {
 				);
 			}.bind(this)
 		);
-
+		this.fillLocale();
 		return true;
 	}
 
