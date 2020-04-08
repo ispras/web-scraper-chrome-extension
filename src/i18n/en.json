@@ -129,7 +129,20 @@
 	"SelectorElementClick": "Element click",
 	"SelectorGroup": "Grouped",
 
-	"sitemap-scrape-requestInterval": "Request interval",
-	"sitemap-scrape-requestIntervalRandomness": "Request interval randomness",
-	"sitemap-scrape-pageLoadDelay": "Page load delay"
+	"sitemap-scrape-config-requestInterval": "Request interval",
+	"sitemap-scrape-config-requestIntervalRandomness": "Request interval randomness",
+	"sitemap-scrape-config-pageLoadDelay": "Page load delay",
+	"selector-edit-id": "Selector Id",
+	"selector-edit-paginationLimit": "empty = unlimited",
+	"selector-edit-extractAttribute": "Attribute name to extract",
+	"selector-edit-value-placeholder": "Text value to insert",
+	"selector-edit-extractStyle": "Style name to extract",
+	"elector-edit-regex": "Regex",
+	"elector-edit-regexgroup": "0",
+	"elector-edit-replaceText": "Replace text",
+	"elector-edit-replacementText": "Replacement text",
+	"elector-edit-textPrefix": "Prefix",
+	"elector-edit-textSuffix": "Suffix",
+	"elector-edit-delay": "Delay",
+	"elector-edit-replaceString": "Replace text"
 }

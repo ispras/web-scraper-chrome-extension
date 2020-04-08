@@ -94,6 +94,10 @@
 	"selector-edit-include-into-result": "Добавить в результат",
 	"selector-edit-save-selector": "Сохранить селектор",
 	"selector-edit-cancel": "Отмена",
+
+	"sitemap-scrape-config-requestInterval": "Интервал между запросами",
+	"sitemap-scrape-config-requestIntervalRandomness": "Случайность между запросами",
+	"sitemap-scrape-config-pageLoadDelay": "Задержка при загрузке страницы",
 	"sitemap-scrape-config-request-interval-label": "Интервал между запросами (мс)",
 	"sitemap-scrape-config-request-interval-randomness-label": "Случайность между запросами (мс)",
 	"sitemap-scrape-config-page-load-delay": "Задержка при загрузке страницы (мс)",
@@ -125,5 +129,22 @@
 	"SelectorElementClick": "Клик на элемент",
 	"SelectorGroup": "Группа",
 	"ConstantValue": "Константа",
-	"SelectorInputValue": "Вставка значения"
+	"SelectorInputValue": "Вставка значения",
+
+	"sitemap-scrape-requestInterval": "Интервал между запросами",
+	"sitemap-scrape-requestIntervalRandomness": "Случайность между запросами",
+	"sitemap-scrape-pageLoadDelay": "Задержка при загрузке страницы",
+	"selector-edit-id": "Идентификатор селектора",
+	"selector-edit-paginationLimit": "устой = бесконечно",
+	"selector-edit-extractAttribute": "Имя аттрибута для извлечения",
+	"selector-edit-value-placeholder": "Значения текста для вставки",
+	"selector-edit-extractStyle": "Имя атрибута для извлечения",
+	"elector-edit-regex": "Регулярное выражение",
+	"elector-edit-regexgroup": "0",
+	"elector-edit-replaceText": "Выражение заменяемого текста",
+	"elector-edit-replacementText": "Текст замены",
+	"elector-edit-textPrefix": "Префикс",
+	"elector-edit-textSuffix": "Суффикс",
+	"elector-edit-delay": "Задержка",
+	"elector-edit-replaceString": "Заменяемый текст"
 }

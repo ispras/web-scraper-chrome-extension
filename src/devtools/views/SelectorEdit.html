@@ -2,7 +2,7 @@
 	<div class="form-group">
 		<label for="selectorId" class="col-sm-2 control-label" data-i18n="selector-edit-id-field"></label>
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="id" id="selectorId" placeholder="Selector Id" value="{{selector.id}}" />
+			<input type="text" class="form-control" name="id" id="selectorId" placeholder="selector-edit-id" value="{{selector.id}}" />
 		</div>
 	</div>
 
@@ -141,7 +141,7 @@
 		<label for="paginationLimit" class="col-sm-2 control-label" data-i18n="selector-edit-pagination-limit"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="paginationLimit" id="paginationLimit" placeholder="empty = unlimited" value="{{selector.paginationLimit}}" />
+			<input type="text" class="form-control" name="paginationLimit" id="paginationLimit" placeholder="selector-edit-paginationLimit" value="{{selector.paginationLimit}}" />
 		</div>
 	</div>
 
@@ -210,7 +210,14 @@
 		<label for="extractAttribute" class="col-sm-2 control-label" data-i18n="selector-edit-attribute-name"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="extractAttribute" id="extractAttribute" placeholder="Attribute name to extract" value="{{selector.extractAttribute}}" />
+			<input
+				type="text"
+				class="form-control"
+				name="extractAttribute"
+				id="extractAttribute"
+				placeholder="selector-edit-extractAttribute"
+				value="{{selector.extractAttribute}}"
+			/>
 		</div>
 	</div>
 
@@ -219,7 +226,7 @@
 		<label for="value" class="col-sm-2 control-label" data-i18n="selector-edit-value"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="value" id="value" placeholder="Text value to insert" value="{{selector.value}}" />
+			<input type="text" class="form-control" name="value" id="value" placeholder="selector-edit-value" value="{{selector.value}}" />
 		</div>
 	</div>
 
@@ -228,7 +235,7 @@
 		<label for="extractStyle" class="col-sm-2 control-label" data-i18n="selector-edit-style-name"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="extractStyle" id="extractStyle" placeholder="Style name to extract" value="{{selector.extractStyle}}" />
+			<input type="text" class="form-control" name="extractStyle" id="extractStyle" placeholder="selector-edit-extractStyle" value="{{selector.extractStyle}}" />
 		</div>
 	</div>
 
@@ -237,10 +244,17 @@
 		<div class="col-sm-8">
 			<div class="form-inline">
 				<label for="regex" data-i18n="selector-edit-regex-match">
-					<input type="text" class="form-control col-sm-8" name="regex" id="regex" placeholder="Regex" value="{{selector.textmanipulation.regex}}" />
+					<input type="text" class="form-control col-sm-8" name="regex" id="regex" placeholder="elector-edit-regex" value="{{selector.textmanipulation.regex}}" />
 				</label>
 				<label for="regexgroup" data-i18n="selector-edit-regex-group">
-					<input type="text" class="form-control col-sm-2" name="regexgroup" id="regexgroup" placeholder="0" value="{{selector.textmanipulation.regexgroup}}" />
+					<input
+						type="text"
+						class="form-control col-sm-2"
+						name="regexgroup"
+						id="regexgroup"
+						placeholder="elector-edit-regexgroup"
+						value="{{selector.textmanipulation.regexgroup}}"
+					/>
 				</label>
 				<span class="help-block" style="margin-top: -5px;" data-i18n="selector-edit-trim-applying"></span>
 			</div>
@@ -259,7 +273,7 @@
 						class="form-control col-sm-6"
 						name="replaceText"
 						id="replaceText"
-						placeholder="Replace text"
+						placeholder="elector-edit-replaceText"
 						value="{{selector.textmanipulation.replaceText}}"
 					/>
 				</label>
@@ -269,17 +283,31 @@
 						class="form-control col-sm-6"
 						name="replacementText"
 						id="replacementText"
-						placeholder="Replacement text"
+						placeholder="elector-edit-replacementText"
 						value="{{selector.textmanipulation.replacementText}}"
 					/>
 				</label>
 			</div>
 			<div class="form-inline">
 				<label for="textPrefix" data-i18n="selector-edit-text-prefix">
-					<input type="text" class="form-control col-sm-6" name="textPrefix" id="textPrefix" placeholder="Prefix" value="{{selector.textmanipulation.textPrefix}}" />
+					<input
+						type="text"
+						class="form-control col-sm-6"
+						name="textPrefix"
+						id="textPrefix"
+						placeholder="elector-edit-textPrefix"
+						value="{{selector.textmanipulation.textPrefix}}"
+					/>
 				</label>
 				<label for="textSuffix" data-i18n="selector-edit-text-suffix">
-					<input type="text" class="form-control col-sm-6" name="textSuffix" id="textSuffix" placeholder="Suffix" value="{{selector.textmanipulation.textSuffix}}" />
+					<input
+						type="text"
+						class="form-control col-sm-6"
+						name="textSuffix"
+						id="textSuffix"
+						placeholder="elector-edit-textSuffix"
+						value="{{selector.textmanipulation.textSuffix}}"
+					/>
 				</label>
 			</div>
 		</div>
@@ -289,7 +317,7 @@
 		<label for="delay" class="col-sm-2 control-label" data-i18n="selector-edit-delay"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="delay" id="delay" placeholder="delay" value="{{selector.delay}}" />
+			<input type="text" class="form-control" name="delay" id="delay" placeholder="elector-edit-delay" value="{{selector.delay}}" />
 		</div>
 	</div>
 
@@ -299,7 +327,14 @@
 		<div class="col-sm-8">
 			<div id="replace" class="input-group">
 				<label data-i18n="selector-edit-replace-text">
-					<input type="text" class="form-control col-sm-6" name="replaceString" id="replaceString" placeholder="Replace text" value="{{selector.replaceString}}" />
+					<input
+						type="text"
+						class="form-control col-sm-6"
+						name="replaceString"
+						id="replaceString"
+						placeholder="elector-edit-replaceText"
+						value="{{selector.replaceString}}"
+					/>
 				</label>
 				<label data-i18n="selector-edit-replacemet-text"
 					><input
@@ -307,7 +342,7 @@
 						class="form-control col-sm-6"
 						name="replacementString"
 						id="replacementString"
-						placeholder="Replacement text"
+						placeholder="elector-edit-replacementText"
 						value="{{selector.replacementString}}"
 					/>
 				</label>
