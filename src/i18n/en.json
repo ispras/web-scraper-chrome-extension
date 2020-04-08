@@ -127,5 +127,9 @@
 	"SelectorElement": "Element",
 	"SelectorElementScroll": "Element scroll down",
 	"SelectorElementClick": "Element click",
-	"SelectorGroup": "Grouped"
+	"SelectorGroup": "Grouped",
+
+	"sitemap-scrape-requestInterval": "Request interval",
+	"sitemap-scrape-requestIntervalRandomness": "Request interval randomness",
+	"sitemap-scrape-pageLoadDelay": "Page load delay"
 }

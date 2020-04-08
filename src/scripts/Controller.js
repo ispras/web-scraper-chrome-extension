@@ -161,8 +161,10 @@ export default class SitemapController {
 			let messageKey = $(this).attr('data-i18n');
 			$(this).html($.i18n(messageKey));
 		});
-		let a = $.i18n('SelectorText');
-		let b = a;
+		$('[placeholder]').each(function() {
+			let placeholderKey = $(this).attr('placeholder');
+			$(this).attr('placeholder', $.i18n(placeholderKey));
+		});
 	}
 
 	init() {
@@ -305,9 +307,14 @@ export default class SitemapController {
 						click: this.previewSelectorDataFromSelectorEditing,
 					},
 				});
+
 				this.showSitemaps();
 			}.bind(this)
 		);
+		this.selectorTypes = this.selectorTypes.map(typeObj => {
+			typeObj.title = $.i18n(typeObj.type);
+			return typeObj;
+		});
 	}
 
 	clearState() {
@@ -605,7 +612,6 @@ export default class SitemapController {
 				this.fillLocale();
 			}.bind(this)
 		);
-		this.fillLocale();
 	}
 
 	getSitemapFromMetadataForm() {
@@ -787,13 +793,17 @@ export default class SitemapController {
 			parentSelectors: parentSelectors,
 		});
 		let selectors = sitemap.getDirectChildSelectors(parentSelectorId);
-		selectors.forEach(function(selector) {
-			let $selector = ich.SelectorListItem(selector);
-			$selector.data('selector', selector);
-			$selectorListPanel.find('tbody').append($selector);
-		});
+		selectors.forEach(
+			function(selector) {
+				let selectorType = this.selectorTypes.find(selectorType => selectorType.type === selector.type);
+				selector.title = selectorType.title;
+				let $selector = ich.SelectorListItem(selector);
+				$selector.data('selector', selector);
+				$selectorListPanel.find('tbody').append($selector);
+			}.bind(this)
+		);
 		$('#viewport').html($selectorListPanel);
-		this.fillLocale();
+
 		return true;
 	}
 
