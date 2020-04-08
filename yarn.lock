@@ -3658,7 +3658,14 @@ jquery-flexdatalist@^2.2.4:
   dependencies:
     jquery ">=1.8"
 
-jquery@>=1.8, jquery@^3.4.1:
+jquery-searcher@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/jquery-searcher/-/jquery-searcher-0.3.0.tgz#1317f686ac80f271569fc9a0d9cc0e835b86faac"
+  integrity sha1-Exf2hqyA8nFWn8mg2cwOg1uG+qw=
+  dependencies:
+    jquery ">=1.4.3"
+
+jquery@>=1.4.3, jquery@>=1.8, jquery@^3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
   integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
@@ -3768,6 +3775,11 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
   integrity sha512-s5kLOcnH0XqDO+FvuaLX8DDjZ18CGFk7VygH40QoKPUQhW4e2rvM0rwUq0t8IQDOwYSeLK01U90OjzBTme2QqA==
+
+lazy-json-viewer@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/lazy-json-viewer/-/lazy-json-viewer-1.1.0.tgz#d08d339bc5569b927a74f66bf86bbc2f2e2e44ec"
+  integrity sha1-0I0zm8VWm5J6dPZr+Gu8Ly4uROw=
 
 lazystream@^1.0.0:
   version "1.0.0"
