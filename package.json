@@ -1,10 +1,10 @@
 {
 	"name": "web-scraper-chrome-extension",
-	"version": "0.3.503",
+	"version": "0.3.505",
 	"description": "Web data extraction tool implemented as chrome extension",
 	"scripts": {
-		"lint": "eslint --ext .js,.vue src",
-		"prettier": "prettier \"src/**/*.{js,vue}\"",
+		"lint": "eslint --ext .js src",
+		"prettier": "prettier \"src/**/*.{js}\"",
 		"prettier:write": "npm run prettier -- --write",
 		"build": "cross-env NODE_ENV=production webpack --hide-modules",
 		"build:dev": "cross-env NODE_ENV=development webpack --hide-modules",
@@ -18,18 +18,18 @@
 		}
 	},
 	"dependencies": {
-		"icanhaz": "0.10.3",
-		"papaparse": "^4.1.0",
-		"pouchdb": "^7.1.1",
-		"sugar": "^1.4.1",
+		"bootstrap": "3.4.1",
 		"d3": "^3.3.8",
-		"bootstrap": "3.1.1",
+		"icanhaz": "0.10.3",
 		"jquery": "^3.4.1",
 		"jquery-flexdatalist": "^2.2.4",
-		"webextension-polyfill": "^0.6.0",
+		"jquery-searcher": "^0.3.0",
 		"nanoid": "^2.1.11",
-		"lazy-json-viewer": "^1.1.0",
-		"jquery-searcher": "^0.3.0"
+		"papaparse": "^4.1.0",
+		"pouchdb": "^7.1.1",
+		"renderjson": "^1.4.0",
+		"sugar": "^1.4.1",
+		"webextension-polyfill": "^0.6.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.1.2",

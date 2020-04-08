@@ -9,9 +9,8 @@ import * as ich from 'icanhaz/ICanHaz';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import * as browser from 'webextension-polyfill';
-import 'lazy-json-viewer/lazyjsonviewer';
-import 'lazy-json-viewer/lazyjsonviewer.css';
 import 'jquery-searcher/dist/jquery.searcher.min';
+import * as renderjson from 'renderjson/renderjson';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -81,6 +80,20 @@ export default class SitemapController {
 				title: 'Grouped',
 			},
 		];
+		this.jsonRenderer = renderjson
+			.set_icons('+', '-')
+			.set_show_to_level('all')
+			.set_max_string_length(80)
+			.set_replacer((key, value) => {
+				if (typeof value === 'string') {
+					return value
+						.replace(/(\r\n|\n|\r)/gm, ' ')
+						.replace(/\s+/g, ' ')
+						.trim();
+				}
+				return value;
+			})
+			.set_sort_objects(true);
 		this.init();
 	}
 
@@ -1330,14 +1343,16 @@ export default class SitemapController {
 				if (row.hasOwnProperty('_rev')) {
 					delete row['_rev'];
 				}
-				$('#json-' + rowNum).jsonViewer(row);
+				$('#json-' + rowNum).html(this.jsonRenderer(row));
 			}
 
-			$('#sitemap-data').searcher({
-				itemSelector: '.card', // jQuery selector for the data item element
-				textSelector: '.card-body', // jQuery selector for the element which contains the text
+			$accordion.searcher({
+				itemSelector: '.panel', // jQuery selector for the data item element
+				textSelector: '.panel-body', // jQuery selector for the element which contains the text
 				inputSelector: '#search-input', // jQuery selector for the input element
 			});
+
+			$('.collapse').collapse('show');
 		});
 
 		return true;
@@ -1685,12 +1700,14 @@ export default class SitemapController {
 				$accordion.append($card);
 			}
 
+			for (let rowNum = 0; rowNum < response.length; rowNum++) {
+				$('#json-' + rowNum).html(this.jsonRenderer(response[rowNum]));
+			}
+
+			$('.collapse').collapse('show');
+
 			let windowHeight = $(window).height();
 			$('.data-preview-modal .modal-body').height(windowHeight - 130);
-
-			for (let rowNum = 0; rowNum < response.length; rowNum++) {
-				$('#json-' + rowNum).jsonViewer(response[rowNum]);
-			}
 
 			// remove modal from dom after it is closed
 			$dataPreviewPanel.on('hidden.bs.modal', function() {
