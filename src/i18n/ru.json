@@ -94,7 +94,6 @@
 	"selector-edit-include-into-result": "Добавить в результат",
 	"selector-edit-save-selector": "Сохранить селектор",
 	"selector-edit-cancel": "Отмена",
-
 	"sitemap-scrape-config-requestInterval": "Интервал между запросами",
 	"sitemap-scrape-config-requestIntervalRandomness": "Случайность между запросами",
 	"sitemap-scrape-config-pageLoadDelay": "Задержка при загрузке страницы",

@@ -137,12 +137,12 @@
 	"selector-edit-extractAttribute": "Attribute name to extract",
 	"selector-edit-value-placeholder": "Text value to insert",
 	"selector-edit-extractStyle": "Style name to extract",
-	"elector-edit-regex": "Regex",
-	"elector-edit-regexgroup": "0",
-	"elector-edit-replaceText": "Replace text",
-	"elector-edit-replacementText": "Replacement text",
-	"elector-edit-textPrefix": "Prefix",
-	"elector-edit-textSuffix": "Suffix",
-	"elector-edit-delay": "Delay",
-	"elector-edit-replaceString": "Replace text"
+	"selector-edit-regex": "Regex",
+	"selector-edit-regexgroup": "0",
+	"selector-edit-replaceText": "Replace text",
+	"selector-edit-replacementText": "Replacement text",
+	"selector-edit-textPrefix": "Prefix",
+	"selector-edit-textSuffix": "Suffix",
+	"selector-edit-delay-placeholder": "Delay",
+	"selector-edit-replaceString": "Replace text"
 }

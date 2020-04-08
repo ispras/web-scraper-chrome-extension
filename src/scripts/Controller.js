@@ -22,6 +22,54 @@ export default class SitemapController {
 		this.templateDir = templateDir;
 		this.backgroundScript = getBackgroundScript('DevTools');
 		this.contentScript = getContentScript('DevTools');
+
+		this.selectorTypes = [
+			{
+				type: 'SelectorText',
+			},
+			{
+				type: 'ConstantValue',
+			},
+			{
+				type: 'SelectorInputValue',
+			},
+			{
+				type: 'SelectorLink',
+			},
+			{
+				type: 'SelectorPopupLink',
+			},
+			{
+				type: 'SelectorImage',
+			},
+			{
+				type: 'SelectorDocument',
+			},
+			{
+				type: 'SelectorTable',
+			},
+			{
+				type: 'SelectorElementAttribute',
+			},
+			{
+				type: 'SelectorElementStyle',
+			},
+			{
+				type: 'SelectorHTML',
+			},
+			{
+				type: 'SelectorElement',
+			},
+			{
+				type: 'SelectorElementScroll',
+			},
+			{
+				type: 'SelectorElementClick',
+			},
+			{
+				type: 'SelectorGroup',
+			},
+		];
 		browser.runtime.sendMessage({ getLocale: true }).then(locale => {
 			$.i18n({
 				locale: locale,
@@ -30,71 +78,15 @@ export default class SitemapController {
 				.load('i18n/locales.json')
 				.promise()
 				.then(() => {
+					this.selectorTypes = this.selectorTypes.map(typeObj => {
+						typeObj.title = $.i18n(typeObj.type);
+						return typeObj;
+					});
+				})
+				.then(() => {
 					this.init();
 				});
 		});
-		this.selectorTypes = [
-			{
-				type: 'SelectorText',
-				title: $.i18n('SelectorText'),
-			},
-			{
-				type: 'ConstantValue',
-				title: $.i18n('ConstantValue'),
-			},
-			{
-				type: 'SelectorInputValue',
-				title: $.i18n('SelectorInputValue'),
-			},
-			{
-				type: 'SelectorLink',
-				title: $.i18n('SelectorLink'),
-			},
-			{
-				type: 'SelectorPopupLink',
-				title: $.i18n('SelectorPopupLink'),
-			},
-			{
-				type: 'SelectorImage',
-				title: $.i18n('SelectorImage'),
-			},
-			{
-				type: 'SelectorDocument',
-				title: $.i18n('SelectorDocument'),
-			},
-			{
-				type: 'SelectorTable',
-				title: $.i18n('SelectorTable'),
-			},
-			{
-				type: 'SelectorElementAttribute',
-				title: $.i18n('SelectorElementAttribute'),
-			},
-			{
-				type: 'SelectorElementStyle',
-				title: $.i18n('SelectorElementStyle'),
-			},
-			{
-				type: 'SelectorHTML',
-				title: $.i18n('SelectorHTML'),
-			},
-			{
-				type: 'SelectorElement',
-				title: $.i18n('SelectorElement'),
-			},
-			{
-				type: 'SelectorElementScroll',
-				title: $.i18n('SelectorElementScroll'),
-			},
-			{
-				type: 'SelectorElementClick',
-				title: $.i18n('SelectorElementClick'),
-			},
-			{
-				type: 'SelectorGroup',
-				title: $.i18n('SelectorGroup'),
-			},
-		];
 	}
 
 	control(controls) {
@@ -307,14 +299,9 @@ export default class SitemapController {
 						click: this.previewSelectorDataFromSelectorEditing,
 					},
 				});
-
 				this.showSitemaps();
 			}.bind(this)
 		);
-		this.selectorTypes = this.selectorTypes.map(typeObj => {
-			typeObj.title = $.i18n(typeObj.type);
-			return typeObj;
-		});
 	}
 
 	clearState() {
@@ -803,7 +790,7 @@ export default class SitemapController {
 			}.bind(this)
 		);
 		$('#viewport').html($selectorListPanel);
-
+		this.fillLocale();
 		return true;
 	}
 
