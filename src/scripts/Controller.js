@@ -262,7 +262,7 @@ export default class SitemapController {
 						click: this.selectTableHeaderRowSelector,
 					},
 					'#edit-selector button[action=refresh-header-row-selector]': {
-						click: this.refreshTableHeaderRowSelector,
+						click: this.refreshTableColumns,
 					},
 					'#edit-selector button[action=select-table-data-row-selector]': {
 						click: this.selectTableDataRowSelector,
@@ -366,7 +366,8 @@ export default class SitemapController {
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message: 'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
+							message:
+								'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
@@ -440,7 +441,8 @@ export default class SitemapController {
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message: 'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
+							message:
+								'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
@@ -468,16 +470,20 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message: 'The sitemap id is required and cannot be empty',
+												message:
+													'The sitemap id is required and cannot be empty',
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message: 'The sitemap id should be at least 3 characters long',
+												message:
+													'The sitemap id should be at least 3 characters long',
 											};
 										}
-										if (!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-/]+$')) {
+										if (
+											!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-/]+$')
+										) {
 											return {
 												valid: false,
 												message:
@@ -490,7 +496,8 @@ export default class SitemapController {
 									if (!sitemap.hasOwnProperty('startUrls')) {
 										return {
 											valid: false,
-											message: 'The start URL is required and cannot be empty',
+											message:
+												'The start URL is required and cannot be empty',
 										};
 									}
 									if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
@@ -832,7 +839,8 @@ export default class SitemapController {
 				regex: {
 					validators: {
 						callback: {
-							message: 'JavaScript does not support regular expressions that can match 0 characters.',
+							message:
+								'JavaScript does not support regular expressions that can match 0 characters.',
 							callback: function(value, validator) {
 								// allow no regex
 								if (!value) {
@@ -991,13 +999,17 @@ export default class SitemapController {
 
 		// set clickElementUniquenessType
 		if (selector.clickElementUniquenessType) {
-			$editSelectorForm.find('[name=clickElementUniquenessType]').val(selector.clickElementUniquenessType);
+			$editSelectorForm
+				.find('[name=clickElementUniquenessType]')
+				.val(selector.clickElementUniquenessType);
 		}
 
 		// handle selects seperately
 		$editSelectorForm.find('[name=type]').val(selector.type);
 		selector.parentSelectors.forEach(function(parentSelectorId) {
-			$editSelectorForm.find("#parentSelectors [value='" + parentSelectorId + "']").attr('selected', 'selected');
+			$editSelectorForm
+				.find("#parentSelectors [value='" + parentSelectorId + "']")
+				.attr('selected', 'selected');
 		});
 
 		this.state.currentSelector = selector;
@@ -1064,14 +1076,20 @@ export default class SitemapController {
 		let selectorsSelector = $('#edit-selector [name=selector]').val();
 		let tableDataRowSelector = $('#edit-selector [name=tableDataRowSelector]').val();
 		let tableHeaderRowSelector = $('#edit-selector [name=tableHeaderRowSelector]').val();
-		let tableAddMissingColumns = $('#edit-selector [name=tableAddMissingColumns]').is(':checked');
+		let tableAddMissingColumns = $('#edit-selector [name=tableAddMissingColumns]').is(
+			':checked'
+		);
 		let verticalTable = $('#edit-selector [name=verticalTable]').is(':checked');
 		let clickElementSelector = $('#edit-selector [name=clickElementSelector]').val();
 		let type = $('#edit-selector [name=type]').val();
-		let clickElementUniquenessType = $('#edit-selector [name=clickElementUniquenessType]').val();
+		let clickElementUniquenessType = $(
+			'#edit-selector [name=clickElementUniquenessType]'
+		).val();
 		let clickType = $('#edit-selector [name=clickType]').val();
 		let paginationLimit = $('#edit-selector [name=paginationLimit]').val();
-		let discardInitialElements = $('#edit-selector [name=discardInitialElements]').is(':checked');
+		let discardInitialElements = $('#edit-selector [name=discardInitialElements]').is(
+			':checked'
+		);
 		let multiple = $('#edit-selector [name=multiple]').is(':checked');
 		let downloadImage = $('#edit-selector [name=downloadImage]').is(':checked');
 		let downloadDocument = $('#edit-selector [name=downloadDocument]').is(':checked');
@@ -1218,7 +1236,8 @@ export default class SitemapController {
 				requestIntervalRandomness: {
 					validators: {
 						notEmpty: {
-							message: 'The request interval randomness is required and cannot be empty',
+							message:
+								'The request interval randomness is required and cannot be empty',
 						},
 						numeric: {
 							message: 'The request interval randomness must be numeric',
@@ -1378,7 +1397,9 @@ export default class SitemapController {
 		let sitemap = this.getCurrentlyEditedSelectorSitemap();
 		let selector = this.getCurrentlyEditedSelector();
 		let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(currentStateParentSelectorIds);
+		let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
+			currentStateParentSelectorIds
+		);
 
 		let deferredSelector = this.contentScript.selectSelector({
 			parentCSSSelector: parentCSSSelector,
@@ -1397,18 +1418,26 @@ export default class SitemapController {
 				// update header row, data row selectors after selecting the table. selectors are updated based on tables
 				// inner html
 				if (selector.type === 'SelectorTable') {
-					this.getSelectorHTML().done(
-						function(html) {
-							let verticalTable = this.getCurrentlyEditedSelector().verticalTable;
-							let tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html, verticalTable);
-							let tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html, verticalTable);
-							$('input[name=tableHeaderRowSelector]').val(tableHeaderRowSelector);
-							$('input[name=tableDataRowSelector]').val(tableDataRowSelector);
+					this.getSelectorHTML().done(html => {
+						let verticalTableHint = this.getCurrentlyEditedSelector().verticalTable;
+						let detectedAttributes = SelectorTable.automaticallyDetectSelectorTableAttributes(
+							html,
+							verticalTableHint
+						);
 
-							let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderRowSelector, html, verticalTable);
-							this.renderTableHeaderColumns(headerColumns);
-						}.bind(this)
-					);
+						// update form with automatically detected selector table attributes
+						$('input[name=tableHeaderRowSelector]').val(
+							detectedAttributes.tableHeaderRowSelector
+						);
+						$('input[name=tableDataRowSelector]').val(
+							detectedAttributes.tableDataRowSelector
+						);
+						$('input[name=verticalTable]').prop(
+							'checked',
+							detectedAttributes.verticalTable
+						);
+						this.renderTableHeaderColumns(detectedAttributes.headerColumns);
+					});
 				}
 			}.bind(this)
 		);
@@ -1422,26 +1451,19 @@ export default class SitemapController {
 		return parentSelectorIds;
 	}
 
-	refreshTableHeaderRowSelector(button) {
-		let input = $(button)
-			.closest('.form-group')
-			.find('input.selector-value');
-		let value = input.val();
+	refreshTableColumns(button) {
+		let selector = this.getCurrentlyEditedSelector();
+		let verticalTable = selector.verticalTable;
+		let tableHeaderRowSelector = selector.tableHeaderRowSelector;
 
-		this.getSelectorHTML().done(
-			function(html) {
-				// let verticalTable = this.getCurrentlyEditedSelector().verticalTable;
-				// let tableHeaderRowSelector = SelectorTable.getTableHeaderRowSelectorFromTableHTML(html, verticalTable);
-				// let tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(html, verticalTable);
-				// $('input[name=tableHeaderRowSelector]').val(tableHeaderRowSelector);
-				// $('input[name=tableDataRowSelector]').val(tableDataRowSelector);
-				let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(value, html);
-				this.renderTableHeaderColumns(headerColumns);
-			}.bind(this)
-		);
-
-		let validator = this.getFormValidator();
-		validator.revalidateField(input);
+		this.getSelectorHTML().done(html => {
+			let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(
+				html,
+				tableHeaderRowSelector,
+				verticalTable
+			);
+			this.renderTableHeaderColumns(headerColumns);
+		});
 	}
 
 	selectTableHeaderRowSelector(button) {
@@ -1451,7 +1473,10 @@ export default class SitemapController {
 		let sitemap = this.getCurrentlyEditedSelectorSitemap();
 		let selector = this.getCurrentlyEditedSelector();
 		let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		let parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(selector.id, currentStateParentSelectorIds);
+		let parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
+			selector.id,
+			currentStateParentSelectorIds
+		);
 
 		let deferredSelector = this.contentScript.selectSelector({
 			parentCSSSelector: parentCSSSelector,
@@ -1465,7 +1490,10 @@ export default class SitemapController {
 
 				this.getSelectorHTML().done(
 					function(html) {
-						let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(tableHeaderRowSelector, html);
+						let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(
+							tableHeaderRowSelector,
+							html
+						);
 						this.renderTableHeaderColumns(headerColumns);
 					}.bind(this)
 				);
@@ -1484,7 +1512,10 @@ export default class SitemapController {
 		let sitemap = this.getCurrentlyEditedSelectorSitemap();
 		let selector = this.getCurrentlyEditedSelector();
 		let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		let parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(selector.id, currentStateParentSelectorIds);
+		let parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
+			selector.id,
+			currentStateParentSelectorIds
+		);
 
 		let deferredSelector = this.contentScript.selectSelector({
 			parentCSSSelector: parentCSSSelector,
@@ -1522,7 +1553,10 @@ export default class SitemapController {
 		let sitemap = this.getCurrentlyEditedSelectorSitemap();
 		let selector = this.getCurrentlyEditedSelector();
 		let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		let CSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(selector.id, currentStateParentSelectorIds);
+		let CSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
+			selector.id,
+			currentStateParentSelectorIds
+		);
 		let deferredHTML = this.contentScript.getHTML({ CSSSelector: CSSSelector });
 
 		return deferredHTML;
@@ -1533,7 +1567,9 @@ export default class SitemapController {
 			let sitemap = this.getCurrentlyEditedSelectorSitemap();
 			let selector = this.getCurrentlyEditedSelector();
 			let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-			let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(currentStateParentSelectorIds);
+			let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
+				currentStateParentSelectorIds
+			);
 			let deferredSelectorPreview = this.contentScript.previewSelector({
 				parentCSSSelector: parentCSSSelector,
 				elementCSSSelector: selector.selector,
@@ -1553,7 +1589,9 @@ export default class SitemapController {
 			let sitemap = this.state.currentSitemap;
 			let selector = this.getCurrentlyEditedSelector();
 			let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-			let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(currentStateParentSelectorIds);
+			let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
+				currentStateParentSelectorIds
+			);
 
 			let deferredSelectorPreview = this.contentScript.previewSelector({
 				parentCSSSelector: parentCSSSelector,
@@ -1574,7 +1612,10 @@ export default class SitemapController {
 			let sitemap = this.getCurrentlyEditedSelectorSitemap();
 			let selector = this.getCurrentlyEditedSelector();
 			let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-			let parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(selector.id, currentStateParentSelectorIds);
+			let parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
+				selector.id,
+				currentStateParentSelectorIds
+			);
 			let rowSelector = $(button)
 				.closest('.form-group')
 				.find('input')
@@ -1601,7 +1642,9 @@ export default class SitemapController {
 				.closest('tr')
 				.data('selector');
 			let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-			let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(currentStateParentSelectorIds);
+			let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
+				currentStateParentSelectorIds
+			);
 			let deferredSelectorPreview = this.contentScript.previewSelector({
 				parentCSSSelector: parentCSSSelector,
 				elementCSSSelector: selector.selector,
