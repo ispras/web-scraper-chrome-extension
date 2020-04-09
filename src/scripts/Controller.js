@@ -155,6 +155,9 @@ export default class SitemapController {
 				});
 
 				this.control({
+					'#sitemapFiles': {
+						change: this.readBlob,
+					},
 					'#sitemaps-nav-button': {
 						click: this.showSitemaps,
 					},
@@ -526,6 +529,23 @@ export default class SitemapController {
 		});
 	}
 
+	readBlob() {
+		let files = $('#sitemapFiles')[0].files;
+		if (!files.length) {
+			alert('Please select a file!');
+			return;
+		}
+		let file = files[0];
+		let validator = this.getFormValidator();
+		let blob = file.slice(0, file.size);
+		blob.text().then(text => {
+			$('#sitemapJSON').val(text);
+			validator.revalidateField('_id');
+			validator.revalidateField('sitemapJSON');
+		});
+		return true;
+	}
+
 	showImportSitemapPanel() {
 		this.setActiveNavigationButton('create-sitemap-import');
 		let sitemapForm = ich.SitemapImport();
@@ -538,10 +558,19 @@ export default class SitemapController {
 		this.setActiveNavigationButton('sitemap-export');
 		let sitemap = this.state.currentSitemap;
 		let sitemapJSON = sitemap.exportSitemap();
+
 		let sitemapExportForm = ich.SitemapExport({
 			sitemapJSON: sitemapJSON,
 		});
+
+		let blob = new Blob([sitemapJSON], { type: 'text/json' });
+
 		$('#viewport').html(sitemapExportForm);
+
+		let downloadButton = $('#download-button');
+		downloadButton.attr('href', window.URL.createObjectURL(blob));
+		downloadButton.attr('download', sitemap._id + '.json');
+
 		return true;
 	}
 
@@ -584,6 +613,7 @@ export default class SitemapController {
 
 	createSitemap() {
 		// cancel submit if invalid form
+
 		if (!this.isValidForm()) {
 			return false;
 		}
@@ -615,6 +645,7 @@ export default class SitemapController {
 
 	importSitemap() {
 		// cancel submit if invalid form
+
 		if (!this.isValidForm()) {
 			return false;
 		}
@@ -627,6 +658,7 @@ export default class SitemapController {
 		if (id.length) {
 			sitemap._id = id;
 		}
+
 		// check whether sitemap with this id already exist
 		this.store.sitemapExists(sitemap._id).then(
 			function(sitemapExists) {
@@ -785,11 +817,11 @@ export default class SitemapController {
 				id: {
 					validators: {
 						notEmpty: {
-							message: 'Sitemap id required and cannot be empty',
+							message: 'Selector id required and cannot be empty',
 						},
 						stringLength: {
 							min: 3,
-							message: 'The sitemap id should be atleast 3 characters long',
+							message: 'The selector id should be at least 3 characters long',
 						},
 						regexp: {
 							regexp: /^[^_].*$/,
@@ -1016,7 +1048,8 @@ export default class SitemapController {
 		let sitemap = this.state.currentSitemap;
 		let selector = this.state.currentSelector;
 		let newSelector = this.getCurrentlyEditedSelector();
-
+		let validator = this.getFormValidator();
+		validator.revalidateField('id');
 		// cancel submit if invalid form
 		if (!this.isValidForm()) {
 			return false;
