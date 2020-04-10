@@ -1,9 +1,8 @@
 #webpage {
-	height:400px;
 	border-radius: 5px;
-	border:3px #ccc solid;
-	margin:10px;
-	overflow-y:scroll;
+	border: 3px #ccc solid;
+	margin: 10px;
+	overflow-y: scroll;
 }
 
 #webpage {
@@ -16,6 +15,6 @@
 }
 
 .productImage {
-    background-image: url("../../docs/images/chrome-store-logo.png");
-    height: 375px;
+	background-image: url('../../docs/images/chrome-store-logo.png');
+	height: 375px;
 }

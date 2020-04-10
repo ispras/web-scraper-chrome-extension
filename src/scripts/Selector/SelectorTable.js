@@ -27,161 +27,140 @@ export default class SelectorTable extends Selector {
 	}
 
 	getTableHeaderColumns($table) {
-		let columns = {};
 		let headerRowSelector = this.getTableHeaderRowSelector();
-		let $headerRow = $table.find(headerRowSelector);
-
-		if ($headerRow.length > 0) {
-			if ($headerRow.length > 1) {
-				if ($headerRow[0].nodeName === 'TR') {
-					$headerRow = $headerRow.find('th:first-child');
-					if ($headerRow.length === 0) {
-						console.log('%c Please specify row header cell selector ', 'background: red; color: white;');
-					}
+		let columns = SelectorTable.getHeaderColumnsIndices(
+			$table,
+			headerRowSelector,
+			this.verticalTable
+		);
+		// add missing columns
+		if (this.tableAddMissingColumns) {
+			Object.keys(columns).forEach(header => {
+				let matchedColumn = this.columns.find(column => column.header === header);
+				if (!matchedColumn) {
+					this.columns.push({
+						header: header,
+						name: header,
+						extract: true,
+					});
 				}
-			} else if ($headerRow.find('th').length) {
-				$headerRow = $headerRow.find('th');
-			} else if ($headerRow.find('td').length) {
-				$headerRow = $headerRow.find('td');
-			}
-
-			$headerRow.each(
-				function(i, value) {
-					let header = $(value)
-						.text()
-						.trim();
-					columns[header] = {
-						index: i + 1,
-					};
-				}.bind(this)
-			);
-
-			this.addMissingColumns($headerRow);
+			});
 		}
 		return columns;
 	}
 
-	addMissingColumns(headerRow) {
-		headerRow.each(
-			function(i, value) {
-				if (this.tableAddMissingColumns) {
-					let header = $(value)
-						.text()
-						.trim();
-					let column = $.grep(this.columns, function(h) {
-						return h.name === header;
-					});
-
-					if (column.length !== 1) {
-						this.columns.push({
-							header: header,
-							extract: true,
-						});
-					}
-				}
-			}.bind(this)
-		);
-	}
-
-	getVerticalDataCells(table, dataSelector) {
-		let selectors = $(table).find(dataSelector),
-			isRow = selectors[0].nodeName === 'TR',
-			result = [];
+	getVerticalDataCells(table) {
+		let columnIndices = this.getTableHeaderColumns($(table));
+		let dataSelector = this.getTableDataRowSelector();
+		let dataColumns = this.getDataColumns();
+		let dataCells = $(table).find(dataSelector);
+		let isRow = dataCells[0].nodeName === 'TR';
+		let result = [];
 
 		if (isRow) {
-			console.log('%c Please specify row data cell selector ', 'background: red; color: white;');
-		} else {
-			for (let i = 0; i < selectors.length; i++) {
-				result.push({});
-			}
-			selectors.each(
-				function(i, dataCell) {
-					if (dataCell.cellIndex === 0) {
-						console.log("%c Vertical rows can't have first column as data cell ", 'background: red; color: white;');
-					} else {
-						let headerCellName = $(dataCell)
-							.closest('tr')
-							.find('th, td')[0].innerText;
-
-						let listDataColumnName = this.getDataColumnName(headerCellName);
-						let dataCellvalue = dataCell.innerText;
-						if (listDataColumnName) {
-							result[dataCell.cellIndex - 1][listDataColumnName] = dataCellvalue;
-						}
-					}
-				}.bind(this)
+			console.log(
+				'%c Please specify row data cell selector ',
+				'background: red; color: white;'
 			);
+			return result;
 		}
 
+		result = Array.from({
+			length: dataCells.length / Object.keys(columnIndices).length,
+		}).map(_ => Object());
+		dataCells.each((rowNum, dataCell) => {
+			if (dataCell.cellIndex === 0) {
+				console.log(
+					"%c Vertical rows can't have first column as data cell ",
+					'background: red; color: white;'
+				);
+			} else {
+				let headerName = SelectorTable.trimHeader(
+					$(dataCell)
+						.closest('tr')
+						.find('th, td')[0].innerText
+				);
+
+				let column = dataColumns.find(column => column.header === headerName);
+				if (column) {
+					result[dataCell.cellIndex - 1][column.name] = dataCell.innerText;
+				}
+			}
+		});
+
+		return result.filter(column => !$.isEmptyObject(column));
+	}
+
+	getHorizontalDataCells(table) {
+		let columnIndices = this.getTableHeaderColumns($(table));
+		let dataColumns = this.getDataColumns();
+		let rows = $(table).find(this.getTableDataRowSelector());
+		let result = Array.from({ length: rows.length }).map(_ => Object());
+		rows.each((rowNum, row) => {
+			//helper function
+			function getColumnIndex(column) {
+				return columnIndices[column.header] - 1;
+			}
+
+			// count current row offsets
+			let rowOffsets = dataColumns.map(column => {
+				return dataColumns.filter(key => {
+					return (
+						getColumnIndex(key) < getColumnIndex(column) && key.header in result[rowNum]
+					);
+				}).length;
+			});
+
+			// extract data from row
+			dataColumns
+				.filter(column => !(column.header in result[rowNum]))
+				.forEach(column => {
+					let headerIndex = getColumnIndex(column);
+					let cell = $(row)[0].children[headerIndex - rowOffsets[headerIndex]];
+					let cellText = cell.innerText.trim();
+					result[rowNum][column.name] = cellText;
+
+					//if we have rowSpan in cell push to further rows
+					if ('rowSpan' in cell && cell.rowSpan > 1) {
+						for (let i = rowNum; i < rowNum + cell.rowSpan; i++) {
+							result[i][column.name] = cellText;
+						}
+					}
+				});
+		});
 		return result;
 	}
 
 	_getData(parentElement) {
-		let dfd = $.Deferred();
-		let verticalTable = this.verticalTable;
+		let data = $.Deferred();
 		let tables = this.getDataElements(parentElement);
-
 		let result = [];
-		$(tables).each(
-			function(k, table) {
-				let dataSelector = this.getTableDataRowSelector();
-				if (verticalTable) {
-					let columnsList = this.getVerticalDataCells(table, dataSelector);
-					columnsList.forEach(function(column) {
-						if (!$.isEmptyObject(column)) {
-							result.push(column);
-						}
-					});
-				} else {
-					let columnIndices = this.getTableHeaderColumns($(table));
-					$(table)
-						.find(dataSelector)
-						.each(
-							function(i, dataCell) {
-								let data = {};
-
-								this.columns.forEach(function(column) {
-									let header = columnIndices[column.header.trim()];
-									let rowText = $(dataCell)
-										.find('>:nth-child(' + header.index + ')')
-										.text()
-										.trim();
-									if (column.extract) {
-										data[column.name] = rowText;
-									}
-								});
-								result.push(data);
-							}.bind(this)
-						);
-				}
-			}.bind(this)
-		);
-
-		dfd.resolve(result);
-		return dfd.promise();
+		$(tables).each((_, table) => {
+			if (this.verticalTable) {
+				result = result.concat(this.getVerticalDataCells(table));
+			} else {
+				result = result.concat(this.getHorizontalDataCells(table));
+			}
+		});
+		data.resolve(result);
+		return data;
 	}
 
 	getDataColumns() {
-		let dataColumns = [];
-		this.columns.forEach(function(column) {
-			if (column.extract) {
-				dataColumns.push(column.name);
-			}
-		});
-		return dataColumns;
-	}
-
-	getDataColumnName(header) {
-		let answer = this.columns.find(function(column) {
-			return column.extract && header === column.header.trim();
-		});
-		if (answer) {
-			return answer.name;
-		}
+		return this.columns.filter(column => column.extract);
 	}
 
 	getFeatures() {
-		return ['selector', 'multiple', 'columns', 'delay', 'tableDataRowSelector', 'tableHeaderRowSelector', 'tableAddMissingColumns', 'verticalTable'];
+		return [
+			'selector',
+			'multiple',
+			'columns',
+			'delay',
+			'tableDataRowSelector',
+			'tableHeaderRowSelector',
+			'tableAddMissingColumns',
+			'verticalTable',
+		];
 	}
 
 	getItemCSSSelector() {
@@ -190,54 +169,71 @@ export default class SelectorTable extends Selector {
 
 	getTableHeaderRowSelector() {
 		// handle legacy selectors
-		if (this.tableHeaderRowSelector === undefined) {
-			return 'thead tr';
-		} else {
-			return this.tableHeaderRowSelector;
-		}
+		return this.tableHeaderRowSelector || 'thead tr';
 	}
 
 	getTableDataRowSelector() {
 		// handle legacy selectors
-		if (this.tableDataRowSelector === undefined) {
-			return 'tbody tr';
-		} else {
-			return this.tableDataRowSelector;
-		}
+		return this.tableDataRowSelector || 'tbody tr';
 	}
 
-	static getTableHeaderRowSelectorFromTableHTML(html, verticalTable) {
+	//TODO split this method into two: one determines table orientation, second finds header row.
+	static getTableHeaderRowSelectorFromTableHTML(html, verticalTableHint) {
 		let $table = $(html);
-		let firstRow = $table.find('tr:first-child');
-
-		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length) {
-			if ($table.find('thead tr').length === 1) {
-				return 'thead tr';
-			} else {
-				let $rows = $table.find('thead tr');
-				// first row with data
-				let rowIndex = $rows.index($rows.filter(':has(td:not(:empty)),:has(th:not(:empty))')[0]);
-				return 'thead tr:nth-of-type(' + (rowIndex + 1) + ')';
-			}
+		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length >= 1) {
+			//rows in thead
+			return {
+				tableHeaderRowSelector: 'thead tr',
+				verticalTable: false,
+			};
 		} else {
-			if (!verticalTable) {
+			let firstRow = $table.find('tr:first-of-type');
+			if (!verticalTableHint) {
 				if (firstRow.find('th:not(:empty)').length > 1) {
-					return 'tr:nth-of-type(1)';
-				} else if (firstRow.find('th:first-child:not(:empty)').length === 1 && firstRow.children().length > 1) {
-					return 'tr';
+					// if we have more than one th in first row
+					//TODO find first row without th here and in data selector
+					return {
+						tableHeaderRowSelector: 'tr:nth-of-type(1)',
+						verticalTable: false,
+					};
+				} else if (
+					firstRow.find('th:first-of-type:not(:empty)').length === 1 &&
+					firstRow.children().length > 1
+				) {
+					//this is the case of vertical table with th on first cell
+					return {
+						tableHeaderRowSelector: 'tr>th',
+						verticalTable: true,
+					};
 				} else if ($table.find('tr td:not(:empty), tr th:not(:empty)').length) {
 					let $rows = $table.find('tr');
-					// first row with data
-					let rowIndex = $rows.index($rows.filter(':has(td:not(:empty)),:has(th:not(:empty))')[0]);
-					return 'tr:nth-of-type(' + (rowIndex + 1) + ')';
+					// first row with th or td
+					let rowIndex = $rows.index(
+						$rows.filter(':has(td:not(:empty)), :has(th:not(:empty))')[0]
+					);
+					return {
+						tableHeaderRowSelector: 'tr:nth-of-type(' + (rowIndex + 1) + ')',
+						verticalTable: false,
+					};
 				} else {
-					return '';
+					return {
+						tableHeaderRowSelector: '',
+						verticalTable: verticalTableHint,
+					};
 				}
 			} else {
 				if (firstRow.find('th').length) {
-					return 'tr>th';
+					// vertical table with th on first cell
+					return {
+						tableHeaderRowSelector: 'tr>th',
+						verticalTable: true,
+					};
 				} else {
-					return 'tr>td:nth-of-type(1)';
+					// vertical table with only td
+					return {
+						tableHeaderRowSelector: 'tr>td:nth-of-type(1)',
+						verticalTable: true,
+					};
 				}
 			}
 		}
@@ -246,52 +242,115 @@ export default class SelectorTable extends Selector {
 	static getTableDataRowSelectorFromTableHTML(html, verticalTable) {
 		let $table = $(html);
 		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length) {
+			// rows in tbody
 			return 'tbody tr';
 		} else {
 			if (!verticalTable) {
 				if ($table.find('tr td:not(:empty), tr th:not(:empty)').length) {
 					let $rows = $table.find('tr');
 					// first row with data
-					let rowIndex = $rows.index($rows.filter(':has(td:not(:empty)),:has(th:not(:empty))')[0]);
+					let rowIndex = $rows.index(
+						$rows.filter(':has(td:not(:empty)),:has(th:not(:empty))')[0]
+					);
 					return 'tr:nth-of-type(n+' + (rowIndex + 2) + ')';
 				}
 			} else {
-				if ($table.find('th').length) return 'tr>td';
-				else return 'tr>td:nth-of-type(n+2)';
+				if ($table.find('th').length) {
+					// vertical table with th on first cell
+					return 'tr>td';
+				} else {
+					// vertical table with only td
+					return 'tr>td:nth-of-type(n+2)';
+				}
 			}
 		}
 	}
 
+	static automaticallyDetectSelectorTableAttributes(html, verticalTableHint) {
+		let detectedAttributes = SelectorTable.getTableHeaderRowSelectorFromTableHTML(
+			html,
+			verticalTableHint
+		);
+		detectedAttributes.tableDataRowSelector = SelectorTable.getTableDataRowSelectorFromTableHTML(
+			html,
+			detectedAttributes.verticalTable
+		);
+		detectedAttributes.headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(
+			html,
+			detectedAttributes.tableHeaderRowSelector,
+			detectedAttributes.verticalTable
+		);
+		return detectedAttributes;
+	}
+
 	/**
 	 * Extract table header column info from html
-	 * @param headerRowSelector
-	 * @param html
-	 * @param verticalTable
+	 * @param $headerRow header's html
 	 */
-	static getTableHeaderColumnsFromHTML(headerRowSelector, html, verticalTable) {
-		let $table = $(html);
-		let $headerRowColumns = $table.find(headerRowSelector);
-
-		let columns = [];
-		if (!verticalTable) {
-			if ($headerRowColumns.length > 1) {
-				$headerRowColumns = $headerRowColumns.find('th:first-child');
-			} else if ($headerRowColumns.find('th').length) {
-				$headerRowColumns = $headerRowColumns.find('th');
-			} else if ($headerRowColumns.find('td').length) {
-				$headerRowColumns = $headerRowColumns.find('td');
+	static horizontalColumnsMaker($headerRow) {
+		let columns = {};
+		let tableRowOffsets = {};
+		/**
+		 * @param tableRowNum - number of layer of our header
+		 * @param nameAcc - accumulator for the name of our column
+		 * @param maxSpanOffset - maximum number of columns to watch (-1 if no limits)
+		 */
+		function columnsMakerHelper(tableRowNum, nameAcc, maxSpanOffset) {
+			let startSpanOffset = tableRowNum in tableRowOffsets ? tableRowOffsets[tableRowNum] : 0;
+			let colSpanOffset = 0;
+			for (let cell of $headerRow[tableRowNum].children) {
+				let colSpan = 'colSpan' in cell ? cell.colSpan : 1;
+				colSpanOffset += colSpan;
+				if (colSpanOffset < startSpanOffset + 1) {
+					continue;
+				}
+				let header = (nameAcc ? nameAcc + ' ' : '') + $(cell).text();
+				if (colSpan < 2) {
+					columns[SelectorTable.trimHeader(header)] = Object.keys(columns).length + 1;
+				} else {
+					columnsMakerHelper(tableRowNum + 1, header, colSpan);
+				}
+				tableRowOffsets[tableRowNum] = colSpanOffset;
+				if (maxSpanOffset > 0 && colSpanOffset >= maxSpanOffset + startSpanOffset) {
+					return;
+				}
 			}
 		}
-		$headerRowColumns.each(function(i, columnEl) {
-			let header = columnEl.innerText;
-			if (header) {
-				columns.push({
-					header: header,
-					name: header,
-					extract: true,
-				});
-			}
-		});
+		columnsMakerHelper(0, '', -1);
 		return columns;
+	}
+
+	static getHeaderColumnsIndices(table_html, headerRowSelector, verticalTable) {
+		let $headerRowColumns = $(table_html).find(headerRowSelector);
+		let columns;
+		if (!verticalTable) {
+			columns = this.horizontalColumnsMaker($headerRowColumns);
+		} else {
+			columns = {};
+			$headerRowColumns.each((i, headerElement) => {
+				let header = SelectorTable.trimHeader($(headerElement).text());
+				columns[header] = i + 1;
+			});
+		}
+		return columns;
+	}
+
+	static getTableHeaderColumnsFromHTML(table_html, headerRowSelector, verticalTable) {
+		let columns = SelectorTable.getHeaderColumnsIndices(
+			table_html,
+			headerRowSelector,
+			verticalTable
+		);
+		return Object.keys(columns).map(header => {
+			return {
+				header: SelectorTable.trimHeader(header),
+				name: SelectorTable.trimHeader(header),
+				extract: true,
+			};
+		});
+	}
+
+	static trimHeader(header) {
+		return header.trim().replace(/\s+/gm, ' ');
 	}
 }
