@@ -109,3 +109,54 @@ select[size] {
 .form-inline .form-control {
 	width: 100%;
 }
+
+.renderjson a {
+	color: green;
+	text-decoration: none;
+}
+
+.renderjson .disclosure {
+	color: darkred;
+	font-size: 150%;
+}
+
+.renderjson .syntax {
+	color: black;
+}
+
+.renderjson .string {
+	color: green;
+}
+
+.renderjson .key {
+	color: darkred;
+}
+
+.renderjson .keyword {
+	color: yellow;
+}
+
+.renderjson .object.syntax {
+	color: black;
+}
+
+.renderjson .array.syntax {
+	color: black;
+}
+
+.search-form {
+	margin-bottom: 1em;
+}
+
+.panel-data > .panel-heading {
+	background-color: #337ab7;
+	border-color: #337ab7;
+}
+
+.panel-data > .panel-heading .btn {
+	color: #fff;
+}
+
+.panel-data > .panel-heading .btn:hover {
+	color: #fff;
+}
