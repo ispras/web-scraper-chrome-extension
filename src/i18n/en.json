@@ -147,5 +147,21 @@
 	"selector-edit-replaceString": "Replace text",
 	"sitemap-create-_id": "Sitemap name",
 	"sitemap-create-startUrls": "Comma seperated URL list",
-	"sitemap-create-model": "Sitemap model"
+	"sitemap-create-model": "Sitemap model",
+	"options-page-title": "Options page",
+	"options-plugin-settings": "Plugin settings",
+	"options-language": "Language",
+	"options-storage-type": "Storage type",
+	"options-local-storage": "local storage",
+	"options-rest-api": "Rest Api",
+	"options-rest-url": "Rest Url",
+	"options-submit": "Save",
+
+	"popup-title": "Open Developer tools where you will find Web Scraper tab",
+	"popup-windows-linux": "Windows, Linux: Ctrl+Shift+I or F12",
+	"popup-mac": "Mac: Cmd+Opt+I",
+	"popup-any-oc": "Any OS: open Tools / Developer tools",
+	"popup-documentation-link": "Documentation is available on",
+	"options-successfully-updated": "Options successfully updated.",
+	"options-error-updating": "Failed to save options"
 }

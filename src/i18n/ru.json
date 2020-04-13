@@ -148,5 +148,20 @@
 	"elector-edit-replaceString": "Заменяемый текст",
 	"sitemap-create-_id": "Идентификатор карты обхода",
 	"sitemap-create-startUrls": "Список шаблонов URL через запятую",
-	"sitemap-create-model": "Модель карты обхода"
+	"sitemap-create-model": "Модель карты обхода",
+	"options-page-title": "Страница настроек",
+	"options-plugin-settings": "Настройки хранилища",
+	"options-language": "Язык",
+	"options-storage-type": "Тип хранилища",
+	"options-local-storage": "Локальное хранилище",
+	"options-rest-api": "Серверное хранилище",
+	"options-rest-url": "URL адрес",
+	"options-submit": "Сохранить настройки",
+	"popup-title": "Откройте инструменты разработчика, где вы можете найти вкладку Web Scraper:",
+	"popup-windows-linux": "Windows, Linux: Ctrl+Shift+I или F12",
+	"popup-mac": "Mac: Cmd+Opt+I",
+	"popup-any-oc": "Любая OS: открыть Tools / Developer tools",
+	"popup-documentation-link": "Документация доступна на сайте",
+	"options-successfully-updated": "Options successfully updated.",
+	"options-error-updating": "Failed to save options"
 }
