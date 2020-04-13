@@ -144,5 +144,8 @@
 	"selector-edit-textPrefix": "Prefix",
 	"selector-edit-textSuffix": "Suffix",
 	"selector-edit-delay-placeholder": "Delay",
-	"selector-edit-replaceString": "Replace text"
+	"selector-edit-replaceString": "Replace text",
+	"sitemap-create-_id": "Sitemap name",
+	"sitemap-create-startUrls": "Comma seperated URL list",
+	"sitemap-create-model": "Sitemap model"
 }

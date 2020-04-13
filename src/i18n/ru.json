@@ -145,5 +145,8 @@
 	"elector-edit-textPrefix": "Префикс",
 	"elector-edit-textSuffix": "Суффикс",
 	"elector-edit-delay": "Задержка",
-	"elector-edit-replaceString": "Заменяемый текст"
+	"elector-edit-replaceString": "Заменяемый текст",
+	"sitemap-create-_id": "Идентификатор карты обхода",
+	"sitemap-create-startUrls": "Список шаблонов URL через запятую",
+	"sitemap-create-model": "Модель карты обхода"
 }
