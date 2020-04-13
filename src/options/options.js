@@ -1,3 +1,10 @@
+import '@wikimedia/jquery.i18n/src/jquery.i18n';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.messagestore';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.parser';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
+
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap';
 import Config from '../scripts/Config';
@@ -91,15 +98,16 @@ $(function() {
 			.then(() => {
 				$('.alert')
 					.attr('id', 'success')
-					.text('Options successfully updated.')
+					.text($.i18n('options-successfully-updated'))
 					.show();
 			})
 			.catch(() => {
 				$('.alert')
 					.attr('id', 'error')
-					.text('Failed to save options ' + chrome.runtime.lastError.message)
+					.text($.i18n('options-error-updating') + chrome.runtime.lastError.message)
 					.show();
 			});
+
 		return false;
 	});
 });
