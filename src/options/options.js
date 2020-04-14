@@ -8,20 +8,8 @@ import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap';
 import Config from '../scripts/Config';
-import * as browser from 'webextension-polyfill';
 
-function fillLocale() {
-	$('[data-i18n]').each(function() {
-		let messageKey = $(this).attr('data-i18n');
-		$(this).html($.i18n(messageKey));
-	});
-	$('[placeholder]').each(function() {
-		let placeholderKey = $(this).attr('placeholder');
-		$(this).attr('placeholder', $.i18n(placeholderKey));
-	});
-}
-
-function initPopups() {
+$(function() {
 	// popups for Storage setting input fields
 	$('#sitemapDb')
 		.popover({
@@ -55,12 +43,11 @@ function initPopups() {
 		.blur(function() {
 			$(this).popover('hide');
 		});
-}
 
-function initConfigSwitch() {
 	// switch between configuration types
 	$('select[name=storageType]').change(function() {
 		let type = $(this).val();
+
 		if (type === 'couchdb') {
 			$('.form-group.couchdb').show();
 			$('.form-group.rest').hide();
@@ -72,9 +59,10 @@ function initConfigSwitch() {
 			$('.form-group.couchdb').hide();
 		}
 	});
-}
 
-function initConfig() {
+	// Extension configuration
+	let config = new Config();
+
 	// load previously synced data
 	config.loadConfiguration().then(() => {
 		$('#locale').val(config.locale);
@@ -85,11 +73,9 @@ function initConfig() {
 
 		$('select[name=storageType]').change();
 	});
-}
 
-function initFormSubmit() {
 	// Sync storage settings
-	$('form#storage_configuration').submit(() => {
+	$('form#storage_configuration').submit(function() {
 		const storageType = $('#storageType').val();
 		const locale = $('#locale').val();
 		const newConfig = {
@@ -114,10 +100,6 @@ function initFormSubmit() {
 					.attr('id', 'success')
 					.text($.i18n('options-successfully-updated'))
 					.show();
-				$.i18n({
-					locale: newConfig.locale,
-				});
-				fillLocale();
 			})
 			.catch(() => {
 				$('.alert')
@@ -127,26 +109,5 @@ function initFormSubmit() {
 			});
 
 		return false;
-	});
-}
-
-// Extension configuration
-let config = new Config();
-
-$(() => {
-	browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-		$.i18n({
-			locale: locale,
-		});
-		$.i18n()
-			.load('../i18n/locales.json')
-			.promise()
-			.then(() => {
-				initPopups();
-				initConfig();
-				initConfigSwitch();
-				initFormSubmit();
-				fillLocale();
-			});
 	});
 });

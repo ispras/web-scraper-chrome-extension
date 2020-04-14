@@ -1,4 +1,4 @@
 {
-	"en": "../i18n/en.json",
-	"ru": "../i18n/ru.json"
+	"en": "i18n/en.json",
+	"ru": "i18n/ru.json"
 }

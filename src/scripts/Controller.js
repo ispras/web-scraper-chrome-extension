@@ -75,7 +75,7 @@ export default class SitemapController {
 				locale: locale,
 			});
 			$.i18n()
-				.load('../i18n/locales.json')
+				.load('i18n/locales.json')
 				.promise()
 				.then(() => {
 					this.selectorTypes = this.selectorTypes.map(typeObj => {
