@@ -28,7 +28,7 @@
 	"background": {
 		"scripts": ["background/background.js"]
 	},
-	"web_accessible_resources": ["icons/icon16.png", "icons/icon19.png", "icons/icon38.png", "icons/icon48.png", "icons/icon128.png"],
+	"web_accessible_resources": ["icons/icon16.png", "icons/icon19.png", "icons/icon38.png", "icons/icon48.png", "icons/icon128.png", "i18n/*"],
 	"content_scripts": [
 		{
 			"matches": ["*://*/*"],

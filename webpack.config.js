@@ -20,6 +20,7 @@ const config = {
 		'devtools/devtools': './devtools/devtools.js',
 		'devtools/app': './scripts/App.js',
 		'options/options': './options/options.js',
+		'popup/popup': './popup/popup.js',
 		'content_script/content_script': './content_script/content_script.js',
 	},
 	output: {
@@ -82,7 +83,7 @@ const config = {
 		}),
 		new CopyWebpackPlugin([
 			{ from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
-			{ from: 'i18n', to: 'devtools/i18n' },
+			{ from: 'i18n', to: 'i18n' },
 			{ from: 'devtools/views', to: 'devtools/views/', transform: transformHtml },
 			{ from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
 			{ from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
