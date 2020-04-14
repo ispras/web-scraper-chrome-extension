@@ -1677,45 +1677,48 @@ export default class SitemapController {
 			parentSelectorIds: parentSelectorIds,
 			selectorId: selectorId,
 		};
-		browser.runtime.sendMessage(request).then(function(response) {
-			if (response.length === 0) {
-				return;
-			}
-			let dataColumns = Object.keys(response[0]);
+		browser.runtime.sendMessage(request).then(
+			function(response) {
+				if (response.length === 0) {
+					return;
+				}
+				let dataColumns = Object.keys(response[0]);
 
-			console.log(dataColumns);
+				console.log(dataColumns);
 
-			let $dataPreviewPanel = ich.DataPreview({
-				columns: dataColumns,
-			});
-			$('#viewport').append($dataPreviewPanel);
-			$dataPreviewPanel.modal('show');
-			// display data
-			// Doing this the long way so there aren't xss vulnerubilites
-			// while working with data or with the selector titles
-			let $tbody = $('tbody', $dataPreviewPanel);
-			response.forEach(function(row) {
-				let $tr = $('<tr></tr>');
-				dataColumns.forEach(function(column) {
-					let $td = $('<td></td>');
-					let cellData = row[column];
-					if (typeof cellData === 'object') {
-						cellData = JSON.stringify(cellData);
-					}
-					$td.text(cellData);
-					$tr.append($td);
+				let $dataPreviewPanel = ich.DataPreview({
+					columns: dataColumns,
 				});
-				$tbody.append($tr);
-			});
+				$('#viewport').append($dataPreviewPanel);
+				$dataPreviewPanel.modal('show');
+				this.fillLocale();
+				// display data
+				// Doing this the long way so there aren't xss vulnerubilites
+				// while working with data or with the selector titles
+				let $tbody = $('tbody', $dataPreviewPanel);
+				response.forEach(function(row) {
+					let $tr = $('<tr></tr>');
+					dataColumns.forEach(function(column) {
+						let $td = $('<td></td>');
+						let cellData = row[column];
+						if (typeof cellData === 'object') {
+							cellData = JSON.stringify(cellData);
+						}
+						$td.text(cellData);
+						$tr.append($td);
+					});
+					$tbody.append($tr);
+				});
 
-			let windowHeight = $(window).height();
+				let windowHeight = $(window).height();
 
-			$('.data-preview-modal .modal-body').height(windowHeight - 130);
+				$('.data-preview-modal .modal-body').height(windowHeight - 130);
 
-			// remove modal from dom after it is closed
-			$dataPreviewPanel.on('hidden.bs.modal', function() {
-				$(this).remove();
-			});
-		});
+				// remove modal from dom after it is closed
+				$dataPreviewPanel.on('hidden.bs.modal', function() {
+					$(this).remove();
+				});
+			}.bind(this)
+		);
 	}
 }
