@@ -381,15 +381,15 @@ export default class SitemapController {
 						},
 						stringLength: {
 							min: 3,
-							message: 'The sitemap id should be at least 3 characters long',
+							message: $.i18n('sitemapid-short-message'),
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message: 'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
+							message: $.i18n('sitemapid-invalid-char'),
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
-							message: 'Sitemap with this id already exists',
+							message: $.i18n('sitemapid-repeated-id'),
 							callback: function() {
 								return true;
 							},
@@ -399,10 +399,10 @@ export default class SitemapController {
 				startUrls: {
 					validators: {
 						notEmpty: {
-							message: 'The start URL is required and cannot be empty',
+							message: $.i18n('sitemapurl-empty-message'),
 						},
 						callback: {
-							message: 'The start URLs are not valid. Please use "," as a seperator.',
+							message: $.i18n('sitemapurl-invalid-message'),
 							callback: function(value) {
 								return Sitemap.validateStartUrls(value.split(','));
 							},
@@ -415,7 +415,7 @@ export default class SitemapController {
 							callback: function(value) {
 								if (!value) {
 									return {
-										message: 'Empty value is possible model',
+										message: $.i18n('sitemapmodel-empty-message'),
 										valid: true,
 									};
 								}
@@ -424,7 +424,7 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: 'JSON is not valid',
+										message: $.i18n('sitemapjson-invalid-message'),
 									};
 								}
 							}.bind(this),
@@ -455,15 +455,15 @@ export default class SitemapController {
 					validators: {
 						stringLength: {
 							min: 3,
-							message: 'The sitemap id should be at least 3 characters long',
+							message: $.i18n('sitemapid-short-message'),
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message: 'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
+							message: $.i18n('sitemapid-invalid-char'),
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
-							message: 'Sitemap with this id already exists',
+							message: $.i18n('sitemapid-repeated-id'),
 							callback: function(value, validator) {
 								validator.revalidateField('sitemapJSON');
 								return true;
@@ -474,10 +474,10 @@ export default class SitemapController {
 				sitemapJSON: {
 					validators: {
 						notEmpty: {
-							message: 'Sitemap JSON is required and cannot be empty',
+							message: $.i18n('sitemapjson-empty-message'),
 						},
 						callback: {
-							message: 'JSON is not valid',
+							message: $.i18n('sitemapjson-invalid-message'),
 							callback: function(value, validator) {
 								try {
 									let sitemap = JSON.parse(value);
@@ -487,20 +487,19 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message: 'The sitemap id is required and cannot be empty',
+												message: $.i18n('sitemapid-empty-message'),
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message: 'The sitemap id should be at least 3 characters long',
+												message: $.i18n('sitemapid-short-message'),
 											};
 										}
 										if (!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-/]+$')) {
 											return {
 												valid: false,
-												message:
-													'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
+												message: $.i18n('sitemapid-invalid-char'),
 											};
 										}
 									}
@@ -509,13 +508,13 @@ export default class SitemapController {
 									if (!sitemap.hasOwnProperty('startUrls')) {
 										return {
 											valid: false,
-											message: 'The start URL is required and cannot be empty',
+											message: $.i18n('sitemapurl-empty-message'),
 										};
 									}
 									if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
 										return {
 											valid: false,
-											message: 'The start URLs are not valid',
+											message: $.i18n('sitemapurl-invalid-message'),
 										};
 									}
 
@@ -526,11 +525,11 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: 'JSON is not valid',
+										message: $.i18n('sitemapjson-invalid-message'),
 									};
 								}
 								return {
-									message: 'Valid sitemap',
+									message: $.i18n('sitemap-valid-message'),
 									valid: true,
 								};
 							}.bind(this),
@@ -544,7 +543,7 @@ export default class SitemapController {
 	readBlob() {
 		let files = $('#sitemapFiles')[0].files;
 		if (!files.length) {
-			alert('Please select a file!');
+			alert($.i18n('selecting-file-error'));
 			return;
 		}
 		let file = files[0];
@@ -832,29 +831,29 @@ export default class SitemapController {
 				id: {
 					validators: {
 						notEmpty: {
-							message: 'Selector id required and cannot be empty',
+							message: $.i18n('sitemapid-empty-message'),
 						},
 						stringLength: {
 							min: 3,
-							message: 'The selector id should be at least 3 characters long',
+							message: $.i18n('sitemapid-short-message'),
 						},
 						regexp: {
 							regexp: /^[^_].*$/,
-							message: 'Selector id cannot start with an underscore _',
+							message: $.i18n('selectorid-underscore'),
 						},
 					},
 				},
 				selector: {
 					validators: {
 						notEmpty: {
-							message: 'Selector is required and cannot be empty',
+							message: $.i18n('selector-empty-message'),
 						},
 					},
 				},
 				regex: {
 					validators: {
 						callback: {
-							message: 'JavaScript does not support regular expressions that can match 0 characters.',
+							message: $.i18n('regex-regular-expressions-error-message'),
 							callback: function(value, validator) {
 								// allow no regex
 								if (!value) {
@@ -874,7 +873,7 @@ export default class SitemapController {
 				regexgroup: {
 					validators: {
 						callback: {
-							message: 'Regex group must be numeric',
+							message: $.i18n('regex-group-numeric-error-message'),
 							callback: function(value, validator) {
 								if (value === '') {
 									return true;
@@ -887,38 +886,38 @@ export default class SitemapController {
 				clickElementSelector: {
 					validators: {
 						notEmpty: {
-							message: 'Click selector is required and cannot be empty',
+							message: $.i18n('selector-click-empty.message'),
 						},
 					},
 				},
 				tableHeaderRowSelector: {
 					validators: {
 						notEmpty: {
-							message: 'Header row selector is required and cannot be empty',
+							message: $.i18n('selector-header-empty-message'),
 						},
 					},
 				},
 				tableDataRowSelector: {
 					validators: {
 						notEmpty: {
-							message: 'Data row selector is required and cannot be empty',
+							message: $.i18n('selector-data-row-empty-message'),
 						},
 					},
 				},
 				delay: {
 					validators: {
 						numeric: {
-							message: 'Delay must be numeric',
+							message: $.i18n('delay-numeric-message'),
 						},
 					},
 				},
 				paginationLimit: {
 					validators: {
 						numeric: {
-							message: 'Pagination limit must be numeric or empty',
+							message: $.i18n('pagination-limit-numeric-message'),
 						},
 						callback: {
-							message: 'Pagination limit must be 1 at least',
+							message: $.i18n('pagination-limit-small-message'),
 							callback: function(value, validator) {
 								if (!value) {
 									return true;
@@ -931,10 +930,10 @@ export default class SitemapController {
 				parentSelectors: {
 					validators: {
 						notEmpty: {
-							message: 'You must choose at least one parent selector',
+							message: $.i18n('parent-selector-empty-message'),
 						},
 						callback: {
-							message: 'Cannot handle recursive element selectors',
+							message: $.i18n('handle-recursive-error-message'),
 							callback: function(value, validator, $field) {
 								let sitemap = this.getCurrentlyEditedSelectorSitemap();
 								return !sitemap.selectors.hasRecursiveElementSelectors();
@@ -1225,13 +1224,13 @@ export default class SitemapController {
 				requestInterval: {
 					validators: {
 						notEmpty: {
-							message: 'The request interval is required and cannot be empty',
+							message: $.i18n('request-interval-empty-message'),
 						},
 						numeric: {
-							message: 'The request interval must be numeric',
+							message: $.i18n('request-interval-numeric-message'),
 						},
 						callback: {
-							message: 'The request interval must be atleast 2000 milliseconds',
+							message: $.i18n('request-interval-short-message'),
 							callback: function(value, validator) {
 								return value >= 2000;
 							},
@@ -1241,23 +1240,23 @@ export default class SitemapController {
 				requestIntervalRandomness: {
 					validators: {
 						notEmpty: {
-							message: 'The request interval randomness is required and cannot be empty',
+							message: $.i18n('request-interval-randomness-empty-message'),
 						},
 						numeric: {
-							message: 'The request interval randomness must be numeric',
+							message: $.i18n('request-interval-randomness-numeric-message'),
 						},
 					},
 				},
 				pageLoadDelay: {
 					validators: {
 						notEmpty: {
-							message: 'The page load delay is required and cannot be empty',
+							message: $.i18n('page-load-delay-empty-message'),
 						},
 						numeric: {
-							message: 'The page laod delay must be numeric',
+							message: $.i18n('page-load-delay-numeric-message'),
 						},
 						callback: {
-							message: 'The page load delay must be atleast 500 milliseconds',
+							message: $.i18n('page-load-delay-short-message'),
 							callback: function(value, validator) {
 								return value >= 500;
 							},
