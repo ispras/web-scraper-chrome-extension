@@ -20,7 +20,6 @@ export default class ChromePopupBrowser {
 			callback.call(scope);
 			return;
 		}
-
 		let createWindowOptions = {
 			type: 'popup',
 			width: 1042,

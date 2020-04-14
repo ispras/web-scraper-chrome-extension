@@ -13,9 +13,9 @@ $(function() {
 	// popups for Storage setting input fields
 	$('#sitemapDb')
 		.popover({
-			title: 'Database for sitemap storage',
+			title: $.i18n('options-database-sitemap-title'),
 			html: true,
-			content: 'CouchDB database url<br /> http://example.com/scraper-sitemaps/',
+			content: $.i18n('options-couchDB-url') + ' <br /> http://example.com/scraper-sitemaps/',
 			placement: 'bottom',
 		})
 		.blur(function() {
@@ -24,9 +24,9 @@ $(function() {
 
 	$('#dataDb')
 		.popover({
-			title: 'Database for scraped data',
+			title: $.i18n('options-database-scraped-data-title'),
 			html: true,
-			content: 'CouchDB database url. For each sitemap a new DB will be created.<br />http://example.com/',
+			content: $.i18n('options-couchdb-database-url'),
 			placement: 'bottom',
 		})
 		.blur(function() {
@@ -35,9 +35,9 @@ $(function() {
 
 	$('#restUrl')
 		.popover({
-			title: 'Url to push your sitemaps.',
+			title: $.i18n('options-url-to-push'),
 			html: true,
-			content: 'Rest api url.',
+			content: $.i18n('options-rest-api-url'),
 			placement: 'bottom',
 		})
 		.blur(function() {
