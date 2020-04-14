@@ -575,10 +575,11 @@ export default class SitemapController {
 		});
 		let blob = new Blob([sitemapJSON], { type: 'text/json' });
 		$('#viewport').html(sitemapExportForm);
+		this.fillLocale();
 		let downloadButton = $('#download-button');
 		downloadButton.attr('href', window.URL.createObjectURL(blob));
 		downloadButton.attr('download', sitemap._id + '.json');
-		this.fillLocale();
+
 		return true;
 	}
 
@@ -1358,20 +1359,19 @@ export default class SitemapController {
 
 	showSitemapExportDataCsvPanel() {
 		this.setActiveNavigationButton('sitemap-export-data-csv');
-		this.fillLocale();
 		let sitemap = this.state.currentSitemap;
 		let exportPanel = ich.SitemapExportDataCSV(sitemap);
 		$('#viewport').html(exportPanel);
 		this.fillLocale();
+
 		$('.result').hide();
 		$('.download-button').hide();
-		this.fillLocale();
 		// generate data
 		$('#generate-csv').click(
 			function() {
 				$('.result').show();
 				$('.download-button').hide();
-				this.fillLocale();
+
 				let options = {
 					delimiter: $('#delimiter').val(),
 					newline: $('#newline').prop('checked'),
@@ -1380,7 +1380,6 @@ export default class SitemapController {
 
 				this.store.getSitemapData(sitemap).then(
 					function(data) {
-						this.fillLocale();
 						let blob = sitemap.getDataExportCsvBlob(data, options);
 						let button_a = $('.download-button a');
 						button_a.attr('href', window.URL.createObjectURL(blob));
