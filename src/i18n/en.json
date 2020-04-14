@@ -212,7 +212,5 @@
 	"content-selector-done-selecting-button": "Done selecting!",
 	"content-selector-parent-selector-not-found": "Parent selector not found",
 	"content-selector-parent-element-not-found": "Parent element not found!",
-	"content-selector-enable-different-type-title": "Enable different type element selection",
-
-	"content-selector-toolbar": "<div id=\"-selector-toolbar\"><div class=\"list-item\"><div class=\"selector-container\"><div class=\"selector\"></div></div></div><div class=\"input-group-addon list-item\"><input type=\"checkbox\" title=\"Enable different type element selection\" name=\"diferentElementSelection\"><div class=\"popover top\"><div class=\"close\">×</div><div class=\"arrow\"></div><div class=\"popover-content\"><div class=\"txt\">Different type element selection is disabled. If the element you clicked should also be included then enable this and click on the element again. Usually this is not needed.</div></div></div></div><div class=\"list-item key-events\"><div title=\"Click here to enable key press events for selection\">Enable key events</div></div><div class=\"list-item key-button key-button-select hide\" title=\"Use S key to select element\">S</div><div class=\"list-item key-button key-button-parent hide\" title=\"Use P key to select parent\">P</div><div class=\"list-item key-button key-button-child hide\" title=\"Use C key to select child\">C</div><div class=\"list-item done-selecting-button\">Done selecting!</div></div>"
+	"content-selector-enable-different-type-title": "Enable different type element selection"
 }

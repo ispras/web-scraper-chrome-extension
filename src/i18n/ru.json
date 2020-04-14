@@ -213,6 +213,5 @@
 
 	"content-selector-done-selecting-button": "Закончить выбор!",
 	"content-selector-parent-selector-not-found": "Не найден родительский селектор!",
-	"content-selector-parent-element-not-found": "Не найден родительский элемент!",
-	"content-selector-toolbar": "<div id=\"-selector-toolbar\"><div class=\"list-item\"><div class=\"selector-container\"><div class=\"selector\"></div></div></div><div class=\"input-group-addon list-item\"><input type=\"checkbox\" title=\"Включить выбор элементов различного типа\" name=\"diferentElementSelection\"><div class=\"popover top\"><div class=\"close\">×</div><div class=\"arrow\"></div><div class=\"popover-content\"><div class=\"txt\">Выбор элементов различного типа выключен. Если элемент на который вы кликнули тоже должен быть выбран, то включите эту функцию и кликните ещё раз. Обычно это не нужно.</div></div></div></div><div class=\"list-item key-events\"><div title=\"Включить события по клавишам\">Клавиши</div></div><div class=\"list-item key-button key-button-select hide\" title=\"Используйте S для выбора элемента\">S</div><div class=\"list-item key-button key-button-parent hide\" title=\"Используйте P для выбора родителя\">P</div><div class=\"list-item key-button key-button-child hide\" title=\"Используйте C для выбора сына\">C</div><div class=\"list-item done-selecting-button\">Закончить выбор!</div></div>"
+	"content-selector-parent-element-not-found": "Не найден родительский элемент!"
 }

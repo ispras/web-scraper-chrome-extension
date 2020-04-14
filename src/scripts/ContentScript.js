@@ -1,5 +1,33 @@
 import getBackgroundScript from './BackgroundScript';
 import ContentSelector from './ContentSelector';
+import * as browser from 'webextension-polyfill';
+import '@wikimedia/jquery.i18n/src/jquery.i18n';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.messagestore';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.parser';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter';
+import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
+
+function readFile(_path) {
+	return new Promise((resolve, reject) => {
+		fetch(_path, { mode: 'same-origin' })
+			.then(function(_res) {
+				return _res.blob();
+			})
+			.then(function(_blob) {
+				var reader = new FileReader();
+
+				reader.addEventListener('loadend', function() {
+					resolve(this.result);
+				});
+
+				reader.readAsText(_blob);
+			})
+			.catch(error => {
+				reject(error);
+			});
+	});
+}
 
 /**
  * ContentScript that can be called from anywhere within the extension
@@ -47,34 +75,57 @@ let ContentScript = {
 	selectSelector: function(request) {
 		let deferredResponse = $.Deferred();
 
-		this.removeCurrentContentSelector().done(
-			function() {
-				let contentSelector = new ContentSelector({
-					parentCSSSelector: request.parentCSSSelector,
-					allowedElements: request.allowedElements,
+		browser.runtime
+			.sendMessage({ getLocale: true })
+			.then(locale => {
+				$.i18n({
+					locale: locale,
 				});
-				window.cs = contentSelector;
 
-				let deferredCSSSelector = contentSelector.getCSSSelector();
-				deferredCSSSelector
-					.done(
-						function(response) {
-							this.removeCurrentContentSelector().done(
-								function() {
-									deferredResponse.resolve(response);
+				return readFile(browser.extension.getURL('i18n/ru.json'))
+					.then(res => {
+						return $.i18n()
+							.load(JSON.parse(res), 'ru')
+							.promise();
+					})
+					.then(() => {
+						return readFile(browser.extension.getURL('i18n/en.json')).then(res => {
+							return $.i18n()
+								.load(JSON.parse(res), 'en')
+								.promise();
+						});
+					});
+			})
+			.then(() => {
+				this.removeCurrentContentSelector().done(
+					function() {
+						let contentSelector = new ContentSelector({
+							parentCSSSelector: request.parentCSSSelector,
+							allowedElements: request.allowedElements,
+						});
+						window.cs = contentSelector;
+
+						let deferredCSSSelector = contentSelector.getCSSSelector();
+						deferredCSSSelector
+							.done(
+								function(response) {
+									this.removeCurrentContentSelector().done(
+										function() {
+											deferredResponse.resolve(response);
+											window.cs = undefined;
+										}.bind(this)
+									);
+								}.bind(this)
+							)
+							.fail(
+								function(message) {
+									deferredResponse.reject(message);
 									window.cs = undefined;
 								}.bind(this)
 							);
-						}.bind(this)
-					)
-					.fail(
-						function(message) {
-							deferredResponse.reject(message);
-							window.cs = undefined;
-						}.bind(this)
-					);
-			}.bind(this)
-		);
+					}.bind(this)
+				);
+			});
 
 		return deferredResponse.promise();
 	},

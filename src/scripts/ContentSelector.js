@@ -1,11 +1,16 @@
 import CssSelector from '../libs/css-selector/lib/CssSelector';
 import ElementQuery from './ElementQuery';
-import '@wikimedia/jquery.i18n/src/jquery.i18n';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.messagestore';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.parser';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
+
+function fillLocale() {
+	$('[data-i18n]').each(function() {
+		let messageKey = $(this).attr('data-i18n');
+		$(this).html($.i18n(messageKey));
+	});
+	$('[placeholder]').each(function() {
+		let placeholderKey = $(this).attr('placeholder');
+		$(this).attr('placeholder', $.i18n(placeholderKey));
+	});
+}
 
 export default class ContentSelector {
 	/**
@@ -30,8 +35,8 @@ export default class ContentSelector {
 
 			//  handle situation when parent selector not found
 			if (this.parent === undefined) {
-				this.deferredCSSSelectorResponse.reject($.i18n('content-selector-parent-selector-not-found'));
-				this.alert($.i18n('content-selector-parent-element-not-found'));
+				this.deferredCSSSelectorResponse.reject('parent selector not found');
+				this.alert('Parent element not found!');
 			}
 		} else {
 			this.parent = $('body')[0];
@@ -127,6 +132,7 @@ export default class ContentSelector {
 		this.bindMultipleGroupCheckbox();
 		this.bindMultipleGroupPopupHide();
 		this.bindMoveImagesToTop();
+		fillLocale();
 	}
 
 	bindElementSelection() {
@@ -321,8 +327,32 @@ export default class ContentSelector {
 	}
 
 	attachToolbar() {
-		let toolbar = $.i18n('content-selector-toolbar');
-		$('body').append(toolbar);
+		//TODO move this to separate html
+		var $toolbar =
+			'<div id="-selector-toolbar">' +
+			'<div class="list-item"><div class="selector-container"><div class="selector"></div></div></div>' +
+			'<div class="input-group-addon list-item">' +
+			'<input type="checkbox" title="Enable different type element selection" name="diferentElementSelection">' +
+			'<div class="popover top">' +
+			'<div class="close">×</div>' +
+			'<div class="arrow"></div>' +
+			'<div class="popover-content">' +
+			'<div class="txt">' +
+			'Different type element selection is disabled. If the element ' +
+			'you clicked should also be included then enable this and ' +
+			'click on the element again. Usually this is not needed.' +
+			'</div>' +
+			'</div>' +
+			'</div>' +
+			'</div>' +
+			'<div class="list-item key-events"><div title="Click here to enable key press events for selection">Enable key events</div></div>' +
+			'<div class="list-item key-button key-button-select hide" title="Use S key to select element">S</div>' +
+			'<div class="list-item key-button key-button-parent hide" title="Use P key to select parent">P</div>' +
+			'<div class="list-item key-button key-button-child hide" title="Use C key to select child">C</div>' +
+			'<div class="list-item done-selecting-button" data-i18n="content-selector-done-selecting-button">Done selecting!</div>' +
+			'</div>';
+		$('body').append($toolbar);
+
 		$('body #-selector-toolbar .done-selecting-button').click(
 			function() {
 				this.selectionFinished();
