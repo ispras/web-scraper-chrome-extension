@@ -10,6 +10,10 @@ function fillLocale() {
 		let placeholderKey = $(this).attr('placeholder');
 		$(this).attr('placeholder', $.i18n(placeholderKey));
 	});
+	$('[title]').each(function() {
+		let titleKey = $(this).attr('title');
+		$(this).attr('title', $.i18n(titleKey));
+	});
 }
 
 export default class ContentSelector {
@@ -332,24 +336,21 @@ export default class ContentSelector {
 			'<div id="-selector-toolbar">' +
 			'<div class="list-item"><div class="selector-container"><div class="selector"></div></div></div>' +
 			'<div class="input-group-addon list-item">' +
-			'<input type="checkbox" title="Enable different type element selection" name="diferentElementSelection">' +
+			'<input type="checkbox" title="content-selector-different-element-selection-title" name="diferentElementSelection">' +
 			'<div class="popover top">' +
 			'<div class="close">×</div>' +
 			'<div class="arrow"></div>' +
 			'<div class="popover-content">' +
-			'<div class="txt">' +
-			'Different type element selection is disabled. If the element ' +
-			'you clicked should also be included then enable this and ' +
-			'click on the element again. Usually this is not needed.' +
+			'<div class="txt" data-i18n="content-selector-different-element-selection-error">' +
 			'</div>' +
 			'</div>' +
 			'</div>' +
 			'</div>' +
-			'<div class="list-item key-events"><div title="Click here to enable key press events for selection">Enable key events</div></div>' +
-			'<div class="list-item key-button key-button-select hide" title="Use S key to select element">S</div>' +
-			'<div class="list-item key-button key-button-parent hide" title="Use P key to select parent">P</div>' +
-			'<div class="list-item key-button key-button-child hide" title="Use C key to select child">C</div>' +
-			'<div class="list-item done-selecting-button" data-i18n="content-selector-done-selecting-button">Done selecting!</div>' +
+			'<div class="list-item key-events"><div title="content-selector-enable-key-events-title" data-i18n="content-selector-enable-key-events-text"></div></div>' +
+			'<div class="list-item key-button key-button-select hide" title="content-selector-select-element-key">S</div>' +
+			'<div class="list-item key-button key-button-parent hide" title="content-selector-select-parent-key">P</div>' +
+			'<div class="list-item key-button key-button-child hide" title="content-selector-select-child-key">C</div>' +
+			'<div class="list-item done-selecting-button" data-i18n="content-selector-done-selecting-button"></div>' +
 			'</div>';
 		$('body').append($toolbar);
 

@@ -213,5 +213,13 @@
 
 	"content-selector-done-selecting-button": "Закончить выбор!",
 	"content-selector-parent-selector-not-found": "Не найден родительский селектор!",
-	"content-selector-parent-element-not-found": "Не найден родительский элемент!"
+	"content-selector-parent-element-not-found": "Не найден родительский элемент!",
+	"content-selector-different-element-selection-title": "Включить выбор элементов различного типа",
+	"content-selector-different-element-selection-error": "Выбор элементов различного типа выключен. Если элемент на \n\t\t\tкоторый вы кликнули тоже должен быть выбран, то включите эту \n\t\t\tфункцию и кликните ещё раз. Обычно это не нужно.",
+	"content-selector-enable-key-events-checker": "Включить события по клавишам",
+	"content-selector-select-child-key": "Используйте C для выбора сына",
+	"content-selector-select-parent-key": "Используйте P для выбора родителя",
+	"content-selector-select-element-key": "Используйте S для выбора элемента",
+	"content-selector-enable-key-events-title": "Включить события по клавишам",
+	"content-selector-enable-key-events-text": "Клавиши"
 }

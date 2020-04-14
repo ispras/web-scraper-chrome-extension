@@ -212,5 +212,12 @@
 	"content-selector-done-selecting-button": "Done selecting!",
 	"content-selector-parent-selector-not-found": "Parent selector not found",
 	"content-selector-parent-element-not-found": "Parent element not found!",
-	"content-selector-enable-different-type-title": "Enable different type element selection"
+	"content-selector-different-element-selection-title": "Enable different type element selection",
+	"content-selector-different-element-selection-error": "Different type element selection is disabled. If the element  \n\t\t\tyou clicked should also be included then enable this and \n\t\t\tclick on the element again. Usually this is not needed.",
+	"content-selector-enable-key-events-checker": "Enable key events",
+	"content-selector-select-child-key": "Use C key to select child",
+	"content-selector-select-parent-key": "Use P key to select parent",
+	"content-selector-select-element-key": "Use S key to select element",
+	"content-selector-enable-key-events-title": "Click here to enable key press events for selection",
+	"content-selector-enable-key-events-text": "Enable key events"
 }
