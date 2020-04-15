@@ -151,7 +151,9 @@ export default class SitemapController {
 	fillLocale() {
 		$('[data-i18n]').each(function() {
 			let messageKey = $(this).attr('data-i18n');
-			$(this).html($.i18n(messageKey));
+			if ($(this).text() !== $.i18n(messageKey)) {
+				$(this).prepend($.i18n(messageKey));
+			}
 		});
 		$('[placeholder]').each(function() {
 			let placeholderKey = $(this).attr('placeholder');
