@@ -40,7 +40,13 @@ export default class Selector {
 	 * @param data
 	 */
 	manipulateData(data) {
-		let regex = function (content, regex, regexgroup) {
+		let isTextManipulationDefined =
+			typeof this.textmanipulation != 'undefined' && this.textmanipulation !== '';
+		if (!isTextManipulationDefined) {
+			return;
+		}
+
+		let regex = function(content, regex, regexgroup) {
 			try {
 				content = $.trim(content);
 				let matches = content.match(new RegExp(regex, 'gm')),
@@ -89,83 +95,85 @@ export default class Selector {
 			return (content += suffix);
 		};
 
-		$(data).each(
-			function (i, element) {
-				let content = element[this.id],
-					isString = typeof content === 'string' || content instanceof String,
-					isUnderlyingString = !isString && $(content).text() !== '',
-					isArray = Array.isArray(content),
-					isTextmManipulationDefined =
-						typeof this.textmanipulation != 'undefined' && this.textmanipulation !== '',
-					textManipulationAvailable =
-						(isString || isUnderlyingString) && isTextmManipulationDefined;
+		let applyTextManipulation = function(content) {
+			let isString = typeof content === 'string' || content instanceof String,
+				isUnderlyingString = !isString && $(content).text() !== '';
 
-				if (textManipulationAvailable) {
-					content = isString ? content : $(content).text();
+			if (!isString && !isUnderlyingString) {
+				return content;
+			}
 
-					// use key in object since unit tests might not define each property
-					let keys = [];
-					for (let key in this.textmanipulation) {
-						if (!this.textmanipulation.hasOwnProperty(key)) {
-							continue;
-						}
-						keys.push(key);
-					}
+			content = isString ? content : $(content).text();
 
-					function propertyIsAvailable(key) {
-						return keys.indexOf(key) >= 0;
-					}
-
-					if (propertyIsAvailable('regex')) {
-						let group = this.textmanipulation.regexgroup;
-						let value = this.textmanipulation.regex;
-						group = typeof group != 'undefined' ? group : '';
-						if (value !== '') {
-							content = regex(content, value, group);
-						}
-					}
-
-					if (propertyIsAvailable('removeHtml')) {
-						if (this.textmanipulation.removeHtml) {
-							content = removeHtml(content);
-						}
-					}
-
-					if (propertyIsAvailable('trimText')) {
-						if (this.textmanipulation.trimText) {
-							content = trimText(content);
-						}
-					}
-
-					if (propertyIsAvailable('replaceText')) {
-						let replacement = this.textmanipulation.replacementText;
-						replacement = typeof replacement != 'undefined' ? replacement : '';
-						content = replaceText(
-							content,
-							this.textmanipulation.replaceText,
-							replacement
-						);
-					}
-
-					if (propertyIsAvailable('textPrefix')) {
-						if (this.textmanipulation.textPrefix !== '') {
-							content = textPrefix(content, this.textmanipulation.textPrefix);
-						}
-					}
-
-					if (propertyIsAvailable('textSuffix')) {
-						if (this.textmanipulation.textSuffix !== '') {
-							content = textSuffix(content, this.textmanipulation.textSuffix);
-						}
-					}
-
-					element[this.id] = content;
-				} else if (isArray && isTextmManipulationDefined) {
-					element[this.id] = JSON.stringify(content);
-					this.manipulateData(element);
+			// use key in object since unit tests might not define each property
+			let keys = [];
+			for (let key in this.textmanipulation) {
+				if (!this.textmanipulation.hasOwnProperty(key)) {
+					continue;
 				}
-			}.bind(this)
-		);
+				keys.push(key);
+			}
+
+			function propertyIsAvailable(key) {
+				return keys.indexOf(key) >= 0;
+			}
+
+			if (propertyIsAvailable('regex')) {
+				let group = this.textmanipulation.regexgroup;
+				let value = this.textmanipulation.regex;
+				group = typeof group != 'undefined' ? group : '';
+				if (value !== '') {
+					content = regex(content, value, group);
+				}
+			}
+
+			if (propertyIsAvailable('removeHtml')) {
+				if (this.textmanipulation.removeHtml) {
+					content = removeHtml(content);
+				}
+			}
+
+			if (propertyIsAvailable('trimText')) {
+				if (this.textmanipulation.trimText) {
+					content = trimText(content);
+				}
+			}
+
+			if (propertyIsAvailable('replaceText')) {
+				let replacement = this.textmanipulation.replacementText;
+				replacement = typeof replacement != 'undefined' ? replacement : '';
+				content = replaceText(content, this.textmanipulation.replaceText, replacement);
+			}
+
+			if (propertyIsAvailable('textPrefix')) {
+				if (this.textmanipulation.textPrefix !== '') {
+					content = textPrefix(content, this.textmanipulation.textPrefix);
+				}
+			}
+
+			if (propertyIsAvailable('textSuffix')) {
+				if (this.textmanipulation.textSuffix !== '') {
+					content = textSuffix(content, this.textmanipulation.textSuffix);
+				}
+			}
+
+			return content;
+		}.bind(this);
+
+		$(data).each((_, dataElement) => {
+			let value = dataElement[this.id];
+			if (Array.isArray(value)) {
+				if (this.multiple) {
+					// text, HTML, attribute, style
+					dataElement[this.id] = value.map(applyTextManipulation);
+				} else {
+					// group
+					dataElement[this.id] = applyTextManipulation(JSON.stringify(value));
+				}
+			} else {
+				dataElement[this.id] = applyTextManipulation(value);
+			}
+		});
 	}
 
 	/**
@@ -256,6 +264,7 @@ export default class Selector {
 					deferredData.done(
 						function (data) {
 							this.manipulateData(data);
+							data.forEach(item => (item.url = window.location.href));
 							d.resolve(data);
 						}.bind(this)
 					);

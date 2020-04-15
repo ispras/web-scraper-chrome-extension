@@ -7,7 +7,7 @@ export default class SelectorElementAttribute extends Selector {
 	}
 
 	canReturnMultipleRecords() {
-		return true;
+		return false;
 	}
 
 	canHaveChildSelectors() {
@@ -27,27 +27,13 @@ export default class SelectorElementAttribute extends Selector {
 	}
 
 	_getData(parentElement) {
-		var dfd = $.Deferred();
-
-		var elements = this.getDataElements(parentElement);
-
-		var result = [];
-		$(elements).each(
-			function(k, element) {
-				var data = {};
-
-				data[this.id] = $(element).attr(this.extractAttribute);
-				result.push(data);
-			}.bind(this)
-		);
-
-		if (this.multiple === false && elements.length === 0) {
-			var data = {};
-			data[this.id + '-src'] = null;
-			result.push(data);
+		let dfd = $.Deferred();
+		let elements = this.getDataElements(parentElement);
+		let attributes = elements.map(element => $(element).attr(this.extractAttribute));
+		if (!this.multiple) {
+			attributes = attributes.length ? attributes[0] : null;
 		}
-		dfd.resolve(result);
-
+		dfd.resolve([{ [this.id]: attributes }]);
 		return dfd.promise();
 	}
 
