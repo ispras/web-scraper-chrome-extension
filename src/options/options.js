@@ -117,15 +117,11 @@ function initFormSubmit() {
 let config = new Config();
 
 $(() => {
-	browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-		Translator.initLocale(locale)
-			.promise()
-			.then(() => {
-				initPopups();
-				initConfig();
-				initConfigSwitch();
-				initFormSubmit();
-				Translator.translatePage();
-			});
+	Translator.initLocale().then(() => {
+		initPopups();
+		initConfig();
+		initConfigSwitch();
+		initFormSubmit();
+		Translator.translatePage();
 	});
 });

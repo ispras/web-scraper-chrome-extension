@@ -4,6 +4,7 @@ import '@wikimedia/jquery.i18n/src/jquery.i18n.parser';
 import '@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks';
 import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter';
 import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
+import * as browser from 'webextension-polyfill';
 
 export default class Translator {
 	static translatePage() {
@@ -28,10 +29,14 @@ export default class Translator {
 		return $.i18n(element);
 	}
 
-	static initLocale(locale) {
-		this.getTranslationByKey({
-			locale: locale,
+	static initLocale() {
+		return browser.runtime.sendMessage({ getLocale: true }).then(locale => {
+			this.getTranslationByKey({
+				locale: locale,
+			});
+			$.i18n()
+				.load('../i18n/locales.json')
+				.promise();
 		});
-		return $.i18n().load('../i18n/locales.json');
 	}
 }

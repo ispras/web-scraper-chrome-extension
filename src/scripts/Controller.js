@@ -66,19 +66,16 @@ export default class SitemapController {
 			},
 		];
 
-		browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-			Translator.initLocale(locale)
-				.promise()
-				.then(() => {
-					this.selectorTypes = this.selectorTypes.map(typeObj => {
-						typeObj.title = Translator.getTranslationByKey(typeObj.type);
-						return typeObj;
-					});
-				})
-				.then(() => {
-					this.init();
+		Translator.initLocale()
+			.then(() => {
+				this.selectorTypes = this.selectorTypes.map(typeObj => {
+					typeObj.title = Translator.getTranslationByKey(typeObj.type);
+					return typeObj;
 				});
-		});
+			})
+			.then(() => {
+				this.init();
+			});
 	}
 
 	control(controls) {
