@@ -67,9 +67,7 @@ export default class SitemapController {
 		];
 
 		browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-			Translator.initLocal(locale);
-			Translator.translateElement()
-				.load(Translator.localePath())
+			Translator.initLocal(locale)
 				.promise()
 				.then(() => {
 					this.selectorTypes = this.selectorTypes.map(typeObj => {

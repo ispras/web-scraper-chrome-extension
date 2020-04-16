@@ -3,9 +3,7 @@ import Translator from '../scripts/Translator';
 
 $(() => {
 	browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-		Translator.initLocal(locale);
-		Translator.translateElement()
-			.load(Translator.localePath())
+		Translator.initLocal(locale)
 			.promise()
 			.then(() => {
 				Translator.translatePage();

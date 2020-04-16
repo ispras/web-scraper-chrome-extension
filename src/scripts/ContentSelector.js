@@ -1,20 +1,6 @@
 import CssSelector from '../libs/css-selector/lib/CssSelector';
 import ElementQuery from './ElementQuery';
-
-function fillLocale() {
-	$('[data-i18n]').each(function() {
-		let messageKey = $(this).attr('data-i18n');
-		$(this).html($.i18n(messageKey));
-	});
-	$('[placeholder]').each(function() {
-		let placeholderKey = $(this).attr('placeholder');
-		$(this).attr('placeholder', $.i18n(placeholderKey));
-	});
-	$('[title]').each(function() {
-		let titleKey = $(this).attr('title');
-		$(this).attr('title', $.i18n(titleKey));
-	});
-}
+import Translator from './Translator';
 
 export default class ContentSelector {
 	/**
@@ -136,7 +122,7 @@ export default class ContentSelector {
 		this.bindMultipleGroupCheckbox();
 		this.bindMultipleGroupPopupHide();
 		this.bindMoveImagesToTop();
-		fillLocale();
+		Translator.translatePage();
 	}
 
 	bindElementSelection() {
