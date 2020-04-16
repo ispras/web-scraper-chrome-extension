@@ -1,19 +1,18 @@
 class Field {
-	constructor(entity, field, field_name) {
+	constructor(entity, field, fieldName) {
 		this.entity = entity;
 		this.field = field;
-		this.field_name = field_name;
+		this.field_name = fieldName;
 	}
 }
 
 export default class Model extends Array {
-
 	constructor(fields) {
 		super();
-		let fieldsArray = fields ? fields : [];
-		for (let fieldObj of fieldsArray) {
+		const fieldsArray = fields || [];
+		fieldsArray.forEach(fieldObj => {
 			this.push(new Field(fieldObj.entity, fieldObj.field, fieldObj.field_name));
-		}
+		});
 	}
 
 	static validateModel(model) {
@@ -29,14 +28,19 @@ export default class Model extends Array {
 				message: 'JSON must be array',
 			};
 		}
-		for (let field_rule of model) {
-			if (!('entity' in field_rule) || !('field' in field_rule) || !('field_name' in field_rule)) {
-				return {
-					valid: false,
-					message: 'Each object in JSON array must contain keys entity, field, field_name.',
-				};
-			}
+
+		if (
+			!model.every(
+				fieldRule =>
+					'entity' in fieldRule && 'field' in fieldRule && 'field_name' in fieldRule
+			)
+		) {
+			return {
+				valid: false,
+				message: 'Each object in JSON array must contain keys entity, field, field_name.',
+			};
 		}
+
 		return {
 			message: 'Valid model',
 			valid: true,
@@ -44,28 +48,24 @@ export default class Model extends Array {
 	}
 
 	getDataForSelector(selectorId) {
-		let dataList = [];
+		const dataList = [];
 		let idInData = false;
 
-		for (let field of this) {
+		this.forEach(field => {
 			dataList.push(field);
 			if (field.field_name === selectorId) {
 				idInData = true;
 			}
-		}
+		});
 
 		if (!idInData && selectorId) {
-			dataList.push(new Field( '', '', selectorId));
+			dataList.push(new Field('', '', selectorId));
 		}
 
 		return dataList;
 	}
 
 	toString() {
-		if (this.length) {
-			return JSON.stringify(this, null, 4);
-		} else {
-			return '';
-		}
+		return this.length ? JSON.stringify(this, null, 4) : '';
 	}
 }

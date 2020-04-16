@@ -1,20 +1,20 @@
-import getBackgroundScript from './BackgroundScript';
+import * as $ from 'jquery';
+import * as ich from 'icanhaz/ICanHaz';
+import * as browser from 'webextension-polyfill';
+import 'jquery-flexdatalist/jquery.flexdatalist';
+import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
+
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
 import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
-import * as ich from 'icanhaz/ICanHaz';
-import 'jquery-flexdatalist/jquery.flexdatalist';
-import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
-import * as browser from 'webextension-polyfill';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
 		this.store = store;
 		this.templateDir = templateDir;
-		this.backgroundScript = getBackgroundScript('DevTools');
 		this.contentScript = getContentScript('DevTools');
 		this.selectorTypes = [
 			{
@@ -78,20 +78,23 @@ export default class SitemapController {
 				title: 'Grouped',
 			},
 		];
-		this.init();
+		return this.init();
 	}
 
 	control(controls) {
-		let controller = this;
+		const controller = this;
 
-		for (let selector in controls) {
-			for (let event in controls[selector]) {
+		for (const selector in controls) {
+			for (const event in controls[selector]) {
 				$(document).on(
 					event,
 					selector,
-					(function(selector, event) {
-						return function() {
-							let continueBubbling = controls[selector][event].call(controller, this);
+					(function (selector, event) {
+						return function () {
+							const continueBubbling = controls[selector][event].call(
+								controller,
+								this
+							);
 							if (continueBubbling !== true) {
 								return false;
 							}
@@ -106,7 +109,7 @@ export default class SitemapController {
 	 * Loads templates for ICanHaz
 	 */
 	async loadTemplates() {
-		let templateIds = [
+		const templateIds = [
 			'Viewport',
 			'SitemapList',
 			'SitemapListItem',
@@ -127,7 +130,7 @@ export default class SitemapController {
 
 		return Promise.all(
 			templateIds.map(templateId => {
-				return $.get(this.templateDir + templateId + '.html')
+				return $.get(`${this.templateDir + templateId}.html`)
 					.promise()
 					.then(template => {
 						ich.addTemplate(templateId, template);
@@ -146,7 +149,7 @@ export default class SitemapController {
 		ich.Viewport().appendTo('body');
 
 		// cancel all form submits
-		$('form').bind('submit', function() {
+		$('form').bind('submit', () => {
 			return false;
 		});
 
@@ -191,9 +194,7 @@ export default class SitemapController {
 				click: this.editSitemapMetadataSave,
 			},
 			'#edit-sitemap-metadata-form': {
-				submit: function() {
-					return false;
-				},
+				submit: () => false,
 			},
 			'#sitemaps tr td:nth-of-type(1)': {
 				click: this.editSitemap,
@@ -205,9 +206,7 @@ export default class SitemapController {
 				click: this.showScrapeSitemapConfigPanel,
 			},
 			'#submit-scrape-sitemap-form': {
-				submit: function() {
-					return false;
-				},
+				submit: () => false,
 			},
 			'#submit-scrape-sitemap': {
 				click: this.scrapeSitemap,
@@ -226,9 +225,7 @@ export default class SitemapController {
 				click: this.editSelector,
 			},
 			'#edit-selector select[name=type]': {
-				change: function() {
-					this.selectorTypeChanged(true);
-				}.bind(this),
+				change: () => this.selectorTypeChanged(true),
 			},
 			'#edit-selector button[action=save-selector]': {
 				click: this.saveSelector,
@@ -298,24 +295,20 @@ export default class SitemapController {
 
 	setActiveNavigationButton(navigationId) {
 		$('.nav .active').removeClass('active');
-		$('#' + navigationId + '-nav-button')
-			.closest('li')
-			.addClass('active');
+		$(`#${navigationId}-nav-button`).closest('li').addClass('active');
 
 		if (navigationId.match(/^sitemap-/)) {
-			let navButton = $('#sitemap-nav-button');
+			const navButton = $('#sitemap-nav-button');
 			navButton.removeClass('disabled');
 			navButton.closest('li').addClass('active');
-			$('#navbar-active-sitemap-id').text('(' + this.state.currentSitemap._id + ')');
+			$('#navbar-active-sitemap-id').text(`(${this.state.currentSitemap._id})`);
 		} else {
 			$('#sitemap-nav-button').addClass('disabled');
 			$('#navbar-active-sitemap-id').text('');
 		}
 
 		if (navigationId.match(/^create-sitemap-/)) {
-			$('#create-sitemap-nav-button')
-				.closest('li')
-				.addClass('active');
+			$('#create-sitemap-nav-button').closest('li').addClass('active');
 		}
 	}
 
@@ -331,10 +324,10 @@ export default class SitemapController {
 	 * @returns {Boolean}
 	 */
 	isValidForm() {
-		let validator = this.getFormValidator();
+		const validator = this.getFormValidator();
 		// validator.validate();
 		// validate method calls submit which is not needed in this case.
-		for (let field in validator.options.fields) {
+		for (const field in validator.options.fields) {
 			validator.validateField(field);
 		}
 
@@ -364,7 +357,7 @@ export default class SitemapController {
 						// placeholder for sitemap id existance validation
 						callback: {
 							message: 'Sitemap with this id already exists',
-							callback: function() {
+							callback() {
 								return true;
 							},
 						},
@@ -377,7 +370,7 @@ export default class SitemapController {
 						},
 						callback: {
 							message: 'The start URLs are not valid. Please use "," as a seperator.',
-							callback: function(value) {
+							callback(value) {
 								return Sitemap.validateStartUrls(value.split(','));
 							},
 						},
@@ -386,7 +379,7 @@ export default class SitemapController {
 				model: {
 					validators: {
 						callback: {
-							callback: function(value) {
+							callback(value) {
 								if (!value) {
 									return {
 										message: 'Empty value is possible model',
@@ -401,7 +394,7 @@ export default class SitemapController {
 										message: 'JSON is not valid',
 									};
 								}
-							}.bind(this),
+							},
 						},
 					},
 				},
@@ -411,13 +404,13 @@ export default class SitemapController {
 
 	showCreateSitemap() {
 		this.setActiveNavigationButton('create-sitemap-create');
-		let sitemapForm = ich.SitemapCreate();
+		const sitemapForm = ich.SitemapCreate();
 		$('#viewport').html(sitemapForm);
 		this.initSitemapValidation();
 
 		// //XXX quickFix for new sitemap creation bug
-		let validator = this.getFormValidator();
-		validator.updateStatus('model', 'VALID', 'callback');
+		// const validator = this.getFormValidator();
+		// validator.updateStatus('model', 'VALID', 'callback');
 
 		return true;
 	}
@@ -439,10 +432,10 @@ export default class SitemapController {
 						// placeholder for sitemap id existance validation
 						callback: {
 							message: 'Sitemap with this id already exists',
-							callback: function(value, validator) {
+							callback(value, validator) {
 								validator.revalidateField('sitemapJSON');
 								return true;
-							}.bind(this),
+							},
 						},
 					},
 				},
@@ -453,11 +446,11 @@ export default class SitemapController {
 						},
 						callback: {
 							message: 'JSON is not valid',
-							callback: function(value, validator) {
+							callback(value, validator) {
 								try {
-									let sitemap = JSON.parse(value);
+									const sitemap = JSON.parse(value);
 
-									let renameId = $('#viewport form [name="_id"]').val();
+									const renameId = $('#viewport form [name="_id"]').val();
 									if (!renameId) {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
@@ -484,7 +477,7 @@ export default class SitemapController {
 										}
 									}
 
-									//check for start urls
+									// check for start urls
 									if (!sitemap.hasOwnProperty('startUrls')) {
 										return {
 											valid: false,
@@ -499,7 +492,7 @@ export default class SitemapController {
 										};
 									}
 
-									let result = Model.validateModel(sitemap.model);
+									const result = Model.validateModel(sitemap.model);
 									if (!result.valid) {
 										return result;
 									}
@@ -513,7 +506,7 @@ export default class SitemapController {
 									message: 'Valid sitemap',
 									valid: true,
 								};
-							}.bind(this),
+							},
 						},
 					},
 				},
@@ -522,14 +515,14 @@ export default class SitemapController {
 	}
 
 	readBlob() {
-		let files = $('#sitemapFiles')[0].files;
+		const { files } = $('#sitemapFiles')[0];
 		if (!files.length) {
 			alert('Please select a file!');
 			return;
 		}
-		let file = files[0];
-		let validator = this.getFormValidator();
-		let blob = file.slice(0, file.size);
+		const file = files[0];
+		const validator = this.getFormValidator();
+		const blob = file.slice(0, file.size);
 		blob.text().then(text => {
 			$('#sitemapJSON').val(text);
 			validator.revalidateField('_id');
@@ -540,7 +533,7 @@ export default class SitemapController {
 
 	showImportSitemapPanel() {
 		this.setActiveNavigationButton('create-sitemap-import');
-		let sitemapForm = ich.SitemapImport();
+		const sitemapForm = ich.SitemapImport();
 		$('#viewport').html(sitemapForm);
 		this.initImportSitemapValidation();
 		return true;
@@ -548,20 +541,20 @@ export default class SitemapController {
 
 	showSitemapExportPanel() {
 		this.setActiveNavigationButton('sitemap-export');
-		let sitemap = this.state.currentSitemap;
-		let sitemapJSON = sitemap.exportSitemap();
+		const sitemap = this.state.currentSitemap;
+		const sitemapJSON = sitemap.exportSitemap();
 
-		let sitemapExportForm = ich.SitemapExport({
-			sitemapJSON: sitemapJSON,
+		const sitemapExportForm = ich.SitemapExport({
+			sitemapJSON,
 		});
 
-		let blob = new Blob([sitemapJSON], { type: 'text/json' });
+		const blob = new Blob([sitemapJSON], { type: 'text/json' });
 
 		$('#viewport').html(sitemapExportForm);
 
-		let downloadButton = $('#download-button');
+		const downloadButton = $('#download-button');
 		downloadButton.attr('href', window.URL.createObjectURL(blob));
-		downloadButton.attr('download', sitemap._id + '.json');
+		downloadButton.attr('download', `${sitemap._id}.json`);
 
 		return true;
 	}
@@ -570,11 +563,11 @@ export default class SitemapController {
 		this.clearState();
 		this.setActiveNavigationButton('sitemaps');
 
-		let sitemaps = await this.store.getAllSitemaps();
-		let $sitemapListPanel = ich.SitemapList();
+		const sitemaps = await this.store.getAllSitemaps();
+		const $sitemapListPanel = ich.SitemapList();
 
 		sitemaps.forEach(sitemap => {
-			let $sitemap = ich.SitemapListItem(sitemap);
+			const $sitemap = ich.SitemapListItem(sitemap);
 			$sitemap.data('sitemap', sitemap);
 			$sitemapListPanel.find('tbody').append($sitemap);
 		});
@@ -582,16 +575,16 @@ export default class SitemapController {
 	}
 
 	getSitemapFromMetadataForm() {
-		let id = $('#viewport form input[name=_id]').val();
-		let $startUrlInputs = $('#viewport form .input-start-url');
-		let startUrls = $startUrlInputs
+		const id = $('#viewport form input[name=_id]').val();
+		const $startUrlInputs = $('#viewport form .input-start-url');
+		const startUrls = $startUrlInputs
 			.val()
 			.split(',')
 			.map(item => item.trim());
-		let modelStr = $('#viewport .input-model').val();
+		const modelStr = $('#viewport .input-model').val();
 		return {
-			id: id,
-			startUrls: startUrls,
+			id,
+			startUrls,
 			model: modelStr ? JSON.parse(modelStr) : undefined,
 		};
 	}
@@ -603,12 +596,12 @@ export default class SitemapController {
 			return false;
 		}
 
-		let sitemapData = this.getSitemapFromMetadataForm();
+		const sitemapData = this.getSitemapFromMetadataForm();
 
 		// check whether sitemap with this id already exist
-		let sitemapExists = await this.store.sitemapExists(sitemapData.id);
+		const sitemapExists = await this.store.sitemapExists(sitemapData.id);
 		if (sitemapExists) {
-			let validator = this.getFormValidator();
+			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
 			let sitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, []);
@@ -625,8 +618,8 @@ export default class SitemapController {
 		}
 
 		// load data from form
-		let sitemapJSON = $('[name=sitemapJSON]').val();
-		let sitemapObj = JSON.parse(sitemapJSON);
+		const sitemapJSON = $('[name=sitemapJSON]').val();
+		const sitemapObj = JSON.parse(sitemapJSON);
 
 		let id = $('input[name=_id]').val();
 		if (!id) {
@@ -634,12 +627,17 @@ export default class SitemapController {
 		}
 
 		// check whether sitemap with this id already exist
-		let sitemapExists = this.store.sitemapExists(id);
+		const sitemapExists = this.store.sitemapExists(id);
 		if (sitemapExists) {
-			let validator = this.getFormValidator();
+			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
-			let sitemap = new Sitemap(sitemapObj._id, sitemapObj.startUrls, sitemapObj.model, sitemapObj.selectors);
+			let sitemap = new Sitemap(
+				sitemapObj._id,
+				sitemapObj.startUrls,
+				sitemapObj.model,
+				sitemapObj.selectors
+			);
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap, ['_root']);
 		}
@@ -648,11 +646,11 @@ export default class SitemapController {
 	editSitemapMetadata() {
 		this.setActiveNavigationButton('sitemap-edit-metadata');
 
-		let sitemap = this.state.currentSitemap.clone();
+		const sitemap = this.state.currentSitemap.clone();
 		if (sitemap.model) {
 			sitemap.model = sitemap.model.toString();
 		}
-		let $sitemapMetadataForm = ich.SitemapEditMetadata(sitemap);
+		const $sitemapMetadataForm = ich.SitemapEditMetadata(sitemap);
 		$('#viewport').html($sitemapMetadataForm);
 		this.initSitemapValidation();
 
@@ -660,8 +658,8 @@ export default class SitemapController {
 	}
 
 	async editSitemapMetadataSave() {
-		let sitemap = this.state.currentSitemap;
-		let sitemapData = this.getSitemapFromMetadataForm();
+		const sitemap = this.state.currentSitemap;
+		const sitemapData = this.getSitemapFromMetadataForm();
 
 		// cancel submit if invalid form
 		if (!this.isValidForm()) {
@@ -669,12 +667,12 @@ export default class SitemapController {
 		}
 
 		// check whether sitemap with this id already exist
-		let sitemapExists = await this.store.sitemapExists(sitemapData.id);
+		const sitemapExists = await this.store.sitemapExists(sitemapData.id);
 
 		if (sitemap._id !== sitemapData.id && sitemapExists) {
-			let validator = this.getFormValidator();
+			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
-			return;
+			return false;
 		}
 
 		// just change sitemaps url
@@ -685,8 +683,13 @@ export default class SitemapController {
 			await this.store.saveSitemap(sitemap);
 		} else {
 			// id changed. we need to delete the old one and create a new one
-			let oldSitemap = sitemap;
-			let newSitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, sitemap.selectors);
+			const oldSitemap = sitemap;
+			const newSitemap = new Sitemap(
+				sitemapData.id,
+				sitemapData.startUrls,
+				sitemapData.model,
+				sitemap.selectors
+			);
 			if (newSitemap._rev) {
 				delete newSitemap._rev;
 			}
@@ -701,9 +704,7 @@ export default class SitemapController {
 	 * Callback when sitemap edit button is clicked in sitemap grid
 	 */
 	editSitemap(td) {
-		let sitemap = $(td)
-			.parent()
-			.data('sitemap');
+		const sitemap = $(td).parent().data('sitemap');
 		this._editSitemap(sitemap);
 	}
 
@@ -717,16 +718,16 @@ export default class SitemapController {
 	showSitemapSelectorList() {
 		this.setActiveNavigationButton('sitemap-selector-list');
 
-		let sitemap = this.state.currentSitemap;
-		let parentSelectors = this.state.editSitemapBreadcumbsSelectors;
-		let parentSelectorId = this.state.currentParentSelectorId;
+		const sitemap = this.state.currentSitemap;
+		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
+		const parentSelectorId = this.state.currentParentSelectorId;
 
-		let $selectorListPanel = ich.SelectorList({
-			parentSelectors: parentSelectors,
+		const $selectorListPanel = ich.SelectorList({
+			parentSelectors,
 		});
-		let selectors = sitemap.getDirectChildSelectors(parentSelectorId);
-		selectors.forEach(function(selector) {
-			let $selector = ich.SelectorListItem(selector);
+		const selectors = sitemap.getDirectChildSelectors(parentSelectorId);
+		selectors.forEach(function (selector) {
+			const $selector = ich.SelectorListItem(selector);
 			$selector.data('selector', selector);
 			$selectorListPanel.find('tbody').append($selector);
 		});
@@ -737,18 +738,18 @@ export default class SitemapController {
 
 	showSitemapSelectorGraph() {
 		this.setActiveNavigationButton('sitemap-selector-graph');
-		let sitemap = this.state.currentSitemap;
-		let $selectorGraphPanel = ich.SitemapSelectorGraph();
+		const sitemap = this.state.currentSitemap;
+		const $selectorGraphPanel = ich.SitemapSelectorGraph();
 		$('#viewport').html($selectorGraphPanel);
-		let graphDiv = $('#selector-graph')[0];
-		let graph = new SelectorGraphv2(sitemap);
+		const graphDiv = $('#selector-graph')[0];
+		const graph = new SelectorGraphv2(sitemap);
 		graph.draw(graphDiv, $(document).width(), 200);
 		return true;
 	}
 
 	showChildSelectors(tr) {
-		let selector = $(tr).data('selector');
-		let parentSelectors = this.state.editSitemapBreadcumbsSelectors;
+		const selector = $(tr).data('selector');
+		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
 		this.state.currentParentSelectorId = selector.id;
 		parentSelectors.push(selector);
 
@@ -756,9 +757,9 @@ export default class SitemapController {
 	}
 
 	treeNavigationShowSitemapSelectorList(button) {
-		let parentSelectors = this.state.editSitemapBreadcumbsSelectors;
-		let controller = this;
-		$('#selector-tree .breadcrumb li a').each(function(i, parentSelectorButton) {
+		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
+		const controller = this;
+		$('#selector-tree .breadcrumb li a').each(function (i, parentSelectorButton) {
 			if (parentSelectorButton === button) {
 				parentSelectors.splice(i + 1);
 				controller.state.currentParentSelectorId = parentSelectors[i].id;
@@ -797,14 +798,14 @@ export default class SitemapController {
 						callback: {
 							message:
 								'JavaScript does not support regular expressions that can match 0 characters.',
-							callback: function(value, validator) {
+							callback(value, validator) {
 								// allow no regex
 								if (!value) {
 									return true;
 								}
 
 								try {
-									let matches = ''.match(new RegExp(value));
+									const matches = ''.match(new RegExp(value));
 									return !(matches !== null && matches[0] === '');
 								} catch (e) {
 									return false;
@@ -817,7 +818,7 @@ export default class SitemapController {
 					validators: {
 						callback: {
 							message: 'Regex group must be numeric',
-							callback: function(value, validator) {
+							callback(value, validator) {
 								if (value === '') {
 									return true;
 								}
@@ -861,7 +862,7 @@ export default class SitemapController {
 						},
 						callback: {
 							message: 'Pagination limit must be 1 at least',
-							callback: function(value, validator) {
+							callback(value, validator) {
 								if (!value) {
 									return true;
 								}
@@ -877,8 +878,8 @@ export default class SitemapController {
 						},
 						callback: {
 							message: 'Cannot handle recursive element selectors',
-							callback: function(value, validator, $field) {
-								let sitemap = this.getCurrentlyEditedSelectorSitemap();
+							callback: function (value, validator, $field) {
+								const sitemap = this.getCurrentlyEditedSelectorSitemap();
 								return !sitemap.selectors.hasRecursiveElementSelectors();
 							}.bind(this),
 						},
@@ -889,26 +890,22 @@ export default class SitemapController {
 	}
 
 	editSelector(button) {
-		let selector = $(button)
-			.closest('tr')
-			.data('selector');
+		const selector = $(button).closest('tr').data('selector');
 		this._editSelector(selector);
 	}
 
 	updateSelectorParentListOnIdChange() {
-		let selector = this.getCurrentlyEditedSelector();
-		$('.currently-edited')
-			.val(selector.id)
-			.text(selector.id);
+		const selector = this.getCurrentlyEditedSelector();
+		$('.currently-edited').val(selector.id).text(selector.id);
 	}
 
 	_editSelector(selector) {
-		let sitemap = this.state.currentSitemap;
-		let selectorIds = sitemap.getPossibleParentSelectorIds();
+		const sitemap = this.state.currentSitemap;
+		const selectorIds = sitemap.getPossibleParentSelectorIds();
 
-		let $editSelectorForm = ich.SelectorEdit({
-			selector: selector,
-			selectorIds: selectorIds,
+		const $editSelectorForm = ich.SelectorEdit({
+			selector,
+			selectorIds,
 			selectorTypes: this.selectorTypes,
 		});
 		$('#viewport').html($editSelectorForm);
@@ -927,7 +924,7 @@ export default class SitemapController {
 		});
 
 		// mark initially opened selector as currently edited
-		$('#edit-selector #parentSelectors option').each(function(i, element) {
+		$('#edit-selector #parentSelectors option').each((_, element) => {
 			if ($(element).val() === selector.id) {
 				$(element).addClass('currently-edited');
 			}
@@ -947,9 +944,9 @@ export default class SitemapController {
 
 		// handle selects seperately
 		$editSelectorForm.find('[name=type]').val(selector.type);
-		selector.parentSelectors.forEach(function(parentSelectorId) {
+		selector.parentSelectors.forEach(parentSelectorId => {
 			$editSelectorForm
-				.find("#parentSelectors [value='" + parentSelectorId + "']")
+				.find(`#parentSelectors [value='${parentSelectorId}']`)
 				.attr('selected', 'selected');
 		});
 
@@ -960,12 +957,12 @@ export default class SitemapController {
 	selectorTypeChanged(changeTrigger) {
 		// let type = $('#edit-selector select[name=type]').val();
 		// add this selector to possible parent selector
-		let selector = this.getCurrentlyEditedSelector();
+		const selector = this.getCurrentlyEditedSelector();
 		// this.state.currentSelector = selector;
-		let features = selector.getFeatures();
+		const features = selector.getFeatures();
 		$('#edit-selector .feature').hide();
-		features.forEach(function(feature) {
-			$('#edit-selector .feature-' + feature).show();
+		features.forEach(function (feature) {
+			$(`#edit-selector .feature-${feature}`).show();
 		});
 
 		if (changeTrigger && selector.type === 'SelectorLink') {
@@ -974,7 +971,7 @@ export default class SitemapController {
 
 		if (selector.canHaveChildSelectors()) {
 			if ($('#edit-selector #parentSelectors .currently-edited').length === 0) {
-				let $option = $('<option class="currently-edited"></option>');
+				const $option = $('<option class="currently-edited"></option>');
 				$option.text(selector.id).val(selector.id);
 				$('#edit-selector #parentSelectors').append($option);
 			}
@@ -986,10 +983,10 @@ export default class SitemapController {
 	}
 
 	saveSelector(button) {
-		let sitemap = this.state.currentSitemap;
-		let selector = this.state.currentSelector;
-		let newSelector = this.getCurrentlyEditedSelector();
-		let validator = this.getFormValidator();
+		const sitemap = this.state.currentSitemap;
+		const selector = this.state.currentSelector;
+		const newSelector = this.getCurrentlyEditedSelector();
+		const validator = this.getFormValidator();
 		validator.revalidateField('id');
 		// cancel submit if invalid form
 		if (!this.isValidForm()) {
@@ -998,10 +995,10 @@ export default class SitemapController {
 
 		// cancel possible element selection
 		this.contentScript.removeCurrentContentSelector().done(
-			function() {
+			function () {
 				sitemap.updateSelector(selector, newSelector);
 				this.store.saveSitemap(sitemap).then(
-					function() {
+					function () {
 						this.showSitemapSelectorList();
 					}.bind(this)
 				);
@@ -1013,42 +1010,42 @@ export default class SitemapController {
 	 * Get selector from selector editing form
 	 */
 	getCurrentlyEditedSelector() {
-		let id = $('#edit-selector [name=id]').val();
-		let selectorsSelector = $('#edit-selector [name=selector]').val();
-		let tableDataRowSelector = $('#edit-selector [name=tableDataRowSelector]').val();
-		let tableHeaderRowSelector = $('#edit-selector [name=tableHeaderRowSelector]').val();
-		let tableAddMissingColumns = $('#edit-selector [name=tableAddMissingColumns]').is(
+		const id = $('#edit-selector [name=id]').val();
+		const selectorsSelector = $('#edit-selector [name=selector]').val();
+		const tableDataRowSelector = $('#edit-selector [name=tableDataRowSelector]').val();
+		const tableHeaderRowSelector = $('#edit-selector [name=tableHeaderRowSelector]').val();
+		const tableAddMissingColumns = $('#edit-selector [name=tableAddMissingColumns]').is(
 			':checked'
 		);
-		let verticalTable = $('#edit-selector [name=verticalTable]').is(':checked');
-		let clickElementSelector = $('#edit-selector [name=clickElementSelector]').val();
-		let type = $('#edit-selector [name=type]').val();
-		let clickElementUniquenessType = $(
+		const verticalTable = $('#edit-selector [name=verticalTable]').is(':checked');
+		const clickElementSelector = $('#edit-selector [name=clickElementSelector]').val();
+		const type = $('#edit-selector [name=type]').val();
+		const clickElementUniquenessType = $(
 			'#edit-selector [name=clickElementUniquenessType]'
 		).val();
-		let clickType = $('#edit-selector [name=clickType]').val();
-		let paginationLimit = $('#edit-selector [name=paginationLimit]').val();
-		let discardInitialElements = $('#edit-selector [name=discardInitialElements]').is(
+		const clickType = $('#edit-selector [name=clickType]').val();
+		const paginationLimit = $('#edit-selector [name=paginationLimit]').val();
+		const discardInitialElements = $('#edit-selector [name=discardInitialElements]').is(
 			':checked'
 		);
-		let multiple = $('#edit-selector [name=multiple]').is(':checked');
-		let downloadImage = $('#edit-selector [name=downloadImage]').is(':checked');
-		let downloadDocument = $('#edit-selector [name=downloadDocument]').is(':checked');
-		let clickPopup = $('#edit-selector [name=clickPopup]').is(':checked');
-		let delay = $('#edit-selector [name=delay]').val();
-		let extractAttribute = $('#edit-selector [name=extractAttribute]').val();
-		let extractStyle = $('#edit-selector [name=extractStyle]').val();
-		let value = $('#edit-selector [name=value]').val();
-		let parentSelectors = $('#edit-selector [name=parentSelectors]').val();
-		let columns = [];
-		let $columnHeaders = $('#edit-selector .column-header');
-		let $columnNames = $('#edit-selector .column-name');
-		let $columnExtracts = $('#edit-selector .column-extract');
-		let stringReplacement = {
+		const multiple = $('#edit-selector [name=multiple]').is(':checked');
+		const downloadImage = $('#edit-selector [name=downloadImage]').is(':checked');
+		const downloadDocument = $('#edit-selector [name=downloadDocument]').is(':checked');
+		const clickPopup = $('#edit-selector [name=clickPopup]').is(':checked');
+		const delay = $('#edit-selector [name=delay]').val();
+		const extractAttribute = $('#edit-selector [name=extractAttribute]').val();
+		const extractStyle = $('#edit-selector [name=extractStyle]').val();
+		const value = $('#edit-selector [name=value]').val();
+		const parentSelectors = $('#edit-selector [name=parentSelectors]').val();
+		const columns = [];
+		const $columnHeaders = $('#edit-selector .column-header');
+		const $columnNames = $('#edit-selector .column-name');
+		const $columnExtracts = $('#edit-selector .column-extract');
+		const stringReplacement = {
 			replaceString: $('#edit-selector [name=replaceString]').val(),
 			replacementString: $('#edit-selector [name=replacementString]').val(),
 		};
-		let textmanipulation = {
+		const textmanipulation = {
 			removeHtml: $('#edit-selector [name=removeHtml]').is(':checked'),
 			trimText: $('#edit-selector [name=trimText]').is(':checked'),
 			replaceText: $('#edit-selector [name=replaceText]').val(),
@@ -1059,42 +1056,42 @@ export default class SitemapController {
 			regexgroup: $('#edit-selector [name=regexgroup]').val(),
 		};
 
-		$columnHeaders.each(function(i) {
-			let header = $($columnHeaders[i]).val();
-			let name = $($columnNames[i]).val();
-			let extract = $($columnExtracts[i]).is(':checked');
+		$columnHeaders.each(function (i) {
+			const header = $($columnHeaders[i]).val();
+			const name = $($columnNames[i]).val();
+			const extract = $($columnExtracts[i]).is(':checked');
 			columns.push({
-				header: header,
-				name: name,
-				extract: extract,
+				header,
+				name,
+				extract,
 			});
 		});
 
 		return SelectorList.createSelector({
-			id: id,
+			id,
 			selector: selectorsSelector,
-			tableHeaderRowSelector: tableHeaderRowSelector,
-			tableAddMissingColumns: tableAddMissingColumns,
-			verticalTable: verticalTable,
-			tableDataRowSelector: tableDataRowSelector,
-			clickElementSelector: clickElementSelector,
-			clickElementUniquenessType: clickElementUniquenessType,
-			clickType: clickType,
-			paginationLimit: paginationLimit,
-			discardInitialElements: discardInitialElements,
-			type: type,
-			multiple: multiple,
-			downloadImage: downloadImage,
-			downloadDocument: downloadDocument,
-			clickPopup: clickPopup,
-			extractAttribute: extractAttribute,
-			extractStyle: extractStyle,
-			value: value,
-			parentSelectors: parentSelectors,
-			columns: columns,
-			delay: delay,
-			textmanipulation: textmanipulation,
-			stringReplacement: stringReplacement,
+			tableHeaderRowSelector,
+			tableAddMissingColumns,
+			verticalTable,
+			tableDataRowSelector,
+			clickElementSelector,
+			clickElementUniquenessType,
+			clickType,
+			paginationLimit,
+			discardInitialElements,
+			type,
+			multiple,
+			downloadImage,
+			downloadDocument,
+			clickPopup,
+			extractAttribute,
+			extractStyle,
+			value,
+			parentSelectors,
+			columns,
+			delay,
+			textmanipulation,
+			stringReplacement,
 		});
 	}
 
@@ -1102,9 +1099,9 @@ export default class SitemapController {
 	 * @returns {Sitemap|*} Cloned Sitemap with currently edited selector
 	 */
 	getCurrentlyEditedSelectorSitemap() {
-		let sitemap = this.state.currentSitemap.clone();
-		let selector = sitemap.getSelectorById(this.state.currentSelector.id);
-		let newSelector = this.getCurrentlyEditedSelector();
+		const sitemap = this.state.currentSitemap.clone();
+		const selector = sitemap.getSelectorById(this.state.currentSelector.id);
+		const newSelector = this.getCurrentlyEditedSelector();
 		sitemap.updateSelector(selector, newSelector);
 		return sitemap;
 	}
@@ -1112,17 +1109,17 @@ export default class SitemapController {
 	cancelSelectorEditing(button) {
 		// cancel possible element selection
 		this.contentScript.removeCurrentContentSelector().done(
-			function() {
+			function () {
 				this.showSitemapSelectorList();
 			}.bind(this)
 		);
 	}
 
 	addSelector() {
-		let parentSelectorId = this.state.currentParentSelectorId;
-		let sitemap = this.state.currentSitemap;
+		const parentSelectorId = this.state.currentParentSelectorId;
+		const sitemap = this.state.currentSitemap;
 
-		let selector = SelectorList.createSelector({
+		const selector = SelectorList.createSelector({
 			parentSelectors: [parentSelectorId],
 			type: 'SelectorText',
 			multiple: false,
@@ -1132,25 +1129,21 @@ export default class SitemapController {
 	}
 
 	deleteSelector(button) {
-		let sitemap = this.state.currentSitemap;
-		let selector = $(button)
-			.closest('tr')
-			.data('selector');
+		const sitemap = this.state.currentSitemap;
+		const selector = $(button).closest('tr').data('selector');
 		sitemap.deleteSelector(selector);
 
 		this.store.saveSitemap(sitemap).then(
-			function() {
+			function () {
 				this.showSitemapSelectorList();
 			}.bind(this)
 		);
 	}
 
 	deleteSitemap(button) {
-		let sitemap = $(button)
-			.closest('tr')
-			.data('sitemap');
-		let controller = this;
-		this.store.deleteSitemap(sitemap).then(function() {
+		const sitemap = $(button).closest('tr').data('sitemap');
+		const controller = this;
+		this.store.deleteSitemap(sitemap).then(function () {
 			controller.showSitemaps();
 		});
 	}
@@ -1168,7 +1161,7 @@ export default class SitemapController {
 						},
 						callback: {
 							message: 'The request interval must be atleast 2000 milliseconds',
-							callback: function(value, validator) {
+							callback(value, validator) {
 								return value >= 2000;
 							},
 						},
@@ -1195,7 +1188,7 @@ export default class SitemapController {
 						},
 						callback: {
 							message: 'The page load delay must be atleast 500 milliseconds',
-							callback: function(value, validator) {
+							callback(value, validator) {
 								return value >= 500;
 							},
 						},
@@ -1207,7 +1200,7 @@ export default class SitemapController {
 
 	showScrapeSitemapConfigPanel() {
 		this.setActiveNavigationButton('sitemap-scrape');
-		let scrapeConfigPanel = ich.SitemapScrapeConfig();
+		const scrapeConfigPanel = ich.SitemapScrapeConfig();
 		$('#viewport').html(scrapeConfigPanel);
 		this.initScrapeSitemapConfigValidation();
 		return true;
@@ -1218,29 +1211,27 @@ export default class SitemapController {
 			return false;
 		}
 
-		let requestInterval = $('input[name=requestInterval]').val();
-		let pageLoadDelay = $('input[name=pageLoadDelay]').val();
-		let intervalRandomness = $('input[name=requestIntervalRandomness]').val();
+		const requestInterval = $('input[name=requestInterval]').val();
+		const pageLoadDelay = $('input[name=pageLoadDelay]').val();
+		const intervalRandomness = $('input[name=requestIntervalRandomness]').val();
 
-		let sitemap = this.state.currentSitemap;
-		let request = {
+		const sitemap = this.state.currentSitemap;
+		const request = {
 			scrapeSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
-			requestInterval: requestInterval,
-			pageLoadDelay: pageLoadDelay,
+			requestInterval,
+			pageLoadDelay,
 			requestIntervalRandomness: intervalRandomness,
 		};
 
 		// show sitemap scraping panel
 		this.getFormValidator().destroy();
 		$('.scraping-in-progress').removeClass('hide');
-		$('#submit-scrape-sitemap')
-			.closest('.form-group')
-			.hide();
+		$('#submit-scrape-sitemap').closest('.form-group').hide();
 		$('#scrape-sitemap-config input').prop('disabled', true);
 
 		browser.runtime.sendMessage(request).then(
-			function(selectors) {
+			function (selectors) {
 				// table selector can dynamically add columns
 				// replace current selector (columns) with the dynamicly created once
 				sitemap.selectors = new SelectorList(selectors);
@@ -1251,44 +1242,40 @@ export default class SitemapController {
 	}
 
 	sitemapListBrowseSitemapData(button) {
-		let sitemap = $(button)
-			.closest('tr')
-			.data('sitemap');
+		const sitemap = $(button).closest('tr').data('sitemap');
 		this.setStateEditSitemap(sitemap);
 		this.browseSitemapData();
 	}
 
 	browseSitemapData() {
 		this.setActiveNavigationButton('sitemap-browse');
-		let sitemap = this.state.currentSitemap;
-		this.store.getSitemapData(sitemap).then(
-			function(data) {
-				let dataColumns = sitemap.getDataColumns();
+		const sitemap = this.state.currentSitemap;
+		this.store.getSitemapData(sitemap).then(function (data) {
+			const dataColumns = sitemap.getDataColumns();
 
-				let dataPanel = ich.SitemapBrowseData({
-					columns: dataColumns,
-				});
-				$('#viewport').html(dataPanel);
+			const dataPanel = ich.SitemapBrowseData({
+				columns: dataColumns,
+			});
+			$('#viewport').html(dataPanel);
 
-				// display data
-				// Doing this the long way so there aren't xss vulnerubilites
-				// while working with data or with the selector titles
-				let $tbody = $('#sitemap-data tbody');
-				data.forEach(function(row) {
-					let $tr = $('<tr></tr>');
-					dataColumns.forEach(function(column) {
-						let $td = $('<td></td>');
-						let cellData = row[column];
-						if (typeof cellData === 'object') {
-							cellData = JSON.stringify(cellData);
-						}
-						$td.text(cellData);
-						$tr.append($td);
-					});
-					$tbody.append($tr);
+			// display data
+			// Doing this the long way so there aren't xss vulnerubilites
+			// while working with data or with the selector titles
+			const $tbody = $('#sitemap-data tbody');
+			data.forEach(function (row) {
+				const $tr = $('<tr></tr>');
+				dataColumns.forEach(function (column) {
+					const $td = $('<td></td>');
+					let cellData = row[column];
+					if (typeof cellData === 'object') {
+						cellData = JSON.stringify(cellData);
+					}
+					$td.text(cellData);
+					$tr.append($td);
 				});
-			}.bind(this)
-		);
+				$tbody.append($tr);
+			});
+		});
 
 		return true;
 	}
@@ -1296,8 +1283,8 @@ export default class SitemapController {
 	showSitemapExportDataCsvPanel() {
 		this.setActiveNavigationButton('sitemap-export-data-csv');
 
-		let sitemap = this.state.currentSitemap;
-		let exportPanel = ich.SitemapExportDataCSV(sitemap);
+		const sitemap = this.state.currentSitemap;
+		const exportPanel = ich.SitemapExportDataCSV(sitemap);
 		$('#viewport').html(exportPanel);
 
 		$('.result').hide();
@@ -1305,26 +1292,24 @@ export default class SitemapController {
 
 		// generate data
 		$('#generate-csv').click(
-			function() {
+			function () {
 				$('.result').show();
 				$('.download-button').hide();
 
-				let options = {
+				const options = {
 					delimiter: $('#delimiter').val(),
 					newline: $('#newline').prop('checked'),
 					containBom: $('#utf-bom').prop('checked'),
 				};
 
-				this.store.getSitemapData(sitemap).then(
-					function(data) {
-						let blob = sitemap.getDataExportCsvBlob(data, options);
-						let button_a = $('.download-button a');
-						button_a.attr('href', window.URL.createObjectURL(blob));
-						button_a.attr('download', sitemap._id + '.csv');
-						$('.download-button').show();
-						$('.result').hide();
-					}.bind(this)
-				);
+				this.store.getSitemapData(sitemap).then(function (data) {
+					const blob = sitemap.getDataExportCsvBlob(data, options);
+					const button_a = $('.download-button a');
+					button_a.attr('href', window.URL.createObjectURL(blob));
+					button_a.attr('download', `${sitemap._id}.csv`);
+					$('.download-button').show();
+					$('.result').hide();
+				});
 			}.bind(this)
 		);
 
@@ -1332,17 +1317,15 @@ export default class SitemapController {
 	}
 
 	async selectSelector(button) {
-		let input = $(button)
-			.closest('.form-group')
-			.find('input.selector-value');
-		let sitemap = this.getCurrentlyEditedSelectorSitemap();
+		const input = $(button).closest('.form-group').find('input.selector-value');
+		const sitemap = this.getCurrentlyEditedSelectorSitemap();
 		let selector = this.getCurrentlyEditedSelector();
-		let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
+		const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+		const parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
 			currentStateParentSelectorIds
 		);
 
-		let result = await this.contentScript
+		const result = await this.contentScript
 			.selectSelector({
 				parentCSSSelector: parentCSSSelector,
 				allowedElements: selector.getItemCSSSelector(),
@@ -1351,129 +1334,86 @@ export default class SitemapController {
 
 		selector = this.getCurrentlyEditedSelector();
 		await selector.afterSelect(result.CSSSelector, this);
-		this.isValidForm();
 
-		// 		// update validation for selector field
-		// 		let validator = this.getFormValidator();
-		// 		validator.revalidateField(input);
-		//
-		// 		// @TODO how could this be encapsulated?
-		// 		// update header row, data row selectors after selecting the table. selectors are updated based on tables
-		// 		// inner html
-		// 		if (selector.type === 'SelectorTable') {
-		// 			this.getSelectorHTML().done(html => {
-		// 				let verticalTableHint = this.getCurrentlyEditedSelector().verticalTable;
-		// 				let detectedAttributes = SelectorTable.automaticallyDetectSelectorTableAttributes(
-		// 					html,
-		// 					verticalTableHint
-		// 				);
-		//
-		// 				// update form with automatically detected selector table attributes
-		// 				$('input[name=tableHeaderRowSelector]').val(
-		// 					detectedAttributes.tableHeaderRowSelector
-		// 				);
-		// 				$('input[name=tableDataRowSelector]').val(
-		// 					detectedAttributes.tableDataRowSelector
-		// 				);
-		// 				$('input[name=verticalTable]').prop(
-		// 					'checked',
-		// 					detectedAttributes.verticalTable
-		// 				);
-		// 				this.renderTableHeaderColumns(detectedAttributes.headerColumns);
-		// 			});
-		// 		}
-		// 	}.bind(this)
-		// );
+		// update validation for selector field
+		const validator = this.getFormValidator();
+		validator.revalidateField(input);
 	}
 
 	getCurrentStateParentSelectorIds() {
-		let parentSelectorIds = this.state.editSitemapBreadcumbsSelectors.map(function(selector) {
-			return selector.id;
-		});
-
-		return parentSelectorIds;
+		return this.state.editSitemapBreadcumbsSelectors.map(selector => selector.id);
 	}
 
-	refreshTableColumns(button) {
-		let selector = this.getCurrentlyEditedSelector();
-		let verticalTable = selector.verticalTable;
-		let tableHeaderRowSelector = selector.tableHeaderRowSelector;
+	async refreshTableColumns() {
+		const selector = this.getCurrentlyEditedSelector();
 
-		this.getSelectorHTML().done(html => {
-			let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(
-				html,
-				tableHeaderRowSelector,
-				verticalTable
-			);
-			this.renderTableHeaderColumns(headerColumns);
-		});
+		if (!selector instanceof SelectorTable) {
+			//wrong selector triggered this event
+			return false;
+		}
+
+		const html = await this.getSelectorHTML().promise();
+		selector.getTableHeaderColumnsFromHTML(html);
+		this.renderTableHeaderColumns(selector.headerColumns);
 	}
 
-	selectTableHeaderRowSelector(button) {
-		let input = $(button)
-			.closest('.form-group')
-			.find('input.selector-value');
-		let sitemap = this.getCurrentlyEditedSelectorSitemap();
-		let selector = this.getCurrentlyEditedSelector();
-		let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		let parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
+	async selectTableHeaderRowSelector(button) {
+		const sitemap = this.getCurrentlyEditedSelectorSitemap();
+		const selector = this.getCurrentlyEditedSelector();
+
+		if (!selector instanceof SelectorTable) {
+			//wrong selector triggered this event
+			return false;
+		}
+
+		const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+		const parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
 			selector.id,
 			currentStateParentSelectorIds
 		);
 
-		let deferredSelector = this.contentScript.selectSelector({
-			parentCSSSelector: parentCSSSelector,
-			allowedElements: 'tr',
-		});
+		const result = await this.contentScript
+			.selectSelector({
+				parentCSSSelector,
+				allowedElements: 'tr',
+			})
+			.promise();
 
-		deferredSelector.done(
-			function(result) {
-				let tableHeaderRowSelector = result.CSSSelector;
-				$(input).val(tableHeaderRowSelector);
+		const tableHeaderRowSelector = result.CSSSelector;
+		selector.tableHeaderRowSelector = tableHeaderRowSelector;
 
-				this.getSelectorHTML().done(
-					function(html) {
-						let headerColumns = SelectorTable.getTableHeaderColumnsFromHTML(
-							tableHeaderRowSelector,
-							html
-						);
-						this.renderTableHeaderColumns(headerColumns);
-					}.bind(this)
-				);
+		let html = this.getSelectorHTML().promise();
+		selector.getTableHeaderColumnsFromHTML(html);
+		this.renderTableHeaderColumns(selector.headerColumns);
 
-				// update validation for selector field
-				let validator = this.getFormValidator();
-				validator.revalidateField(input);
-			}.bind(this)
-		);
+		// update validation for selector field
+		const input = $(button).closest('.form-group').find('input.selector-value');
+		$(input).val(tableHeaderRowSelector);
+		const validator = this.getFormValidator();
+		validator.revalidateField(input);
 	}
 
-	selectTableDataRowSelector(button) {
-		let input = $(button)
-			.closest('.form-group')
-			.find('input.selector-value');
-		let sitemap = this.getCurrentlyEditedSelectorSitemap();
-		let selector = this.getCurrentlyEditedSelector();
-		let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		let parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
+	async selectTableDataRowSelector(button) {
+		const sitemap = this.getCurrentlyEditedSelectorSitemap();
+		const selector = this.getCurrentlyEditedSelector();
+		const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+		const parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
 			selector.id,
 			currentStateParentSelectorIds
 		);
 
-		let deferredSelector = this.contentScript.selectSelector({
-			parentCSSSelector: parentCSSSelector,
-			allowedElements: 'tr',
-		});
+		const result = await this.contentScript
+			.selectSelector({
+				parentCSSSelector,
+				allowedElements: 'tr',
+			})
+			.promise();
 
-		deferredSelector.done(
-			function(result) {
-				$(input).val(result.CSSSelector);
-
-				// update validation for selector field
-				let validator = this.getFormValidator();
-				validator.revalidateField(input);
-			}.bind(this)
-		);
+		// update validation for selector field
+		const input = $(button).closest('.form-group').find('input.selector-value');
+		$(input).val(result.CSSSelector);
+		const validator = this.getFormValidator();
+		validator.revalidateField(input);
 	}
 
 	/**
@@ -1481,10 +1421,10 @@ export default class SitemapController {
 	 */
 	renderTableHeaderColumns(headerColumns) {
 		// reset previous columns
-		let $tbody = $('.feature-columns table tbody');
+		const $tbody = $('.feature-columns table tbody');
 		$tbody.html('');
-		headerColumns.forEach(function(column) {
-			let $row = ich.SelectorEditTableColumn(column);
+		headerColumns.forEach(function (column) {
+			const $row = ich.SelectorEditTableColumn(column);
 			$tbody.append($row);
 		});
 	}
@@ -1493,30 +1433,30 @@ export default class SitemapController {
 	 * Returns HTML that the current selector would select
 	 */
 	getSelectorHTML() {
-		let sitemap = this.getCurrentlyEditedSelectorSitemap();
-		let selector = this.getCurrentlyEditedSelector();
-		let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-		let CSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
+		const sitemap = this.getCurrentlyEditedSelectorSitemap();
+		const selector = this.getCurrentlyEditedSelector();
+		const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+		const CSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
 			selector.id,
 			currentStateParentSelectorIds
 		);
-		return this.contentScript.getHTML({ CSSSelector: CSSSelector }).promise();
+		return this.contentScript.getHTML({ CSSSelector }).promise();
 	}
 
 	previewSelector(button) {
 		if (!$(button).hasClass('preview')) {
-			let sitemap = this.getCurrentlyEditedSelectorSitemap();
-			let selector = this.getCurrentlyEditedSelector();
-			let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-			let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
+			const sitemap = this.getCurrentlyEditedSelectorSitemap();
+			const selector = this.getCurrentlyEditedSelector();
+			const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+			const parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
 				currentStateParentSelectorIds
 			);
-			let deferredSelectorPreview = this.contentScript.previewSelector({
-				parentCSSSelector: parentCSSSelector,
+			const deferredSelectorPreview = this.contentScript.previewSelector({
+				parentCSSSelector,
 				elementCSSSelector: selector.selector,
 			});
 
-			deferredSelectorPreview.done(function() {
+			deferredSelectorPreview.done(function () {
 				$(button).addClass('preview');
 			});
 		} else {
@@ -1527,19 +1467,19 @@ export default class SitemapController {
 
 	previewClickElementSelector(button) {
 		if (!$(button).hasClass('preview')) {
-			let sitemap = this.state.currentSitemap;
-			let selector = this.getCurrentlyEditedSelector();
-			let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-			let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
+			const sitemap = this.state.currentSitemap;
+			const selector = this.getCurrentlyEditedSelector();
+			const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+			const parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
 				currentStateParentSelectorIds
 			);
 
-			let deferredSelectorPreview = this.contentScript.previewSelector({
-				parentCSSSelector: parentCSSSelector,
+			const deferredSelectorPreview = this.contentScript.previewSelector({
+				parentCSSSelector,
 				elementCSSSelector: selector.clickElementSelector,
 			});
 
-			deferredSelectorPreview.done(function() {
+			deferredSelectorPreview.done(function () {
 				$(button).addClass('preview');
 			});
 		} else {
@@ -1550,24 +1490,21 @@ export default class SitemapController {
 
 	previewTableRowSelector(button) {
 		if (!$(button).hasClass('preview')) {
-			let sitemap = this.getCurrentlyEditedSelectorSitemap();
-			let selector = this.getCurrentlyEditedSelector();
-			let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-			let parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
+			const sitemap = this.getCurrentlyEditedSelectorSitemap();
+			const selector = this.getCurrentlyEditedSelector();
+			const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+			const parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
 				selector.id,
 				currentStateParentSelectorIds
 			);
-			let rowSelector = $(button)
-				.closest('.form-group')
-				.find('input')
-				.val();
+			const rowSelector = $(button).closest('.form-group').find('input').val();
 
-			let deferredSelectorPreview = this.contentScript.previewSelector({
-				parentCSSSelector: parentCSSSelector,
+			const deferredSelectorPreview = this.contentScript.previewSelector({
+				parentCSSSelector,
 				elementCSSSelector: rowSelector,
 			});
 
-			deferredSelectorPreview.done(function() {
+			deferredSelectorPreview.done(function () {
 				$(button).addClass('preview');
 			});
 		} else {
@@ -1578,20 +1515,18 @@ export default class SitemapController {
 
 	previewSelectorFromSelectorTree(button) {
 		if (!$(button).hasClass('preview')) {
-			let sitemap = this.state.currentSitemap;
-			let selector = $(button)
-				.closest('tr')
-				.data('selector');
-			let currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
-			let parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
+			const sitemap = this.state.currentSitemap;
+			const selector = $(button).closest('tr').data('selector');
+			const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
+			const parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
 				currentStateParentSelectorIds
 			);
-			let deferredSelectorPreview = this.contentScript.previewSelector({
-				parentCSSSelector: parentCSSSelector,
+			const deferredSelectorPreview = this.contentScript.previewSelector({
+				parentCSSSelector,
 				elementCSSSelector: selector.selector,
 			});
 
-			deferredSelectorPreview.done(function() {
+			deferredSelectorPreview.done(function () {
 				$(button).addClass('preview');
 			});
 		} else {
@@ -1601,17 +1536,15 @@ export default class SitemapController {
 	}
 
 	previewSelectorDataFromSelectorTree(button) {
-		let sitemap = this.state.currentSitemap;
-		let selector = $(button)
-			.closest('tr')
-			.data('selector');
+		const sitemap = this.state.currentSitemap;
+		const selector = $(button).closest('tr').data('selector');
 		this.previewSelectorData(sitemap, selector.id);
 	}
 
 	previewSelectorDataFromSelectorEditing() {
-		let sitemap = this.state.currentSitemap.clone();
-		let selector = sitemap.getSelectorById(this.state.currentSelector.id);
-		let newSelector = this.getCurrentlyEditedSelector();
+		const sitemap = this.state.currentSitemap.clone();
+		const selector = sitemap.getSelectorById(this.state.currentSelector.id);
+		const newSelector = this.getCurrentlyEditedSelector();
 		sitemap.updateSelector(selector, newSelector);
 		this.previewSelectorData(sitemap, newSelector.id);
 	}
@@ -1621,8 +1554,8 @@ export default class SitemapController {
 	 * @returns {Array}
 	 */
 	getStateParentSelectorIds() {
-		let parentSelectorIds = [];
-		this.state.editSitemapBreadcumbsSelectors.forEach(function(selector) {
+		const parentSelectorIds = [];
+		this.state.editSitemapBreadcumbsSelectors.forEach(function (selector) {
 			parentSelectorIds.push(selector.id);
 		});
 		return parentSelectorIds;
@@ -1630,23 +1563,23 @@ export default class SitemapController {
 
 	previewSelectorData(sitemap, selectorId) {
 		// data preview will be base on how the selector tree is opened
-		let parentSelectorIds = this.getStateParentSelectorIds();
+		const parentSelectorIds = this.getStateParentSelectorIds();
 
-		let request = {
+		const request = {
 			previewSelectorData: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
-			parentSelectorIds: parentSelectorIds,
-			selectorId: selectorId,
+			parentSelectorIds,
+			selectorId,
 		};
-		browser.runtime.sendMessage(request).then(function(response) {
+		browser.runtime.sendMessage(request).then(function (response) {
 			if (response.length === 0) {
 				return;
 			}
-			let dataColumns = Object.keys(response[0]);
+			const dataColumns = Object.keys(response[0]);
 
 			console.log(dataColumns);
 
-			let $dataPreviewPanel = ich.DataPreview({
+			const $dataPreviewPanel = ich.DataPreview({
 				columns: dataColumns,
 			});
 			$('#viewport').append($dataPreviewPanel);
@@ -1654,11 +1587,11 @@ export default class SitemapController {
 			// display data
 			// Doing this the long way so there aren't xss vulnerubilites
 			// while working with data or with the selector titles
-			let $tbody = $('tbody', $dataPreviewPanel);
-			response.forEach(function(row) {
-				let $tr = $('<tr></tr>');
-				dataColumns.forEach(function(column) {
-					let $td = $('<td></td>');
+			const $tbody = $('tbody', $dataPreviewPanel);
+			response.forEach(function (row) {
+				const $tr = $('<tr></tr>');
+				dataColumns.forEach(function (column) {
+					const $td = $('<td></td>');
 					let cellData = row[column];
 					if (typeof cellData === 'object') {
 						cellData = JSON.stringify(cellData);
@@ -1669,12 +1602,12 @@ export default class SitemapController {
 				$tbody.append($tr);
 			});
 
-			let windowHeight = $(window).height();
+			const windowHeight = $(window).height();
 
 			$('.data-preview-modal .modal-body').height(windowHeight - 130);
 
 			// remove modal from dom after it is closed
-			$dataPreviewPanel.on('hidden.bs.modal', function() {
+			$dataPreviewPanel.on('hidden.bs.modal', function () {
 				$(this).remove();
 			});
 		});
