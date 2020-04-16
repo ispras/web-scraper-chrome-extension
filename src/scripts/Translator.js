@@ -31,10 +31,10 @@ export default class Translator {
 
 	static initLocale() {
 		return browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-			this.getTranslationByKey({
+			$.i18n({
 				locale: locale,
 			});
-			$.i18n()
+			return $.i18n()
 				.load('../i18n/locales.json')
 				.promise();
 		});
