@@ -1,33 +1,16 @@
-import '@wikimedia/jquery.i18n/src/jquery.i18n';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.messagestore';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.parser';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
-
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap';
 import Config from '../scripts/Config';
 import * as browser from 'webextension-polyfill';
-
-function fillLocale() {
-	$('[data-i18n]').each(function() {
-		let messageKey = $(this).attr('data-i18n');
-		$(this).html($.i18n(messageKey));
-	});
-	$('[placeholder]').each(function() {
-		let placeholderKey = $(this).attr('placeholder');
-		$(this).attr('placeholder', $.i18n(placeholderKey));
-	});
-}
+import Translator from '../scripts/Translator';
 
 function initPopups() {
 	// popups for Storage setting input fields
 	$('#sitemapDb')
 		.popover({
-			title: $.i18n('options-database-sitemap-title'),
+			title: Translator.translateElement('options-database-sitemap-title'),
 			html: true,
-			content: $.i18n('options-couchDB-url') + ' <br /> http://example.com/scraper-sitemaps/',
+			content: Translator.translateElement('options-couchDB-url') + ' <br /> http://example.com/scraper-sitemaps/',
 			placement: 'bottom',
 		})
 		.blur(function() {
@@ -36,9 +19,9 @@ function initPopups() {
 
 	$('#dataDb')
 		.popover({
-			title: $.i18n('options-database-scraped-data-title'),
+			title: Translator.translateElement('options-database-scraped-data-title'),
 			html: true,
-			content: $.i18n('options-couchdb-database-url'),
+			content: Translator.translateElement('options-couchdb-database-url'),
 			placement: 'bottom',
 		})
 		.blur(function() {
@@ -47,9 +30,9 @@ function initPopups() {
 
 	$('#restUrl')
 		.popover({
-			title: $.i18n('options-url-to-push'),
+			title: Translator.translateElement('options-url-to-push'),
 			html: true,
-			content: $.i18n('options-rest-api-url'),
+			content: Translator.translateElement('options-rest-api-url'),
 			placement: 'bottom',
 		})
 		.blur(function() {
@@ -112,17 +95,17 @@ function initFormSubmit() {
 			.then(() => {
 				$('.alert')
 					.attr('id', 'success')
-					.text($.i18n('options-successfully-updated'))
+					.text(Translator.translateElement('options-successfully-updated'))
 					.show();
-				$.i18n({
+				Translator.translateElement({
 					locale: newConfig.locale,
 				});
-				fillLocale();
+				Translator.translatePage();
 			})
 			.catch(() => {
 				$('.alert')
 					.attr('id', 'error')
-					.text($.i18n('options-error-updating') + chrome.runtime.lastError.message)
+					.text(Translator.translateElement('options-error-updating') + chrome.runtime.lastError.message)
 					.show();
 			});
 
@@ -135,18 +118,16 @@ let config = new Config();
 
 $(() => {
 	browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-		$.i18n({
-			locale: locale,
-		});
-		$.i18n()
-			.load('../i18n/locales.json')
+		Translator.initLocal(locale);
+		Translator.translateElement()
+			.load(Translator.localePath())
 			.promise()
 			.then(() => {
 				initPopups();
 				initConfig();
 				initConfigSwitch();
 				initFormSubmit();
-				fillLocale();
+				Translator.translatePage();
 			});
 	});
 });

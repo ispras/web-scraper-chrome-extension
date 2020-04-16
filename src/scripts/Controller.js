@@ -5,16 +5,11 @@ import SelectorGraphv2 from './SelectorGraphv2';
 import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
+import Translator from './Translator';
 import * as ich from 'icanhaz/ICanHaz';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 import * as browser from 'webextension-polyfill';
-import '@wikimedia/jquery.i18n/src/jquery.i18n';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.messagestore';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.parser';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -70,16 +65,15 @@ export default class SitemapController {
 				type: 'SelectorGroup',
 			},
 		];
+
 		browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-			$.i18n({
-				locale: locale,
-			});
-			$.i18n()
-				.load('../i18n/locales.json')
+			Translator.initLocal(locale);
+			Translator.translateElement()
+				.load(Translator.localePath())
 				.promise()
 				.then(() => {
 					this.selectorTypes = this.selectorTypes.map(typeObj => {
-						typeObj.title = $.i18n(typeObj.type);
+						typeObj.title = Translator.translateElement(typeObj.type);
 						return typeObj;
 					});
 				})
@@ -146,19 +140,6 @@ export default class SitemapController {
 				$.get(this.templateDir + templateId + '.html', cbLoaded.bind(this, templateId));
 			}.bind(this)
 		);
-	}
-
-	fillLocale() {
-		$('[data-i18n]').each(function() {
-			let messageKey = $(this).attr('data-i18n');
-			if ($(this).text() !== $.i18n(messageKey)) {
-				$(this).prepend($.i18n(messageKey));
-			}
-		});
-		$('[placeholder]').each(function() {
-			let placeholderKey = $(this).attr('placeholder');
-			$(this).attr('placeholder', $.i18n(placeholderKey));
-		});
 	}
 
 	init() {
@@ -379,19 +360,19 @@ export default class SitemapController {
 				_id: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('sitemapid-empty-message'),
+							message: Translator.translateElement('sitemapid-empty-message'),
 						},
 						stringLength: {
 							min: 3,
-							message: $.i18n('sitemapid-short-message'),
+							message: Translator.translateElement('sitemapid-short-message'),
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message: $.i18n('sitemapid-invalid-char'),
+							message: Translator.translateElement('sitemapid-invalid-char'),
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
-							message: $.i18n('sitemapid-repeated-id'),
+							message: Translator.translateElement('sitemapid-repeated-id'),
 							callback: function() {
 								return true;
 							},
@@ -401,10 +382,10 @@ export default class SitemapController {
 				startUrls: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('sitemapurl-empty-message'),
+							message: Translator.translateElement('sitemapurl-empty-message'),
 						},
 						callback: {
-							message: $.i18n('sitemapurl-invalid-message'),
+							message: Translator.translateElement('sitemapurl-invalid-message'),
 							callback: function(value) {
 								return Sitemap.validateStartUrls(value.split(','));
 							},
@@ -417,7 +398,7 @@ export default class SitemapController {
 							callback: function(value) {
 								if (!value) {
 									return {
-										message: $.i18n('sitemapmodel-empty-message'),
+										message: Translator.translateElement('sitemapmodel-empty-message'),
 										valid: true,
 									};
 								}
@@ -426,7 +407,7 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: $.i18n('sitemapjson-invalid-message'),
+										message: Translator.translateElement('sitemapjson-invalid-message'),
 									};
 								}
 							}.bind(this),
@@ -446,7 +427,7 @@ export default class SitemapController {
 		// //XXX quickFix for new sitemap creation bug
 		let validator = this.getFormValidator();
 		validator.updateStatus('model', 'VALID', 'callback');
-		this.fillLocale();
+		Translator.translatePage();
 		return true;
 	}
 
@@ -457,15 +438,15 @@ export default class SitemapController {
 					validators: {
 						stringLength: {
 							min: 3,
-							message: $.i18n('sitemapid-short-message'),
+							message: Translator.translateElement('sitemapid-short-message'),
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message: $.i18n('sitemapid-invalid-char'),
+							message: Translator.translateElement('sitemapid-invalid-char'),
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
-							message: $.i18n('sitemapid-repeated-id'),
+							message: Translator.translateElement('sitemapid-repeated-id'),
 							callback: function(value, validator) {
 								validator.revalidateField('sitemapJSON');
 								return true;
@@ -476,10 +457,10 @@ export default class SitemapController {
 				sitemapJSON: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('sitemapjson-empty-message'),
+							message: Translator.translateElement('sitemapjson-empty-message'),
 						},
 						callback: {
-							message: $.i18n('sitemapjson-invalid-message'),
+							message: Translator.translateElement('sitemapjson-invalid-message'),
 							callback: function(value, validator) {
 								try {
 									let sitemap = JSON.parse(value);
@@ -489,19 +470,19 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message: $.i18n('sitemapid-empty-message'),
+												message: Translator.translateElement('sitemapid-empty-message'),
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message: $.i18n('sitemapid-short-message'),
+												message: Translator.translateElement('sitemapid-short-message'),
 											};
 										}
 										if (!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-/]+$')) {
 											return {
 												valid: false,
-												message: $.i18n('sitemapid-invalid-char'),
+												message: Translator.translateElement('sitemapid-invalid-char'),
 											};
 										}
 									}
@@ -510,13 +491,13 @@ export default class SitemapController {
 									if (!sitemap.hasOwnProperty('startUrls')) {
 										return {
 											valid: false,
-											message: $.i18n('sitemapurl-empty-message'),
+											message: Translator.translateElement('sitemapurl-empty-message'),
 										};
 									}
 									if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
 										return {
 											valid: false,
-											message: $.i18n('sitemapurl-invalid-message'),
+											message: Translator.translateElement('sitemapurl-invalid-message'),
 										};
 									}
 
@@ -527,11 +508,11 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: $.i18n('sitemapjson-invalid-message'),
+										message: Translator.translateElement('sitemapjson-invalid-message'),
 									};
 								}
 								return {
-									message: $.i18n('sitemap-valid-message'),
+									message: Translator.translateElement('sitemap-valid-message'),
 									valid: true,
 								};
 							}.bind(this),
@@ -545,7 +526,7 @@ export default class SitemapController {
 	readBlob() {
 		let files = $('#sitemapFiles')[0].files;
 		if (!files.length) {
-			alert($.i18n('selecting-file-error'));
+			alert(Translator.translateElement('selecting-file-error'));
 			return;
 		}
 		let file = files[0];
@@ -564,7 +545,7 @@ export default class SitemapController {
 		let sitemapForm = ich.SitemapImport();
 		$('#viewport').html(sitemapForm);
 		this.initImportSitemapValidation();
-		this.fillLocale();
+		Translator.translatePage();
 		return true;
 	}
 
@@ -577,7 +558,7 @@ export default class SitemapController {
 		});
 		let blob = new Blob([sitemapJSON], { type: 'text/json' });
 		$('#viewport').html(sitemapExportForm);
-		this.fillLocale();
+		Translator.translatePage();
 		let downloadButton = $('#download-button');
 		downloadButton.attr('href', window.URL.createObjectURL(blob));
 		downloadButton.attr('download', sitemap._id + '.json');
@@ -598,7 +579,7 @@ export default class SitemapController {
 					$sitemapListPanel.find('tbody').append($sitemap);
 				});
 				$('#viewport').html($sitemapListPanel);
-				this.fillLocale();
+				Translator.translatePage();
 			}.bind(this)
 		);
 	}
@@ -699,7 +680,7 @@ export default class SitemapController {
 		let $sitemapMetadataForm = ich.SitemapEditMetadata(sitemap);
 		$('#viewport').html($sitemapMetadataForm);
 		this.initSitemapValidation();
-		this.fillLocale();
+		Translator.translatePage();
 		return true;
 	}
 
@@ -792,7 +773,7 @@ export default class SitemapController {
 			}.bind(this)
 		);
 		$('#viewport').html($selectorListPanel);
-		this.fillLocale();
+		Translator.translatePage();
 		return true;
 	}
 
@@ -834,29 +815,29 @@ export default class SitemapController {
 				id: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('sitemapid-empty-message'),
+							message: Translator.translateElement('sitemapid-empty-message'),
 						},
 						stringLength: {
 							min: 3,
-							message: $.i18n('sitemapid-short-message'),
+							message: Translator.translateElement('sitemapid-short-message'),
 						},
 						regexp: {
 							regexp: /^[^_].*$/,
-							message: $.i18n('selectorid-underscore'),
+							message: Translator.translateElement('selectorid-underscore'),
 						},
 					},
 				},
 				selector: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('selector-empty-message'),
+							message: Translator.translateElement('selector-empty-message'),
 						},
 					},
 				},
 				regex: {
 					validators: {
 						callback: {
-							message: $.i18n('regex-regular-expressions-error-message'),
+							message: Translator.translateElement('regex-regular-expressions-error-message'),
 							callback: function(value, validator) {
 								// allow no regex
 								if (!value) {
@@ -876,7 +857,7 @@ export default class SitemapController {
 				regexgroup: {
 					validators: {
 						callback: {
-							message: $.i18n('regex-group-numeric-error-message'),
+							message: Translator.translateElement('regex-group-numeric-error-message'),
 							callback: function(value, validator) {
 								if (value === '') {
 									return true;
@@ -889,38 +870,38 @@ export default class SitemapController {
 				clickElementSelector: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('selector-click-empty.message'),
+							message: Translator.translateElement('selector-click-empty.message'),
 						},
 					},
 				},
 				tableHeaderRowSelector: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('selector-header-empty-message'),
+							message: Translator.translateElement('selector-header-empty-message'),
 						},
 					},
 				},
 				tableDataRowSelector: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('selector-data-row-empty-message'),
+							message: Translator.translateElement('selector-data-row-empty-message'),
 						},
 					},
 				},
 				delay: {
 					validators: {
 						numeric: {
-							message: $.i18n('delay-numeric-message'),
+							message: Translator.translateElement('delay-numeric-message'),
 						},
 					},
 				},
 				paginationLimit: {
 					validators: {
 						numeric: {
-							message: $.i18n('pagination-limit-numeric-message'),
+							message: Translator.translateElement('pagination-limit-numeric-message'),
 						},
 						callback: {
-							message: $.i18n('pagination-limit-small-message'),
+							message: Translator.translateElement('pagination-limit-small-message'),
 							callback: function(value, validator) {
 								if (!value) {
 									return true;
@@ -933,10 +914,10 @@ export default class SitemapController {
 				parentSelectors: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('parent-selector-empty-message'),
+							message: Translator.translateElement('parent-selector-empty-message'),
 						},
 						callback: {
-							message: $.i18n('handle-recursive-error-message'),
+							message: Translator.translateElement('handle-recursive-error-message'),
 							callback: function(value, validator, $field) {
 								let sitemap = this.getCurrentlyEditedSelectorSitemap();
 								return !sitemap.selectors.hasRecursiveElementSelectors();
@@ -1026,7 +1007,7 @@ export default class SitemapController {
 
 		this.state.currentSelector = selector;
 		this.selectorTypeChanged(false);
-		this.fillLocale();
+		Translator.translatePage();
 	}
 
 	selectorTypeChanged(changeTrigger) {
@@ -1227,13 +1208,13 @@ export default class SitemapController {
 				requestInterval: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('request-interval-empty-message'),
+							message: Translator.translateElement('request-interval-empty-message'),
 						},
 						numeric: {
-							message: $.i18n('request-interval-numeric-message'),
+							message: Translator.translateElement('request-interval-numeric-message'),
 						},
 						callback: {
-							message: $.i18n('request-interval-short-message'),
+							message: Translator.translateElement('request-interval-short-message'),
 							callback: function(value, validator) {
 								return value >= 2000;
 							},
@@ -1243,23 +1224,23 @@ export default class SitemapController {
 				requestIntervalRandomness: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('request-interval-randomness-empty-message'),
+							message: Translator.translateElement('request-interval-randomness-empty-message'),
 						},
 						numeric: {
-							message: $.i18n('request-interval-randomness-numeric-message'),
+							message: Translator.translateElement('request-interval-randomness-numeric-message'),
 						},
 					},
 				},
 				pageLoadDelay: {
 					validators: {
 						notEmpty: {
-							message: $.i18n('page-load-delay-empty-message'),
+							message: Translator.translateElement('page-load-delay-empty-message'),
 						},
 						numeric: {
-							message: $.i18n('page-load-delay-numeric-message'),
+							message: Translator.translateElement('page-load-delay-numeric-message'),
 						},
 						callback: {
-							message: $.i18n('page-load-delay-short-message'),
+							message: Translator.translateElement('page-load-delay-short-message'),
 							callback: function(value, validator) {
 								return value >= 500;
 							},
@@ -1275,7 +1256,7 @@ export default class SitemapController {
 		let scrapeConfigPanel = ich.SitemapScrapeConfig();
 		$('#viewport').html(scrapeConfigPanel);
 		this.initScrapeSitemapConfigValidation();
-		this.fillLocale();
+		Translator.translatePage();
 		return true;
 	}
 
@@ -1364,7 +1345,7 @@ export default class SitemapController {
 		let sitemap = this.state.currentSitemap;
 		let exportPanel = ich.SitemapExportDataCSV(sitemap);
 		$('#viewport').html(exportPanel);
-		this.fillLocale();
+		Translator.translatePage();
 
 		$('.result').hide();
 		$('.download-button').hide();
@@ -1392,7 +1373,7 @@ export default class SitemapController {
 				);
 			}.bind(this)
 		);
-		this.fillLocale();
+		Translator.translatePage();
 		return true;
 	}
 
@@ -1693,7 +1674,7 @@ export default class SitemapController {
 				});
 				$('#viewport').append($dataPreviewPanel);
 				$dataPreviewPanel.modal('show');
-				this.fillLocale();
+				Translator.translatePage();
 				// display data
 				// Doing this the long way so there aren't xss vulnerubilites
 				// while working with data or with the selector titles
