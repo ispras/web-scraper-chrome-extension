@@ -1,6 +1,8 @@
 import * as $ from 'jquery';
 import * as ich from 'icanhaz/ICanHaz';
 import * as browser from 'webextension-polyfill';
+import * as renderjson from 'renderjson/renderjson';
+import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 
@@ -78,6 +80,20 @@ export default class SitemapController {
 				title: 'Grouped',
 			},
 		];
+    this.jsonRenderer = renderjson
+			.set_icons('+', '-')
+			.set_show_to_level('all')
+			.set_max_string_length(80)
+			.set_replacer((key, value) => {
+				if (typeof value === 'string') {
+					return value
+						.replace(/(\r\n|\n|\r)/gm, ' ')
+						.replace(/\s+/g, ' ')
+						.trim();
+				}
+				return value;
+			})
+			.set_sort_objects(true);
 		return this.init();
 	}
 
@@ -126,6 +142,7 @@ export default class SitemapController {
 			'SelectorEditTableColumn',
 			'SitemapSelectorGraph',
 			'DataPreview',
+			'ItemCard',
 		];
 
 		return Promise.all(
@@ -1249,32 +1266,42 @@ export default class SitemapController {
 
 	browseSitemapData() {
 		this.setActiveNavigationButton('sitemap-browse');
-		const sitemap = this.state.currentSitemap;
-		this.store.getSitemapData(sitemap).then(function (data) {
-			const dataColumns = sitemap.getDataColumns();
-
-			const dataPanel = ich.SitemapBrowseData({
-				columns: dataColumns,
-			});
-			$('#viewport').html(dataPanel);
+		let sitemap = this.state.currentSitemap;
+		this.store.getSitemapData(sitemap).then(data => {
+			let $dataPanel = ich.SitemapBrowseData();
+			$('#viewport').html($dataPanel);
 
 			// display data
 			// Doing this the long way so there aren't xss vulnerubilites
 			// while working with data or with the selector titles
-			const $tbody = $('#sitemap-data tbody');
-			data.forEach(function (row) {
-				const $tr = $('<tr></tr>');
-				dataColumns.forEach(function (column) {
-					const $td = $('<td></td>');
-					let cellData = row[column];
-					if (typeof cellData === 'object') {
-						cellData = JSON.stringify(cellData);
-					}
-					$td.text(cellData);
-					$tr.append($td);
+
+			let $accordion = $('#sitemap-data');
+			for (let rowNum = 0; rowNum < data.length; rowNum++) {
+				let $card = ich.ItemCard({
+					id: rowNum,
+					url: data[rowNum].url || 'Item' + rowNum,
 				});
-				$tbody.append($tr);
+				$accordion.append($card);
+			}
+
+			for (let rowNum = 0; rowNum < data.length; rowNum++) {
+				let row = data[rowNum];
+				if (row.hasOwnProperty('_id')) {
+					delete row['_id'];
+				}
+				if (row.hasOwnProperty('_rev')) {
+					delete row['_rev'];
+				}
+				$('#json-' + rowNum).html(this.jsonRenderer(row));
+			}
+
+			$accordion.searcher({
+				itemSelector: '.panel', // jQuery selector for the data item element
+				textSelector: '.panel-body', // jQuery selector for the element which contains the text
+				inputSelector: '#search-input', // jQuery selector for the input element
 			});
+
+			$('.collapse').collapse('show');
 		});
 
 		return true;
@@ -1571,39 +1598,35 @@ export default class SitemapController {
 			parentSelectorIds,
 			selectorId,
 		};
-		browser.runtime.sendMessage(request).then(function (response) {
+
+		browser.runtime.sendMessage(request).then(response => {
 			if (response.length === 0) {
 				return;
 			}
-			const dataColumns = Object.keys(response[0]);
 
-			console.log(dataColumns);
+			let $dataPreviewPanel = ich.DataPreview();
 
-			const $dataPreviewPanel = ich.DataPreview({
-				columns: dataColumns,
-			});
 			$('#viewport').append($dataPreviewPanel);
 			$dataPreviewPanel.modal('show');
 			// display data
 			// Doing this the long way so there aren't xss vulnerubilites
 			// while working with data or with the selector titles
-			const $tbody = $('tbody', $dataPreviewPanel);
-			response.forEach(function (row) {
-				const $tr = $('<tr></tr>');
-				dataColumns.forEach(function (column) {
-					const $td = $('<td></td>');
-					let cellData = row[column];
-					if (typeof cellData === 'object') {
-						cellData = JSON.stringify(cellData);
-					}
-					$td.text(cellData);
-					$tr.append($td);
+			let $accordion = $('#data-preview', $dataPreviewPanel);
+			for (let rowNum = 0; rowNum < response.length; rowNum++) {
+				let $card = ich.ItemCard({
+					id: rowNum,
+					url: response[rowNum].url || 'Item' + rowNum,
 				});
-				$tbody.append($tr);
-			});
+				$accordion.append($card);
+			}
+
 
 			const windowHeight = $(window).height();
+			for (let rowNum = 0; rowNum < response.length; rowNum++) {
+				$('#json-' + rowNum).html(this.jsonRenderer(response[rowNum]));
+			}
 
+			$('.collapse').collapse('show');
 			$('.data-preview-modal .modal-body').height(windowHeight - 130);
 
 			// remove modal from dom after it is closed

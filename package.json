@@ -19,17 +19,19 @@
 	},
 	"dependencies": {
 		"axios": "^0.19.2",
-		"icanhaz": "0.10.3",
-		"papaparse": "^4.1.0",
-		"pouchdb": "^7.1.1",
-		"sugar": "^1.4.1",
-		"d3": "^3.3.8",
 		"bootstrap": "3.1.1",
+		"d3": "^3.3.8",
+		"icanhaz": "0.10.3",
 		"jquery": "^3.4.1",
 		"jquery-flexdatalist": "^2.2.4",
-		"webextension-polyfill": "^0.6.0",
+		"jquery-searcher": "^0.3.0",
+		"nanoid": "^2.1.11",
+		"papaparse": "^4.1.0",
+		"pouchdb": "^7.1.1",
+		"renderjson": "^1.4.0",
+		"sugar": "^1.4.1",
 		"@babel/runtime": "^7.8.4",
-		"nanoid": "^2.1.11"
+		"webextension-polyfill": "^0.6.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.1.2",

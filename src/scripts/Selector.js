@@ -245,6 +245,7 @@ export default class Selector {
 			deferredData.done(
 				function (data) {
 					this.manipulateData(data);
+					data.forEach(item => (item.url = window.location.href));
 					d.resolve(data);
 				}.bind(this)
 			);
