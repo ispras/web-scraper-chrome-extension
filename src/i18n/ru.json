@@ -220,5 +220,7 @@
 	"content-selector-select-parent-key": "Используйте P для выбора родителя",
 	"content-selector-select-element-key": "Используйте S для выбора элемента",
 	"content-selector-enable-key-events-title": "Включить события по клавишам",
-	"content-selector-enable-key-events-text": "Клавиши"
+	"content-selector-enable-key-events-text": "Клавиши",
+	"selector-edit-refresh-button-title": "Обновить, если вы вручную изменили селектор",
+	"options-title": "Web Scraper"
 }

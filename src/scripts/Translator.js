@@ -16,7 +16,7 @@ export default class Translator {
 			if (selector === '[data-i18n]') {
 				$(elem).html(this.getTranslationByKey(messageKey));
 			} else {
-				$(elem).attr(messageKey, this.getTranslationByKey(messageKey));
+				$(elem).attr(attribute, this.getTranslationByKey(messageKey));
 			}
 		});
 	}

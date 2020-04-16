@@ -219,5 +219,7 @@
 	"content-selector-select-parent-key": "Use P key to select parent",
 	"content-selector-select-element-key": "Use S key to select element",
 	"content-selector-enable-key-events-title": "Click here to enable key press events for selection",
-	"content-selector-enable-key-events-text": "Enable key events"
+	"content-selector-enable-key-events-text": "Enable key events",
+	"selector-edit-refresh-button-title": "Refresh if you manually changed the selector",
+	"options-title": "Web Scraper"
 }
