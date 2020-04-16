@@ -13,10 +13,14 @@ export default class Translator {
 		let selector = '[' + attribute + ']';
 		$(selector).each((_, elem) => {
 			let messageKey = $(elem).attr(attribute);
-			if (selector === '[data-i18n]') {
-				$(elem).html(this.getTranslationByKey(messageKey));
-			} else {
-				$(elem).attr(attribute, this.getTranslationByKey(messageKey));
+			try {
+				if (selector === '[data-i18n]') {
+					$(elem).html(this.getTranslationByKey(messageKey));
+				} else {
+					$(elem).attr(attribute, this.getTranslationByKey(messageKey));
+				}
+			} catch (e) {
+				$(elem).attr(attribute, messageKey);
 			}
 		});
 	}
@@ -24,10 +28,10 @@ export default class Translator {
 		return $.i18n(element);
 	}
 
-	static initLocal(locale) {
+	static initLocale(locale) {
 		this.getTranslationByKey({
 			locale: locale,
 		});
-		return this.getTranslationByKey().load('../i18n/locales.json');
+		return $.i18n().load('../i18n/locales.json');
 	}
 }

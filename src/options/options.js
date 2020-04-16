@@ -118,7 +118,7 @@ let config = new Config();
 
 $(() => {
 	browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-		Translator.initLocal(locale)
+		Translator.initLocale(locale)
 			.promise()
 			.then(() => {
 				initPopups();

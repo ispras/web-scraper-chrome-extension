@@ -222,5 +222,7 @@
 	"content-selector-enable-key-events-title": "Включить события по клавишам",
 	"content-selector-enable-key-events-text": "Клавиши",
 	"selector-edit-refresh-button-title": "Обновить, если вы вручную изменили селектор",
-	"options-title": "Web Scraper"
+	"options-title": "Web Scraper",
+	"options-sitemapDb-placeholder": "Database URL",
+	"options-sitemapdb-label": "Sitemap db"
 }

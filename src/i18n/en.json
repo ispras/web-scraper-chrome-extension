@@ -221,5 +221,7 @@
 	"content-selector-enable-key-events-title": "Click here to enable key press events for selection",
 	"content-selector-enable-key-events-text": "Enable key events",
 	"selector-edit-refresh-button-title": "Refresh if you manually changed the selector",
-	"options-title": "Web Scraper"
+	"options-title": "Web Scraper",
+	"options-sitemapDb-placeholder": "Database URL",
+	"options-sitemapdb-label": "Sitemap db"
 }
