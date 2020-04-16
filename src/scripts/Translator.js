@@ -4,35 +4,30 @@ import '@wikimedia/jquery.i18n/src/jquery.i18n.parser';
 import '@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks';
 import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter';
 import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
-import * as browser from 'webextension-polyfill';
+
 export default class Translator {
 	static translatePage() {
-		$('[data-i18n]').each(function() {
-			let messageKey = $(this).attr('data-i18n');
-			$(this).html($.i18n(messageKey));
-		});
-		($('[placeholder]') || $('[title]')).each(function() {
-			let messageKey = $(this).attr('data-i18n');
-			$(this).html($.i18n(messageKey));
-			let placeholderKey = $(this).attr('placeholder');
-			$(this).attr('placeholder', $.i18n(placeholderKey));
-			let titleKey = $(this).attr('title');
-			$(this).attr('title', $.i18n(titleKey));
-		});
-
-		// $('[title]').each(function() {
-		// 	let titleKey = $(this).attr('title');
-		// 	$(this).attr('title', $.i18n(titleKey));
-		// });
+		['title', 'data-i18n', 'placeholder'].forEach(attribute => this.translateAttribute(attribute));
 	}
-	static translateElement(element) {
+	static translateAttribute(attribute = 'data-i18n') {
+		let selector = '[' + attribute + ']';
+		$(selector).each((_, elem) => {
+			let messageKey = $(elem).attr(attribute);
+			if (selector === '[data-i18n]') {
+				$(elem).html(this.getTranslationByKey(messageKey));
+			} else {
+				$(elem).attr(messageKey, this.getTranslationByKey(messageKey));
+			}
+		});
+	}
+	static getTranslationByKey(element) {
 		return $.i18n(element);
 	}
 
 	static initLocal(locale) {
-		this.translateElement({
+		this.getTranslationByKey({
 			locale: locale,
 		});
-		return this.translateElement().load('../i18n/locales.json');
+		return this.getTranslationByKey().load('../i18n/locales.json');
 	}
 }

@@ -8,9 +8,9 @@ function initPopups() {
 	// popups for Storage setting input fields
 	$('#sitemapDb')
 		.popover({
-			title: Translator.translateElement('options-database-sitemap-title'),
+			title: Translator.getTranslationByKey('options-database-sitemap-title'),
 			html: true,
-			content: Translator.translateElement('options-couchDB-url') + ' <br /> http://example.com/scraper-sitemaps/',
+			content: Translator.getTranslationByKey('options-couchDB-url') + ' <br /> http://example.com/scraper-sitemaps/',
 			placement: 'bottom',
 		})
 		.blur(function() {
@@ -19,9 +19,9 @@ function initPopups() {
 
 	$('#dataDb')
 		.popover({
-			title: Translator.translateElement('options-database-scraped-data-title'),
+			title: Translator.getTranslationByKey('options-database-scraped-data-title'),
 			html: true,
-			content: Translator.translateElement('options-couchdb-database-url'),
+			content: Translator.getTranslationByKey('options-couchdb-database-url'),
 			placement: 'bottom',
 		})
 		.blur(function() {
@@ -30,9 +30,9 @@ function initPopups() {
 
 	$('#restUrl')
 		.popover({
-			title: Translator.translateElement('options-url-to-push'),
+			title: Translator.getTranslationByKey('options-url-to-push'),
 			html: true,
-			content: Translator.translateElement('options-rest-api-url'),
+			content: Translator.getTranslationByKey('options-rest-api-url'),
 			placement: 'bottom',
 		})
 		.blur(function() {
@@ -95,9 +95,9 @@ function initFormSubmit() {
 			.then(() => {
 				$('.alert')
 					.attr('id', 'success')
-					.text(Translator.translateElement('options-successfully-updated'))
+					.text(Translator.getTranslationByKey('options-successfully-updated'))
 					.show();
-				Translator.translateElement({
+				Translator.getTranslationByKey({
 					locale: newConfig.locale,
 				});
 				Translator.translatePage();
@@ -105,7 +105,7 @@ function initFormSubmit() {
 			.catch(() => {
 				$('.alert')
 					.attr('id', 'error')
-					.text(Translator.translateElement('options-error-updating') + chrome.runtime.lastError.message)
+					.text(Translator.getTranslationByKey('options-error-updating') + chrome.runtime.lastError.message)
 					.show();
 			});
 

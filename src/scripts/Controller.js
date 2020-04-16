@@ -71,7 +71,7 @@ export default class SitemapController {
 				.promise()
 				.then(() => {
 					this.selectorTypes = this.selectorTypes.map(typeObj => {
-						typeObj.title = Translator.translateElement(typeObj.type);
+						typeObj.title = Translator.getTranslationByKey(typeObj.type);
 						return typeObj;
 					});
 				})
@@ -358,19 +358,19 @@ export default class SitemapController {
 				_id: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('sitemapid-empty-message'),
+							message: Translator.getTranslationByKey('sitemapid-empty-message'),
 						},
 						stringLength: {
 							min: 3,
-							message: Translator.translateElement('sitemapid-short-message'),
+							message: Translator.getTranslationByKey('sitemapid-short-message'),
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message: Translator.translateElement('sitemapid-invalid-char'),
+							message: Translator.getTranslationByKey('sitemapid-invalid-char'),
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
-							message: Translator.translateElement('sitemapid-repeated-id'),
+							message: Translator.getTranslationByKey('sitemapid-repeated-id'),
 							callback: function() {
 								return true;
 							},
@@ -380,10 +380,10 @@ export default class SitemapController {
 				startUrls: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('sitemapurl-empty-message'),
+							message: Translator.getTranslationByKey('sitemapurl-empty-message'),
 						},
 						callback: {
-							message: Translator.translateElement('sitemapurl-invalid-message'),
+							message: Translator.getTranslationByKey('sitemapurl-invalid-message'),
 							callback: function(value) {
 								return Sitemap.validateStartUrls(value.split(','));
 							},
@@ -396,7 +396,7 @@ export default class SitemapController {
 							callback: function(value) {
 								if (!value) {
 									return {
-										message: Translator.translateElement('sitemapmodel-empty-message'),
+										message: Translator.getTranslationByKey('sitemapmodel-empty-message'),
 										valid: true,
 									};
 								}
@@ -405,7 +405,7 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: Translator.translateElement('sitemapjson-invalid-message'),
+										message: Translator.getTranslationByKey('sitemapjson-invalid-message'),
 									};
 								}
 							}.bind(this),
@@ -436,15 +436,15 @@ export default class SitemapController {
 					validators: {
 						stringLength: {
 							min: 3,
-							message: Translator.translateElement('sitemapid-short-message'),
+							message: Translator.getTranslationByKey('sitemapid-short-message'),
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message: Translator.translateElement('sitemapid-invalid-char'),
+							message: Translator.getTranslationByKey('sitemapid-invalid-char'),
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
-							message: Translator.translateElement('sitemapid-repeated-id'),
+							message: Translator.getTranslationByKey('sitemapid-repeated-id'),
 							callback: function(value, validator) {
 								validator.revalidateField('sitemapJSON');
 								return true;
@@ -455,10 +455,10 @@ export default class SitemapController {
 				sitemapJSON: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('sitemapjson-empty-message'),
+							message: Translator.getTranslationByKey('sitemapjson-empty-message'),
 						},
 						callback: {
-							message: Translator.translateElement('sitemapjson-invalid-message'),
+							message: Translator.getTranslationByKey('sitemapjson-invalid-message'),
 							callback: function(value, validator) {
 								try {
 									let sitemap = JSON.parse(value);
@@ -468,19 +468,19 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message: Translator.translateElement('sitemapid-empty-message'),
+												message: Translator.getTranslationByKey('sitemapid-empty-message'),
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message: Translator.translateElement('sitemapid-short-message'),
+												message: Translator.getTranslationByKey('sitemapid-short-message'),
 											};
 										}
 										if (!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-/]+$')) {
 											return {
 												valid: false,
-												message: Translator.translateElement('sitemapid-invalid-char'),
+												message: Translator.getTranslationByKey('sitemapid-invalid-char'),
 											};
 										}
 									}
@@ -489,13 +489,13 @@ export default class SitemapController {
 									if (!sitemap.hasOwnProperty('startUrls')) {
 										return {
 											valid: false,
-											message: Translator.translateElement('sitemapurl-empty-message'),
+											message: Translator.getTranslationByKey('sitemapurl-empty-message'),
 										};
 									}
 									if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
 										return {
 											valid: false,
-											message: Translator.translateElement('sitemapurl-invalid-message'),
+											message: Translator.getTranslationByKey('sitemapurl-invalid-message'),
 										};
 									}
 
@@ -506,11 +506,11 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: Translator.translateElement('sitemapjson-invalid-message'),
+										message: Translator.getTranslationByKey('sitemapjson-invalid-message'),
 									};
 								}
 								return {
-									message: Translator.translateElement('sitemap-valid-message'),
+									message: Translator.getTranslationByKey('sitemap-valid-message'),
 									valid: true,
 								};
 							}.bind(this),
@@ -524,7 +524,7 @@ export default class SitemapController {
 	readBlob() {
 		let files = $('#sitemapFiles')[0].files;
 		if (!files.length) {
-			alert(Translator.translateElement('selecting-file-error'));
+			alert(Translator.getTranslationByKey('selecting-file-error'));
 			return;
 		}
 		let file = files[0];
@@ -813,29 +813,29 @@ export default class SitemapController {
 				id: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('sitemapid-empty-message'),
+							message: Translator.getTranslationByKey('sitemapid-empty-message'),
 						},
 						stringLength: {
 							min: 3,
-							message: Translator.translateElement('sitemapid-short-message'),
+							message: Translator.getTranslationByKey('sitemapid-short-message'),
 						},
 						regexp: {
 							regexp: /^[^_].*$/,
-							message: Translator.translateElement('selectorid-underscore'),
+							message: Translator.getTranslationByKey('selectorid-underscore'),
 						},
 					},
 				},
 				selector: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('selector-empty-message'),
+							message: Translator.getTranslationByKey('selector-empty-message'),
 						},
 					},
 				},
 				regex: {
 					validators: {
 						callback: {
-							message: Translator.translateElement('regex-regular-expressions-error-message'),
+							message: Translator.getTranslationByKey('regex-regular-expressions-error-message'),
 							callback: function(value, validator) {
 								// allow no regex
 								if (!value) {
@@ -855,7 +855,7 @@ export default class SitemapController {
 				regexgroup: {
 					validators: {
 						callback: {
-							message: Translator.translateElement('regex-group-numeric-error-message'),
+							message: Translator.getTranslationByKey('regex-group-numeric-error-message'),
 							callback: function(value, validator) {
 								if (value === '') {
 									return true;
@@ -868,38 +868,38 @@ export default class SitemapController {
 				clickElementSelector: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('selector-click-empty.message'),
+							message: Translator.getTranslationByKey('selector-click-empty.message'),
 						},
 					},
 				},
 				tableHeaderRowSelector: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('selector-header-empty-message'),
+							message: Translator.getTranslationByKey('selector-header-empty-message'),
 						},
 					},
 				},
 				tableDataRowSelector: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('selector-data-row-empty-message'),
+							message: Translator.getTranslationByKey('selector-data-row-empty-message'),
 						},
 					},
 				},
 				delay: {
 					validators: {
 						numeric: {
-							message: Translator.translateElement('delay-numeric-message'),
+							message: Translator.getTranslationByKey('delay-numeric-message'),
 						},
 					},
 				},
 				paginationLimit: {
 					validators: {
 						numeric: {
-							message: Translator.translateElement('pagination-limit-numeric-message'),
+							message: Translator.getTranslationByKey('pagination-limit-numeric-message'),
 						},
 						callback: {
-							message: Translator.translateElement('pagination-limit-small-message'),
+							message: Translator.getTranslationByKey('pagination-limit-small-message'),
 							callback: function(value, validator) {
 								if (!value) {
 									return true;
@@ -912,10 +912,10 @@ export default class SitemapController {
 				parentSelectors: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('parent-selector-empty-message'),
+							message: Translator.getTranslationByKey('parent-selector-empty-message'),
 						},
 						callback: {
-							message: Translator.translateElement('handle-recursive-error-message'),
+							message: Translator.getTranslationByKey('handle-recursive-error-message'),
 							callback: function(value, validator, $field) {
 								let sitemap = this.getCurrentlyEditedSelectorSitemap();
 								return !sitemap.selectors.hasRecursiveElementSelectors();
@@ -1206,13 +1206,13 @@ export default class SitemapController {
 				requestInterval: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('request-interval-empty-message'),
+							message: Translator.getTranslationByKey('request-interval-empty-message'),
 						},
 						numeric: {
-							message: Translator.translateElement('request-interval-numeric-message'),
+							message: Translator.getTranslationByKey('request-interval-numeric-message'),
 						},
 						callback: {
-							message: Translator.translateElement('request-interval-short-message'),
+							message: Translator.getTranslationByKey('request-interval-short-message'),
 							callback: function(value, validator) {
 								return value >= 2000;
 							},
@@ -1222,23 +1222,23 @@ export default class SitemapController {
 				requestIntervalRandomness: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('request-interval-randomness-empty-message'),
+							message: Translator.getTranslationByKey('request-interval-randomness-empty-message'),
 						},
 						numeric: {
-							message: Translator.translateElement('request-interval-randomness-numeric-message'),
+							message: Translator.getTranslationByKey('request-interval-randomness-numeric-message'),
 						},
 					},
 				},
 				pageLoadDelay: {
 					validators: {
 						notEmpty: {
-							message: Translator.translateElement('page-load-delay-empty-message'),
+							message: Translator.getTranslationByKey('page-load-delay-empty-message'),
 						},
 						numeric: {
-							message: Translator.translateElement('page-load-delay-numeric-message'),
+							message: Translator.getTranslationByKey('page-load-delay-numeric-message'),
 						},
 						callback: {
-							message: Translator.translateElement('page-load-delay-short-message'),
+							message: Translator.getTranslationByKey('page-load-delay-short-message'),
 							callback: function(value, validator) {
 								return value >= 500;
 							},
