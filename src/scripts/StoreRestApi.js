@@ -1,17 +1,19 @@
+import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
-import axios from 'axios';
 
 export default class StoreRestApi {
 	constructor(config) {
 		this.localDataStore = new StorePouchDB(config);
-		axios.defaults.baseURL = config.restUrl;
-		axios.defaults.headers.post['Content-Type'] = 'application/json';
-		axios.defaults.headers.put['Content-Type'] = 'application/json';
+		this.axiosInstance = axios.create({
+			baseURL: config.restUrl,
+		});
+		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
+		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
 	}
 
 	createSitemap(sitemap) {
-		return axios
+		return this.axiosInstance
 			.post('/sitemaps/', Sitemap.sitemapFromObj(sitemap).exportSitemap())
 			.then(() => {
 				return sitemap;
@@ -22,24 +24,26 @@ export default class StoreRestApi {
 	}
 
 	async saveSitemap(sitemap) {
-		let sitemapExists = await this.sitemapExists(sitemap._id);
+		const sitemapExists = await this.sitemapExists(sitemap._id);
 		if (sitemapExists) {
-			return axios
-				.put('/sitemaps/' + sitemap._id, Sitemap.sitemapFromObj(sitemap).exportSitemap())
+			return this.axiosInstance
+				.put(`/sitemaps/${sitemap._id}`, Sitemap.sitemapFromObj(sitemap).exportSitemap())
 				.then(() => {
 					return sitemap;
 				})
-				.catch(() => {
+				.catch(response => {
+					if (response.statusCode() === 304) {
+						return sitemap;
+					}
 					alert('StoreApi: Error updating sitemap.');
 				});
-		} else {
-			return this.createSitemap(sitemap);
 		}
+		return this.createSitemap(sitemap);
 	}
 
 	deleteSitemap(sitemap) {
-		return axios
-			.delete('/sitemaps/' + sitemap._id)
+		return this.axiosInstance
+			.delete(`/sitemaps/${sitemap._id}`)
 			.then(response => {
 				return response.data;
 			})
@@ -48,8 +52,8 @@ export default class StoreRestApi {
 			});
 	}
 
-	getAllSitemaps(iterable) {
-		return axios
+	getAllSitemaps() {
+		return this.axiosInstance
 			.get('/sitemaps/')
 			.then(response => {
 				return Array.from(response.data, sitemapObj => {
@@ -62,15 +66,10 @@ export default class StoreRestApi {
 	}
 
 	async sitemapExists(sitemapId) {
-		let sitemaps = await this.getAllSitemaps().catch(() => {
+		const sitemaps = await this.getAllSitemaps().catch(() => {
 			alert('StoreApi: Could not get all sitemaps.');
 		});
-		for (let sitemap of sitemaps) {
-			if (sitemap._id === sitemapId) {
-				return true;
-			}
-		}
-		return false;
+		return sitemaps.some(sitemap => sitemap._id === sitemapId);
 	}
 
 	initSitemapDataDb(sitemapId) {

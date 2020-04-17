@@ -8,19 +8,21 @@ import Sitemap from './Sitemap';
  */
 function normalizeProperties(docs) {
 	// get all keys of the objects
-	let keys = new Set(
+	const keys = new Set(
 		docs.flatMap(doc => {
 			return Object.keys(doc);
 		})
 	);
 
 	// add missing keys to objects
-	docs.forEach(doc => {
-		for (let key of keys) {
-			if (!(key in doc)) {
-				doc[key] = '';
+	return docs.map(doc => {
+		const normalizedDoc = doc.clone();
+		keys.forEach(key => {
+			if (!(key in normalizedDoc)) {
+				normalizedDoc[key] = '';
 			}
-		}
+		});
+		return doc;
 	});
 }
 
@@ -32,14 +34,13 @@ class StoreScrapeResultWriter {
 	writeDocs(docs) {
 		if (docs.length === 0) {
 			return Promise.resolve();
-		} else {
-			normalizeProperties(docs);
-			return this.db.bulkDocs({ docs: docs }).catch(err => {
-				if (err !== null) {
-					console.log('Error while persisting scraped data to db', err);
-				}
-			});
 		}
+		const normalizedDocs = normalizeProperties(docs);
+		return this.db.bulkDocs({ docs: normalizedDocs }).catch(err => {
+			if (err !== null) {
+				console.log('Error while persisting scraped data to db', err);
+			}
+		});
 	}
 }
 
@@ -51,16 +52,16 @@ export default class StorePouchDB {
 	}
 
 	sanitizeSitemapDataDbName(dbName) {
-		return 'sitemap-data-' + dbName.replace(/[^a-z0-9_\$\(\)\+\-/]/gi, '_');
+		return `sitemap-data-${dbName.replace(/[^a-z0-9_\$\(\)\+\-/]/gi, '_')}`;
 	}
 
 	getSitemapDataDbLocation(sitemapId) {
-		let dbName = this.sanitizeSitemapDataDbName(sitemapId);
+		const dbName = this.sanitizeSitemapDataDbName(sitemapId);
 		return this.config.dataDb + dbName;
 	}
 
 	getSitemapDataDb(sitemapId) {
-		let dbLocation = this.getSitemapDataDbLocation(sitemapId);
+		const dbLocation = this.getSitemapDataDbLocation(sitemapId);
 		return new PouchDB(dbLocation);
 	}
 
@@ -70,7 +71,7 @@ export default class StorePouchDB {
 	 * @returns {undefined}
 	 */
 	async initSitemapDataDb(sitemapId) {
-		let store = this;
+		const store = this;
 		let db = this.getSitemapDataDb(sitemapId);
 		try {
 			await db.destroy();
@@ -82,13 +83,13 @@ export default class StorePouchDB {
 	}
 
 	async createSitemap(sitemap) {
-		let sitemapJson = JSON.parse(JSON.stringify(sitemap));
+		const sitemapJson = JSON.parse(JSON.stringify(sitemap));
 
 		if (!sitemap._id) {
 			console.log('cannot save sitemap without an id', sitemap);
 		}
 
-		let response = await this.sitemapDb.put(sitemapJson);
+		const response = await this.sitemapDb.put(sitemapJson);
 		sitemap._rev = response.rev;
 		return sitemap;
 	}
@@ -98,33 +99,32 @@ export default class StorePouchDB {
 	}
 
 	async deleteSitemap(sitemap) {
-		let sitemapJson = JSON.parse(JSON.stringify(sitemap));
+		const sitemapJson = JSON.parse(JSON.stringify(sitemap));
 		await this.sitemapDb.remove(sitemapJson);
-		let db = this.getSitemapDataDb(sitemap._id);
+		const db = this.getSitemapDataDb(sitemap._id);
 		await db.destroy();
 	}
 
 	async getAllSitemaps() {
-		let result = await this.sitemapDb.allDocs({ include_docs: true });
+		const result = await this.sitemapDb.allDocs({ include_docs: true });
 		return Array.from(result.rows, row => {
-			let sitemapObj = row.doc;
-			if (!!browser.extension) {
+			const sitemapObj = row.doc;
+			if (browser.extension) {
 				return sitemapObj;
-			} else {
-				let sitemap = Sitemap.sitemapFromObj(sitemapObj);
-				if (sitemapObj._rev) {
-					sitemap._rev = sitemapObj._rev;
-				}
-				return sitemap;
 			}
+			const sitemap = Sitemap.sitemapFromObj(sitemapObj);
+			if (sitemapObj._rev) {
+				sitemap._rev = sitemapObj._rev;
+			}
+			return sitemap;
 		});
 	}
 
 	async getSitemapData(sitemap) {
-		let db = this.getSitemapDataDb(sitemap._id);
-		let response = await db.allDocs({ include_docs: true });
+		const db = this.getSitemapDataDb(sitemap._id);
+		const response = await db.allDocs({ include_docs: true });
 
-		let responseData = Array.from(response.rows, row => {
+		const responseData = Array.from(response.rows, row => {
 			return row.doc;
 		});
 		return normalizeProperties(responseData);
@@ -133,11 +133,7 @@ export default class StorePouchDB {
 	async sitemapExists(sitemapId) {
 		return this.sitemapDb
 			.get(sitemapId)
-			.then(() => {
-				return Promise.resolve(true);
-			})
-			.catch(() => {
-				return Promise.resolve(false);
-			});
+			.then(() => true)
+			.catch(() => false);
 	}
 }

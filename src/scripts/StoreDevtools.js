@@ -1,5 +1,5 @@
-import Sitemap from './Sitemap';
 import * as browser from 'webextension-polyfill';
+import Sitemap from './Sitemap';
 
 /**
  * From devtools panel there is no possibility to execute XHR requests. So all requests to a remote CouchDb must be
@@ -8,29 +8,29 @@ import * as browser from 'webextension-polyfill';
  */
 export default class StoreDevtools {
 	async createSitemap(sitemap) {
-		let request = {
+		const request = {
 			createSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
 		};
 
-		let newSitemap = await browser.runtime.sendMessage(request);
+		const newSitemap = await browser.runtime.sendMessage(request);
 		sitemap._rev = newSitemap._rev;
 		return sitemap;
 	}
 
 	async saveSitemap(sitemap) {
-		let request = {
+		const request = {
 			saveSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
 		};
 
-		let newSitemap = await browser.runtime.sendMessage(request);
+		const newSitemap = await browser.runtime.sendMessage(request);
 		sitemap._rev = newSitemap._rev;
 		return sitemap;
 	}
 
 	deleteSitemap(sitemap) {
-		let request = {
+		const request = {
 			deleteSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
 		};
@@ -38,21 +38,17 @@ export default class StoreDevtools {
 	}
 
 	async getAllSitemaps() {
-		let request = {
+		const request = {
 			getAllSitemaps: true,
 		};
-		let response = await browser.runtime.sendMessage(request);
+		const response = await browser.runtime.sendMessage(request);
 		return Array.from(response, sitemapObj => {
-			let sitemap = Sitemap.sitemapFromObj(sitemapObj);
-			if (sitemapObj._rev) {
-				sitemap._rev = sitemapObj._rev;
-			}
-			return sitemap;
+			return Sitemap.sitemapFromObj(sitemapObj);
 		});
 	}
 
 	getSitemapData(sitemap) {
-		let request = {
+		const request = {
 			getSitemapData: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
 		};
@@ -61,9 +57,9 @@ export default class StoreDevtools {
 	}
 
 	sitemapExists(sitemapId) {
-		let request = {
+		const request = {
 			sitemapExists: true,
-			sitemapId: sitemapId,
+			sitemapId,
 		};
 
 		return browser.runtime.sendMessage(request);

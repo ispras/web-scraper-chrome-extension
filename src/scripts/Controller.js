@@ -80,7 +80,7 @@ export default class SitemapController {
 				title: 'Grouped',
 			},
 		];
-    this.jsonRenderer = renderjson
+		this.jsonRenderer = renderjson
 			.set_icons('+', '-')
 			.set_show_to_level('all')
 			.set_max_string_length(80)
@@ -424,11 +424,6 @@ export default class SitemapController {
 		const sitemapForm = ich.SitemapCreate();
 		$('#viewport').html(sitemapForm);
 		this.initSitemapValidation();
-
-		// //XXX quickFix for new sitemap creation bug
-		// const validator = this.getFormValidator();
-		// validator.updateStatus('model', 'VALID', 'callback');
-
 		return true;
 	}
 
@@ -644,13 +639,13 @@ export default class SitemapController {
 		}
 
 		// check whether sitemap with this id already exist
-		const sitemapExists = this.store.sitemapExists(id);
+		const sitemapExists = await this.store.sitemapExists(id);
 		if (sitemapExists) {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
 			let sitemap = new Sitemap(
-				sitemapObj._id,
+				id,
 				sitemapObj.startUrls,
 				sitemapObj.model,
 				sitemapObj.selectors
@@ -929,9 +924,9 @@ export default class SitemapController {
 
 		$('#selectorId').flexdatalist({
 			init: this.initSelectorValidation(),
-			textProperty: '{field_name}',
-			valueProperty: 'field_name',
-			data: sitemap.model.getDataForSelector(selector.id),
+			textProperty: '{fieldName}',
+			valueProperty: 'fieldName',
+			data: [...sitemap.model, { entity: '', field: '', fieldName: selector.id }],
 			searchIn: ['entity', 'field'],
 			visibleProperties: ['entity', 'field'],
 			groupBy: 'entity',
@@ -1619,7 +1614,6 @@ export default class SitemapController {
 				});
 				$accordion.append($card);
 			}
-
 
 			const windowHeight = $(window).height();
 			for (let rowNum = 0; rowNum < response.length; rowNum++) {
