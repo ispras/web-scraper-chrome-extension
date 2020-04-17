@@ -317,26 +317,26 @@ export default class ContentSelector {
 	}
 
 	attachToolbar() {
-		//TODO move this to separate html
+		// TODO move this to separate html
 		var $toolbar =
 			'<div id="-selector-toolbar">' +
 			'<div class="list-item"><div class="selector-container"><div class="selector"></div></div></div>' +
 			'<div class="input-group-addon list-item">' +
-			'<input type="checkbox" title="content-selector-different-element-selection-title" name="diferentElementSelection">' +
+			'<input type="checkbox" title="content_selector_different_element_selection_title" name="diferentElementSelection">' +
 			'<div class="popover top">' +
 			'<div class="close">×</div>' +
 			'<div class="arrow"></div>' +
 			'<div class="popover-content">' +
-			'<div class="txt" data-i18n="content-selector-different-element-selection-error">' +
+			'<div class="txt" data-i18n="content_selector_different_element_selection_error">' +
 			'</div>' +
 			'</div>' +
 			'</div>' +
 			'</div>' +
-			'<div class="list-item key-events"><div title="content-selector-enable-key-events-title" data-i18n="content-selector-enable-key-events-text"></div></div>' +
-			'<div class="list-item key-button key-button-select hide" title="content-selector-select-element-key">S</div>' +
-			'<div class="list-item key-button key-button-parent hide" title="content-selector-select-parent-key">P</div>' +
-			'<div class="list-item key-button key-button-child hide" title="content-selector-select-child-key">C</div>' +
-			'<div class="list-item done-selecting-button" data-i18n="content-selector-done-selecting-button"></div>' +
+			'<div class="list-item key-events"><div title="content_selector_enable_key_events_title" data-i18n="content_selector_enable_key_events_text"></div></div>' +
+			'<div class="list-item key-button key-button-select hide" title="content_selector_select_element_key">S</div>' +
+			'<div class="list-item key-button key-button-parent hide" title="content_selector_select_parent_key">P</div>' +
+			'<div class="list-item key-button key-button-child hide" title="content_selector_select_child_key">C</div>' +
+			'<div class="list-item done-selecting-button" data-i18n="content_selector_done_selecting_button"></div>' +
 			'</div>';
 		$('body').append($toolbar);
 

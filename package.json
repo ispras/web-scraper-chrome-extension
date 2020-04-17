@@ -1,6 +1,6 @@
 {
 	"name": "web-scraper-chrome-extension",
-	"version": "0.3.503",
+	"version": "0.3.507",
 	"description": "Web data extraction tool implemented as chrome extension",
 	"scripts": {
 		"lint": "eslint --ext .js,.vue src",
@@ -27,8 +27,7 @@
 		"jquery": "^3.4.1",
 		"jquery-flexdatalist": "^2.2.4",
 		"webextension-polyfill": "^0.6.0",
-		"nanoid": "^2.1.11",
-		"@wikimedia/jquery.i18n": "^1.0.7"
+		"nanoid": "^2.1.11"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.1.2",

@@ -1,15 +1,10 @@
-import '@wikimedia/jquery.i18n/src/jquery.i18n';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.messagestore';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.parser';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter';
-import '@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi';
 import * as browser from 'webextension-polyfill';
 
 export default class Translator {
 	static translatePage() {
 		['title', 'data-i18n', 'placeholder'].forEach(attribute => this.translateAttribute(attribute));
 	}
+
 	static translateAttribute(attribute = 'data-i18n') {
 		let selector = '[' + attribute + ']';
 		$(selector).each((_, elem) => {
@@ -25,18 +20,8 @@ export default class Translator {
 			}
 		});
 	}
-	static getTranslationByKey(element) {
-		return $.i18n(element);
-	}
 
-	static initLocale() {
-		return browser.runtime.sendMessage({ getLocale: true }).then(locale => {
-			$.i18n({
-				locale: locale,
-			});
-			return $.i18n()
-				.load('../i18n/locales.json')
-				.promise();
-		});
+	static getTranslationByKey(element) {
+		return browser.i18n.getMessage(element);
 	}
 }

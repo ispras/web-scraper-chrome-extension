@@ -1,8 +1,6 @@
-import * as browser from 'webextension-polyfill';
+import * as $ from 'jquery';
 import Translator from '../scripts/Translator';
 
 $(() => {
-	Translator.initLocale().then(() => {
-		Translator.translatePage();
-	});
+	Translator.translatePage();
 });
