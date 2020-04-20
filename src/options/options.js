@@ -14,10 +14,12 @@ function initPopups() {
 		.popover({
 			title: Translator.getTranslationByKey('options_couchdb_db_popup_title'),
 			html: true,
-			content: `${Translator.getTranslationByKey('options_couchdb_db_popup_content')} <br /> http://example.com/scraper-sitemaps/`,
+			content: `${Translator.getTranslationByKey(
+				'options_couchdb_db_popup_content'
+			)} <br /> http://example.com/scraper-sitemaps/`,
 			placement: 'bottom',
 		})
-		.blur(function() {
+		.blur(function () {
 			$(this).popover('hide');
 		});
 
@@ -25,10 +27,12 @@ function initPopups() {
 		.popover({
 			title: Translator.getTranslationByKey('options_couchdb_datadb_popup_title'),
 			html: true,
-			content: `${Translator.getTranslationByKey('options_couchdb_datadb_popup_content')} <br />http://example.com/`,
+			content: `${Translator.getTranslationByKey(
+				'options_couchdb_datadb_popup_content'
+			)} <br />http://example.com/`,
 			placement: 'bottom',
 		})
-		.blur(function() {
+		.blur(function () {
 			$(this).popover('hide');
 		});
 
@@ -39,14 +43,14 @@ function initPopups() {
 			content: Translator.getTranslationByKey('options_rest_url_popup_content'),
 			placement: 'bottom',
 		})
-		.blur(function() {
+		.blur(function () {
 			$(this).popover('hide');
 		});
 }
 
 function initConfigSwitch() {
 	// switch between configuration types
-	$('select[name=storageType]').change(function() {
+	$('select[name=storageType]').change(function () {
 		let type = $(this).val();
 		if (type === 'couchdb') {
 			$('.form-group.couchdb').show();
@@ -68,16 +72,14 @@ function initConfig() {
 		$('#sitemapDb').val(config.sitemapDb);
 		$('#dataDb').val(config.dataDb);
 		$('#restUrl').val(config.restUrl);
-
 		$('select[name=storageType]').change();
+		if (browser.i18n.getUILanguage() === 'ru' && config.storageType !== 'couchdb') {
+			$('#storageType [value=couchdb]').hide();
+		}
 	});
 }
 
 function initFormSubmit() {
-	if (browser.i18n.getUILanguage() === 'ru') {
-		$('#storageType [value=couchdb]').hide();
-	}
-
 	// Sync storage settings
 	$('form#storage_configuration').submit(() => {
 		const storageType = $('#storageType').val();
@@ -118,8 +120,8 @@ function initFormSubmit() {
 
 $(() => {
 	initPopups();
-	initConfig();
 	initConfigSwitch();
+	initConfig();
 	initFormSubmit();
 	Translator.translatePage();
 });
