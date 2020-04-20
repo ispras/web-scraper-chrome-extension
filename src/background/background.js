@@ -52,17 +52,23 @@ browser.runtime.onMessage.addListener(async request => {
 
 	if (request.createSitemap) {
 		return store.createSitemap(request.sitemap);
-	}else if (request.saveSitemap) {
+	}
+	if (request.saveSitemap) {
 		return store.saveSitemap(request.sitemap);
-	} else if (request.deleteSitemap) {
+	}
+	if (request.deleteSitemap) {
 		return store.deleteSitemap(request.sitemap);
-	} else if (request.getAllSitemaps) {
+	}
+	if (request.getAllSitemaps) {
 		return store.getAllSitemaps();
-	} else if (request.sitemapExists) {
+	}
+	if (request.sitemapExists) {
 		return store.sitemapExists(request.sitemapId);
-	}	else if (request.getSitemapData) {
+	}
+	if (request.getSitemapData) {
 		return store.getSitemapData(Sitemap.sitemapFromObj(request.sitemap));
-	}	else if (request.scrapeSitemap) {
+	}
+	if (request.scrapeSitemap) {
 		const sitemap = Sitemap.sitemapFromObj(request.sitemap);
 		const queue = new Queue();
 		const browserTab = new ChromePopupBrowser({
