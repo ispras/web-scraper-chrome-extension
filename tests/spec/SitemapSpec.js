@@ -23,7 +23,7 @@ describe("Sitemap", function () {
 			}
 		];
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -59,7 +59,7 @@ describe("Sitemap", function () {
 			}
 		];
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -97,7 +97,7 @@ describe("Sitemap", function () {
 			}
 		];
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -124,7 +124,7 @@ describe("Sitemap", function () {
 
 	it("should be able to change selector type", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -151,7 +151,7 @@ describe("Sitemap", function () {
 
 	it("should be able to export as JSON", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			_id: 'id',
 			_rev: 'rev',
 			selectors: [
@@ -172,7 +172,7 @@ describe("Sitemap", function () {
 
 	it("should be able to import from JSON", function () {
 
-		var expectedSitemap = new Sitemap({
+		var expectedSitemap = Sitemap.sitemapFromObj({
 			_id: 'id',
 			selectors: [
 				{
@@ -186,14 +186,14 @@ describe("Sitemap", function () {
 		});
 
 		var sitemapJSON = '{"_id":"id","selectors":[{"id":"a","type":"SelectorElement","parentSelectors":["a"]}]}';
-		var sitemap = new Sitemap();
+		var sitemap = Sitemap.sitemapFromObj();
 		sitemap.importSitemap(sitemapJSON);
 		expect(sitemap).toEqual(expectedSitemap);
 	});
 
 	it("should be able to export data as CSV", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -218,7 +218,7 @@ describe("Sitemap", function () {
 
 	it("should know what data columns is it going to return", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -239,7 +239,7 @@ describe("Sitemap", function () {
 	});
 
 	it("should be able to delete a selector", function () {
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -262,7 +262,7 @@ describe("Sitemap", function () {
 	});
 
 	it("should be able to delete a selector with child selectors", function () {
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -284,7 +284,7 @@ describe("Sitemap", function () {
 	});
 
 	it("should not delete selectors if they have multiple parent selectors when deleting one of their parent", function () {
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -318,7 +318,7 @@ describe("Sitemap", function () {
 	});
 
 	it("Should return one start url", function(){
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			startUrls:"http://example.com/"
 		});
 		var expectedURLS = ["http://example.com/"];
@@ -326,7 +326,7 @@ describe("Sitemap", function () {
 	});
 
 	it("Should return multiple start urls", function () {
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			startUrls: "http://example.com/[1-3].html"
 		});
 		var expectedURLS = [
@@ -338,7 +338,7 @@ describe("Sitemap", function () {
 	});
 
 	it("Should return multiple start urls with id at the end", function () {
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			startUrls: "http://example.com/?id=[1-3]"
 		});
 		var expectedURLS = [
@@ -350,7 +350,7 @@ describe("Sitemap", function () {
 	});
 
 	it("should return multiple start urls with specified incremental", function () {
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			startUrls: "http://example.com/?id=[0-20:10]"
 		});
 		var expectedURLS = [
@@ -362,7 +362,7 @@ describe("Sitemap", function () {
 	});
 
 	it("Should return multiple start urls with padding", function () {
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			startUrls: "http://example.com/[001-003].html"
 		});
 		var expectedURLS = [
@@ -375,7 +375,7 @@ describe("Sitemap", function () {
 
 	it("Should return multiple start urls when startUrl is an array", function(){
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			startUrls: ["http://example.com/1.html", "http://example.com/2.html", "http://example.com/3.html"]
 		});
 		var expectedURLS = [
@@ -387,7 +387,7 @@ describe("Sitemap", function () {
 	});
 
 	it("Should return only selectors which can have child selectors", function () {
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",

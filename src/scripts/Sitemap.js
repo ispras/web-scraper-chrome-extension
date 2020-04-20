@@ -1,17 +1,22 @@
 import DatePatternSupport from './DateUtils/DatePatternSupport';
 import SelectorList from './SelectorList';
+import Model from './Model';
 import * as Papa from 'papaparse';
 
 export default class Sitemap {
-	constructor(sitemapObj) {
-		this.initData(sitemapObj);
+	constructor(id, startUrls, model, selectors) {
+		this._id = id;
+		this.startUrls = startUrls;
+		this.model = new Model(model);
+		this.selectors = new SelectorList(selectors ? selectors : []);
 	}
 
-	initData(sitemapObj) {
-		for (let key in sitemapObj) {
-			this[key] = sitemapObj[key];
+	static sitemapFromObj(sitemapObj) {
+		let sitemap = new Sitemap(sitemapObj._id, sitemapObj.startUrls, sitemapObj.model, sitemapObj.selectors);
+		if (sitemapObj._rev) {
+			sitemap._rev = sitemapObj._rev;
 		}
-		this.selectors = new SelectorList(this.selectors);
+		return sitemap;
 	}
 
 	static isUrlValid(url) {
@@ -199,10 +204,7 @@ export default class Sitemap {
 		removeEmpty(sitemapObj);
 		return JSON.stringify(sitemapObj);
 	}
-	importSitemap(sitemapJSON) {
-		let sitemapObj = JSON.parse(sitemapJSON);
-		this.initData(sitemapObj);
-	}
+
 	// return a list of columns than can be exported
 	getDataColumns() {
 		let columns = [];
@@ -264,7 +266,7 @@ export default class Sitemap {
 	 * @returns {Sitemap}
 	 */
 	clone() {
-		let clonedJSON = JSON.parse(JSON.stringify(this));
-		return new Sitemap(clonedJSON);
+		let clonedObj = JSON.parse(JSON.stringify(this));
+		return new Sitemap(clonedObj._id, clonedObj.startUrls, clonedObj.model, clonedObj.selectors);
 	}
 }

@@ -37,7 +37,7 @@ describe("Chrome popup browser", function () {
 
 	it("should sendMessage to popup contentscript when data extraction is needed", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: 'a',

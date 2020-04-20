@@ -8,7 +8,7 @@ export default class DataExtractor {
 		if (options.sitemap instanceof Sitemap) {
 			this.sitemap = options.sitemap;
 		} else {
-			this.sitemap = new Sitemap(options.sitemap);
+			this.sitemap = Sitemap.sitemapFromObj(options.sitemap);
 		}
 
 		this.parentSelectorId = options.parentSelectorId;
