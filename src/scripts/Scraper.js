@@ -164,25 +164,22 @@ export default class Scraper {
 				$.whenCallSequentially(deferredDatamanipulations).done(
 					function() {
 						this.store.saveSitemap(this.sitemap, function() {});
-						this.resultWriter.writeDocs(
-							scrapedRecords,
-							function() {
-								var now = new Date().getTime();
-								// delay next job if needed
-								this._timeNextScrapeAvailable = now + this.requestInterval + Math.random() * this.requestIntervalRandomness;
-								if (now >= this._timeNextScrapeAvailable) {
-									this._run();
-								} else {
-									var delay = this._timeNextScrapeAvailable - now;
-									setTimeout(
-										function() {
-											this._run();
-										}.bind(this),
-										delay
-									);
-								}
-							}.bind(this)
-						);
+						this.resultWriter.writeDocs(scrapedRecords).then(() => {
+							var now = new Date().getTime();
+							// delay next job if needed
+							this._timeNextScrapeAvailable = now + this.requestInterval + Math.random() * this.requestIntervalRandomness;
+							if (now >= this._timeNextScrapeAvailable) {
+								this._run();
+							} else {
+								var delay = this._timeNextScrapeAvailable - now;
+								setTimeout(
+									function() {
+										this._run();
+									}.bind(this),
+									delay
+								);
+							}
+						});
 					}.bind(this)
 				);
 			}.bind(this)

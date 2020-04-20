@@ -1,4 +1,20 @@
-export default class Model {
+class Field {
+	constructor(entity, field, fieldName) {
+		this.entity = entity;
+		this.field = field;
+		this.fieldName = fieldName;
+	}
+}
+
+export default class Model extends Array {
+	constructor(fields) {
+		super();
+		const fieldsArray = fields || [];
+		fieldsArray.forEach(fieldObj => {
+			this.push(new Field(fieldObj.entity, fieldObj.field, fieldObj.fieldName));
+		});
+	}
+
 	static validateModel(model) {
 		if (model === undefined) {
 			return {
@@ -12,17 +28,26 @@ export default class Model {
 				message: 'JSON must be array',
 			};
 		}
-		for (let field_rule of model) {
-			if (!('entity' in field_rule) || !('field' in field_rule) || !('field_name' in field_rule)) {
-				return {
-					valid: false,
-					message: 'Each object in JSON array must contain keys entity, field, field_name.',
-				};
-			}
+
+		if (
+			!model.every(
+				fieldRule =>
+					'entity' in fieldRule && 'field' in fieldRule && 'fieldName' in fieldRule
+			)
+		) {
+			return {
+				valid: false,
+				message: 'Each object in JSON array must contain keys entity, field, fieldName.',
+			};
 		}
+
 		return {
 			message: 'Valid model',
 			valid: true,
 		};
+	}
+
+	toString() {
+		return this.length ? JSON.stringify(this, null, 4) : '';
 	}
 }

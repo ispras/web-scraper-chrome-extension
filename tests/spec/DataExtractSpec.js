@@ -15,7 +15,7 @@ describe("DataExtractor", function () {
 			}
 		]);
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -38,7 +38,7 @@ describe("DataExtractor", function () {
 			}
 		]);
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -68,7 +68,7 @@ describe("DataExtractor", function () {
 			}
 		]);
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -100,7 +100,7 @@ describe("DataExtractor", function () {
 			}
 		]);
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 		var extractor = new DataExtractor({
@@ -129,7 +129,7 @@ describe("DataExtractor", function () {
 			}
 		]);
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 		var extractor = new DataExtractor({
@@ -185,7 +185,7 @@ describe("DataExtractor", function () {
 			}
 		]);
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 		var extractor = new DataExtractor({
@@ -207,7 +207,7 @@ describe("DataExtractor", function () {
 				parentSelectors: ['_root']
 			}
 		];
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -239,7 +239,7 @@ describe("DataExtractor", function () {
 			}
 		];
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -273,7 +273,7 @@ describe("DataExtractor", function () {
 			}
 		];
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -311,7 +311,7 @@ describe("DataExtractor", function () {
 			}
 		];
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -373,7 +373,7 @@ describe("DataExtractor", function () {
 			}
 		];
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -444,7 +444,7 @@ describe("DataExtractor", function () {
 			}
 		];
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -495,7 +495,7 @@ describe("DataExtractor", function () {
 			}
 		];
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: selectors
 		});
 
@@ -514,7 +514,7 @@ describe("DataExtractor", function () {
 
 		var parentElement = $("#dataextract-get-data");
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -552,7 +552,7 @@ describe("DataExtractor", function () {
 
 	it("should be able to extract text data from head title", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "title",
@@ -591,7 +591,7 @@ describe("DataExtractor", function () {
 
 		var parentElement = $("#dataextract-get-element-text");
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "e",
@@ -639,7 +639,7 @@ describe("DataExtractor", function () {
 	it("should be able to extract multiple text results", function () {
 
 		var parentElement = $("#dataextract-get-data");
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -681,7 +681,7 @@ describe("DataExtractor", function () {
 	it("should be able to extract multiple text results with common data", function () {
 
 		var parentElement = $("#dataextract-get-data");
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -732,7 +732,7 @@ describe("DataExtractor", function () {
 	it("should be able to extract multiple text results within elements", function () {
 
 		var parentElement = $("#dataextract-get-element-text");
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "div",
@@ -781,7 +781,7 @@ describe("DataExtractor", function () {
 	it("should be able to extract multiple text records within single element", function () {
 
 		var parentElement = $("#dataextract-get-element-text");
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "div",
@@ -829,7 +829,7 @@ describe("DataExtractor", function () {
 
 		var parentElement = $("#dataextract-get-data-multiple-selectors");
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "div",
@@ -899,7 +899,7 @@ describe("DataExtractor", function () {
 
 		var parentElement = $("#dataextract-get-data-multiple-selectors");
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "span",
@@ -939,7 +939,7 @@ describe("DataExtractor", function () {
 
 		var parentElement = $("#dataextract-get-data-multiple-selectors");
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "span",
@@ -972,7 +972,7 @@ describe("DataExtractor", function () {
 	});
 
 	it("should return one selector tree for this sitemap", function () {
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			"selectors": [
 				{
 					"parentSelectors": [
@@ -1093,7 +1093,7 @@ describe("DataExtractor", function () {
 
 		var parentElement = $("#dataextract-get-data");
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -1131,7 +1131,7 @@ describe("DataExtractor", function () {
 
 		var parentElement = $("#dataextract-get-data");
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "a",
@@ -1169,7 +1169,7 @@ describe("DataExtractor", function () {
 
 		var parentElement = $("#dataextract-multiple-elements");
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
 					id: "parent1",

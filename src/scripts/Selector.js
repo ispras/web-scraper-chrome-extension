@@ -2,17 +2,12 @@ import ElementQuery from './ElementQuery';
 import Base64 from './Base64';
 
 export default class Selector {
-	constructor(selector) {
-		// if (selector.type === 'ConstantValue'){
-		// 	this = new ConstantValue(selector);
-		// }
-		// this.updateData(['id', 'type', 'selector', 'parentSelectors']);
-		// this.initType();
-	}
+	constructor(selector) {}
 
 	/**
 	 * Update current selector configuration
 	 * @param data
+	 * @param features
 	 */
 	updateData(data, features) {
 		let allowedKeys = ['id', 'type', 'selector', 'parentSelectors'];
@@ -34,18 +29,10 @@ export default class Selector {
 		}
 	}
 
-	/**
-	 * override objects methods based on seletor type
-	 */
-	initType() {
-		// if (window[this.type] === undefined) {
-		// 	throw 'Selector type not defined ' + this.type;
-		// }
-		//
-		// // overrides objects methods
-		// for (let i in window[this.type]) {
-		// 	this[i] = window[this.type][i];
-		// }
+	afterSelect(selector, controller) {
+		this.selector = selector;
+		controller._editSelector(this);
+		return Promise.resolve();
 	}
 
 	/**
@@ -53,7 +40,7 @@ export default class Selector {
 	 * @param data
 	 */
 	manipulateData(data) {
-		let regex = function(content, regex, regexgroup) {
+		let regex = function (content, regex, regexgroup) {
 			try {
 				content = $.trim(content);
 				let matches = content.match(new RegExp(regex, 'gm')),
@@ -67,21 +54,22 @@ export default class Selector {
 					return '';
 				}
 			} catch (e) {
-				console.log('%c Skipping regular expression: ' + e.message, 'background: red; color: white;');
+				console.log(
+					'%c Skipping regular expression: ' + e.message,
+					'background: red; color: white;'
+				);
 			}
 		};
 
-		let removeHtml = function(content) {
-			return $('<div/>')
-				.html(content)
-				.text();
+		let removeHtml = function (content) {
+			return $('<div/>').html(content).text();
 		};
 
-		let trimText = function(content) {
+		let trimText = function (content) {
 			return content.trim();
 		};
 
-		let replaceText = function(content, replaceText, replacementText) {
+		let replaceText = function (content, replaceText, replacementText) {
 			let replace;
 			try {
 				let regex = new RegExp(replaceText, 'gm');
@@ -93,22 +81,24 @@ export default class Selector {
 			return content.replace(replace, replacementText);
 		};
 
-		let textPrefix = function(content, prefix) {
+		let textPrefix = function (content, prefix) {
 			return (content = prefix + content);
 		};
 
-		let textSuffix = function(content, suffix) {
+		let textSuffix = function (content, suffix) {
 			return (content += suffix);
 		};
 
 		$(data).each(
-			function(i, element) {
+			function (i, element) {
 				let content = element[this.id],
 					isString = typeof content === 'string' || content instanceof String,
 					isUnderlyingString = !isString && $(content).text() !== '',
 					isArray = Array.isArray(content),
-					isTextmManipulationDefined = typeof this.textmanipulation != 'undefined' && this.textmanipulation !== '',
-					textManipulationAvailable = (isString || isUnderlyingString) && isTextmManipulationDefined;
+					isTextmManipulationDefined =
+						typeof this.textmanipulation != 'undefined' && this.textmanipulation !== '',
+					textManipulationAvailable =
+						(isString || isUnderlyingString) && isTextmManipulationDefined;
 
 				if (textManipulationAvailable) {
 					content = isString ? content : $(content).text();
@@ -150,7 +140,11 @@ export default class Selector {
 					if (propertyIsAvailable('replaceText')) {
 						let replacement = this.textmanipulation.replacementText;
 						replacement = typeof replacement != 'undefined' ? replacement : '';
-						content = replaceText(content, this.textmanipulation.replaceText, replacement);
+						content = replaceText(
+							content,
+							this.textmanipulation.replaceText,
+							replacement
+						);
 					}
 
 					if (propertyIsAvailable('textPrefix')) {
@@ -249,7 +243,7 @@ export default class Selector {
 		if (timeout === 0) {
 			let deferredData = this._getData(parentElement);
 			deferredData.done(
-				function(data) {
+				function (data) {
 					this.manipulateData(data);
 					data.forEach(item => (item.url = window.location.href));
 					d.resolve(data);
@@ -257,10 +251,10 @@ export default class Selector {
 			);
 		} else {
 			setTimeout(
-				function() {
+				function () {
 					let deferredData = this._getData(parentElement);
 					deferredData.done(
-						function(data) {
+						function (data) {
 							this.manipulateData(data);
 							d.resolve(data);
 						}.bind(this)
@@ -288,14 +282,14 @@ export default class Selector {
 		let deferredResponse = $.Deferred();
 		let xhr = new XMLHttpRequest();
 		let fileName = this.getFilenameFromUrl(url);
-		xhr.onreadystatechange = function() {
+		xhr.onreadystatechange = function () {
 			if (this.readyState == 4) {
 				if (this.status == 200) {
 					let blob = this.response;
 					let mimeType = blob.type;
 					let deferredBlob = Base64.blobToBase64(blob);
 
-					deferredBlob.then(function(fileBase64) {
+					deferredBlob.then(function (fileBase64) {
 						deferredResponse.resolve({
 							mimeType: mimeType,
 							fileBase64: fileBase64,
