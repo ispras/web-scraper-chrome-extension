@@ -61,13 +61,13 @@ export default class StoreRestApi {
 				});
 			})
 			.catch(() => {
-				alert('StoreApi: Error deleting sitemap.');
+				alert('StoreApi: Could not get all sitemaps.');
 			});
 	}
 
 	async sitemapExists(sitemapId) {
 		const sitemaps = await this.getAllSitemaps().catch(() => {
-			alert('StoreApi: Could not get all sitemaps.');
+			alert('StoreApi: Error checking sitemap exists.');
 		});
 		return sitemaps.some(sitemap => sitemap._id === sitemapId);
 	}

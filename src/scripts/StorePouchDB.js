@@ -16,13 +16,13 @@ function normalizeProperties(docs) {
 
 	// add missing keys to objects
 	return docs.map(doc => {
-		const normalizedDoc = doc.clone();
+		const normalizedDoc = { ...doc };
 		keys.forEach(key => {
-			if (!(key in normalizedDoc)) {
+			if (!(key in doc)) {
 				normalizedDoc[key] = '';
 			}
 		});
-		return doc;
+		return normalizedDoc;
 	});
 }
 
