@@ -9,7 +9,8 @@ automatically suggest you the CSS of the header and rows or you can try to guess
 header row and data rows. You can click Element preview on those selectors to see whether the
 _Table selector_ found table header and data rows correctly.The header row selector is used to
 identify table columns when data is extracted from multiple pages. Also you can rename table columns.
-  
+If new columns are found during data extraction, they will be added to the extracted data as well.
+
 Figure 1 shows what you should select when extracting data from a table.
 ![Fig. 1: Selectors for table selector][table-selector-selectors]
 
@@ -27,7 +28,7 @@ Figure 3 shows example of complex rows.
 -   header row selector - [CSS selector][css-selector] for table header row.
 -   data rows selector - [CSS selector][css-selector] for table data rows.
 -   This is vertical table - table is being vertical (with vertical header and rows)
--   Extract missing columns -
+-   Extract missing columns - missing columns will be added to the extracted data
 -   multiple - multiple records are being extracted. Usually should be
     checked for Table selector because you are extracting multiple rows.
 -   delay - delay the extraction
