@@ -11,7 +11,7 @@ export default class Selector {
 	 */
 	updateData(data, features) {
 		let allowedKeys = ['id', 'type', 'selector', 'parentSelectors'];
-		//XXX no need in information from window
+		// XXX no need in information from window
 		allowedKeys = allowedKeys.concat(features);
 
 		// update data
@@ -46,7 +46,16 @@ export default class Selector {
 			return;
 		}
 
-		let regex = function(content, regex, regexgroup) {
+		// TODO refactor + selector group semantics
+		if (Array.isArray(data)) {
+			return data.map(e => this.manipulateData(e));
+		}
+		if (Object.isObject(data) && this.id in data) {
+			data[this.id] = this.manipulateData(data[this.id]);
+			return data;
+		}
+
+		let regex = function (content, regex, regexgroup) {
 			try {
 				content = $.trim(content);
 				let matches = content.match(new RegExp(regex, 'gm')),
@@ -95,7 +104,7 @@ export default class Selector {
 			return (content += suffix);
 		};
 
-		let applyTextManipulation = function(content) {
+		let applyTextManipulation = function (content) {
 			let isString = typeof content === 'string' || content instanceof String,
 				isUnderlyingString = !isString && $(content).text() !== '';
 
@@ -160,20 +169,7 @@ export default class Selector {
 			return content;
 		}.bind(this);
 
-		$(data).each((_, dataElement) => {
-			let value = dataElement[this.id];
-			if (Array.isArray(value)) {
-				if (this.multiple) {
-					// text, HTML, attribute, style
-					dataElement[this.id] = value.map(applyTextManipulation);
-				} else {
-					// group
-					dataElement[this.id] = applyTextManipulation(JSON.stringify(value));
-				}
-			} else {
-				dataElement[this.id] = applyTextManipulation(value);
-			}
-		});
+		return applyTextManipulation(data);
 	}
 
 	/**
@@ -252,7 +248,7 @@ export default class Selector {
 			let deferredData = this._getData(parentElement);
 			deferredData.done(
 				function (data) {
-					this.manipulateData(data);
+					data = this.manipulateData(data);
 					data.forEach(item => (item.url = window.location.href));
 					d.resolve(data);
 				}.bind(this)
@@ -263,7 +259,7 @@ export default class Selector {
 					let deferredData = this._getData(parentElement);
 					deferredData.done(
 						function (data) {
-							this.manipulateData(data);
+							data = this.manipulateData(data);
 							data.forEach(item => (item.url = window.location.href));
 							d.resolve(data);
 						}.bind(this)
@@ -277,7 +273,7 @@ export default class Selector {
 	}
 
 	getFilenameFromUrl(url) {
-		let parts = url.split('/');
+		const parts = url.split('/');
 		let filename = parts[parts.length - 1];
 		filename = filename.split('?', 1)[0];
 		filename = filename.split('#', 1)[0];
@@ -287,33 +283,12 @@ export default class Selector {
 		return filename;
 	}
 
-	downloadFileAsBase64(url) {
-		let deferredResponse = $.Deferred();
-		let xhr = new XMLHttpRequest();
-		let fileName = this.getFilenameFromUrl(url);
-		xhr.onreadystatechange = function () {
-			if (this.readyState == 4) {
-				if (this.status == 200) {
-					let blob = this.response;
-					let mimeType = blob.type;
-					let deferredBlob = Base64.blobToBase64(blob);
-
-					deferredBlob.then(function (fileBase64) {
-						deferredResponse.resolve({
-							mimeType: mimeType,
-							fileBase64: fileBase64,
-							filename: fileName,
-						});
-					});
-				} else {
-					deferredResponse.reject(xhr.statusText);
-				}
-			}
-		};
-		xhr.open('GET', url);
-		xhr.responseType = 'blob';
-		xhr.send();
-
-		return deferredResponse.promise();
+	async downloadFileAsBase64(url) {
+		const filename = this.getFilenameFromUrl(url);
+		const response = await fetch(url);
+		const blob = await response.blob();
+		const mimeType = blob.type;
+		const fileBase64 = await Base64.blobToBase64(blob);
+		return { mimeType, fileBase64, filename };
 	}
 }

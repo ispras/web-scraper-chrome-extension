@@ -1,5 +1,4 @@
 import Selector from '../Selector';
-import '../../libs/jquery.whencallsequentially';
 
 export default class SelectorDocument extends Selector {
 	constructor(options) {
@@ -27,75 +26,34 @@ export default class SelectorDocument extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		var elements = this.getDataElements(parentElement);
-
-		var dfd = $.Deferred();
-
-		// return empty record if not multiple type and no elements found
-		if (this.multiple === false && elements.length === 0) {
-			var data = {};
-			data[this.id] = null;
-			dfd.resolve([data]);
-			return dfd;
-		}
-
-		// extract links one by one
-		var deferredDataExtractionCalls = [];
-		$(elements).each(
-			function(k, element) {
-				deferredDataExtractionCalls.push(
-					function(element) {
-						var href = this.stringReplace(element.href, this.stringReplacement);
-						var deferredData = $.Deferred();
-						var data = {};
-
-						data[this.id] = $(element).text();
-
-						data[this.id + '-href'] = href;
-
-						if (!this.downloadDocument) {
-							deferredData.resolve(data);
-						} else if (href) {
-							var deferredFileBase64 = this.downloadFileAsBase64(href);
-
-							deferredFileBase64
-								.done(
-									function(base64Response) {
-										data['_fileBase64-' + this.id] = base64Response.fileBase64;
-										data['_fileMimeType-' + this.id] = base64Response.mimeType;
-										data['_filename' + this.id] = base64Response.filename;
-
-										deferredData.resolve(data);
-									}.bind(this)
-								)
-								.fail(function() {
-									deferredData.resolve(data);
-								});
-						} else {
-							deferredData.resolve(data);
-						}
-						return deferredData.promise();
-					}.bind(this, element)
-				);
-			}.bind(this)
-		);
-
-		$.whenCallSequentially(deferredDataExtractionCalls).done(function(responses) {
-			var result = [];
-			responses.forEach(function(dataResult) {
-				result.push(dataResult);
-			});
-			dfd.resolve(result);
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement);
+		let documents = elements.map(element => {
+			const text = $(element).text();
+			const href = this.stringReplace(element.href, this.stringReplacement);
+			return { [this.id]: text, [`${this.id}-href`]: href };
 		});
-
-		return dfd.promise();
+		if (this.downloadDocument) {
+			for (const document of documents) {
+				const url = document[`${this.id}-href`];
+				if (url) {
+					const documentResponse = await this.downloadFileAsBase64(url);
+					document[`_fileBase64-${this.id}`] = documentResponse.fileBase64;
+					document[`_mimeType-${this.id}`] = documentResponse.mimeType;
+					document[`_filename-${this.id}`] = documentResponse.filename;
+				}
+			}
+		}
+		if (!this.multiple) {
+			documents = documents.length ? documents[0] : null;
+		}
+		return [{ [this.id]: documents }];
 	}
 
 	getDataColumns() {
-		let dataColumns = [this.id, this.id + '-href'];
+		const dataColumns = [this.id, `${this.id}-href`];
 		if (this.downloadDocument) {
-			dataColumns.push(this.id + '-download_path');
+			dataColumns.push(`${this.id}-download_path`);
 		}
 		return dataColumns;
 	}

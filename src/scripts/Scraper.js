@@ -25,7 +25,7 @@ export default class Scraper {
 		var urls = this.sitemap.getStartUrls();
 
 		urls.forEach(
-			function(url) {
+			function (url) {
 				var firstJob = new Job(url, '_root', this);
 				this.queue.add(firstJob);
 			}.bind(this)
@@ -40,7 +40,7 @@ export default class Scraper {
 
 		this.initFirstJobs();
 
-		this.store.initSitemapDataDb(this.sitemap._id).then(function(resultWriter) {
+		this.store.initSitemapDataDb(this.sitemap._id).then(function (resultWriter) {
 			scraper.resultWriter = resultWriter;
 			scraper._run();
 		});
@@ -84,10 +84,10 @@ export default class Scraper {
 				let selectorId = attr.substring(prefixLength, attr.length);
 				let url = record[selectorId + '-src'] || record[selectorId + '-href'];
 				let fileBase64 = record['_fileBase64-' + selectorId];
-				let filename = record['_filename' + selectorId];
+				let filename = record['_filename-' + selectorId];
 				let fileMimeType = record['_fileMimeType-' + selectorId];
 				delete record['_fileBase64-' + selectorId];
-				delete record['_filename' + selectorId];
+				delete record['_filename-' + selectorId];
 				delete record['_fileMimeType-' + selectorId];
 
 				if (this.downloadPaths.has(url)) {
@@ -95,7 +95,8 @@ export default class Scraper {
 					continue;
 				}
 
-				let downloadPath = this.sitemap._id + '/' + selectorId + '/' + nanoid(10) + '--' + filename;
+				let downloadPath =
+					this.sitemap._id + '/' + selectorId + '/' + nanoid(10) + '--' + filename;
 				this.downloadPaths.set(url, downloadPath);
 				record[selectorId + '-download_path'] = downloadPath;
 
@@ -123,13 +124,13 @@ export default class Scraper {
 
 		job.execute(
 			this.browser,
-			function(job) {
+			function (job) {
 				var scrapedRecords = [];
 				var deferredDatamanipulations = [];
 
 				var records = job.getResults();
 				records.forEach(
-					function(record) {
+					function (record) {
 						//var record = JSON.parse(JSON.stringify(rec));
 
 						deferredDatamanipulations.push(this.saveFile.bind(this, record));
@@ -162,18 +163,21 @@ export default class Scraper {
 				);
 
 				$.whenCallSequentially(deferredDatamanipulations).done(
-					function() {
-						this.store.saveSitemap(this.sitemap, function() {});
+					function () {
+						this.store.saveSitemap(this.sitemap, function () {});
 						this.resultWriter.writeDocs(scrapedRecords).then(() => {
 							var now = new Date().getTime();
 							// delay next job if needed
-							this._timeNextScrapeAvailable = now + this.requestInterval + Math.random() * this.requestIntervalRandomness;
+							this._timeNextScrapeAvailable =
+								now +
+								this.requestInterval +
+								Math.random() * this.requestIntervalRandomness;
 							if (now >= this._timeNextScrapeAvailable) {
 								this._run();
 							} else {
 								var delay = this._timeNextScrapeAvailable - now;
 								setTimeout(
-									function() {
+									function () {
 										this._run();
 									}.bind(this),
 									delay
