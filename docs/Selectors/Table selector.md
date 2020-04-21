@@ -5,8 +5,10 @@ The selector is for table selection. If header is a column you can choose vertic
 with using _This is vertical table_ hint. You can extract data from complex headers
 (consisting of multiple rows and substrings), as well as from complex rows(whose cells may
 contain substrings). After you have selected the selector the _Table selector_ scraper will
-automatically suggest you the CSS of the header and rows or you can try to guess selectors for
-header row and data rows. You can click Element preview on those selectors to see whether the
+automatically suggest you the CSS of the header and rows If the table header is defined by
+th or tbody tag - the table type is automatically determined (vertical or horizontal).
+You can also try to guess selectors for header row and data rows. You can click Element preview on
+those selectors to see whether the
 _Table selector_ found table header and data rows correctly.The header row selector is used to
 identify table columns when data is extracted from multiple pages. Also you can rename table columns.
 If new columns are found during data extraction, they will be added to the extracted data as well.
