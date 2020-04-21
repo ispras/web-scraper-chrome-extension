@@ -26,15 +26,13 @@ export default class SelectorHTML extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		let dfd = $.Deferred();
-		let elements = this.getDataElements(parentElement);
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement);
 		let htmls = elements.map(element => $(element).html());
 		if (!this.multiple) {
 			htmls = htmls.length ? htmls[0] : null;
 		}
-		dfd.resolve([{ [this.id]: htmls }]);
-		return dfd.promise();
+		return [{ [this.id]: htmls }];
 	}
 
 	getDataColumns() {

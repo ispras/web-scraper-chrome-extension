@@ -26,12 +26,11 @@ export default class SelectorText extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		let dfd = $.Deferred();
-		let elements = this.getDataElements(parentElement);
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement);
 		let texts = elements.map(element => {
 			// remove script, style tag contents from text results
-			let $elementClone = $(element).clone();
+			const $elementClone = $(element).clone();
 			$elementClone.find('script, style').remove();
 			// <br> replace br tags with newlines
 			$elementClone.find('br').after('\n');
@@ -40,8 +39,7 @@ export default class SelectorText extends Selector {
 		if (!this.multiple) {
 			texts = texts.length ? texts[0] : null;
 		}
-		dfd.resolve([{ [this.id]: texts }]);
-		return dfd.promise();
+		return [{ [this.id]: texts }];
 	}
 
 	getDataColumns() {

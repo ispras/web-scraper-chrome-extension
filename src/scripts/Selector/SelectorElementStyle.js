@@ -26,15 +26,13 @@ export default class SelectorElementStyle extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		let dfd = $.Deferred();
-		let elements = this.getDataElements(parentElement);
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement);
 		let styles = elements.map(element => $(element).css(this.extractStyle));
 		if (!this.multiple) {
 			styles = styles.length ? styles[0] : null;
 		}
-		dfd.resolve([{ [this.id]: styles }]);
-		return dfd.promise();
+		return [{ [this.id]: styles }];
 	}
 
 	getDataColumns() {
