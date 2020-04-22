@@ -12,74 +12,68 @@ import SelectorGraphv2 from './SelectorGraphv2';
 import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
+import Translator from './Translator';
+
 
 export default class SitemapController {
 	constructor(store, templateDir) {
 		this.store = store;
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');
+
 		this.selectorTypes = [
 			{
 				type: 'SelectorText',
-				title: 'Text',
 			},
 			{
 				type: 'ConstantValue',
-				title: 'Constant value',
 			},
 			{
 				type: 'SelectorInputValue',
-				title: 'Input value',
 			},
 			{
 				type: 'SelectorLink',
-				title: 'Link',
 			},
 			{
 				type: 'SelectorPopupLink',
-				title: 'Popup Link',
 			},
 			{
 				type: 'SelectorImage',
-				title: 'Image',
 			},
 			{
 				type: 'SelectorDocument',
-				title: 'Document',
 			},
 			{
 				type: 'SelectorTable',
-				title: 'Table',
 			},
 			{
 				type: 'SelectorElementAttribute',
-				title: 'Element attribute',
 			},
 			{
 				type: 'SelectorElementStyle',
-				title: 'Element style',
 			},
 			{
 				type: 'SelectorHTML',
-				title: 'HTML',
 			},
 			{
 				type: 'SelectorElement',
-				title: 'Element',
 			},
 			{
 				type: 'SelectorElementScroll',
-				title: 'Element scroll down',
 			},
 			{
 				type: 'SelectorElementClick',
-				title: 'Element click',
 			},
 			{
 				type: 'SelectorGroup',
-				title: 'Grouped',
 			},
 		];
+
+		this.selectorTypes = this.selectorTypes.map(typeObj => {
+			typeObj.title = Translator.getTranslationByKey(typeObj.type);
+			return typeObj;
+		});
+
 		this.jsonRenderer = renderjson
 			.set_icons('+', '-')
 			.set_show_to_level('all')
@@ -360,20 +354,19 @@ export default class SitemapController {
 				_id: {
 					validators: {
 						notEmpty: {
-							message: 'The sitemap id is required and cannot be empty',
+							message: Translator.getTranslationByKey('sitemapid_empty_message'),
 						},
 						stringLength: {
 							min: 3,
-							message: 'The sitemap id should be at least 3 characters long',
+							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message:
-								'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
+							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
-							message: 'Sitemap with this id already exists',
+							message: Translator.getTranslationByKey('sitemapid_repeated_id'),
 							callback() {
 								return true;
 							},
@@ -383,10 +376,10 @@ export default class SitemapController {
 				startUrls: {
 					validators: {
 						notEmpty: {
-							message: 'The start URL is required and cannot be empty',
+							message: Translator.getTranslationByKey('sitemapurl_empty_message'),
 						},
 						callback: {
-							message: 'The start URLs are not valid. Please use "," as a seperator.',
+							message: Translator.getTranslationByKey('sitemapurl_invalid_message'),
 							callback(value) {
 								return Sitemap.validateStartUrls(value.split(','));
 							},
@@ -399,7 +392,7 @@ export default class SitemapController {
 							callback(value) {
 								if (!value) {
 									return {
-										message: 'Empty value is possible model',
+										message: Translator.getTranslationByKey('sitemapmodel_empty_message'),
 										valid: true,
 									};
 								}
@@ -408,7 +401,7 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: 'JSON is not valid',
+										message: Translator.getTranslationByKey('sitemapjson_invalid_message'),
 									};
 								}
 							},
@@ -424,6 +417,7 @@ export default class SitemapController {
 		const sitemapForm = ich.SitemapCreate();
 		$('#viewport').html(sitemapForm);
 		this.initSitemapValidation();
+		Translator.translatePage();
 		return true;
 	}
 
@@ -434,16 +428,15 @@ export default class SitemapController {
 					validators: {
 						stringLength: {
 							min: 3,
-							message: 'The sitemap id should be at least 3 characters long',
+							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
-							message:
-								'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
+							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						// placeholder for sitemap id existance validation
 						callback: {
-							message: 'Sitemap with this id already exists',
+							message: Translator.getTranslationByKey('sitemapid_repeated_id'),
 							callback(value, validator) {
 								validator.revalidateField('sitemapJSON');
 								return true;
@@ -454,10 +447,10 @@ export default class SitemapController {
 				sitemapJSON: {
 					validators: {
 						notEmpty: {
-							message: 'Sitemap JSON is required and cannot be empty',
+							message: Translator.getTranslationByKey('sitemapjson_empty_message'),
 						},
 						callback: {
-							message: 'JSON is not valid',
+							message: Translator.getTranslationByKey('sitemapjson_invalid_message'),
 							callback(value, validator) {
 								try {
 									const sitemap = JSON.parse(value);
@@ -467,15 +460,13 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message:
-													'The sitemap id is required and cannot be empty',
+												message: Translator.getTranslationByKey('sitemapid_empty_message'),
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message:
-													'The sitemap id should be at least 3 characters long',
+												message: Translator.getTranslationByKey('sitemapid_short_message'),
 											};
 										}
 										if (
@@ -483,8 +474,7 @@ export default class SitemapController {
 										) {
 											return {
 												valid: false,
-												message:
-													'Only lowercase characters (a-z), digits (0-9), or any of the characters _, $, (, ), +, -, and / are allowed. Must begin with a letter.',
+												message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 											};
 										}
 									}
@@ -493,14 +483,13 @@ export default class SitemapController {
 									if (!sitemap.hasOwnProperty('startUrls')) {
 										return {
 											valid: false,
-											message:
-												'The start URL is required and cannot be empty',
+											message: Translator.getTranslationByKey('sitemapurl_empty_message'),
 										};
 									}
 									if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
 										return {
 											valid: false,
-											message: 'The start URLs are not valid',
+											message: Translator.getTranslationByKey('sitemapurl_invalid_message'),
 										};
 									}
 
@@ -511,11 +500,11 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: 'JSON is not valid',
+										message: Translator.getTranslationByKey('sitemapjson_invalid_message'),
 									};
 								}
 								return {
-									message: 'Valid sitemap',
+									message: Translator.getTranslationByKey('sitemap_valid_message'),
 									valid: true,
 								};
 							},
@@ -529,7 +518,7 @@ export default class SitemapController {
 	readBlob() {
 		const { files } = $('#sitemapFiles')[0];
 		if (!files.length) {
-			alert('Please select a file!');
+			alert(Translator.getTranslationByKey('selecting_file_error'));
 			return;
 		}
 		const file = files[0];
@@ -548,6 +537,7 @@ export default class SitemapController {
 		const sitemapForm = ich.SitemapImport();
 		$('#viewport').html(sitemapForm);
 		this.initImportSitemapValidation();
+		Translator.translatePage();
 		return true;
 	}
 
@@ -563,7 +553,7 @@ export default class SitemapController {
 		const blob = new Blob([sitemapJSON], { type: 'text/json' });
 
 		$('#viewport').html(sitemapExportForm);
-
+    Translator.translatePage();
 		const downloadButton = $('#download-button');
 		downloadButton.attr('href', window.URL.createObjectURL(blob));
 		downloadButton.attr('download', `${sitemap._id}.json`);
@@ -574,7 +564,7 @@ export default class SitemapController {
 	async showSitemaps() {
 		this.clearState();
 		this.setActiveNavigationButton('sitemaps');
-
+    
 		const sitemaps = await this.store.getAllSitemaps();
 		const $sitemapListPanel = ich.SitemapList();
 
@@ -584,6 +574,7 @@ export default class SitemapController {
 			$sitemapListPanel.find('tbody').append($sitemap);
 		});
 		$('#viewport').html($sitemapListPanel);
+    Translator.translatePage();
 	}
 
 	getSitemapFromMetadataForm() {
@@ -628,7 +619,6 @@ export default class SitemapController {
 		if (!this.isValidForm()) {
 			return false;
 		}
-
 		// load data from form
 		const sitemapJSON = $('[name=sitemapJSON]').val();
 		const sitemapObj = JSON.parse(sitemapJSON);
@@ -665,7 +655,7 @@ export default class SitemapController {
 		const $sitemapMetadataForm = ich.SitemapEditMetadata(sitemap);
 		$('#viewport').html($sitemapMetadataForm);
 		this.initSitemapValidation();
-
+		Translator.translatePage();
 		return true;
 	}
 
@@ -744,7 +734,7 @@ export default class SitemapController {
 			$selectorListPanel.find('tbody').append($selector);
 		});
 		$('#viewport').html($selectorListPanel);
-
+		Translator.translatePage();
 		return true;
 	}
 
@@ -786,30 +776,29 @@ export default class SitemapController {
 				id: {
 					validators: {
 						notEmpty: {
-							message: 'Selector id required and cannot be empty',
+							message: Translator.getTranslationByKey('sitemapid_empty_message'),
 						},
 						stringLength: {
 							min: 3,
-							message: 'The selector id should be at least 3 characters long',
+							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
 							regexp: /^[^_].*$/,
-							message: 'Selector id cannot start with an underscore _',
+							message: Translator.getTranslationByKey('selectorid_underscore'),
 						},
 					},
 				},
 				selector: {
 					validators: {
 						notEmpty: {
-							message: 'Selector is required and cannot be empty',
+							message: Translator.getTranslationByKey('selector_empty_message'),
 						},
 					},
 				},
 				regex: {
 					validators: {
 						callback: {
-							message:
-								'JavaScript does not support regular expressions that can match 0 characters.',
+							message: Translator.getTranslationByKey('regex_regular_expressions_error_message'),
 							callback(value, validator) {
 								// allow no regex
 								if (!value) {
@@ -829,7 +818,7 @@ export default class SitemapController {
 				regexgroup: {
 					validators: {
 						callback: {
-							message: 'Regex group must be numeric',
+							message: Translator.getTranslationByKey('regex_group_numeric_error_message'),
 							callback(value, validator) {
 								if (value === '') {
 									return true;
@@ -842,38 +831,38 @@ export default class SitemapController {
 				clickElementSelector: {
 					validators: {
 						notEmpty: {
-							message: 'Click selector is required and cannot be empty',
+							message: Translator.getTranslationByKey('selector_click_empty_message'),
 						},
 					},
 				},
 				tableHeaderRowSelector: {
 					validators: {
 						notEmpty: {
-							message: 'Header row selector is required and cannot be empty',
+							message: Translator.getTranslationByKey('selector_header_empty_message'),
 						},
 					},
 				},
 				tableDataRowSelector: {
 					validators: {
 						notEmpty: {
-							message: 'Data row selector is required and cannot be empty',
+							message: Translator.getTranslationByKey('selector_data_row_empty_message'),
 						},
 					},
 				},
 				delay: {
 					validators: {
 						numeric: {
-							message: 'Delay must be numeric',
+							message: Translator.getTranslationByKey('delay_numeric_message'),
 						},
 					},
 				},
 				paginationLimit: {
 					validators: {
 						numeric: {
-							message: 'Pagination limit must be numeric or empty',
+							message: Translator.getTranslationByKey('pagination_limit_numeric_message'),
 						},
 						callback: {
-							message: 'Pagination limit must be 1 at least',
+							message: Translator.getTranslationByKey('pagination_limit_small_message'),
 							callback(value, validator) {
 								if (!value) {
 									return true;
@@ -886,10 +875,10 @@ export default class SitemapController {
 				parentSelectors: {
 					validators: {
 						notEmpty: {
-							message: 'You must choose at least one parent selector',
+							message: Translator.getTranslationByKey('parent_selector_empty_message'),
 						},
 						callback: {
-							message: 'Cannot handle recursive element selectors',
+							message: Translator.getTranslationByKey('handle_recursive_error_message'),
 							callback: function (value, validator, $field) {
 								const sitemap = this.getCurrentlyEditedSelectorSitemap();
 								return !sitemap.selectors.hasRecursiveElementSelectors();
@@ -964,6 +953,7 @@ export default class SitemapController {
 
 		this.state.currentSelector = selector;
 		this.selectorTypeChanged(false);
+		Translator.translatePage();
 	}
 
 	selectorTypeChanged(changeTrigger) {
@@ -1166,13 +1156,13 @@ export default class SitemapController {
 				requestInterval: {
 					validators: {
 						notEmpty: {
-							message: 'The request interval is required and cannot be empty',
+							message: Translator.getTranslationByKey('request_interval_empty_message'),
 						},
 						numeric: {
-							message: 'The request interval must be numeric',
+							message: Translator.getTranslationByKey('request_interval_numeric_message'),
 						},
 						callback: {
-							message: 'The request interval must be atleast 2000 milliseconds',
+							message: Translator.getTranslationByKey('request_interval_short_message'),
 							callback(value, validator) {
 								return value >= 2000;
 							},
@@ -1182,24 +1172,23 @@ export default class SitemapController {
 				requestIntervalRandomness: {
 					validators: {
 						notEmpty: {
-							message:
-								'The request interval randomness is required and cannot be empty',
+							message: Translator.getTranslationByKey('request_interval_randomness_empty_message'),
 						},
 						numeric: {
-							message: 'The request interval randomness must be numeric',
+							message: Translator.getTranslationByKey('request_interval_randomness_numeric_message'),
 						},
 					},
 				},
 				pageLoadDelay: {
 					validators: {
 						notEmpty: {
-							message: 'The page load delay is required and cannot be empty',
+							message: Translator.getTranslationByKey('page_load_delay_empty_message'),
 						},
 						numeric: {
-							message: 'The page laod delay must be numeric',
+							message: Translator.getTranslationByKey('page_load_delay_numeric_message'),
 						},
 						callback: {
-							message: 'The page load delay must be atleast 500 milliseconds',
+							message: Translator.getTranslationByKey('page_load_delay_short_message'),
 							callback(value, validator) {
 								return value >= 500;
 							},
@@ -1215,6 +1204,7 @@ export default class SitemapController {
 		const scrapeConfigPanel = ich.SitemapScrapeConfig();
 		$('#viewport').html(scrapeConfigPanel);
 		this.initScrapeSitemapConfigValidation();
+		Translator.translatePage();
 		return true;
 	}
 
@@ -1307,11 +1297,12 @@ export default class SitemapController {
 
 		const sitemap = this.state.currentSitemap;
 		const exportPanel = ich.SitemapExportDataCSV(sitemap);
+
 		$('#viewport').html(exportPanel);
+		Translator.translatePage();
 
 		$('.result').hide();
 		$('.download-button').hide();
-
 		// generate data
 		$('#generate-csv').click(
 			function () {
@@ -1334,7 +1325,7 @@ export default class SitemapController {
 				});
 			}.bind(this)
 		);
-
+		Translator.translatePage();
 		return true;
 	}
 
@@ -1603,6 +1594,7 @@ export default class SitemapController {
 
 			$('#viewport').append($dataPreviewPanel);
 			$dataPreviewPanel.modal('show');
+      Translator.translatePage();
 			// display data
 			// Doing this the long way so there aren't xss vulnerubilites
 			// while working with data or with the selector titles

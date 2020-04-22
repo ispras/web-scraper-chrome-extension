@@ -1,10 +1,17 @@
 {
 	"manifest_version": 2,
-	"version": "0.3.5.00",
-	"name": "Web Scraper Webpack",
-	"short_name": "Web Scraper Webpack",
-	"description": "Tool for data extraction from websites",
-	"permissions": ["<all_urls>", "tabs", "notifications", "storage", "unlimitedStorage", "downloads"],
+	"version": "0.3.500",
+	"name": "__MSG_extension_name__",
+	"short_name": "__MSG_extension_short_name__",
+	"description": "__MSG_extension_description__",
+	"permissions": [
+		"<all_urls>",
+		"tabs",
+		"notifications",
+		"storage",
+		"unlimitedStorage",
+		"downloads"
+	],
 	"icons": {
 		"16": "icons/icon16.png",
 		"48": "icons/icon48.png",
@@ -28,7 +35,14 @@
 	"background": {
 		"scripts": ["background/background.js"]
 	},
-	"web_accessible_resources": ["icons/icon16.png", "icons/icon19.png", "icons/icon38.png", "icons/icon48.png", "icons/icon128.png"],
+	"web_accessible_resources": [
+		"icons/icon16.png",
+		"icons/icon19.png",
+		"icons/icon38.png",
+		"icons/icon48.png",
+		"icons/icon128.png",
+		"content_script/AttachedToolbar.html"
+	],
 	"content_scripts": [
 		{
 			"matches": ["*://*/*"],
@@ -36,6 +50,7 @@
 			"css": ["content_script/content_script.css"]
 		}
 	],
+	"default_locale": "en",
 	"browser_specific_settings": {
 		"gecko": {
 			"id": "web_scraper@extension.com",

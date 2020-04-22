@@ -1,3 +1,6 @@
+import Translator from './Translator';
+
+
 class Field {
 	constructor(entity, field, fieldName) {
 		this.entity = entity;
@@ -14,21 +17,20 @@ export default class Model extends Array {
 			this.push(new Field(fieldObj.entity, fieldObj.field, fieldObj.fieldName));
 		});
 	}
-
+  
 	static validateModel(model) {
 		if (model === undefined) {
 			return {
-				message: 'Empty value is possible model',
+				message: Translator.getTranslationByKey('model_empty_message'),
 				valid: true,
 			};
 		}
 		if (!Array.isArray(model)) {
 			return {
 				valid: false,
-				message: 'JSON must be array',
+				message: Translator.getTranslationByKey('model_json_array_message'),
 			};
 		}
-
 		if (
 			!model.every(
 				fieldRule =>
@@ -37,12 +39,12 @@ export default class Model extends Array {
 		) {
 			return {
 				valid: false,
-				message: 'Each object in JSON array must contain keys entity, field, fieldName.',
+				message: Translator.getTranslationByKey('model_json_error_message'),
 			};
 		}
 
 		return {
-			message: 'Valid model',
+			message: Translator.getTranslationByKey('model_correct_message'),
 			valid: true,
 		};
 	}

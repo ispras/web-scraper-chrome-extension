@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Web Scraper</title>
+		<title data-i18n="ptions_page_title"></title>
 		<link rel="stylesheet" href="options.css" />
 		<script src="options.js"></script>
 		<style>
@@ -25,33 +25,32 @@
 	<body>
 		<div class="container">
 			<h1>Web Scraper</h1>
-			<p>Options page</p>
+			<p data-i18n="options_page_title"></p>
 			<br />
-
 			<form class="form-horizontal" id="storage_configuration">
 				<fieldset>
-					<legend>Storage settings</legend>
+					<legend data-i18n="options_plugin_settings"></legend>
 					<div class="form-group">
-						<label for="storageType" class="col-lg-2 control-label">Storage type</label>
+						<label for="storageType" class="col-lg-2 control-label" data-i18n="options_storage_type"></label>
 						<div class="col-lg-10">
 							<select name="storageType" id="storageType" class="form-control">
-								<option value="local">local storage</option>
-								<option value="couchdb">CouchDB</option>
-								<option value="rest">Rest Api</option>
+								<option value="local" data-i18n="options_local_storage"></option>
+								<option value="couchdb" data-i18n="options_couchdb_storage"></option>
+								<option value="rest" data-i18n="options_rest_api_storage"></option>
 							</select>
 						</div>
 					</div>
 
 					<div class="form-group couchdb">
-						<label for="sitemapDb" class="col-lg-2 control-label">Sitemap db</label>
+						<label for="sitemapDb" class="col-lg-2 control-label" data-i18n="options_couchdb_db_url"></label>
 
 						<div class="col-lg-10">
-							<input type="text" class="form-control" name="sitemapDb" id="sitemapDb" placeholder="Database URL" />
+							<input type="text" class="form-control" name="sitemapDb" id="sitemapDb" placeholder="options_couchdb_db_url_placeholder" />
 						</div>
 					</div>
 
 					<div class="form-group couchdb">
-						<label for="dataDb" class="col-lg-2 control-label">Data db</label>
+						<label for="dataDb" class="col-lg-2 control-label" data-i18n="options_couchdb_datadb"></label>
 
 						<div class="col-lg-10">
 							<input type="text" class="form-control" id="dataDb" name="dataDb" />
@@ -59,7 +58,7 @@
 					</div>
 
 					<div class="form-group rest">
-						<label for="restUrl" class="col-lg-2 control-label">Rest Url</label>
+						<label for="restUrl" class="col-lg-2 control-label" data-i18n="options_rest_url"></label>
 
 						<div class="col-lg-10">
 							<input type="text" class="form-control" id="restUrl" name="restUrl" />
@@ -69,7 +68,7 @@
 					<div class="form-group">
 						<div class="col-lg-offset-2 col-lg-10">
 							<div class="alert"></div>
-							<button type="submit" class="btn btn-default">Save</button>
+							<button type="submit" class="btn btn-default" data-i18n="options_submit"></button>
 						</div>
 					</div>
 				</fieldset>

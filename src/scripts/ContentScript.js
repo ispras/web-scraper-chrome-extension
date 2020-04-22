@@ -45,7 +45,7 @@ let ContentScript = {
 	 * @param request.allowedElements
 	 */
 	selectSelector: function(request) {
-		let deferredResponse = $.Deferred();
+		const deferredResponse = $.Deferred();
 
 		this.removeCurrentContentSelector().done(
 			function() {
@@ -55,7 +55,7 @@ let ContentScript = {
 				});
 				window.cs = contentSelector;
 
-				let deferredCSSSelector = contentSelector.getCSSSelector();
+				const deferredCSSSelector = contentSelector.getCSSSelector();
 				deferredCSSSelector
 					.done(
 						function(response) {
