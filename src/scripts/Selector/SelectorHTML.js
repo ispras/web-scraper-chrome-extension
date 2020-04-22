@@ -1,3 +1,4 @@
+import * as $ from 'jquery';
 import Selector from '../Selector';
 
 export default class SelectorHTML extends Selector {
