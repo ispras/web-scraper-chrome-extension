@@ -26,13 +26,8 @@ export default class SelectorElement extends Selector {
 		return true;
 	}
 
-	_getData(parentElement) {
-		var dfd = $.Deferred();
-
-		var elements = this.getDataElements(parentElement);
-		dfd.resolve(jQuery.makeArray(elements));
-
-		return dfd.promise();
+	async _getData(parentElement) {
+		return this.getDataElements(parentElement);
 	}
 
 	getDataColumns() {
