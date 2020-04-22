@@ -12,9 +12,19 @@ To run the latest version you need to [download the project][latest-releases] to
 
 ## Changelog
 
+### v0.3.6
+
+-   Updated support for Tables (update vertical tables support and added complex headers and data rows)
+-   Added export and import sitemap from file
+-   Added Russian translations and support of i18n that make possible to add every language translation.
+-   Added saving in JSON lines
+-   Added Rest Api CRUD storage for sitemaps
+-   Moved to webpack bundler
+-   Added id hints from predefined model
+
 ### v0.3
 
--   Enabled pasting of multible start URLs (by [@jwillmer](https://github.com/jwillmer))
+-   Enabled pasting of multiple start URLs (by [@jwillmer](https://github.com/jwillmer))
 -   Added scraping of dynamic table columns (by [@jwillmer](https://github.com/jwillmer))
 -   Added style extraction type (by [@jwillmer](https://github.com/jwillmer))
 -   Added text manipulation (trim, replace, prefix, suffix, remove HTML) (by [@jwillmer](https://github.com/jwillmer))
