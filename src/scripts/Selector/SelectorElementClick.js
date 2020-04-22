@@ -32,38 +32,13 @@ export default class SelectorElementClick extends Selector {
 		return ElementQuery(this.clickElementSelector, parentElement);
 	}
 
-	getElementCSSSelector(element) {
-		function localCssSelector(element) {
-			const tagName = element.tagName.toLocaleLowerCase();
-			if (tagName === 'html' || tagName === 'body') {
-				return tagName;
-			}
-			let nthChild = 1;
-			let prevSibling = element.previousElementSibling;
-			while (prevSibling) {
-				nthChild++;
-				prevSibling = prevSibling.previousElementSibling;
-			}
-			return `${tagName}:nth-child(${nthChild})`;
-		}
-
-		let cssSelector = localCssSelector(element);
-		let parent = element.parentElement;
-		while (parent) {
-			cssSelector = `${localCssSelector(parent)}>${cssSelector}`;
-			parent = parent.parentElement;
-		}
-
-		return cssSelector;
-	}
-
 	triggerButtonClick(clickElement) {
 		const cssSelector = this.getElementCSSSelector(clickElement);
 		// this function will trigger the click from browser land
 		// TODO do we really need to inject a script instead of document.querySelector(...).click()?
 		const script = document.createElement('script');
 		script.type = 'text/javascript';
-		script.text = `(function(){ document.querySelector('${cssSelector}').click(); })();`;
+		script.text = `{ document.querySelector('${cssSelector}').click(); }`;
 		document.body.appendChild(script);
 	}
 

@@ -239,6 +239,31 @@ export default class Selector {
 		}
 	}
 
+	getElementCSSSelector(element) {
+		function localCssSelector(element) {
+			const tagName = element.tagName.toLocaleLowerCase();
+			if (tagName === 'html' || tagName === 'body') {
+				return tagName;
+			}
+			let nthChild = 1;
+			let prevSibling = element.previousElementSibling;
+			while (prevSibling) {
+				nthChild++;
+				prevSibling = prevSibling.previousElementSibling;
+			}
+			return `${tagName}:nth-child(${nthChild})`;
+		}
+
+		let cssSelector = localCssSelector(element);
+		let parent = element.parentElement;
+		while (parent) {
+			cssSelector = `${localCssSelector(parent)}>${cssSelector}`;
+			parent = parent.parentElement;
+		}
+
+		return cssSelector;
+	}
+
 	getData(parentElement) {
 		let d = $.Deferred();
 		let timeout = this.delay || 0;
