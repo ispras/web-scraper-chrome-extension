@@ -33,13 +33,9 @@ export default class SelectorLink extends Selector {
 			return [{ [this.id]: null }];
 		}
 		return elements.map(element => {
-			const text = $(element).text();
-			let url;
-			if (this.extractAttribute) {
-				url = element[this.extractAttribute];
-			} else {
-				url = text;
-			}
+			const $element = $(element);
+			const text = $element.text();
+			let url = this.extractAttribute ? $element.attr(this.extractAttribute) : text;
 			url = this.stringReplace(url, this.stringReplacement);
 			return {
 				[this.id]: text,
