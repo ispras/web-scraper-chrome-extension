@@ -4,7 +4,14 @@
 	"name": "__MSG_extension_name__",
 	"short_name": "__MSG_extension_short_name__",
 	"description": "__MSG_extension_description__",
-	"permissions": ["<all_urls>", "tabs", "notifications", "storage", "unlimitedStorage", "downloads"],
+	"permissions": [
+		"<all_urls>",
+		"tabs",
+		"notifications",
+		"storage",
+		"unlimitedStorage",
+		"downloads"
+	],
 	"icons": {
 		"16": "icons/icon16.png",
 		"48": "icons/icon48.png",
@@ -28,7 +35,14 @@
 	"background": {
 		"scripts": ["background/background.js"]
 	},
-	"web_accessible_resources": ["icons/icon16.png", "icons/icon19.png", "icons/icon38.png", "icons/icon48.png", "icons/icon128.png"],
+	"web_accessible_resources": [
+		"icons/icon16.png",
+		"icons/icon19.png",
+		"icons/icon38.png",
+		"icons/icon48.png",
+		"icons/icon128.png",
+		"content_script/AttachedToolbar.html"
+	],
 	"content_scripts": [
 		{
 			"matches": ["*://*/*"],
