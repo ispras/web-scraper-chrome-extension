@@ -26,13 +26,8 @@ export default class ConstantValue extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		let dfd = $.Deferred();
-		let data = {};
-		data[this.id] = this.value;
-
-		dfd.resolve([data]);
-		return dfd.promise();
+	async _getData(parentElement) {
+		return [{ [this.id]: this.value }];
 	}
 
 	getDataColumns() {
