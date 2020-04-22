@@ -14,7 +14,6 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 
-
 export default class SitemapController {
 	constructor(store, templateDir) {
 		this.store = store;
@@ -392,7 +391,9 @@ export default class SitemapController {
 							callback(value) {
 								if (!value) {
 									return {
-										message: Translator.getTranslationByKey('sitemapmodel_empty_message'),
+										message: Translator.getTranslationByKey(
+											'sitemapmodel_empty_message'
+										),
 										valid: true,
 									};
 								}
@@ -401,7 +402,9 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: Translator.getTranslationByKey('sitemapjson_invalid_message'),
+										message: Translator.getTranslationByKey(
+											'sitemapjson_invalid_message'
+										),
 									};
 								}
 							},
@@ -460,13 +463,17 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey('sitemapid_empty_message'),
+												message: Translator.getTranslationByKey(
+													'sitemapid_empty_message'
+												),
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey('sitemapid_short_message'),
+												message: Translator.getTranslationByKey(
+													'sitemapid_short_message'
+												),
 											};
 										}
 										if (
@@ -474,7 +481,9 @@ export default class SitemapController {
 										) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey('sitemapid_invalid_char'),
+												message: Translator.getTranslationByKey(
+													'sitemapid_invalid_char'
+												),
 											};
 										}
 									}
@@ -483,13 +492,17 @@ export default class SitemapController {
 									if (!sitemap.hasOwnProperty('startUrls')) {
 										return {
 											valid: false,
-											message: Translator.getTranslationByKey('sitemapurl_empty_message'),
+											message: Translator.getTranslationByKey(
+												'sitemapurl_empty_message'
+											),
 										};
 									}
 									if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
 										return {
 											valid: false,
-											message: Translator.getTranslationByKey('sitemapurl_invalid_message'),
+											message: Translator.getTranslationByKey(
+												'sitemapurl_invalid_message'
+											),
 										};
 									}
 
@@ -500,11 +513,15 @@ export default class SitemapController {
 								} catch (e) {
 									return {
 										valid: false,
-										message: Translator.getTranslationByKey('sitemapjson_invalid_message'),
+										message: Translator.getTranslationByKey(
+											'sitemapjson_invalid_message'
+										),
 									};
 								}
 								return {
-									message: Translator.getTranslationByKey('sitemap_valid_message'),
+									message: Translator.getTranslationByKey(
+										'sitemap_valid_message'
+									),
 									valid: true,
 								};
 							},
@@ -553,7 +570,7 @@ export default class SitemapController {
 		const blob = new Blob([sitemapJSON], { type: 'text/json' });
 
 		$('#viewport').html(sitemapExportForm);
-    Translator.translatePage();
+		Translator.translatePage();
 		const downloadButton = $('#download-button');
 		downloadButton.attr('href', window.URL.createObjectURL(blob));
 		downloadButton.attr('download', `${sitemap._id}.json`);
@@ -564,7 +581,7 @@ export default class SitemapController {
 	async showSitemaps() {
 		this.clearState();
 		this.setActiveNavigationButton('sitemaps');
-    
+
 		const sitemaps = await this.store.getAllSitemaps();
 		const $sitemapListPanel = ich.SitemapList();
 
@@ -574,7 +591,7 @@ export default class SitemapController {
 			$sitemapListPanel.find('tbody').append($sitemap);
 		});
 		$('#viewport').html($sitemapListPanel);
-    Translator.translatePage();
+		Translator.translatePage();
 	}
 
 	getSitemapFromMetadataForm() {
@@ -798,7 +815,9 @@ export default class SitemapController {
 				regex: {
 					validators: {
 						callback: {
-							message: Translator.getTranslationByKey('regex_regular_expressions_error_message'),
+							message: Translator.getTranslationByKey(
+								'regex_regular_expressions_error_message'
+							),
 							callback(value, validator) {
 								// allow no regex
 								if (!value) {
@@ -818,7 +837,9 @@ export default class SitemapController {
 				regexgroup: {
 					validators: {
 						callback: {
-							message: Translator.getTranslationByKey('regex_group_numeric_error_message'),
+							message: Translator.getTranslationByKey(
+								'regex_group_numeric_error_message'
+							),
 							callback(value, validator) {
 								if (value === '') {
 									return true;
@@ -838,14 +859,18 @@ export default class SitemapController {
 				tableHeaderRowSelector: {
 					validators: {
 						notEmpty: {
-							message: Translator.getTranslationByKey('selector_header_empty_message'),
+							message: Translator.getTranslationByKey(
+								'selector_header_empty_message'
+							),
 						},
 					},
 				},
 				tableDataRowSelector: {
 					validators: {
 						notEmpty: {
-							message: Translator.getTranslationByKey('selector_data_row_empty_message'),
+							message: Translator.getTranslationByKey(
+								'selector_data_row_empty_message'
+							),
 						},
 					},
 				},
@@ -859,10 +884,14 @@ export default class SitemapController {
 				paginationLimit: {
 					validators: {
 						numeric: {
-							message: Translator.getTranslationByKey('pagination_limit_numeric_message'),
+							message: Translator.getTranslationByKey(
+								'pagination_limit_numeric_message'
+							),
 						},
 						callback: {
-							message: Translator.getTranslationByKey('pagination_limit_small_message'),
+							message: Translator.getTranslationByKey(
+								'pagination_limit_small_message'
+							),
 							callback(value, validator) {
 								if (!value) {
 									return true;
@@ -875,10 +904,14 @@ export default class SitemapController {
 				parentSelectors: {
 					validators: {
 						notEmpty: {
-							message: Translator.getTranslationByKey('parent_selector_empty_message'),
+							message: Translator.getTranslationByKey(
+								'parent_selector_empty_message'
+							),
 						},
 						callback: {
-							message: Translator.getTranslationByKey('handle_recursive_error_message'),
+							message: Translator.getTranslationByKey(
+								'handle_recursive_error_message'
+							),
 							callback: function (value, validator, $field) {
 								const sitemap = this.getCurrentlyEditedSelectorSitemap();
 								return !sitemap.selectors.hasRecursiveElementSelectors();
@@ -1156,13 +1189,19 @@ export default class SitemapController {
 				requestInterval: {
 					validators: {
 						notEmpty: {
-							message: Translator.getTranslationByKey('request_interval_empty_message'),
+							message: Translator.getTranslationByKey(
+								'request_interval_empty_message'
+							),
 						},
 						numeric: {
-							message: Translator.getTranslationByKey('request_interval_numeric_message'),
+							message: Translator.getTranslationByKey(
+								'request_interval_numeric_message'
+							),
 						},
 						callback: {
-							message: Translator.getTranslationByKey('request_interval_short_message'),
+							message: Translator.getTranslationByKey(
+								'request_interval_short_message'
+							),
 							callback(value, validator) {
 								return value >= 2000;
 							},
@@ -1172,23 +1211,33 @@ export default class SitemapController {
 				requestIntervalRandomness: {
 					validators: {
 						notEmpty: {
-							message: Translator.getTranslationByKey('request_interval_randomness_empty_message'),
+							message: Translator.getTranslationByKey(
+								'request_interval_randomness_empty_message'
+							),
 						},
 						numeric: {
-							message: Translator.getTranslationByKey('request_interval_randomness_numeric_message'),
+							message: Translator.getTranslationByKey(
+								'request_interval_randomness_numeric_message'
+							),
 						},
 					},
 				},
 				pageLoadDelay: {
 					validators: {
 						notEmpty: {
-							message: Translator.getTranslationByKey('page_load_delay_empty_message'),
+							message: Translator.getTranslationByKey(
+								'page_load_delay_empty_message'
+							),
 						},
 						numeric: {
-							message: Translator.getTranslationByKey('page_load_delay_numeric_message'),
+							message: Translator.getTranslationByKey(
+								'page_load_delay_numeric_message'
+							),
 						},
 						callback: {
-							message: Translator.getTranslationByKey('page_load_delay_short_message'),
+							message: Translator.getTranslationByKey(
+								'page_load_delay_short_message'
+							),
 							callback(value, validator) {
 								return value >= 500;
 							},
@@ -1251,33 +1300,34 @@ export default class SitemapController {
 
 	browseSitemapData() {
 		this.setActiveNavigationButton('sitemap-browse');
-		let sitemap = this.state.currentSitemap;
+		const sitemap = this.state.currentSitemap;
 		this.store.getSitemapData(sitemap).then(data => {
-			let $dataPanel = ich.SitemapBrowseData();
+			const $dataPanel = ich.SitemapBrowseData();
 			$('#viewport').html($dataPanel);
+			Translator.translatePage();
 
 			// display data
 			// Doing this the long way so there aren't xss vulnerubilites
 			// while working with data or with the selector titles
 
-			let $accordion = $('#sitemap-data');
+			const $accordion = $('#sitemap-data');
 			for (let rowNum = 0; rowNum < data.length; rowNum++) {
-				let $card = ich.ItemCard({
+				const $card = ich.ItemCard({
 					id: rowNum,
-					url: data[rowNum].url || 'Item' + rowNum,
+					url: data[rowNum].url || `Item${rowNum}`,
 				});
 				$accordion.append($card);
 			}
 
 			for (let rowNum = 0; rowNum < data.length; rowNum++) {
-				let row = data[rowNum];
+				const row = data[rowNum];
 				if (row.hasOwnProperty('_id')) {
-					delete row['_id'];
+					delete row._id;
 				}
 				if (row.hasOwnProperty('_rev')) {
-					delete row['_rev'];
+					delete row._rev;
 				}
-				$('#json-' + rowNum).html(this.jsonRenderer(row));
+				$(`#json-${rowNum}`).html(this.jsonRenderer(row));
 			}
 
 			$accordion.searcher({
@@ -1340,7 +1390,7 @@ export default class SitemapController {
 
 		const result = await this.contentScript
 			.selectSelector({
-				parentCSSSelector: parentCSSSelector,
+				parentCSSSelector,
 				allowedElements: selector.getItemCSSSelector(),
 			})
 			.promise();
@@ -1360,8 +1410,8 @@ export default class SitemapController {
 	async refreshTableColumns() {
 		const selector = this.getCurrentlyEditedSelector();
 
-		if (!selector instanceof SelectorTable) {
-			//wrong selector triggered this event
+		if (!(selector instanceof SelectorTable)) {
+			// wrong selector triggered this event
 			return false;
 		}
 
@@ -1374,8 +1424,8 @@ export default class SitemapController {
 		const sitemap = this.getCurrentlyEditedSelectorSitemap();
 		const selector = this.getCurrentlyEditedSelector();
 
-		if (!selector instanceof SelectorTable) {
-			//wrong selector triggered this event
+		if (!(selector instanceof SelectorTable)) {
+			// wrong selector triggered this event
 			return false;
 		}
 
@@ -1395,7 +1445,7 @@ export default class SitemapController {
 		const tableHeaderRowSelector = result.CSSSelector;
 		selector.tableHeaderRowSelector = tableHeaderRowSelector;
 
-		let html = this.getSelectorHTML().promise();
+		const html = this.getSelectorHTML().promise();
 		selector.getTableHeaderColumnsFromHTML(html);
 		this.renderTableHeaderColumns(selector.headerColumns);
 
@@ -1590,26 +1640,26 @@ export default class SitemapController {
 				return;
 			}
 
-			let $dataPreviewPanel = ich.DataPreview();
+			const $dataPreviewPanel = ich.DataPreview();
 
 			$('#viewport').append($dataPreviewPanel);
 			$dataPreviewPanel.modal('show');
-      Translator.translatePage();
+			Translator.translatePage();
 			// display data
 			// Doing this the long way so there aren't xss vulnerubilites
 			// while working with data or with the selector titles
-			let $accordion = $('#data-preview', $dataPreviewPanel);
+			const $accordion = $('#data-preview', $dataPreviewPanel);
 			for (let rowNum = 0; rowNum < response.length; rowNum++) {
-				let $card = ich.ItemCard({
+				const $card = ich.ItemCard({
 					id: rowNum,
-					url: response[rowNum].url || 'Item' + rowNum,
+					url: response[rowNum].url || `Item${rowNum}`,
 				});
 				$accordion.append($card);
 			}
 
 			const windowHeight = $(window).height();
 			for (let rowNum = 0; rowNum < response.length; rowNum++) {
-				$('#json-' + rowNum).html(this.jsonRenderer(response[rowNum]));
+				$(`#json-${rowNum}`).html(this.jsonRenderer(response[rowNum]));
 			}
 
 			$('.collapse').collapse('show');

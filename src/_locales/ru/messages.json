@@ -51,7 +51,7 @@
 	"selector_edit_element_preview_button": { "message": "Элементы" },
 	"selector_edit_refresh_button": { "message": "Обновить" },
 	"selector_edit_data_rows_selector": { "message": "Селектор строк с данными" },
-	"selector_edit_missing_columns_checker": { "message": "Извлечь недостающие колонк" },
+	"selector_edit_missing_columns_checker": { "message": "Извлечь недостающие колонки" },
 	"selector_edit_vertical_table_checker": { "message": "Это вертикальная таблица" },
 	"selector_edit_click_type": { "message": "Тип клика" },
 	"selector_edit_clickOnce": { "message": "Кликнуть один раз (страницы, вкладки)" },
@@ -120,7 +120,7 @@
 	"sitemap_create_submit_create_sitemap": { "message": "Создать карту обхода" },
 
 	"url_patterns_hints": {
-		"message": "<div class=\"col_lg_10 col_lg_offset_1\">\n\t\t\tПоддерживаемы шаблоны URL:<br />\n\t\t\t1. <b>Числовой</b> с опциональным шагом и дозаполнением нулями – [<i>START</i>_<i>END</i>:<i>STEP</i>] – [001_010:10]<br />\n\t\t\t2. <b>На основе дат</b> – [date&lt;<i>PATTERN</i>&gt;&lt;<i>START</i>&gt;&lt;<i>END</i>&gt;] – [date&lt;dd.MM.yyyy&gt;&lt;01.01.2017&gt;&lt;now&gt;]<br />\n\t\t\t<ul>\n\t\t\t\tвместо дат можно использовать\n\t\t\t\t<b>yesterday</b\n\t\t\t\t>(вчера) /\n\t\t\t\t<b>now</b\n\t\t\t\t>(сейчас) /\n\t\t\t\t<b>tomorrow</b\n\t\t\t\t>(завтра)<br />\n\t\t\t\tостальные шаблоны (в стиле Java)\n\t\t\t\t<ul>\n\t\t\t\t\t<table border=\"0\">\n\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yyyy</td>\n\t\t\t\t\t\t\t\t<td>полный год (4 digits)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yy</td>\n\t\t\t\t\t\t\t\t<td>последние 2 цифры года</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MMM &emsp;</td>\n\t\t\t\t\t\t\t\t<td>Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MM</td>\n\t\t\t\t\t\t\t\t<td>номер месяца (01_12)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>dd</td>\n\t\t\t\t\t\t\t\t<td>день месяца</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t</table>\n\t\t\t\t</ul>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n"
+		"message": "<div class=\"col_lg_10 col_lg_offset_1\">\n\t\t\tПоддерживаемые шаблоны URL:<br />\n\t\t\t1. <b>Числовой</b> с опциональным шагом и дозаполнением нулями – [<i>START</i>_<i>END</i>:<i>STEP</i>] – [001_010:10]<br />\n\t\t\t2. <b>На основе дат</b> – [date&lt;<i>PATTERN</i>&gt;&lt;<i>START</i>&gt;&lt;<i>END</i>&gt;] – [date&lt;dd.MM.yyyy&gt;&lt;01.01.2017&gt;&lt;now&gt;]<br />\n\t\t\t<ul>\n\t\t\t\tвместо дат можно использовать\n\t\t\t\t<b>yesterday</b\n\t\t\t\t>(вчера) /\n\t\t\t\t<b>now</b\n\t\t\t\t>(сейчас) /\n\t\t\t\t<b>tomorrow</b\n\t\t\t\t>(завтра)<br />\n\t\t\t\tостальные шаблоны (в стиле Java)\n\t\t\t\t<ul>\n\t\t\t\t\t<table border=\"0\">\n\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yyyy</td>\n\t\t\t\t\t\t\t\t<td>полный год (4 digits)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yy</td>\n\t\t\t\t\t\t\t\t<td>последние 2 цифры года</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MMM &emsp;</td>\n\t\t\t\t\t\t\t\t<td>Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MM</td>\n\t\t\t\t\t\t\t\t<td>номер месяца (01_12)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>dd</td>\n\t\t\t\t\t\t\t\t<td>день месяца</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t</table>\n\t\t\t\t</ul>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n"
 	},
 	"sitemap_model_hints": {
 		"message": "<div>\n\t\t\t<p>\n\t\t\t\tВы можете указать модель карты обхода в виде списка JSON объектов. <br />\n\t\t\t\tПример: [ { \"entity\": \"Имя сущности\", \"field\": \"Поле сущности\", \"fieldName\": \"Ожидаемый идентификатор поля\" } ]\n\t\t\t</p>\n\t\t</div>"
@@ -208,15 +208,15 @@
 	},
 	"sitemapurl_empty_message": { "message": "Стартовый URL обязателен и не может быть пустым" },
 	"sitemapurl_invalid_message": {
-		"message": "Cтартовые URL_ы не валидны. Пожалуйста используйте \",\"  в качестве разделителя."
+		"message": "Стартовые URL_ы не валидны. Пожалуйста используйте \",\"  в качестве разделителя."
 	},
 	"sitemapmodel_empty_message": { "message": "Пустые значения модели возможны" },
-	"sitemapjson_invalid_message": { "message": "Невалидный JSON" },
+	"sitemapjson_invalid_message": { "message": "Неправильный JSON карты обхода" },
 	"sitemapjson_empty_message": {
 		"message": "JSON карта обхода обязателен и не может быть пустым"
 	},
 	"selecting_file_error": { "message": "Пожалуйста, выберите файл!" },
-	"sitemap_valid_message": { "message": "Валидная карта обхода" },
+	"sitemap_valid_message": { "message": "Правильная карта обхода" },
 	"selectorid_underscore": {
 		"message": "Идентификатор не может начинаться с нижнего подчеркивания _"
 	},
@@ -270,7 +270,7 @@
 		"message": "Задержка загрузки страницы должна быть не меньше 500 миллисекунд"
 	},
 	"model_json_error_message": {
-		"message": "Каждый объект в JSON массиве должен содержать ключи entity, field, field_name."
+		"message": "Каждый объект в JSON массиве должен содержать ключи entity, field, fieldName."
 	},
 	"model_json_array_message": { "message": "JSON должен быть массивом" },
 	"model_empty_message": { "message": "Пустые значения модели возможны" },
@@ -292,10 +292,11 @@
 	"content_selector_enable_key_events_title": { "message": "Включить события по клавишам" },
 	"content_selector_enable_key_events_text": { "message": "Клавиши" },
 	"selector_edit_refresh_button_title": {
-		"message": "Обновить, если вы вручную изменили селектор"
+		"message": "Обновите, если вы вручную изменили селектор"
 	},
-	"content_script_width": { "message": "150px !important" },
 	"extension_name": { "message": "Web Scraper" },
 	"extension_short_name": { "message": "Web Scraper" },
-	"extension_description": { "message": "Инструмент для извлечения данных с веб-сайтов." }
+	"extension_description": { "message": "Инструмент для извлечения данных с веб-сайтов." },
+	"browse_data_search": { "message": "Поиск в собранных данных" },
+	"content_script_width": { "message": "150px !important" }
 }

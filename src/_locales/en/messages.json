@@ -268,5 +268,6 @@
 	"content_script_width": { "message": "130px !important" },
 	"extension_name": { "message": "Web Scraper" },
 	"extension_short_name": { "message": "Web Scraper" },
-	"extension_description": { "message": "Tool for data extraction from websites" }
+	"extension_description": { "message": "Tool for data extraction from websites" },
+	"browse_data_search": { "message": "Search in scraped data" }
 }
