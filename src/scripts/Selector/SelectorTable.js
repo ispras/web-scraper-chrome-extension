@@ -126,19 +126,12 @@ export default class SelectorTable extends Selector {
 		return result;
 	}
 
-	_getData(parentElement) {
-		const data = $.Deferred();
+	async _getData(parentElement) {
 		const tables = this.getDataElements(parentElement);
-		let result = [];
-		$(tables).each((_, table) => {
-			if (this.verticalTable) {
-				result = result.concat(this.getVerticalDataCells(table));
-			} else {
-				result = result.concat(this.getHorizontalDataCells(table));
-			}
-		});
-		data.resolve(result);
-		return data;
+		const getDataCells = this.verticalTable
+			? this.getVerticalDataCells
+			: this.getHorizontalDataCells;
+		return tables.flatMap(getDataCells);
 	}
 
 	getDataColumns() {
