@@ -5,6 +5,8 @@ import * as renderjson from 'renderjson/renderjson';
 import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
+import 'sugar';
+import * as Papa from 'papaparse';
 
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
@@ -13,7 +15,6 @@ import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
-import * as Papa from 'papaparse';
 
 export default class SitemapController {
 	constructor(store, templateDir) {

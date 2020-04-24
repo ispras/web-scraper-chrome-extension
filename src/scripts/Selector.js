@@ -43,7 +43,7 @@ export default class Selector {
 		let isTextManipulationDefined =
 			typeof this.textmanipulation != 'undefined' && this.textmanipulation !== '';
 		if (!isTextManipulationDefined) {
-			return;
+			return data;
 		}
 
 		// TODO refactor + selector group semantics
@@ -271,7 +271,7 @@ export default class Selector {
 		// this works much faster because $.whenCallSequentially isn't running next data extraction immediately
 		if (timeout === 0) {
 			let deferredData = this._getData(parentElement);
-			deferredData.done(
+			deferredData.then(
 				function (data) {
 					data = this.manipulateData(data);
 					data.forEach(item => (item.url = window.location.href));
@@ -282,7 +282,7 @@ export default class Selector {
 			setTimeout(
 				function () {
 					let deferredData = this._getData(parentElement);
-					deferredData.done(
+					deferredData.then(
 						function (data) {
 							data = this.manipulateData(data);
 							data.forEach(item => (item.url = window.location.href));
