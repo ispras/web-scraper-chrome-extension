@@ -13,6 +13,7 @@ import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
+import * as Papa from 'papaparse';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -127,7 +128,7 @@ export default class SitemapController {
 			'SitemapExport',
 			'SitemapBrowseData',
 			'SitemapScrapeConfig',
-			'SitemapExportDataCSV',
+			'SitemapExportData',
 			'SitemapEditMetadata',
 			'SelectorList',
 			'SelectorListItem',
@@ -179,8 +180,8 @@ export default class SitemapController {
 			'#sitemap-export-nav-button': {
 				click: this.showSitemapExportPanel,
 			},
-			'#sitemap-export-data-csv-nav-button': {
-				click: this.showSitemapExportDataCsvPanel,
+			'#sitemap-export-data-nav-button': {
+				click: this.showSitemapExportDataPanel,
 			},
 			'#submit-create-sitemap': {
 				click: this.createSitemap,
@@ -1342,41 +1343,116 @@ export default class SitemapController {
 		return true;
 	}
 
-	showSitemapExportDataCsvPanel() {
-		this.setActiveNavigationButton('sitemap-export-data-csv');
+	showSitemapExportDataPanel() {
+		this.setActiveNavigationButton('sitemap-export-data');
 
 		const sitemap = this.state.currentSitemap;
-		const exportPanel = ich.SitemapExportDataCSV(sitemap);
+		const exportPanel = ich.SitemapExportData(sitemap);
 
 		$('#viewport').html(exportPanel);
 		Translator.translatePage();
 
-		$('.result').hide();
-		$('.download-button').hide();
-		// generate data
-		$('#generate-csv').click(
-			function () {
-				$('.result').show();
-				$('.download-button').hide();
+		$('#viewport form').bootstrapValidator({
+			fields: {
+				delimiter: {
+					validators: {
+						callback: {
+							message: 'CSV delimiter may not be empty',
+							callback: value => $('#export-format').val() !== 'csv' || !!value,
+						},
+					},
+				},
+			},
+		});
 
-				const options = {
-					delimiter: $('#delimiter').val(),
-					newline: $('#newline').prop('checked'),
-					containBom: $('#utf-bom').prop('checked'),
-				};
+		$('#export-format').change(() => {
+			const format = $('#export-format').val();
+			if (format === 'csv') {
+				$('#delimiter-option').show();
+			} else {
+				$('#delimiter-option').hide();
+			}
+			$('#wait-message').hide();
+			$('#download-file').hide();
+		});
 
-				this.store.getSitemapData(sitemap).then(function (data) {
-					const blob = sitemap.getDataExportCsvBlob(data, options);
-					const button_a = $('.download-button a');
-					button_a.attr('href', window.URL.createObjectURL(blob));
-					button_a.attr('download', `${sitemap._id}.csv`);
-					$('.download-button').show();
-					$('.result').hide();
-				});
-			}.bind(this)
-		);
-		Translator.translatePage();
+		$('#generate-file').click(() => {
+			if (!this.isValidForm()) {
+				return;
+			}
+
+			const downloadButton = $('#download-file');
+			const waitMessage = $('#wait-message');
+			downloadButton.hide();
+			waitMessage.show();
+
+			const format = $('#export-format').val();
+			const options = {
+				delimiter: $('#delimiter').val(),
+				newline: $('#newline').prop('checked'),
+				containBom: $('#utf-bom').prop('checked'),
+			};
+
+			const dataPromise =
+				format === 'csv'
+					? this.getDataExportCsvBlob(sitemap, options)
+					: this.getDataExportJsonLinesBlob(sitemap, options);
+			dataPromise.then(blob => {
+				waitMessage.hide();
+				downloadButton.attr('href', window.URL.createObjectURL(blob));
+				downloadButton.attr('download', `${sitemap._id}.${format}`);
+				downloadButton.show();
+			});
+		});
+
 		return true;
+	}
+
+	async getDataExportCsvBlob(sitemap, options) {
+		// default delimiter is comma
+		const delimiter = options.delimiter || ',';
+		// per default, utf8 BOM is included at the beginning
+		const prepend = 'containBom' in options && !options.containBom ? '' : '\ufeff';
+		// per default, new line is included at end of lines
+		const append = 'newline' in options && !options.newline ? '' : '\r\n';
+
+		const data = await this.store.getSitemapData(sitemap);
+		// TODO split
+		const columns = sitemap.getDataColumns();
+		const jsonData = data.map(row => {
+			const jsonRow = {};
+			columns.forEach(column => {
+				let cellData = row[column];
+				if (cellData === undefined) {
+					cellData = '';
+				} else if (typeof cellData === 'object') {
+					cellData = JSON.stringify(cellData);
+				}
+				jsonRow[column] = cellData;
+			});
+			return jsonRow;
+		});
+
+		const csvConfig = {
+			delimiter,
+			quotes: false,
+			quoteChar: '"',
+			header: true,
+			newline: '\r\n', // between value rows
+		};
+		const csvData = prepend + Papa.unparse(jsonData, csvConfig) + append;
+		return new Blob([csvData], { type: 'text/csv' });
+	}
+
+	async getDataExportJsonLinesBlob(sitemap, options) {
+		// per default, utf8 BOM is NOT included at the beginning
+		const prepend = options.containBom ? '\ufeff' : '';
+		// per default, new line is included at end of lines
+		const append = 'newline' in options && !options.newline ? '' : '\r\n';
+
+		const data = await this.store.getSitemapData(sitemap);
+		const jsonlData = prepend + data.map(JSON.stringify).join('\r\n') + append;
+		return new Blob([jsonlData], { type: 'application/x-jsonlines' });
 	}
 
 	async selectSelector(button) {

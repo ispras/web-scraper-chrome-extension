@@ -8,7 +8,7 @@
 	"sitemap_scrape_nav_button": { "message": "Запустить тестовый сбор" },
 	"sitemap_browse_nav_button": { "message": "Просмотр данных" },
 	"sitemap_export_nav_button": { "message": "Выгрузить карту обхода" },
-	"sitemap_export_data_csv_nav_button": { "message": "Выгрузить данные" },
+	"sitemap_export_data_nav_button": { "message": "Выгрузить данные" },
 	"create_sitemap_nav_button": { "message": "Добавить карту обхода" },
 	"create_sitemap_create_nav_button": { "message": "Создать" },
 	"create_sitemap_import_nav_button": { "message": "Загрузить" },
@@ -22,15 +22,13 @@
 	"sitemap_import_renam_field": { "message": "Переименовать карту обхода (опционально)" },
 	"sitemap_import_input_button": { "message": "Импортировать карту обхода из файла" },
 	"sitemap_import_JSON_field": { "message": "JSON представление карты обхода" },
-	"data_export_title": { "message": "Экспортировать данные в формате CSV" },
-	"data_export_delimiter_field": { "message": "Разделитель полей:" },
-	"data_export_newline_checker": { "message": "Добавить перевод строки в конце?" },
-	"data_export_utf_bom_checker": { "message": "Добавить UTF_8 BOM?" },
-	"data_export_generate_csv_buttom": { "message": "Сгенерировать CSV" },
-	"data_export_waiting": {
-		"message": "Ожидание окончания процесса формирования документа с данными."
-	},
-	"data_export_download_button": { "message": "Скачать данные!" },
+	"data_export_format": { "message": "Формат" },
+	"data_export_delimiter_field": { "message": "Разделитель полей" },
+	"data_export_newline_checker": { "message": "Добавить перевод строки в конце" },
+	"data_export_utf_bom_checker": { "message": "Добавить UTF-8 BOM" },
+	"data_export_generate_file_button": { "message": "Создать файл" },
+	"data_export_waiting": { "message": "Пожалуйста, подождите, данные скоро будут готовы" },
+	"data_export_download_file_button": { "message": "Скачать" },
 	"selectorListItem_element_preview": { "message": "Элементы" },
 	"selectorListItem_data_preview": { "message": "Данные" },
 	"selectorListItem_edit": { "message": "Изменить" },
@@ -106,7 +104,7 @@
 	"sitemap_scrape_config_page_load_delay": { "message": "Задержка при загрузке страницы (мс)" },
 	"sitemap_scrape_config_submit_scraping": { "message": "Запустить тестовый сбор" },
 	"sitemap_scrape_config_alert_success": {
-		"message": "<div class=\"alert alert_success col_lg_10 col_lg_offset_1 hide scraping_in_progress\" role=\"alert\">\n\t\t\tСбор в процессе. Закройте всплывающее окно для того, чтобы остановить сбор.<br />\n\t\t\tКогда сбор завершится вы можете посмотреть собранные данные и выгрузить их в CSV.\n\t\t</div>"
+		"message": "<div class=\"alert alert_success col_lg_10 col_lg_offset_1 hide scraping_in_progress\" role=\"alert\">\n\t\t\tСбор в процессе. Закройте всплывающее окно для того, чтобы остановить сбор.<br />\n\t\t\tКогда сбор завершится вы можете посмотреть собранные данные и выгрузить их в CSV или JSON Lines.\n\t\t</div>"
 	},
 	"sitemap_edit_metadata_submit_model": { "message": "Сохранить карту обхода" },
 	"sitemap_edit_metadata_edit_sitemap_id": { "message": "Идентификатор карты обхода" },
