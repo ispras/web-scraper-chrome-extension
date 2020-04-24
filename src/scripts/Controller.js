@@ -1409,6 +1409,31 @@ export default class SitemapController {
 	}
 
 	async getDataExportCsvBlob(sitemap, options) {
+		function splitProps(obj) {
+			const commonProps = {};
+			const listProps = {};
+			Object.entries(obj).forEach(([key, value]) => {
+				if (Array.isArray(value)) {
+					listProps[key] = value;
+				} else if (Object.isObject(value)) {
+					const [valueCommonProps, valueListProps] = splitProps(value);
+					Object.assign(commonProps, valueCommonProps);
+					Object.assign(listProps, valueListProps);
+				} else {
+					commonProps[key] = value;
+				}
+			});
+			return [commonProps, listProps];
+		}
+
+		function flatten(obj) {
+			const [commonProps, listProps] = splitProps(obj);
+			const results = Object.entries(listProps).flatMap(([key, values]) =>
+				values.flatMap(value => flatten({ ...commonProps, [key]: value }))
+			);
+			return results.length ? results : commonProps;
+		}
+
 		// default delimiter is comma
 		const delimiter = options.delimiter || ',';
 		// per default, utf8 BOM is included at the beginning
@@ -1417,9 +1442,8 @@ export default class SitemapController {
 		const append = 'newline' in options && !options.newline ? '' : '\r\n';
 
 		const data = await this.store.getSitemapData(sitemap);
-		// TODO split
 		const columns = sitemap.getDataColumns();
-		const jsonData = data.map(row => {
+		const jsonData = data.flatMap(flatten).map(row => {
 			const jsonRow = {};
 			columns.forEach(column => {
 				let cellData = row[column];
