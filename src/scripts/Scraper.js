@@ -59,14 +59,20 @@ export default class Scraper {
 		return true;
 	}
 
-	getFileFilename(url) {
-		const parts = url.split('/');
-		let filename = parts[parts.length - 1];
-		filename = filename.replace(/\?/g, '');
-		if (filename.length > 130) {
-			filename = filename.substr(0, 130);
+	generateDownloadPath(filename, maxLength = 100) {
+		// TODO consider using URL-based hash
+		const path = `${this.sitemap._id}/${nanoid(8)}--${filename}`;
+		if (path.length <= maxLength) {
+			return path;
 		}
-		return filename;
+		const extensionMatch = /\.[^/]*$/.exec(path);
+		if (extensionMatch) {
+			const [extension] = extensionMatch;
+			if (extension.length <= maxLength) {
+				return path.substr(0, maxLength - extension.length) + extension;
+			}
+		}
+		return path.substr(0, maxLength);
 	}
 
 	/**
@@ -85,7 +91,7 @@ export default class Scraper {
 			if (this.downloadPaths.has(url)) {
 				return { url, filename, checksum, path: this.downloadPaths.get(url) };
 			}
-			const downloadPath = `${this.sitemap._id}/${nanoid(10)}--${filename}`;
+			const downloadPath = this.generateDownloadPath(filename);
 			try {
 				const blob = await Base64.base64ToBlob(fileBase64, mimeType);
 				const downloadUrl = window.URL.createObjectURL(blob);
