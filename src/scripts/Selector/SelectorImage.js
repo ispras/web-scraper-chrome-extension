@@ -27,6 +27,10 @@ export default class SelectorImage extends Selector {
 		return false;
 	}
 
+	downloadsAttachments() {
+		return !!this.downloadImage;
+	}
+
 	async _getData(parentElement) {
 		const elements = this.getDataElements(parentElement);
 		const urls = elements.map(element => {
@@ -76,6 +80,10 @@ export default class SelectorImage extends Selector {
 			dataColumns.push(`${this.id}-path`, `${this.id}-checksum`, `${this.id}-filename`);
 		}
 		return dataColumns;
+	}
+
+	getUrlColumn() {
+		return `${this.id}-src`;
 	}
 
 	getFeatures() {

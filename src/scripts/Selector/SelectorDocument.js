@@ -26,6 +26,10 @@ export default class SelectorDocument extends Selector {
 		return false;
 	}
 
+	downloadsAttachments() {
+		return !!this.downloadDocument;
+	}
+
 	async _getData(parentElement) {
 		const elements = this.getDataElements(parentElement).filter(element => 'href' in element);
 		const urls = elements.map(element =>
@@ -70,6 +74,10 @@ export default class SelectorDocument extends Selector {
 			dataColumns.push(`${this.id}-path`, `${this.id}-checksum`, `${this.id}-filename`);
 		}
 		return dataColumns;
+	}
+
+	getUrlColumn() {
+		return `${this.id}-href`;
 	}
 
 	getFeatures() {

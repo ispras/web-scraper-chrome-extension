@@ -1410,6 +1410,41 @@ export default class SitemapController {
 	}
 
 	async getDataExportCsvBlob(sitemap, options) {
+		function mergeAttachments(obj, attachmentsSelectors) {
+			const { _attachments, ...data } = obj;
+			if (!_attachments) {
+				return data;
+			}
+			const attachments = new Map(
+				_attachments.map(attachment => {
+					const { url, ...rest } = attachment;
+					return [url, rest];
+				})
+			);
+			const toAttachment = (selector, url) => {
+				if (url && attachments.has(url)) {
+					const attachment = { [selector.getUrlColumn()]: url };
+					Object.entries(attachments.get(url)).forEach(([key, value]) => {
+						attachment[`${selector.id}-${key}`] = value;
+					});
+					return attachment;
+				}
+				return url;
+			};
+			attachmentsSelectors.forEach(selector => {
+				const urlKey = selector.getUrlColumn();
+				if (urlKey in data) {
+					const urlData = data[urlKey];
+					if (Array.isArray(urlData)) {
+						data[urlKey] = urlData.map(url => toAttachment(selector, url));
+					} else {
+						data[urlKey] = toAttachment(selector, urlData);
+					}
+				}
+			});
+			return data;
+		}
+
 		function splitProps(obj) {
 			const commonProps = {};
 			const listProps = {};
@@ -1435,6 +1470,16 @@ export default class SitemapController {
 			return results.length ? results : commonProps;
 		}
 
+		function addMissingProps(obj, columns) {
+			const objCopy = { ...obj };
+			columns.forEach(column => {
+				if (!(column in obj)) {
+					objCopy[column] = '';
+				}
+			});
+			return objCopy;
+		}
+
 		// default delimiter is comma
 		const delimiter = options.delimiter || ',';
 		// per default, utf8 BOM is included at the beginning
@@ -1443,20 +1488,14 @@ export default class SitemapController {
 		const append = 'newline' in options && !options.newline ? '' : '\r\n';
 
 		const data = await this.store.getSitemapData(sitemap);
+		const attachmentsSelectors = sitemap.selectors.filter(selector =>
+			selector.downloadsAttachments()
+		);
 		const columns = sitemap.getDataColumns();
-		const jsonData = data.flatMap(flatten).map(row => {
-			const jsonRow = {};
-			columns.forEach(column => {
-				let cellData = row[column];
-				if (cellData === undefined) {
-					cellData = '';
-				} else if (typeof cellData === 'object') {
-					cellData = JSON.stringify(cellData);
-				}
-				jsonRow[column] = cellData;
-			});
-			return jsonRow;
-		});
+		const jsonData = data
+			.map(dataObj => mergeAttachments(dataObj, attachmentsSelectors))
+			.flatMap(flatten)
+			.map(dataObj => addMissingProps(dataObj, columns));
 
 		const csvConfig = {
 			delimiter,

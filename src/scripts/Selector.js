@@ -297,6 +297,10 @@ export default class Selector {
 		return d.promise();
 	}
 
+	downloadsAttachments() {
+		return false;
+	}
+
 	getFilenameFromUrl(url) {
 		// TODO retain extension
 		const parts = url.split('/');
