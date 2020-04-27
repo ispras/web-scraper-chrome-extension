@@ -22,18 +22,18 @@ export default class Scraper {
 	}
 
 	initFirstJobs() {
-		var urls = this.sitemap.getStartUrls();
+		const urls = this.sitemap.getStartUrls();
 
 		urls.forEach(
 			function (url) {
-				var firstJob = new Job(url, '_root', this);
+				const firstJob = new Job(url, '_root', this);
 				this.queue.add(firstJob);
 			}.bind(this)
 		);
 	}
 
 	run(executionCallback) {
-		var scraper = this;
+		const scraper = this;
 
 		// callback when scraping is finished
 		this.executionCallback = executionCallback;
@@ -51,18 +51,17 @@ export default class Scraper {
 			return false;
 		}
 
-		var selectorId = record._followSelectorId;
-		var childSelectors = this.sitemap.getDirectChildSelectors(selectorId);
+		const selectorId = record._followSelectorId;
+		const childSelectors = this.sitemap.getDirectChildSelectors(selectorId);
 		if (childSelectors.length === 0) {
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 	getFileFilename(url) {
-		var parts = url.split('/');
-		var filename = parts[parts.length - 1];
+		const parts = url.split('/');
+		let filename = parts[parts.length - 1];
 		filename = filename.replace(/\?/g, '');
 		if (filename.length > 130) {
 			filename = filename.substr(0, 130);
@@ -75,47 +74,40 @@ export default class Scraper {
 	 * @param record
 	 */
 	saveFile(record) {
-		let deferredResponse = $.Deferred();
-		let downloads = [];
-		let prefixLength = '_fileBase64-'.length;
-
-		for (let attr in record) {
-			if (attr.substr(0, prefixLength) === '_fileBase64-') {
-				let selectorId = attr.substring(prefixLength, attr.length);
-				let url = record[selectorId + '-src'] || record[selectorId + '-href'];
-				let fileBase64 = record['_fileBase64-' + selectorId];
-				let filename = record['_filename-' + selectorId];
-				let fileMimeType = record['_fileMimeType-' + selectorId];
-				delete record['_fileBase64-' + selectorId];
-				delete record['_filename-' + selectorId];
-				delete record['_fileMimeType-' + selectorId];
-
-				if (this.downloadPaths.has(url)) {
-					record[selectorId + '-download_path'] = this.downloadPaths.get(url);
-					continue;
-				}
-
-				let downloadPath =
-					this.sitemap._id + '/' + selectorId + '/' + nanoid(10) + '--' + filename;
-				this.downloadPaths.set(url, downloadPath);
-				record[selectorId + '-download_path'] = downloadPath;
-
-				downloads.push(
-					Base64.base64ToBlob(fileBase64, fileMimeType).then(blob => {
-						let downloadUrl = window.URL.createObjectURL(blob);
-						return this.browser.downloadFile(downloadUrl, downloadPath);
-					})
-				);
-			}
+		const deferredResponse = $.Deferred();
+		if (!('_attachments' in record)) {
+			deferredResponse.resolve();
+			return deferredResponse.promise();
 		}
 
-		Promise.allSettled(downloads).then(deferredResponse.resolve);
+		const downloads = record._attachments.map(async attachment => {
+			const { url, mimeType, fileBase64, filename } = attachment;
+			if (this.downloadPaths.has(url)) {
+				return { url, filename, path: this.downloadPaths.get(url) };
+			}
+			const downloadPath = `${this.sitemap._id}/${nanoid(10)}--${filename}`;
+			try {
+				const blob = await Base64.base64ToBlob(fileBase64, mimeType);
+				const downloadUrl = window.URL.createObjectURL(blob);
+				await this.browser.downloadFile(downloadUrl, downloadPath);
+				this.downloadPaths.set(url, downloadPath);
+				return { url, filename, path: downloadPath };
+			} catch (e) {
+				console.error(`Failed to save attachment for url ${url}`, e);
+				return attachment;
+			}
+		});
+
+		Promise.all(downloads).then(attachments => {
+			record._attachments = attachments;
+			deferredResponse.resolve();
+		});
 		return deferredResponse.promise();
 	}
 
 	// @TODO remove recursion and add an iterative way to run these jobs.
 	_run() {
-		var job = this.queue.getNextJob();
+		const job = this.queue.getNextJob();
 		if (job === false) {
 			console.log('Scraper execution is finished');
 			this.executionCallback();
@@ -125,24 +117,24 @@ export default class Scraper {
 		job.execute(
 			this.browser,
 			function (job) {
-				var scrapedRecords = [];
-				var deferredDatamanipulations = [];
+				const scrapedRecords = [];
+				const deferredDatamanipulations = [];
 
-				var records = job.getResults();
+				const records = job.getResults();
 				records.forEach(
 					function (record) {
-						//var record = JSON.parse(JSON.stringify(rec));
+						// var record = JSON.parse(JSON.stringify(rec));
 
 						deferredDatamanipulations.push(this.saveFile.bind(this, record));
 
 						// @TODO refactor job exstraction to a seperate method
 						if (this.recordCanHaveChildJobs(record)) {
 							// var followSelectorId = record._followSelectorId;
-							var followURL = record['_follow'];
-							var followSelectorId = record['_followSelectorId'];
-							delete record['_follow'];
-							delete record['_followSelectorId'];
-							var newJob = new Job(followURL, followSelectorId, this, job, record);
+							const followURL = record._follow;
+							const followSelectorId = record._followSelectorId;
+							delete record._follow;
+							delete record._followSelectorId;
+							const newJob = new Job(followURL, followSelectorId, this, job, record);
 							if (this.queue.canBeAdded(newJob)) {
 								this.queue.add(newJob);
 							}
@@ -154,8 +146,8 @@ export default class Scraper {
 							}
 						} else {
 							if (record._follow !== undefined) {
-								delete record['_follow'];
-								delete record['_followSelectorId'];
+								delete record._follow;
+								delete record._followSelectorId;
 							}
 							scrapedRecords.push(record);
 						}
@@ -166,7 +158,7 @@ export default class Scraper {
 					function () {
 						this.store.saveSitemap(this.sitemap, function () {});
 						this.resultWriter.writeDocs(scrapedRecords).then(() => {
-							var now = new Date().getTime();
+							const now = new Date().getTime();
 							// delay next job if needed
 							this._timeNextScrapeAvailable =
 								now +
@@ -175,7 +167,7 @@ export default class Scraper {
 							if (now >= this._timeNextScrapeAvailable) {
 								this._run();
 							} else {
-								var delay = this._timeNextScrapeAvailable - now;
+								const delay = this._timeNextScrapeAvailable - now;
 								setTimeout(
 									function () {
 										this._run();

@@ -1,4 +1,3 @@
-import * as $ from 'jquery';
 import Selector from '../Selector';
 
 export default class SelectorDocument extends Selector {
@@ -8,7 +7,7 @@ export default class SelectorDocument extends Selector {
 	}
 
 	canReturnMultipleRecords() {
-		return true;
+		return false;
 	}
 
 	canHaveChildSelectors() {
@@ -28,38 +27,56 @@ export default class SelectorDocument extends Selector {
 	}
 
 	async _getData(parentElement) {
-		const elements = this.getDataElements(parentElement);
-		let documents = elements.map(element => {
-			const text = $(element).text();
-			const href = this.stringReplace(element.href, this.stringReplacement);
-			return { [this.id]: text, [`${this.id}-href`]: href };
-		});
+		const elements = this.getDataElements(parentElement).filter(element => 'href' in element);
+		const urls = elements.map(element =>
+			this.stringReplace(element.href, this.stringReplacement)
+		);
+
+		const result = {};
+		if (this.multiple) {
+			result[`${this.id}-href`] = urls;
+		} else {
+			result[`${this.id}-href`] = urls.length ? urls[0] : null;
+		}
+
 		if (this.downloadDocument) {
-			for (const document of documents) {
-				const url = document[`${this.id}-href`];
-				if (url) {
-					const documentResponse = await this.downloadFileAsBase64(url);
-					document[`_fileBase64-${this.id}`] = documentResponse.fileBase64;
-					document[`_mimeType-${this.id}`] = documentResponse.mimeType;
-					document[`_filename-${this.id}`] = documentResponse.filename;
+			const documents = [];
+			for (const [i, url] of urls.entries()) {
+				try {
+					if (url) {
+						const document = await this.downloadFileAsBase64(url);
+						if (!document.filename) {
+							// TODO consider $(elements[i]).text() for filename
+							document.filename =
+								elements[i].download || this.getFilenameFromUrl(url);
+						}
+						documents.push(document);
+					}
+				} catch (e) {
+					console.warn(`Failed to download document by url ${url}`, e);
 				}
 			}
+			if (documents.length) {
+				result[`_attachments-${this.id}`] = documents;
+			}
 		}
-		if (!this.multiple) {
-			documents = documents.length ? documents[0] : null;
-		}
-		return [{ [this.id]: documents }];
+
+		return [result];
 	}
 
 	getDataColumns() {
-		const dataColumns = [this.id, `${this.id}-href`];
+		const dataColumns = [`${this.id}-href`];
 		if (this.downloadDocument) {
-			dataColumns.push(`${this.id}-download_path`);
+			dataColumns.push(`${this.id}-path`, `${this.id}-checksum`, `${this.id}-filename`);
 		}
 		return dataColumns;
 	}
 
 	getFeatures() {
 		return ['selector', 'multiple', 'delay', 'downloadDocument', 'stringReplacement'];
+	}
+
+	getItemCSSSelector() {
+		return 'a';
 	}
 }

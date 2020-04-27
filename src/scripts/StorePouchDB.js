@@ -1,6 +1,7 @@
 import PouchDB from 'pouchdb';
 import * as browser from 'webextension-polyfill';
 import Sitemap from './Sitemap';
+import 'sugar';
 
 /**
  * Make sure all obj have the same properties
@@ -35,7 +36,12 @@ class StoreScrapeResultWriter {
 		if (docs.length === 0) {
 			return Promise.resolve();
 		}
-		const normalizedDocs = normalizeProperties(docs);
+		const normalizedDocs = normalizeProperties(docs).map(doc => {
+			// Extra wrapping is added since PouchDB forbids identifiers starting
+			// with underscore. We use them for our attachments and meta information.
+			// TODO Consider moving custom properties from doc to wrapper level
+			return { data: doc };
+		});
 		return this.db.bulkDocs({ docs: normalizedDocs }).catch(err => {
 			if (err !== null) {
 				console.log('Error while persisting scraped data to db', err);
@@ -123,9 +129,13 @@ export default class StorePouchDB {
 	async getSitemapData(sitemap) {
 		const db = this.getSitemapDataDb(sitemap._id);
 		const response = await db.allDocs({ include_docs: true });
-
 		const responseData = Array.from(response.rows, row => {
-			return row.doc;
+			const { doc } = row;
+			delete doc._id;
+			delete doc._rev;
+			const { data, ...rest } = doc;
+			// these conditions are included for backwards compatibility
+			return Object.isObject(data) && Object.isEmpty(rest) ? data : doc;
 		});
 		return normalizeProperties(responseData);
 	}

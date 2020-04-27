@@ -298,10 +298,11 @@ export default class Selector {
 	}
 
 	getFilenameFromUrl(url) {
+		// TODO retain extension
 		const parts = url.split('/');
 		let filename = parts[parts.length - 1];
-		filename = filename.split('?', 1)[0];
-		filename = filename.split('#', 1)[0];
+		[filename] = filename.split('?', 1);
+		[filename] = filename.split('#', 1);
 		if (filename.length > 100) {
 			filename = filename.substr(0, 100);
 		}
@@ -314,6 +315,6 @@ export default class Selector {
 		const blob = await response.blob();
 		const mimeType = blob.type;
 		const fileBase64 = await Base64.blobToBase64(blob);
-		return { mimeType, fileBase64, filename };
+		return { url, mimeType, fileBase64, filename };
 	}
 }

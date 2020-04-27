@@ -8,7 +8,7 @@ export default class SelectorImage extends Selector {
 	}
 
 	canReturnMultipleRecords() {
-		return true;
+		return false;
 	}
 
 	canHaveChildSelectors() {
@@ -29,7 +29,7 @@ export default class SelectorImage extends Selector {
 
 	async _getData(parentElement) {
 		const elements = this.getDataElements(parentElement);
-		let images = elements.map(element => {
+		const urls = elements.map(element => {
 			let { src } = element;
 			// get url from style
 			if (src == null) {
@@ -37,30 +37,43 @@ export default class SelectorImage extends Selector {
 				src = /^url\((['"]?)(.*)\1\)$/.exec(src);
 				src = src ? src[2] : '';
 			}
-			src = this.stringReplace(src, this.stringReplacement);
-			return { [`${this.id}-src`]: src };
+			return this.stringReplace(src, this.stringReplacement);
 		});
+
+		const result = {};
+		if (this.multiple) {
+			result[`${this.id}-src`] = urls;
+		} else {
+			result[`${this.id}-src`] = urls.length ? urls[0] : null;
+		}
+
 		if (this.downloadImage) {
-			for (const image of images) {
-				const url = image[`${this.id}-src`];
-				if (url) {
-					const imageResponse = await this.downloadFileAsBase64(url);
-					image[`_fileBase64-${this.id}`] = imageResponse.fileBase64;
-					image[`_mimeType-${this.id}`] = imageResponse.mimeType;
-					image[`_filename-${this.id}`] = imageResponse.filename;
+			const images = [];
+			for (const [i, url] of urls.entries()) {
+				try {
+					if (url) {
+						const image = await this.downloadFileAsBase64(url);
+						if (!image.filename) {
+							image.filename = this.getFilenameFromUrl(url);
+						}
+						images.push(image);
+					}
+				} catch (e) {
+					console.warn(`Failed to download image by url ${url}`, e);
 				}
 			}
+			if (images.length) {
+				result[`_attachments-${this.id}`] = images;
+			}
 		}
-		if (!this.multiple) {
-			images = images.length ? images[0] : null;
-		}
-		return [{ [this.id]: images }];
+
+		return [result];
 	}
 
 	getDataColumns() {
 		const dataColumns = [`${this.id}-src`];
 		if (this.downloadImage) {
-			dataColumns.push(`${this.id}-download_path`);
+			dataColumns.push(`${this.id}-path`, `${this.id}-checksum`, `${this.id}-filename`);
 		}
 		return dataColumns;
 	}
