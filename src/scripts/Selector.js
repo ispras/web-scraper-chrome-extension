@@ -265,37 +265,13 @@ export default class Selector {
 		return cssSelector;
 	}
 
-	getData(parentElement) {
-		let d = $.Deferred();
-		let timeout = this.delay || 0;
-
-		// this works much faster because $.whenCallSequentially isn't running next data extraction immediately
-		if (timeout === 0) {
-			let deferredData = this._getData(parentElement);
-			deferredData.then(
-				function (data) {
-					data = this.manipulateData(data);
-					data.forEach(item => (item.url = window.location.href));
-					d.resolve(data);
-				}.bind(this)
-			);
-		} else {
-			setTimeout(
-				function () {
-					let deferredData = this._getData(parentElement);
-					deferredData.then(
-						function (data) {
-							data = this.manipulateData(data);
-							data.forEach(item => (item.url = window.location.href));
-							d.resolve(data);
-						}.bind(this)
-					);
-				}.bind(this),
-				timeout
-			);
+	async getData(parentElement) {
+		const timeout = parseInt(this.delay);
+		if (timeout) {
+			await new Promise(resolve => setTimeout(resolve, timeout));
 		}
-
-		return d.promise();
+		const data = await this._getData(parentElement);
+		return this.manipulateData(data);
 	}
 
 	downloadsAttachments() {

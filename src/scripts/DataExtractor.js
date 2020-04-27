@@ -144,7 +144,7 @@ export default class DataExtractor {
 	getSelectorCommonData(selectors, selector, parentElement) {
 		let d = $.Deferred();
 		let deferredData = selector.getData(parentElement);
-		deferredData.done(
+		deferredData.then(
 			function (data) {
 				if (selector.willReturnElements()) {
 					let newParentElement = data[0];
@@ -174,7 +174,7 @@ export default class DataExtractor {
 		// if the selector is not an Element selector then its fetched data is the result.
 		if (!selector.willReturnElements()) {
 			let deferredData = selector.getData(parentElement);
-			deferredData.done(
+			deferredData.then(
 				function (selectorData) {
 					let newCommonData = Object.clone(commonData, true);
 					let resultData = [];
@@ -193,7 +193,7 @@ export default class DataExtractor {
 
 		// handle situation when this selector is an elementSelector
 		let deferredData = selector.getData(parentElement);
-		deferredData.done(
+		deferredData.then(
 			function (selectorData) {
 				let deferredDataCalls = [];
 
@@ -354,6 +354,10 @@ export default class DataExtractor {
 					}.bind(this)
 				);
 				results.forEach(this.manageAttachments);
+				results.forEach(dataObject => {
+					dataObject._url = window.location.href;
+					dataObject._timestamp = Date.now();
+				});
 				responseDeferred.resolve(results);
 			}.bind(this)
 		);
