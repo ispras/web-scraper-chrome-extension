@@ -3,30 +3,6 @@ import * as browser from 'webextension-polyfill';
 import Sitemap from './Sitemap';
 import 'sugar';
 
-/**
- * Make sure all obj have the same properties
- * They can differ if table selector retrieves dynamic columns
- */
-function normalizeProperties(docs) {
-	// get all keys of the objects
-	const keys = new Set(
-		docs.flatMap(doc => {
-			return Object.keys(doc);
-		})
-	);
-
-	// add missing keys to objects
-	return docs.map(doc => {
-		const normalizedDoc = { ...doc };
-		keys.forEach(key => {
-			if (!(key in doc)) {
-				normalizedDoc[key] = '';
-			}
-		});
-		return normalizedDoc;
-	});
-}
-
 class StoreScrapeResultWriter {
 	constructor(db) {
 		this.db = db;
@@ -36,13 +12,10 @@ class StoreScrapeResultWriter {
 		if (docs.length === 0) {
 			return Promise.resolve();
 		}
-		const normalizedDocs = normalizeProperties(docs).map(doc => {
-			// Extra wrapping is added since PouchDB forbids identifiers starting
-			// with underscore. We use them for our attachments and meta information.
-			// TODO Consider moving custom properties from doc to wrapper level
-			return { data: doc };
-		});
-		return this.db.bulkDocs({ docs: normalizedDocs }).catch(err => {
+		// Extra wrapping is added since PouchDB forbids identifiers starting
+		// with underscore. We use them for our attachments and meta information.
+		// TODO Consider moving custom properties from doc to wrapper level
+		return this.db.bulkDocs({ docs: docs.map(doc => ({ data: doc })) }).catch(err => {
 			if (err !== null) {
 				console.log('Error while persisting scraped data to db', err);
 			}
@@ -129,7 +102,7 @@ export default class StorePouchDB {
 	async getSitemapData(sitemap) {
 		const db = this.getSitemapDataDb(sitemap._id);
 		const response = await db.allDocs({ include_docs: true });
-		const responseData = Array.from(response.rows, row => {
+		return Array.from(response.rows, row => {
 			const { doc } = row;
 			delete doc._id;
 			delete doc._rev;
@@ -137,7 +110,6 @@ export default class StorePouchDB {
 			// these conditions are included for backwards compatibility
 			return Object.isObject(data) && Object.isEmpty(rest) ? data : doc;
 		});
-		return normalizeProperties(responseData);
 	}
 
 	async sitemapExists(sitemapId) {
