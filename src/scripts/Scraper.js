@@ -81,9 +81,9 @@ export default class Scraper {
 		}
 
 		const downloads = record._attachments.map(async attachment => {
-			const { url, mimeType, fileBase64, filename } = attachment;
+			const { url, mimeType, fileBase64, checksum, filename } = attachment;
 			if (this.downloadPaths.has(url)) {
-				return { url, filename, path: this.downloadPaths.get(url) };
+				return { url, filename, checksum, path: this.downloadPaths.get(url) };
 			}
 			const downloadPath = `${this.sitemap._id}/${nanoid(10)}--${filename}`;
 			try {
@@ -91,7 +91,7 @@ export default class Scraper {
 				const downloadUrl = window.URL.createObjectURL(blob);
 				await this.browser.downloadFile(downloadUrl, downloadPath);
 				this.downloadPaths.set(url, downloadPath);
-				return { url, filename, path: downloadPath };
+				return { url, filename, checksum, path: downloadPath };
 			} catch (e) {
 				console.error(`Failed to save attachment for url ${url}`, e);
 				return attachment;

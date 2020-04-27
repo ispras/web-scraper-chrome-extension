@@ -1,3 +1,4 @@
+import SparkMD5 from 'spark-md5';
 import ElementQuery from './ElementQuery';
 import Base64 from './Base64';
 
@@ -318,7 +319,8 @@ export default class Selector {
 		const blob = await response.blob();
 		const mimeType = blob.type;
 		const fileBase64 = await Base64.blobToBase64(blob);
-		const result = { url, mimeType, fileBase64 };
+		const checksum = SparkMD5.ArrayBuffer.hash(await blob.arrayBuffer());
+		const result = { url, mimeType, fileBase64, checksum };
 		const contentDisposition = response.headers.get('Content-Disposition');
 		if (contentDisposition) {
 			const filenameMatch = /filename="(.*?)"/.exec(contentDisposition);
