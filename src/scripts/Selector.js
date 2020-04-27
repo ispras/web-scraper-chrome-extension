@@ -314,11 +314,19 @@ export default class Selector {
 	}
 
 	async downloadFileAsBase64(url) {
-		const filename = this.getFilenameFromUrl(url);
 		const response = await fetch(url);
 		const blob = await response.blob();
 		const mimeType = blob.type;
 		const fileBase64 = await Base64.blobToBase64(blob);
-		return { url, mimeType, fileBase64, filename };
+		const result = { url, mimeType, fileBase64 };
+		const contentDisposition = response.headers.get('Content-Disposition');
+		if (contentDisposition) {
+			const filenameMatch = /filename="(.*?)"/.exec(contentDisposition);
+			if (filenameMatch) {
+				const [, filename] = filenameMatch;
+				result.filename = filename;
+			}
+		}
+		return result;
 	}
 }
