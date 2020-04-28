@@ -27,6 +27,11 @@ export default class SelectorGroup extends Selector {
 		return false;
 	}
 
+	async getData(parentElement) {
+		const [{ [this.id]: records }] = await super.getData(parentElement);
+		return [{ [this.id]: JSON.stringify(records) }];
+	}
+
 	async _getData(parentElement) {
 		// cannot reuse this.getDataElements because it depends on *multiple* property
 		const $elements = $(this.selector, parentElement);
@@ -41,6 +46,7 @@ export default class SelectorGroup extends Selector {
 			if (this.extractStyle) {
 				record[`${this.id}-${this.extractStyle}`] = $element.css(this.extractStyle);
 			}
+			return record;
 		});
 		return [{ [this.id]: records }];
 	}
