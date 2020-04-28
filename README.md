@@ -8,13 +8,26 @@ data later can be exported as CSV or JSON Lines.
 
 #### Latest Version
 
-To run the latest version you need to [download the project][latest-releases] to your system and [follow the description on Google][get-started-chrome]) (select the `extension` folder).
+Read about installation process on [installation page](./docs/Installation.md).
 
 ## Changelog
 
+### v0.3.6
+
+-   Updated support for Tables (update vertical tables support and added complex headers and data rows)
+-   Added export and import sitemap from file
+-   Added Russian translations and support of i18n that make possible to add every language translation
+-   Added Rest Api CRUD storage for sitemaps
+-   Moved to webpack bundler
+-   Added id hints from predefined model
+-   Added selectors for Constants and Documents
+-   Refactored preview data and added search in scraped data
+-   Refactored returned items model to JSON
+-   Added saving in JSON lines
+
 ### v0.3
 
--   Enabled pasting of multible start URLs (by [@jwillmer](https://github.com/jwillmer))
+-   Enabled pasting of multiple start URLs (by [@jwillmer](https://github.com/jwillmer))
 -   Added scraping of dynamic table columns (by [@jwillmer](https://github.com/jwillmer))
 -   Added style extraction type (by [@jwillmer](https://github.com/jwillmer))
 -   Added text manipulation (trim, replace, prefix, suffix, remove HTML) (by [@jwillmer](https://github.com/jwillmer))
@@ -70,5 +83,4 @@ LGPLv3
 [google-groups]: https://groups.google.com/forum/#!forum/web-scraper
 [github-issues]: https://github.com/martinsbalodis/web-scraper-chrome-extension/issues
 [get-started-chrome]: https://developer.chrome.com/extensions/getstarted#unpacked
-[issue-14]: https://github.com/jwillmer/web-scraper-chrome-extension/issues/14
-[latest-releases]: https://github.com/jwillmer/web-scraper-chrome-extension/releases
+[latest-releases]: https://github.com/ispras/web-scraper-chrome-extension/releases

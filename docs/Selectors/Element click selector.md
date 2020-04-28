@@ -1,9 +1,9 @@
 # Element click selector
 
 Element click selector works similarly to
-[Element selector] [element-selector]. It's main purpose also is element 
+[Element selector][element-selector]. It's main purpose also is element
 selection that could be given as parent elements to its child selectors. The only
-difference is that *Element click selector* can interact with the web page by
+difference is that _Element click selector_ can interact with the web page by
 clicking on buttons to load new elements. For example a page might use
 JavaScript and AJAX for pagination or item loading.
 
@@ -12,26 +12,28 @@ mouse over the element and pressing "S". This kind of selection will avoid
 events triggered by the button.
 
 ## Configuration options
- * selector - [CSS selector] [css-selector] for the wrapper elements that will
- be used as parent elements for child selectors.
- * click selector - [CSS selector] [css-selector] for the buttons that need to
- be clicked to load more elements.
- * click type - type of how the selector knows when there will be no new
- elements and clicking should stop.
- * pagination limit - the number of clicks you want the selector to perform.
- * click element uniqueness - type of how selector knows which buttons are 
- already clicked.
- * multiple - multiple records are being extracted (almost always should be
- checked). Multiple option for child selectors usually should not be checked.
- * delay - delay before element selection and delay between clicking. This
- should usually be specified because the data won't be loaded immediately from
- the server. More than 2000 ms might be a good choice if you you don't want to
- loose data because the server didn't respond fast enough.
- * Discard initial elements - the selector will not return the elements that
- were available before clicking for the first time. This might be useful for
- duplicate removal.
+
+-   selector - [CSS selector][css-selector] for the wrapper elements that will
+    be used as parent elements for child selectors.
+-   click selector - [CSS selector][css-selector] for the buttons that need to
+    be clicked to load more elements.
+-   click type - type of how the selector knows when there will be no new
+    elements and clicking should stop.
+-   pagination limit - the number of clicks you want the selector to perform.
+-   click element uniqueness - type of how selector knows which buttons are
+    already clicked.
+-   multiple - multiple records are being extracted (almost always should be
+    checked). Multiple option for child selectors usually should not be checked.
+-   delay - delay before element selection and delay between clicking. This
+    should usually be specified because the data won't be loaded immediately from
+    the server. More than 2000 ms might be a good choice if you you don't want to
+    loose data because the server didn't respond fast enough.
+-   Discard initial elements - the selector will not return the elements that
+    were available before clicking for the first time. This might be useful for
+    duplicate removal.
 
 ### Click type
+
 #### Click Once
 
 Click Once type will click on the buttons only once. If a new button appears
@@ -47,15 +49,15 @@ element that has unique text content.
 
 ### Click element uniqueness
 
-When using *Click Once* only unique buttons will be clicked. When using 
-*Click More* this helps to ignore buttons that don't generate more elements.
- 
- * Unique Text - buttons with identical text content are considered equal
- * Unique HTML+Text - buttons with identical HTML and text content are 
- considered equal
- * Unique HTML - buttons with identical HTML and stripped text content are 
- considered equal
- * Unique CSS Selector - buttons with identical CSS Selector are considered equal
+When using _Click Once_ only unique buttons will be clicked. When using
+_Click More_ this helps to ignore buttons that don't generate more elements.
+
+-   Unique Text - buttons with identical text content are considered equal
+-   Unique HTML+Text - buttons with identical HTML and text content are
+    considered equal
+-   Unique HTML - buttons with identical HTML and stripped text content are
+    considered equal
+-   Unique CSS Selector - buttons with identical CSS Selector are considered equal
 
 ## Use cases
 
@@ -63,26 +65,26 @@ When using *Click Once* only unique buttons will be clicked. When using
 
 For example there is a site that displays a list of items and there are some
 pagination buttons that reload these items dynamically (after clicking a button
-the url doesn't change. changes after hash tag # doesn't count). Using *Element
-click selector* you can select these items and buttons that need to be clicked.
+the url doesn't change. changes after hash tag # doesn't count). Using _Element
+click selector_ you can select these items and buttons that need to be clicked.
 The scraper during scraping phase will click these buttons to extract all
-elements. Also you need to add child selectors for the *Element click selector*
+elements. Also you need to add child selectors for the _Element click selector_
 that select data within each element. In figure 1 you can see how to configure
-the *Element click selector* to extract data from the described site.
+the _Element click selector_ to extract data from the described site.
 
- ![Fig. 1: Sitemap when using Click once type][image-click-once]
+![Fig. 1: Sitemap when using Click once type][image-click-once]
 
 #### Load more items in an e-commerce site by clicking "More" button
 
 This example is similar to the one above. The only difference is that in this
 site items are loaded by clicking a single button multiple times. In this case
-the *Element click selector* should be configured to use "Click more" click
-type. In figure 2 you can see how to configure the *Element click selector*
+the _Element click selector_ should be configured to use "Click more" click
+type. In figure 2 you can see how to configure the _Element click selector_
 to extract data from this site.
 
- ![Fig. 2: Sitemap when using Click more type][image-click-more]
+![Fig. 2: Sitemap when using Click more type][image-click-more]
 
- [image-click-more]: ../images/selectors/element-click/click-more.png?raw=true
- [image-click-once]: ../images/selectors/element-click/click-once.png?raw=true
- [element-selector]: Element%20selector.md
- [css-selector]: ../CSS%20selector.md
+[image-click-more]: ../images/selectors/element-click/click-more.png?raw=true
+[image-click-once]: ../images/selectors/element-click/click-once.png?raw=true
+[element-selector]: Element%20selector.md
+[css-selector]: ../CSS%20selector.md
