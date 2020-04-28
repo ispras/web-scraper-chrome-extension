@@ -284,6 +284,12 @@ export default class SitemapController {
 			'#edit-selector button[action=preview-selector-data]': {
 				click: this.previewSelectorDataFromSelectorEditing,
 			},
+			'#data-export-form .data-export-control': {
+				input: this.sitemapExportDataFormChanged,
+			},
+			'#data-export-generate-file': {
+				click: this.sitemapExportData,
+			},
 		});
 		await this.showSitemaps();
 	}
@@ -1344,15 +1350,7 @@ export default class SitemapController {
 		return true;
 	}
 
-	showSitemapExportDataPanel() {
-		this.setActiveNavigationButton('sitemap-export-data');
-
-		const sitemap = this.state.currentSitemap;
-		const exportPanel = ich.SitemapExportData(sitemap);
-
-		$('#viewport').html(exportPanel);
-		Translator.translatePage();
-
+	initSitemapExportDataValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
 				delimiter: {
@@ -1365,48 +1363,61 @@ export default class SitemapController {
 				},
 			},
 		});
+	}
 
-		$('#export-format').change(() => {
-			const format = $('#export-format').val();
-			if (format === 'csv') {
+	showSitemapExportDataPanel() {
+		this.setActiveNavigationButton('sitemap-export-data');
+		const sitemap = this.state.currentSitemap;
+		const exportPanel = ich.SitemapExportData(sitemap);
+		$('#viewport').html(exportPanel);
+		this.initSitemapExportDataValidation();
+		Translator.translatePage();
+		return true;
+	}
+
+	sitemapExportDataFormChanged(element) {
+		if (element.id === 'export-format') {
+			if (element.value === 'csv') {
 				$('#delimiter-option').show();
 			} else {
 				$('#delimiter-option').hide();
 			}
-			$('#wait-message').hide();
-			$('#download-file').hide();
-		});
+		}
+		$('#wait-message').hide();
+		$('#data-export-download-file').hide();
+		return true;
+	}
 
-		$('#generate-file').click(() => {
-			if (!this.isValidForm()) {
-				return;
-			}
+	sitemapExportData() {
+		if (!this.isValidForm()) {
+			return false;
+		}
 
-			const downloadButton = $('#download-file');
-			const waitMessage = $('#wait-message');
-			downloadButton.hide();
+		const downloadButton = $('#data-export-download-file');
+		const waitMessage = $('#wait-message');
+		downloadButton.hide();
 
-			// displaying alert immediately looks annoying
-			const waitMessageTimeout = setTimeout(() => waitMessage.show(), 100);
+		// displaying alert immediately looks annoying
+		const waitMessageTimeout = setTimeout(() => waitMessage.show(), 100);
 
-			const format = $('#export-format').val();
-			const options = {
-				delimiter: $('#delimiter').val(),
-				newline: $('#newline').prop('checked'),
-				containBom: $('#utf-bom').prop('checked'),
-			};
+		const sitemap = this.state.currentSitemap;
+		const format = $('#export-format').val();
+		const options = {
+			delimiter: $('#delimiter').val(),
+			newline: $('#newline').prop('checked'),
+			containBom: $('#utf-bom').prop('checked'),
+		};
 
-			const dataPromise =
-				format === 'csv'
-					? this.getDataExportCsvBlob(sitemap, options)
-					: this.getDataExportJsonLinesBlob(sitemap, options);
-			dataPromise.then(blob => {
-				clearTimeout(waitMessageTimeout);
-				waitMessage.hide();
-				downloadButton.attr('href', window.URL.createObjectURL(blob));
-				downloadButton.attr('download', `${sitemap._id}.${format}`);
-				downloadButton.show();
-			});
+		const dataPromise =
+			format === 'csv'
+				? this.getDataExportCsvBlob(sitemap, options)
+				: this.getDataExportJsonLinesBlob(sitemap, options);
+		dataPromise.then(blob => {
+			clearTimeout(waitMessageTimeout);
+			waitMessage.hide();
+			downloadButton.attr('href', window.URL.createObjectURL(blob));
+			downloadButton.attr('download', `${sitemap._id}.${format}`);
+			downloadButton.show();
 		});
 
 		return true;
