@@ -1792,7 +1792,7 @@ export default class SitemapController {
 			for (let rowNum = 0; rowNum < response.length; rowNum++) {
 				const $card = ich.ItemCard({
 					id: rowNum,
-					url: response[rowNum].url || `Item${rowNum}`,
+					url: response[rowNum]._url || `Item${rowNum}`,
 				});
 				$accordion.append($card);
 			}
