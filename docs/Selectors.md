@@ -22,6 +22,7 @@ selected element. These selectors can be used as data extraction selectors:
 -   [Constant Value][constant-value]
 -   [Table selector][table-selector]
 -   [Element attribute selector][element-attribute-selector]
+-   [Element style selector][element-style-selector]
 -   [HTML selector][html-selector]
 -   [Grouped selector][grouped-selector]
 
@@ -51,6 +52,12 @@ These are currently available Element selectors:
 -   [Element scroll down selector][element-scroll-selector]
 -   [Element click selector][element-click-selector]
 
+### Input Value
+
+This selector is used to interact with page. For example input value in search form.
+
+-   [Input Value][input-value]
+
 ## Selector configuration options
 
 Each selector has configuration options. Here you can see the most common ones.
@@ -77,7 +84,8 @@ as child selectors to the element selector with multiple option not checked.
 [link-selector]: Selectors/Link%20Selector.md
 [link-popup-selector]: Selectors/Link%20Popup%20Selector.md
 [image-selector]: Selectors/Image%20selector.md
-[element-attribute-selector]: Selectors/Table%20selector.md
+[element-attribute-selector]: Selectors/Element%20attribute%20selector.md
+[element-style-selector]: Selectors/Element%20style%20selector.md
 [table-selector]: Selectors/Table%20selector.md
 [grouped-selector]: Selectors/Grouped%20selector.md
 [html-selector]: Selectors/HTML%20selector.md
@@ -86,3 +94,4 @@ as child selectors to the element selector with multiple option not checked.
 [element-scroll-selector]: Selectors/Element%20scroll%20down%20selector.md
 [document-selector]: Selectors/Document%20selector%20.md
 [constant-value]: Selectors/Constant%20value.md
+[input-value]: Selectors/Input%20value.md
