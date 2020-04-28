@@ -8,7 +8,7 @@ data later can be exported as CSV or JSON Lines.
 
 #### Latest Version
 
-To run the latest version you need to [download the project][latest-releases] to your system and [follow the description on Google][get-started-chrome]) (select the `extension` folder).
+Read about installation process on [installation page](./docs/Installation.md).
 
 ## Changelog
 
@@ -83,5 +83,4 @@ LGPLv3
 [google-groups]: https://groups.google.com/forum/#!forum/web-scraper
 [github-issues]: https://github.com/martinsbalodis/web-scraper-chrome-extension/issues
 [get-started-chrome]: https://developer.chrome.com/extensions/getstarted#unpacked
-[issue-14]: https://github.com/jwillmer/web-scraper-chrome-extension/issues/14
-[latest-releases]: https://github.com/jwillmer/web-scraper-chrome-extension/releases
+[latest-releases]: https://github.com/ispras/web-scraper-chrome-extension/releases
