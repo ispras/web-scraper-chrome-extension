@@ -753,8 +753,9 @@ export default class SitemapController {
 			parentSelectors,
 		});
 		const selectors = sitemap.getDirectChildSelectors(parentSelectorId);
-		selectors.forEach(function (selector) {
-			const $selector = ich.SelectorListItem(selector);
+		selectors.forEach(selector => {
+			const selectorType = this.selectorTypes.find(selType => selType.type === selector.type);
+			const $selector = ich.SelectorListItem({ ...selector, title: selectorType.title });
 			$selector.data('selector', selector);
 			$selectorListPanel.find('tbody').append($selector);
 		});
