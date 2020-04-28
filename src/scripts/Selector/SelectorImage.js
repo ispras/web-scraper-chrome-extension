@@ -1,5 +1,5 @@
+import * as $ from 'jquery';
 import Selector from '../Selector';
-import '../../libs/jquery.whencallsequentially';
 
 export default class SelectorImage extends Selector {
 	constructor(options) {
@@ -8,7 +8,7 @@ export default class SelectorImage extends Selector {
 	}
 
 	canReturnMultipleRecords() {
-		return true;
+		return false;
 	}
 
 	canHaveChildSelectors() {
@@ -27,63 +27,63 @@ export default class SelectorImage extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		let dfd = $.Deferred();
+	downloadsAttachments() {
+		return !!this.downloadImage;
+	}
 
-		let elements = this.getDataElements(parentElement);
-		if (!this.multiple && !elements.length) {
-			let data = {};
-			data[this.id + '-src'] = null;
-			dfd.resolve([data]);
-			return dfd.promise();
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement);
+		const urls = elements.map(element => {
+			let { src } = element;
+			// get url from style
+			if (src == null) {
+				src = $(element).css('background-image');
+				src = /^url\((['"]?)(.*)\1\)$/.exec(src);
+				src = src ? src[2] : '';
+			}
+			return this.stringReplace(src, this.stringReplacement);
+		});
+
+		const result = {};
+		if (this.multiple) {
+			result[`${this.id}-src`] = urls;
+		} else {
+			result[`${this.id}-src`] = urls.length ? urls[0] : null;
 		}
 
-		let dataPromises = elements.map(
-			element =>
-				new Promise(resolve => {
-					let data = {};
-					let src = element.src;
-
-					// get url from style
-					if (src == null) {
-						src = $(element).css('background-image');
-						src = /^url\((['"]?)(.*)\1\)$/.exec(src);
-						src = src ? src[2] : '';
+		if (this.downloadImage) {
+			const images = [];
+			for (const [i, url] of urls.entries()) {
+				try {
+					if (url) {
+						const image = await this.downloadFileAsBase64(url);
+						if (!image.filename) {
+							image.filename = this.getFilenameFromUrl(url);
+						}
+						images.push(image);
 					}
+				} catch (e) {
+					console.warn(`Failed to download image by url ${url}`, e);
+				}
+			}
+			if (images.length) {
+				result[`_attachments-${this.id}`] = images;
+			}
+		}
 
-					src = this.stringReplace(src, this.stringReplacement);
-					data[this.id + '-src'] = src;
-
-					// download image if required
-					if (!this.downloadImage) {
-						resolve(data);
-					} else {
-						this.downloadFileAsBase64(src)
-							.done(imageResponse => {
-								data['_fileBase64-' + this.id] = imageResponse.fileBase64;
-								data['_fileMimeType-' + this.id] = imageResponse.mimeType;
-								data['_filename' + this.id] = imageResponse.filename;
-								resolve(data);
-							})
-							.fail(() => {
-								// failed to download image continue.
-								// @TODO handle errror
-								resolve(data);
-							});
-					}
-				})
-		);
-
-		Promise.all(dataPromises).then(dfd.resolve);
-		return dfd.promise();
+		return [result];
 	}
 
 	getDataColumns() {
-		let dataColumns = [this.id + '-src'];
+		const dataColumns = [`${this.id}-src`];
 		if (this.downloadImage) {
-			dataColumns.push(this.id + '-download_path');
+			dataColumns.push(`${this.id}-path`, `${this.id}-checksum`, `${this.id}-filename`);
 		}
 		return dataColumns;
+	}
+
+	getUrlColumn() {
+		return `${this.id}-src`;
 	}
 
 	getFeatures() {

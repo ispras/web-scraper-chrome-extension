@@ -32,110 +32,66 @@ export default class SelectorElementClick extends Selector {
 		return ElementQuery(this.clickElementSelector, parentElement);
 	}
 
-	/**
-	 * Check whether element is still reachable from html. Useful to check whether the element is removed from DOM.
-	 * @param element
-	 */
-	isElementInHTML(element) {
-		return $(element).closest('html').length !== 0;
-	}
-
-	getElementCSSSelector(element) {
-		let nthChild, prev;
-		for (nthChild = 1, prev = element.previousElementSibling; prev !== null; prev = prev.previousElementSibling, nthChild++) {}
-		let tagName = element.tagName.toLocaleLowerCase();
-		let cssSelector = tagName + ':nth-child(' + nthChild + ')';
-
-		while (element.parentElement) {
-			element = element.parentElement;
-			let tagName = element.tagName.toLocaleLowerCase();
-			if (tagName === 'body' || tagName === 'html') {
-				cssSelector = tagName + '>' + cssSelector;
-			} else {
-				for (nthChild = 1, prev = element.previousElementSibling; prev !== null; prev = prev.previousElementSibling, nthChild++) {}
-				cssSelector = tagName + ':nth-child(' + nthChild + ')>' + cssSelector;
-			}
-		}
-
-		return cssSelector;
-	}
-
 	triggerButtonClick(clickElement) {
-		let cssSelector = this.getElementCSSSelector(clickElement);
-
+		const cssSelector = this.getElementCSSSelector(clickElement);
 		// this function will trigger the click from browser land
-		let script = document.createElement('script');
+		// TODO do we really need to inject a script instead of document.querySelector(...).click()?
+		const script = document.createElement('script');
 		script.type = 'text/javascript';
-		script.text = '' + '(function(){ ' + "let el = document.querySelectorAll('" + cssSelector + "')[0]; " + 'el.click(); ' + '})();';
+		script.text = `{ document.querySelector('${cssSelector}').click(); }`;
 		document.body.appendChild(script);
 	}
 
 	getClickElementUniquenessType() {
 		if (this.clickElementUniquenessType === undefined) {
 			return 'uniqueText';
-		} else {
-			return this.clickElementUniquenessType;
 		}
+		return this.clickElementUniquenessType;
 	}
 
-	_getData(parentElement) {
-		let paginationLimit = parseInt(this.paginationLimit);
+	async _getData(parentElement) {
+		const delay = parseInt(this.delay) || 0;
+		const paginationLimit = parseInt(this.paginationLimit);
 		let paginationCount = 1;
-		let delay = parseInt(this.delay) || 0;
-		let deferredResponse = $.Deferred();
-		let foundElements = new UniqueElementList('uniqueHTMLText');
+
+		const foundDataElements = new UniqueElementList('uniqueHTMLText');
+		if (!this.discardInitialElements) {
+			// add elements that are available before clicking
+			this.getDataElements(parentElement).forEach(foundDataElements.push);
+		}
+
 		let clickElements = this.getClickElements(parentElement);
-		let doneClickingElements = new UniqueElementList(this.getClickElementUniquenessType());
-
-		// add elements that are available before clicking
-		let elements = this.getDataElements(parentElement);
-		elements.forEach(foundElements.push.bind(foundElements));
-
-		// discard initial elements
-		if (this.discardInitialElements) {
-			foundElements = new UniqueElementList('uniqueText');
+		if (!clickElements.length) {
+			// no elements to click at the beginning
+			return foundDataElements;
 		}
 
-		// no elements to click at the beginning
-		if (clickElements.length === 0) {
-			deferredResponse.resolve(foundElements);
-			return deferredResponse.promise();
-		}
+		const doneClickingElements = new UniqueElementList(this.getClickElementUniquenessType());
 
 		// initial click and wait
-		let currentClickElement = clickElements[0];
+		let [currentClickElement] = clickElements;
 		this.triggerButtonClick(currentClickElement);
-		let nextElementSelection = new Date().getTime() + delay;
+		let nextElementSelection = Date.now() + delay;
 
-		// infinitely scroll down and find all items
-		let interval = setInterval(
-			function() {
+		return new Promise(resolve => {
+			// repeatedly click and find new items
+			const interval = setInterval(() => {
 				// find those click elements that are not in the black list
-				let allClickElements = this.getClickElements(parentElement);
-				clickElements = [];
-				allClickElements.forEach(function(element) {
-					if (!doneClickingElements.isAdded(element)) {
-						clickElements.push(element);
-					}
-				});
+				clickElements = this.getClickElements(parentElement).filter(
+					element => !doneClickingElements.isAdded(element)
+				);
 
-				let now = new Date().getTime();
-				// sleep. wait when to extract next elements
+				const now = Date.now();
+				// sleep and wait when to extract next elements
 				if (now < nextElementSelection) {
-					//console.log("wait");
 					return;
 				}
 
-				// add newly found elements to element foundElements array.
-				let elements = this.getDataElements(parentElement);
-				let addedAnElement = false;
-				elements.forEach(function(element) {
-					let added = foundElements.push(element);
-					if (added) {
-						addedAnElement = true;
-					}
-				});
-				//console.log("added", addedAnElement);
+				// add newly found elements to foundDataElements array
+				const addedAnElement = this.getDataElements(parentElement).reduce(
+					(added, element) => foundDataElements.push(element) || added,
+					false
+				);
 
 				// no new elements found. Stop clicking this button
 				if (!addedAnElement) {
@@ -143,15 +99,13 @@ export default class SelectorElementClick extends Selector {
 				}
 
 				// continue clicking and add delay, but if there is nothing
-				// more to click the finish
-				//console.log("total buttons", clickElements.length)
-				if (clickElements.length === 0 || paginationCount >= paginationLimit) {
+				// more to click then finish
+				if (!clickElements.length || paginationCount >= paginationLimit) {
 					clearInterval(interval);
-					deferredResponse.resolve(foundElements);
+					resolve(foundDataElements);
 				} else {
 					paginationCount++;
-					//console.log("click");
-					currentClickElement = clickElements[0];
+					[currentClickElement] = clickElements;
 					// click on elements only once if the type is clickonce
 					if (this.clickType === 'clickOnce') {
 						doneClickingElements.push(currentClickElement);
@@ -159,11 +113,8 @@ export default class SelectorElementClick extends Selector {
 					this.triggerButtonClick(currentClickElement);
 					nextElementSelection = now + delay;
 				}
-			}.bind(this),
-			50
-		);
-
-		return deferredResponse.promise();
+			}, 50);
+		});
 	}
 
 	getDataColumns() {
@@ -171,6 +122,15 @@ export default class SelectorElementClick extends Selector {
 	}
 
 	getFeatures() {
-		return ['selector', 'multiple', 'delay', 'clickElementSelector', 'clickType', 'discardInitialElements', 'clickElementUniquenessType', 'paginationLimit'];
+		return [
+			'selector',
+			'multiple',
+			'delay',
+			'clickElementSelector',
+			'clickType',
+			'discardInitialElements',
+			'clickElementUniquenessType',
+			'paginationLimit',
+		];
 	}
 }

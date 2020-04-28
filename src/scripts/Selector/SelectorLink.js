@@ -1,5 +1,5 @@
+import * as $ from 'jquery';
 import Selector from '../Selector';
-import '../../libs/jquery.whencallsequentially';
 
 export default class SelectorLink extends Selector {
 	constructor(options) {
@@ -27,61 +27,27 @@ export default class SelectorLink extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		var elements = this.getDataElements(parentElement);
-
-		var dfd = $.Deferred();
-
-		// return empty record if not multiple type and no elements found
-		if (this.multiple === false && elements.length === 0) {
-			var data = {};
-			data[this.id] = null;
-			dfd.resolve([data]);
-			return dfd;
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement);
+		if (!this.multiple && !elements.length) {
+			return [{ [this.id]: null }];
 		}
-
-		// extract links one by one
-		var deferredDataExtractionCalls = [];
-		$(elements).each(
-			function(k, element) {
-				deferredDataExtractionCalls.push(
-					function(element) {
-						var deferredData = $.Deferred();
-						var data = {};
-
-						var extracted_value;
-						if (this.extractAttribute) {
-							extracted_value = element[this.extractAttribute];
-						} else {
-							extracted_value = $(element).text();
-						}
-						extracted_value = this.stringReplace(extracted_value, this.stringReplacement);
-
-						data[this.id] = $(element).text();
-						data[this.id + '-href'] = extracted_value;
-						data._followSelectorId = this.id;
-						data._follow = extracted_value;
-						deferredData.resolve(data);
-
-						return deferredData;
-					}.bind(this, element)
-				);
-			}.bind(this)
-		);
-
-		$.whenCallSequentially(deferredDataExtractionCalls).done(function(responses) {
-			var result = [];
-			responses.forEach(function(dataResult) {
-				result.push(dataResult);
-			});
-			dfd.resolve(result);
+		return elements.map(element => {
+			const $element = $(element);
+			const text = $element.text();
+			let url = this.extractAttribute ? $element.attr(this.extractAttribute) : text;
+			url = this.stringReplace(url, this.stringReplacement);
+			return {
+				[this.id]: text,
+				[`${this.id}-href`]: url,
+				_followSelectorId: this.id,
+				_follow: url,
+			};
 		});
-
-		return dfd.promise();
 	}
 
 	getDataColumns() {
-		return [this.id, this.id + '-href'];
+		return [this.id, `${this.id}-href`];
 	}
 
 	getFeatures() {

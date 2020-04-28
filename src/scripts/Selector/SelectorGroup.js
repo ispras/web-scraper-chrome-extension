@@ -1,3 +1,4 @@
+import * as $ from 'jquery';
 import Selector from '../Selector';
 
 export default class SelectorGroup extends Selector {
@@ -26,36 +27,28 @@ export default class SelectorGroup extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		var dfd = $.Deferred();
+	async getData(parentElement) {
+		const [{ [this.id]: records }] = await super.getData(parentElement);
+		return [{ [this.id]: JSON.stringify(records) }];
+	}
 
+	async _getData(parentElement) {
 		// cannot reuse this.getDataElements because it depends on *multiple* property
-		var elements = $(this.selector, parentElement);
-
-		var records = [];
-		$(elements).each(
-			function(k, element) {
-				var data = {};
-
-				data[this.id] = $(element).text();
-
-				if (this.extractAttribute) {
-					data[this.id + '-' + this.extractAttribute] = $(element).attr(this.extractAttribute);
-				}
-
-				if (this.extractStyle) {
-					data[this.id + '-' + this.extractStyle] = $(element).css(this.extractStyle);
-				}
-
-				records.push(data);
-			}.bind(this)
-		);
-
-		var result = {};
-		result[this.id] = records;
-
-		dfd.resolve([result]);
-		return dfd.promise();
+		const $elements = $(this.selector, parentElement);
+		const records = $.map($elements, element => {
+			const $element = $(element);
+			const record = { [this.id]: $element.text() };
+			if (this.extractAttribute) {
+				record[`${this.id}-${this.extractAttribute}`] = $element.attr(
+					this.extractAttribute
+				);
+			}
+			if (this.extractStyle) {
+				record[`${this.id}-${this.extractStyle}`] = $element.css(this.extractStyle);
+			}
+			return record;
+		});
+		return [{ [this.id]: records }];
 	}
 
 	getDataColumns() {

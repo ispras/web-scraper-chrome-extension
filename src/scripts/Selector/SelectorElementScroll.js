@@ -30,31 +30,33 @@ export default class SelectorElementScroll extends Selector {
 		window.scrollTo(0, document.body.scrollHeight);
 	}
 
-	_getData(parentElement) {
-		let paginationLimit = parseInt(this.paginationLimit);
+	async _getData(parentElement) {
+		const delay = parseInt(this.delay) || 0;
+		const paginationLimit = parseInt(this.paginationLimit);
 		let paginationCount = 1;
-		let delay = parseInt(this.delay) || 0;
-		let deferredResponse = $.Deferred();
 		let foundElements = [];
 
 		// initially scroll down and wait
 		this.scrollToBottom();
-		let nextElementSelection = new Date().getTime() + delay;
+		let nextElementSelection = Date.now() + delay;
 
-		// infinitely scroll down and find all items
-		let interval = setInterval(
-			function() {
-				let now = new Date().getTime();
-				// sleep. wait when to extract next elements
+		return new Promise(resolve => {
+			// infinitely scroll down and find all items
+			const interval = setInterval(() => {
+				const now = Date.now();
+				// sleep and wait when to extract next elements
 				if (now < nextElementSelection) {
 					return;
 				}
 
-				let elements = this.getDataElements(parentElement);
+				const elements = this.getDataElements(parentElement);
 				// no new elements found or pagination limit
-				if (elements.length === foundElements.length || paginationCount >= paginationLimit) {
+				if (
+					elements.length === foundElements.length ||
+					paginationCount >= paginationLimit
+				) {
 					clearInterval(interval);
-					deferredResponse.resolve($.makeArray(elements));
+					resolve(elements);
 				} else {
 					paginationCount++;
 					// continue scrolling and add delay
@@ -62,11 +64,8 @@ export default class SelectorElementScroll extends Selector {
 					this.scrollToBottom();
 					nextElementSelection = now + delay;
 				}
-			}.bind(this),
-			50
-		);
-
-		return deferredResponse.promise();
+			}, 50);
+		});
 	}
 
 	getDataColumns() {

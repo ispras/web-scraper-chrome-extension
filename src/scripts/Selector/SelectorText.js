@@ -1,3 +1,4 @@
+import * as $ from 'jquery';
 import Selector from '../Selector';
 
 export default class SelectorText extends Selector {
@@ -7,7 +8,7 @@ export default class SelectorText extends Selector {
 	}
 
 	canReturnMultipleRecords() {
-		return true;
+		return false;
 	}
 
 	canHaveChildSelectors() {
@@ -26,35 +27,20 @@ export default class SelectorText extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		let dfd = $.Deferred();
-
-		let elements = this.getDataElements(parentElement);
-
-		let result = [];
-		$(elements).each(
-			function(k, element) {
-				let data = {};
-
-				// remove script, style tag contents from text results
-				let $element_clone = $(element).clone();
-				$element_clone.find('script, style').remove();
-				// <br> replace br tags with newlines
-				$element_clone.find('br').after('\n');
-				data[this.id] = $element_clone.text();
-
-				result.push(data);
-			}.bind(this)
-		);
-
-		if (this.multiple === false && elements.length === 0) {
-			let data = {};
-			data[this.id] = null;
-			result.push(data);
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement);
+		let texts = elements.map(element => {
+			// remove script, style tag contents from text results
+			const $elementClone = $(element).clone();
+			$elementClone.find('script, style').remove();
+			// <br> replace br tags with newlines
+			$elementClone.find('br').after('\n');
+			return $elementClone.text();
+		});
+		if (!this.multiple) {
+			texts = texts.length ? texts[0] : null;
 		}
-
-		dfd.resolve(result);
-		return dfd.promise();
+		return [{ [this.id]: texts }];
 	}
 
 	getDataColumns() {

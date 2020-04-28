@@ -1,3 +1,4 @@
+import SparkMD5 from 'spark-md5';
 import ElementQuery from './ElementQuery';
 import Base64 from './Base64';
 
@@ -11,7 +12,6 @@ export default class Selector {
 	 */
 	updateData(data, features) {
 		let allowedKeys = ['id', 'type', 'selector', 'parentSelectors'];
-		//XXX no need in information from window
 		allowedKeys = allowedKeys.concat(features);
 
 		// update data
@@ -40,6 +40,21 @@ export default class Selector {
 	 * @param data
 	 */
 	manipulateData(data) {
+		let isTextManipulationDefined =
+			typeof this.textmanipulation != 'undefined' && this.textmanipulation !== '';
+		if (!isTextManipulationDefined) {
+			return data;
+		}
+
+		// TODO refactor + selector group semantics
+		if (Array.isArray(data)) {
+			return data.map(e => this.manipulateData(e));
+		}
+		if (Object.isObject(data) && this.id in data) {
+			data[this.id] = this.manipulateData(data[this.id]);
+			return data;
+		}
+
 		let regex = function (content, regex, regexgroup) {
 			try {
 				content = $.trim(content);
@@ -89,83 +104,72 @@ export default class Selector {
 			return (content += suffix);
 		};
 
-		$(data).each(
-			function (i, element) {
-				let content = element[this.id],
-					isString = typeof content === 'string' || content instanceof String,
-					isUnderlyingString = !isString && $(content).text() !== '',
-					isArray = Array.isArray(content),
-					isTextmManipulationDefined =
-						typeof this.textmanipulation != 'undefined' && this.textmanipulation !== '',
-					textManipulationAvailable =
-						(isString || isUnderlyingString) && isTextmManipulationDefined;
+		let applyTextManipulation = function (content) {
+			let isString = typeof content === 'string' || content instanceof String,
+				isUnderlyingString = !isString && $(content).text() !== '';
 
-				if (textManipulationAvailable) {
-					content = isString ? content : $(content).text();
+			if (!isString && !isUnderlyingString) {
+				return content;
+			}
 
-					// use key in object since unit tests might not define each property
-					let keys = [];
-					for (let key in this.textmanipulation) {
-						if (!this.textmanipulation.hasOwnProperty(key)) {
-							continue;
-						}
-						keys.push(key);
-					}
+			content = isString ? content : $(content).text();
 
-					function propertyIsAvailable(key) {
-						return keys.indexOf(key) >= 0;
-					}
-
-					if (propertyIsAvailable('regex')) {
-						let group = this.textmanipulation.regexgroup;
-						let value = this.textmanipulation.regex;
-						group = typeof group != 'undefined' ? group : '';
-						if (value !== '') {
-							content = regex(content, value, group);
-						}
-					}
-
-					if (propertyIsAvailable('removeHtml')) {
-						if (this.textmanipulation.removeHtml) {
-							content = removeHtml(content);
-						}
-					}
-
-					if (propertyIsAvailable('trimText')) {
-						if (this.textmanipulation.trimText) {
-							content = trimText(content);
-						}
-					}
-
-					if (propertyIsAvailable('replaceText')) {
-						let replacement = this.textmanipulation.replacementText;
-						replacement = typeof replacement != 'undefined' ? replacement : '';
-						content = replaceText(
-							content,
-							this.textmanipulation.replaceText,
-							replacement
-						);
-					}
-
-					if (propertyIsAvailable('textPrefix')) {
-						if (this.textmanipulation.textPrefix !== '') {
-							content = textPrefix(content, this.textmanipulation.textPrefix);
-						}
-					}
-
-					if (propertyIsAvailable('textSuffix')) {
-						if (this.textmanipulation.textSuffix !== '') {
-							content = textSuffix(content, this.textmanipulation.textSuffix);
-						}
-					}
-
-					element[this.id] = content;
-				} else if (isArray && isTextmManipulationDefined) {
-					element[this.id] = JSON.stringify(content);
-					this.manipulateData(element);
+			// use key in object since unit tests might not define each property
+			let keys = [];
+			for (let key in this.textmanipulation) {
+				if (!this.textmanipulation.hasOwnProperty(key)) {
+					continue;
 				}
-			}.bind(this)
-		);
+				keys.push(key);
+			}
+
+			function propertyIsAvailable(key) {
+				return keys.indexOf(key) >= 0;
+			}
+
+			if (propertyIsAvailable('regex')) {
+				let group = this.textmanipulation.regexgroup;
+				let value = this.textmanipulation.regex;
+				group = typeof group != 'undefined' ? group : '';
+				if (value !== '') {
+					content = regex(content, value, group);
+				}
+			}
+
+			if (propertyIsAvailable('removeHtml')) {
+				if (this.textmanipulation.removeHtml) {
+					content = removeHtml(content);
+				}
+			}
+
+			if (propertyIsAvailable('trimText')) {
+				if (this.textmanipulation.trimText) {
+					content = trimText(content);
+				}
+			}
+
+			if (propertyIsAvailable('replaceText')) {
+				let replacement = this.textmanipulation.replacementText;
+				replacement = typeof replacement != 'undefined' ? replacement : '';
+				content = replaceText(content, this.textmanipulation.replaceText, replacement);
+			}
+
+			if (propertyIsAvailable('textPrefix')) {
+				if (this.textmanipulation.textPrefix !== '') {
+					content = textPrefix(content, this.textmanipulation.textPrefix);
+				}
+			}
+
+			if (propertyIsAvailable('textSuffix')) {
+				if (this.textmanipulation.textSuffix !== '') {
+					content = textSuffix(content, this.textmanipulation.textSuffix);
+				}
+			}
+
+			return content;
+		}.bind(this);
+
+		return applyTextManipulation(data);
 	}
 
 	/**
@@ -235,76 +239,67 @@ export default class Selector {
 		}
 	}
 
-	getData(parentElement) {
-		let d = $.Deferred();
-		let timeout = this.delay || 0;
-
-		// this works much faster because $.whenCallSequentially isn't running next data extraction immediately
-		if (timeout === 0) {
-			let deferredData = this._getData(parentElement);
-			deferredData.done(
-				function (data) {
-					this.manipulateData(data);
-					data.forEach(item => (item.url = window.location.href));
-					d.resolve(data);
-				}.bind(this)
-			);
-		} else {
-			setTimeout(
-				function () {
-					let deferredData = this._getData(parentElement);
-					deferredData.done(
-						function (data) {
-							this.manipulateData(data);
-							d.resolve(data);
-						}.bind(this)
-					);
-				}.bind(this),
-				timeout
-			);
+	getElementCSSSelector(element) {
+		function localCssSelector(element) {
+			const tagName = element.tagName.toLocaleLowerCase();
+			if (tagName === 'html' || tagName === 'body') {
+				return tagName;
+			}
+			let nthChild = 1;
+			let prevSibling = element.previousElementSibling;
+			while (prevSibling) {
+				nthChild++;
+				prevSibling = prevSibling.previousElementSibling;
+			}
+			return `${tagName}:nth-child(${nthChild})`;
 		}
 
-		return d.promise();
+		let cssSelector = localCssSelector(element);
+		let parent = element.parentElement;
+		while (parent) {
+			cssSelector = `${localCssSelector(parent)}>${cssSelector}`;
+			parent = parent.parentElement;
+		}
+
+		return cssSelector;
+	}
+
+	async getData(parentElement) {
+		const timeout = parseInt(this.delay);
+		if (timeout) {
+			await new Promise(resolve => setTimeout(resolve, timeout));
+		}
+		const data = await this._getData(parentElement);
+		return this.manipulateData(data);
+	}
+
+	downloadsAttachments() {
+		return false;
 	}
 
 	getFilenameFromUrl(url) {
-		let parts = url.split('/');
+		const parts = url.split('/');
 		let filename = parts[parts.length - 1];
-		filename = filename.split('?', 1)[0];
-		filename = filename.split('#', 1)[0];
-		if (filename.length > 100) {
-			filename = filename.substr(0, 100);
-		}
+		[filename] = filename.split('?', 1);
+		[filename] = filename.split('#', 1);
 		return filename;
 	}
 
-	downloadFileAsBase64(url) {
-		let deferredResponse = $.Deferred();
-		let xhr = new XMLHttpRequest();
-		let fileName = this.getFilenameFromUrl(url);
-		xhr.onreadystatechange = function () {
-			if (this.readyState == 4) {
-				if (this.status == 200) {
-					let blob = this.response;
-					let mimeType = blob.type;
-					let deferredBlob = Base64.blobToBase64(blob);
-
-					deferredBlob.then(function (fileBase64) {
-						deferredResponse.resolve({
-							mimeType: mimeType,
-							fileBase64: fileBase64,
-							filename: fileName,
-						});
-					});
-				} else {
-					deferredResponse.reject(xhr.statusText);
-				}
+	async downloadFileAsBase64(url) {
+		const response = await fetch(url);
+		const blob = await response.blob();
+		const mimeType = blob.type;
+		const fileBase64 = await Base64.blobToBase64(blob);
+		const checksum = SparkMD5.ArrayBuffer.hash(await blob.arrayBuffer());
+		const result = { url, mimeType, fileBase64, checksum };
+		const contentDisposition = response.headers.get('Content-Disposition');
+		if (contentDisposition) {
+			const filenameMatch = /filename="(.*?)"/.exec(contentDisposition);
+			if (filenameMatch) {
+				const [, filename] = filenameMatch;
+				result.filename = filename;
 			}
-		};
-		xhr.open('GET', url);
-		xhr.responseType = 'blob';
-		xhr.send();
-
-		return deferredResponse.promise();
+		}
+		return result;
 	}
 }
