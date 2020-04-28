@@ -29,6 +29,7 @@
 	"data_export_generate_file_button": { "message": "Generate file" },
 	"data_export_waiting": { "message": "Your data will be ready soon, please wait" },
 	"data_export_download_file_button": { "message": "Download" },
+	"data_export_empty_delimiter": { "message": "CSV delimiter may not be empty" },
 	"selectorListItem_element_preview": { "message": "Element preview" },
 	"selectorListItem_data_preview": { "message": "Data preview" },
 	"selectorListItem_edit": { "message": "Edit" },

@@ -29,6 +29,9 @@
 	"data_export_generate_file_button": { "message": "Создать файл" },
 	"data_export_waiting": { "message": "Пожалуйста, подождите, данные скоро будут готовы" },
 	"data_export_download_file_button": { "message": "Скачать" },
+	"data_export_empty_delimiter": {
+		"message": "Пустая строка не может быть разделителем полей в CSV файле"
+	},
 	"selectorListItem_element_preview": { "message": "Элементы" },
 	"selectorListItem_data_preview": { "message": "Данные" },
 	"selectorListItem_edit": { "message": "Изменить" },

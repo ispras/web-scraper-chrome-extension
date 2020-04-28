@@ -1358,7 +1358,7 @@ export default class SitemapController {
 				delimiter: {
 					validators: {
 						callback: {
-							message: 'CSV delimiter may not be empty',
+							message: Translator.getTranslationByKey('data_export_empty_delimiter'),
 							callback: value => $('#export-format').val() !== 'csv' || !!value,
 						},
 					},
@@ -1385,7 +1385,9 @@ export default class SitemapController {
 			const downloadButton = $('#download-file');
 			const waitMessage = $('#wait-message');
 			downloadButton.hide();
-			waitMessage.show();
+
+			// displaying alert immediately looks annoying
+			const waitMessageTimeout = setTimeout(() => waitMessage.show(), 100);
 
 			const format = $('#export-format').val();
 			const options = {
@@ -1399,6 +1401,7 @@ export default class SitemapController {
 					? this.getDataExportCsvBlob(sitemap, options)
 					: this.getDataExportJsonLinesBlob(sitemap, options);
 			dataPromise.then(blob => {
+				clearTimeout(waitMessageTimeout);
 				waitMessage.hide();
 				downloadButton.attr('href', window.URL.createObjectURL(blob));
 				downloadButton.attr('download', `${sitemap._id}.${format}`);
