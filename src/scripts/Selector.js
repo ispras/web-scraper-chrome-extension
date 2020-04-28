@@ -12,7 +12,6 @@ export default class Selector {
 	 */
 	updateData(data, features) {
 		let allowedKeys = ['id', 'type', 'selector', 'parentSelectors'];
-		// XXX no need in information from window
 		allowedKeys = allowedKeys.concat(features);
 
 		// update data
