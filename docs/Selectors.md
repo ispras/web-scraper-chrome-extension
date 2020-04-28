@@ -81,8 +81,8 @@ way is to select a wrapper element with Element selector and add data selectors
 as child selectors to the element selector with multiple option not checked.
 
 [text-selector]: Selectors/Text%20selector.md
-[link-selector]: Selectors/Link%20Selector.md
-[link-popup-selector]: Selectors/Link%20Popup%20Selector.md
+[link-selector]: Selectors/Link%20selector.md
+[link-popup-selector]: Selectors/Link%20popup%20selector.md
 [image-selector]: Selectors/Image%20selector.md
 [element-attribute-selector]: Selectors/Element%20attribute%20selector.md
 [element-style-selector]: Selectors/Element%20style%20selector.md
