@@ -1,17 +1,27 @@
 import DatePatternSupport from './DateUtils/DatePatternSupport';
 import SelectorList from './SelectorList';
+import Model from './Model';
 import * as Papa from 'papaparse';
 
 export default class Sitemap {
-	constructor(sitemapObj) {
-		this.initData(sitemapObj);
+	constructor(id, startUrls, model, selectors) {
+		this._id = id;
+		this.startUrls = startUrls;
+		this.model = new Model(model);
+		this.selectors = new SelectorList(selectors ? selectors : []);
 	}
 
-	initData(sitemapObj) {
-		for (let key in sitemapObj) {
-			this[key] = sitemapObj[key];
+	static sitemapFromObj(sitemapObj) {
+		let sitemap = new Sitemap(
+			sitemapObj._id,
+			sitemapObj.startUrls,
+			sitemapObj.model,
+			sitemapObj.selectors
+		);
+		if (sitemapObj._rev) {
+			sitemap._rev = sitemapObj._rev;
 		}
-		this.selectors = new SelectorList(this.selectors);
+		return sitemap;
 	}
 
 	static isUrlValid(url) {
@@ -57,7 +67,7 @@ export default class Sitemap {
 	 */
 	getSelectorIds() {
 		let ids = ['_root'];
-		this.selectors.forEach(function(selector) {
+		this.selectors.forEach(function (selector) {
 			ids.push(selector.id);
 		});
 		return ids;
@@ -70,7 +80,7 @@ export default class Sitemap {
 	getPossibleParentSelectorIds() {
 		let ids = ['_root'];
 		this.selectors.forEach(
-			function(selector) {
+			function (selector) {
 				if (selector.canHaveChildSelectors()) {
 					ids.push(selector.id);
 				}
@@ -83,9 +93,9 @@ export default class Sitemap {
 		let startUrls = this.startUrls;
 		startUrls = DatePatternSupport.expandUrl(startUrls);
 
-		let nextUrls = function(url) {
+		let nextUrls = function (url) {
 			let urls = [];
-			let lpad = function(str, length) {
+			let lpad = function (str, length) {
 				while (str.length < length) str = '0' + str;
 				return str;
 			};
@@ -112,7 +122,7 @@ export default class Sitemap {
 					} else {
 						current = matches[1] + i;
 					}
-					nextSet.forEach(function(next) {
+					nextSet.forEach(function (next) {
 						urls.push(current + next);
 					});
 				}
@@ -123,7 +133,7 @@ export default class Sitemap {
 		};
 		let urls = [];
 
-		startUrls.forEach(function(startUrl) {
+		startUrls.forEach(function (startUrl) {
 			urls = urls.concat(nextUrls(startUrl));
 		});
 
@@ -138,7 +148,7 @@ export default class Sitemap {
 
 		// update child selectors
 		if (selector.id !== undefined && selector.id !== selectorData.id) {
-			this.selectors.forEach(function(currentSelector) {
+			this.selectors.forEach(function (currentSelector) {
 				currentSelector.renameParentSelector(selector.id, selectorData.id);
 			});
 
@@ -161,7 +171,7 @@ export default class Sitemap {
 	}
 	deleteSelector(selectorToDelete) {
 		this.selectors.forEach(
-			function(selector) {
+			function (selector) {
 				if (selector.hasParentSelector(selectorToDelete.id)) {
 					selector.removeParentSelector(selectorToDelete.id);
 					if (selector.parentSelectors.length === 0) {
@@ -183,7 +193,7 @@ export default class Sitemap {
 	}
 	exportSitemap() {
 		function removeEmpty(obj) {
-			Object.keys(obj).forEach(function(key) {
+			Object.keys(obj).forEach(function (key) {
 				if (obj[key] && typeof obj[key] === 'object') {
 					removeEmpty(obj[key]);
 					if (Object.keys(obj[key]).length === 0) {
@@ -199,63 +209,22 @@ export default class Sitemap {
 		removeEmpty(sitemapObj);
 		return JSON.stringify(sitemapObj);
 	}
-	importSitemap(sitemapJSON) {
-		let sitemapObj = JSON.parse(sitemapJSON);
-		this.initData(sitemapObj);
-	}
+
 	// return a list of columns than can be exported
 	getDataColumns() {
 		let columns = [];
-		this.selectors.forEach(function(selector) {
+		this.selectors.forEach(function (selector) {
 			columns = columns.concat(selector.getDataColumns());
 		});
 
 		let uniqueColumns = [];
-		$.each(columns, function(i, e) {
+		$.each(columns, function (i, e) {
 			if ($.inArray(e, uniqueColumns) == -1) uniqueColumns.push(e);
 		});
 
 		return uniqueColumns;
 	}
-	getDataExportCsvBlob(data, option) {
-		let delimiterKey = 'delimiter';
-		let newlineKey = 'newline';
-		let containBomKey = 'containBom';
 
-		let columns = this.getDataColumns(),
-			// default delimiter is comma
-			delimiter = option.hasOwnProperty(delimiterKey) ? option[delimiterKey] : ',',
-			// per default, new line is included at end of lines
-			newline = option.hasOwnProperty(newlineKey) ? (option[newlineKey] == true ? '\r\n' : '') : '\r\n',
-			// per default, utf8 BOM is included at the beginning.
-			prepend = option.hasOwnProperty(containBomKey) ? (option[containBomKey] == true ? '\ufeff' : '') : '\ufeff', // utf-8 bom char
-			options = {
-				quotes: false,
-				quoteChar: '"',
-				delimiter: delimiter,
-				header: true,
-				newline: '\r\n', // between value rows
-			},
-			jsonData = [];
-
-		// data
-		data.forEach(function(row) {
-			let jsonRow = {};
-			columns.forEach(function(column) {
-				let cellData = row[column];
-				if (cellData === undefined) {
-					cellData = '';
-				} else if (typeof cellData === 'object') {
-					cellData = JSON.stringify(cellData);
-				}
-
-				jsonRow[column] = cellData;
-			});
-			jsonData.push(jsonRow);
-		});
-
-		return new Blob([prepend + Papa.unparse(jsonData, options) + newline], { type: 'text/csv' });
-	}
 	getSelectorById(selectorId) {
 		return this.selectors.getSelectorById(selectorId);
 	}
@@ -264,7 +233,12 @@ export default class Sitemap {
 	 * @returns {Sitemap}
 	 */
 	clone() {
-		let clonedJSON = JSON.parse(JSON.stringify(this));
-		return new Sitemap(clonedJSON);
+		let clonedObj = JSON.parse(JSON.stringify(this));
+		return new Sitemap(
+			clonedObj._id,
+			clonedObj.startUrls,
+			clonedObj.model,
+			clonedObj.selectors
+		);
 	}
 }

@@ -1,5 +1,5 @@
+import * as $ from 'jquery';
 import Selector from '../Selector';
-import '../../libs/jquery.whencallsequentially';
 
 export default class SelectorImage extends Selector {
 	constructor(options) {
@@ -8,7 +8,7 @@ export default class SelectorImage extends Selector {
 	}
 
 	canReturnMultipleRecords() {
-		return true;
+		return false;
 	}
 
 	canHaveChildSelectors() {
@@ -27,75 +27,63 @@ export default class SelectorImage extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		var dfd = $.Deferred();
+	downloadsAttachments() {
+		return !!this.downloadImage;
+	}
 
-		var elements = this.getDataElements(parentElement);
-
-		var deferredDataCalls = [];
-		$(elements).each(
-			function(i, element) {
-				deferredDataCalls.push(
-					function() {
-						var deferredData = $.Deferred(),
-							data = {};
-
-						src = element.src;
-
-						// get url from style
-						if (src == null) {
-							src = $(element).css('background-image');
-							src = /^url\((['"]?)(.*)\1\)$/.exec(src);
-							src = src ? src[2] : '';
-						}
-
-						src = this.stringReplace(src, this.stringReplacement);
-
-						data[this.id + '-src'] = src;
-
-						// download image if required
-						if (!this.downloadImage) {
-							deferredData.resolve(data);
-						} else {
-							var deferredFileBase64 = this.downloadFileAsBase64(src);
-							deferredFileBase64
-								.done(
-									function(imageResponse) {
-										data['_fileBase64-' + this.id] = imageResponse.fileBase64;
-										data['_fileMimeType-' + this.id] = imageResponse.mimeType;
-										data['_filename' + this.id] = imageResponse.filename;
-
-										deferredData.resolve(data);
-									}.bind(this)
-								)
-								.fail(function() {
-									// failed to download image continue.
-									// @TODO handle errror
-									deferredData.resolve(data);
-								});
-						}
-
-						return deferredData.promise();
-					}.bind(this)
-				);
-			}.bind(this)
-		);
-
-		$.whenCallSequentially(deferredDataCalls).done(function(dataResults) {
-			if (this.multiple === false && elements.length === 0) {
-				var data = {};
-				data[this.id + '-src'] = null;
-				dataResults.push(data);
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement);
+		const urls = elements.map(element => {
+			let { src } = element;
+			// get url from style
+			if (src == null) {
+				src = $(element).css('background-image');
+				src = /^url\((['"]?)(.*)\1\)$/.exec(src);
+				src = src ? src[2] : '';
 			}
-
-			dfd.resolve(dataResults);
+			return this.stringReplace(src, this.stringReplacement);
 		});
 
-		return dfd.promise();
+		const result = {};
+		if (this.multiple) {
+			result[`${this.id}-src`] = urls;
+		} else {
+			result[`${this.id}-src`] = urls.length ? urls[0] : null;
+		}
+
+		if (this.downloadImage) {
+			const images = [];
+			for (const [i, url] of urls.entries()) {
+				try {
+					if (url) {
+						const image = await this.downloadFileAsBase64(url);
+						if (!image.filename) {
+							image.filename = this.getFilenameFromUrl(url);
+						}
+						images.push(image);
+					}
+				} catch (e) {
+					console.warn(`Failed to download image by url ${url}`, e);
+				}
+			}
+			if (images.length) {
+				result[`_attachments-${this.id}`] = images;
+			}
+		}
+
+		return [result];
 	}
 
 	getDataColumns() {
-		return [this.id + '-src'];
+		const dataColumns = [`${this.id}-src`];
+		if (this.downloadImage) {
+			dataColumns.push(`${this.id}-path`, `${this.id}-checksum`, `${this.id}-filename`);
+		}
+		return dataColumns;
+	}
+
+	getUrlColumn() {
+		return `${this.id}-src`;
 	}
 
 	getFeatures() {

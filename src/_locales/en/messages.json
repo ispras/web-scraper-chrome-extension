@@ -1,0 +1,274 @@
+{
+	"data_preview": { "message": "Data Preview" },
+	"sitemaps_nav_button": { "message": "Sitemaps" },
+	"sitemap_nav_button": { "message": "Sitemap" },
+	"sitemap_selector_list_nav_button": { "message": "Selectors" },
+	"sitemap_selector_graph_nav_button": { "message": "Selector graph" },
+	"sitemap_edit_metadata_nav_button": { "message": "Edit metadata" },
+	"sitemap_scrape_nav_button": { "message": "Scrape" },
+	"sitemap_browse_nav_button": { "message": "Browse" },
+	"sitemap_export_nav_button": { "message": "Export Sitemap" },
+	"sitemap_export_data_nav_button": { "message": "Export data" },
+	"create_sitemap_nav_button": { "message": "Create new sitemap" },
+	"create_sitemap_create_nav_button": { "message": "Create sitemap" },
+	"create_sitemap_import_nav_button": { "message": "Import sitemap" },
+	"sitemaplist_id": { "message": "ID" },
+	"sitemaplist_starturl": { "message": "Start URL" },
+	"sitemaplist_actions": { "message": "actions" },
+	"browse_sitemap_data": { "message": "Browse" },
+	"delete_sitemap": { "message": "Delete" },
+	"sitemap_export_download_button": { "message": "Download sitemap as JSON file" },
+	"sitemap_import_submit_button": { "message": "Submit import" },
+	"sitemap_import_renam_field": { "message": "Rename Sitemap (optional)" },
+	"sitemap_import_input_button": { "message": "Import sitemap JSON from file" },
+	"sitemap_import_JSON_field": { "message": "Sitemap JSON" },
+	"data_export_format": { "message": "File format" },
+	"data_export_delimiter_field": { "message": "Field delimiter" },
+	"data_export_newline_checker": { "message": "Add new lines at end" },
+	"data_export_utf_bom_checker": { "message": "Add UTF-8 BOM" },
+	"data_export_generate_file_button": { "message": "Generate file" },
+	"data_export_waiting": { "message": "Your data will be ready soon, please wait" },
+	"data_export_download_file_button": { "message": "Download" },
+	"data_export_empty_delimiter": { "message": "CSV delimiter may not be empty" },
+	"selectorListItem_element_preview": { "message": "Element preview" },
+	"selectorListItem_data_preview": { "message": "Data preview" },
+	"selectorListItem_edit": { "message": "Edit" },
+	"selectorListItem_delete": { "message": "Delete" },
+	"selectorList_id": { "message": "ID" },
+	"selectorList_selector": { "message": "Selector" },
+	"selectorList_type": { "message": "Type" },
+	"selectorList_multiple": { "message": "Multiple" },
+	"selectorList_parent_selector": { "message": "Parent selectors" },
+	"selectorList_actions": { "message": "Actions" },
+	"selectorList_add_selector_button": { "message": "Add new selector" },
+	"selector_edit_id_field": { "message": "Id" },
+	"selector_edit_type_placeholder": { "message": "Type" },
+	"selector_edit_selector_css_field": { "message": "Selector" },
+	"selector_edit_data_preview_button": { "message": "Data preview" },
+	"selector_edit_click_selector": { "message": "Click selector" },
+	"selector_edit_select_button": { "message": "Select" },
+	"selector_edit_element_preview_button": { "message": "Element preview" },
+	"selector_edit_refresh_button": { "message": "Refresh" },
+	"selector_edit_data_rows_selector": { "message": "Data rows selector" },
+	"selector_edit_select": { "message": "Select" },
+	"selector_edit_element_preview": { "message": "Element preview" },
+	"selector_edit_missing_columns_checker": { "message": "Extract missing columns" },
+	"selector_edit_vertical_table_checker": { "message": "This is vertical table" },
+	"selector_edit_click_type": { "message": "Click type" },
+	"selector_edit_clickOnce": { "message": "Click once (pagination, tabs)" },
+	"selector_edit_clickMore": {
+		"message": "Click more (click to load more elements. Stops when no new elements with unique text content are found.)"
+	},
+	"selector_edit_pagination_limit": { "message": "Pagination limit" },
+	"selector_edit_click_element_uniqueness": { "message": "Click element uniqueness" },
+	"selector_edit_unique_text": { "message": "Unique Text" },
+	"selector_edit_unique_html_and_text": { "message": "Unique HTML+Text" },
+	"selector_edit_unique_html": { "message": "Unique HTML" },
+	"selector_edit_unique_css_selector": { "message": "unique CSS Selector" },
+	"selector_edit_multiple": { "message": "Multiple Values" },
+	"selector_edit_discard_elements": { "message": "Discard elements" },
+	"selector_edit_discardInitialElements": {
+		"message": "Discard initial elements that are available before click"
+	},
+	"selector_edit_download_image": { "message": "Download image" },
+	"selector_edit_download_document": { "message": "Download document" },
+	"selector_edit_attribute_name": { "message": "Attribute name" },
+	"selector_edit_value": { "message": "Value" },
+	"selector_edit_style_name": { "message": "Style name" },
+	"selector_edit_string_manipulation": { "message": "String Manipulation" },
+	"selector_edit_regex_match": { "message": "Regex match:" },
+	"selector_edit_regex_group": { "message": "Regex group:" },
+	"selector_edit_trim_applying": { "message": "Trim will be applied before regex." },
+	"selector_edit_remove_html": { "message": "Remove HTML " },
+	"selector_edit_trim_text": { "message": "Trim Text" },
+	"selector_edit_replace_text": { "message": "Replace text:" },
+	"selector_edit_replacement_text": { "message": "Replacement text:" },
+	"selector_edit_text_prefix": { "message": "Text Prefix:" },
+	"selector_edit_text_suffix": { "message": "Text Suffix:" },
+	"selector_edit_delay": { "message": "Delay (ms)" },
+	"selector_edit_replace": { "message": "Replace" },
+	"selector_edit_parent_selector": { "message": "Parent Selectors" },
+	"selector_edit_table_columns": { "message": "Table columns" },
+	"selector_edit_column": { "message": "Column" },
+	"selector_edit_result_key": { "message": "Result key" },
+	"selector_edit_include_into_result": { "message": "Include into result" },
+	"selector_edit_save_selector": { "message": "Save selector" },
+	"selector_edit_cancel": { "message": "Cancel" },
+	"sitemap_scrape_config_request_interval_label": { "message": "Request interval (ms)" },
+	"sitemap_scrape_config_request_interval_randomness_label": {
+		"message": "Request interval randomness (ms)"
+	},
+	"sitemap_scrape_config_page_load_delay": { "message": "Page load delay (ms)" },
+	"sitemap_scrape_config_submit_scraping": { "message": "Start scraping" },
+	"sitemap_scrape_config_alert_success": {
+		"message": "Scraping in progress. Close the popup to stop scraping.\n\t\t\tWhen scraping is finished you can browse the data or export it as CSV or JSON Lines."
+	},
+	"sitemap_edit_metadata_submit_model": { "message": "Save Sitemap" },
+	"sitemap_edit_metadata_edit_sitemap_id": { "message": "Sitemap name" },
+	"sitemap_edit_metadata_start_url": { "message": "Start URL" },
+	"sitemap_edit_metadata_sitemap_model": { "message": "Sitemap Model" },
+	"sitemap_edit_metadata_sitemap_name_placeholder": { "message": "Sitemap name" },
+	"sitemap_edit_metadata_url_list_placeholder": { "message": "URL List" },
+	"sitemap_create_id": { "message": "Sitemap name" },
+	"sitemap_create_start_url_block_label": { "message": "Start URLs" },
+	"sitemap_create_sitemap_model": { "message": "Sitemap Model" },
+	"sitemap_create_submit_create_sitemap": { "message": "Create Sitemap" },
+
+	"url_patterns_hints": {
+		"message": "<div class=\"col_lg_10 col_lg_offset_1\">\n\t\t\tSupported URL patterns:<br />\n\t\t\t1. <b>Numeric</b> with optional step and zero padding – [<i>START</i>_<i>END</i>:<i>STEP</i>] – [001_010:10]<br />\n\t\t\t2. <b>Date interval</b> – [date&lt;<i>PATTERN</i>&gt;&lt;<i>START</i>&gt;&lt;<i>END</i>&gt;] – [date&lt;dd.MM.yyyy&gt;&lt;01.01.2017&gt;&lt;now&gt;]<br />\n\t\t\t<ul>\n\t\t\t\tdate placeholder may be\n\t\t\t\t<b>yesterday</b>\n\t\t\t\t/\n\t\t\t\t<b>now</b>\n\t\t\t\t/\n\t\t\t\t<b>tomorrow</b\n\t\t\t\t><br />\n\t\t\t\tother template components (in Java style)\n\t\t\t\t<ul>\n\t\t\t\t\t<table border=\"0\">\n\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yyyy</td>\n\t\t\t\t\t\t\t\t<td>full year (4 digits)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yy</td>\n\t\t\t\t\t\t\t\t<td>last 2 digits of year</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MMM &emsp;</td>\n\t\t\t\t\t\t\t\t<td>Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MM</td>\n\t\t\t\t\t\t\t\t<td>month number (01_12)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>dd</td>\n\t\t\t\t\t\t\t\t<td>day of month</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t</table>\n\t\t\t\t</ul>\n\t\t\t</ul>\n\t\t</div>\n\t</div>"
+	},
+	"sitemap_model_hints": {
+		"message": "\t\t\t</div>\n\t\t\t<p>\n\t\t\t\tYou can specify sitemap model as a list of json objects. <br />\n\t\t\t\t\tExample: [ { \"entity\": \"name of entity\", \"field\": \"field in entity\",\n\t\t\t\t\t\"fieldName\": \"expected field id\" } ]\n\t\t\t</p>\n\t\t</div>"
+	},
+
+	"SelectorText": { "message": "Text" },
+	"ConstantValue": { "message": "Constant value" },
+	"SelectorInputValue": { "message": "Input value" },
+	"SelectorLink": { "message": "Link" },
+	"SelectorPopupLink": { "message": "Popup Link" },
+	"SelectorImage": { "message": "Image" },
+	"SelectorDocument": { "message": "Document" },
+	"SelectorTable": { "message": "Table" },
+	"SelectorElementAttribute": { "message": "Element attribute" },
+	"SelectorElementStyle": { "message": "Element style" },
+	"SelectorHTML": { "message": "HTML" },
+	"SelectorElement": { "message": "Element" },
+	"SelectorElementScroll": { "message": "Element scroll down" },
+	"SelectorElementClick": { "message": "Element click" },
+	"SelectorGroup": { "message": "Grouped" },
+
+	"sitemap_scrape_config_requestInterval": { "message": "Request interval" },
+	"sitemap_scrape_config_requestIntervalRandomness": { "message": "Request interval randomness" },
+	"sitemap_scrape_config_pageLoadDelay": { "message": "Page load delay" },
+	"selector_edit_id": { "message": "Selector Id" },
+	"selector_edit_paginationLimit": { "message": "empty = unlimited" },
+	"selector_edit_extractAttribute": { "message": "Attribute name to extract" },
+	"selector_edit_value_placeholder": { "message": "Text value to insert" },
+	"selector_edit_extractStyle": { "message": "Style name to extract" },
+	"selector_edit_regex": { "message": "Regex" },
+	"selector_edit_regexgroup": { "message": "0" },
+	"selector_edit_replaceText": { "message": "Replace text" },
+	"selector_edit_replacementText": { "message": "Replacement text" },
+	"selector_edit_textPrefix": { "message": "Prefix" },
+	"selector_edit_textSuffix": { "message": "Suffix" },
+	"selector_edit_delay_placeholder": { "message": "Delay" },
+	"selector_edit_replaceString": { "message": "Replace text" },
+	"sitemap_create__id": { "message": "Sitemap name" },
+	"sitemap_create_startUrls": { "message": "Comma separated URL list" },
+	"sitemap_create_model": { "message": "Sitemap model" },
+
+	"options_title": { "message": "Web Scraper" },
+	"options_page_title": { "message": "Options page" },
+	"options_plugin_settings": { "message": "Plugin settings" },
+	"options_storage_type": { "message": "Storage type" },
+	"options_local_storage": { "message": "Local storage" },
+	"options_couchdb_storage": { "message": "CouchDB" },
+	"options_rest_api_storage": { "message": "Rest Api" },
+	"options_submit": { "message": "Save" },
+	"options_successfully_updated": { "message": "Options successfully updated." },
+	"options_error_updating": { "message": "Failed to save options" },
+	"options_couchdb_db_url_placeholder": { "message": "Database URL" },
+	"options_couchdb_db_url": { "message": "Sitemap DB" },
+	"options_couchdb_datadb": { "message": "Data DB" },
+	"options_couchdb_db_popup_title": { "message": "Database for sitemap storage" },
+	"options_couchdb_db_popup_content": { "message": "CouchDB database url" },
+	"options_couchdb_datadb_popup_title": { "message": "Database for scraped data" },
+	"options_couchdb_datadb_popup_content": {
+		"message": "CouchDB database url. For each sitemap a new DB will be created."
+	},
+	"options_rest_url": { "message": "Rest Url" },
+	"options_rest_url_popup_title": { "message": "Rest api url." },
+	"options_rest_url_popup_content": { "message": "Sitemaps will be syncing with that URL." },
+
+	"popup_title": { "message": "Open Developer tools where you will find Web Scraper tab" },
+	"popup_windows_linux": { "message": "Windows, Linux: Ctrl+Shift+I or F12" },
+	"popup_mac": { "message": "Mac: Cmd+Opt+I" },
+	"popup_any_oc": { "message": "Any OS: open Tools / Developer tools" },
+	"popup_documentation_link": { "message": "Documentation is available on" },
+
+	"sitemapid_short_message": { "message": "The sitemap id should be at least 3 characters long" },
+	"sitemapid_invalid_char": {
+		"message": "Only lowercase characters (a_z), digits (0_9), or any of the characters _, $, (, ), +, _, and / are allowed. Must begin with a letter."
+	},
+	"sitemapid_repeated_id": { "message": "Sitemap with this id already exists" },
+	"sitemapid_empty_message": { "message": "The sitemap id is required and cannot be empty" },
+	"sitemapurl_empty_message": { "message": "The start URL is required and cannot be empty" },
+	"sitemapurl_invalid_message": {
+		"message": "The start URLs are not valid. Please use \",\" as a seperator."
+	},
+	"sitemapmodel_empty_message": { "message": "Empty value is possible model" },
+	"sitemapjson_invalid_message": { "message": "JSON is not valid" },
+	"sitemapjson_empty_message": { "message": "Sitemap JSON is required and cannot be empty" },
+	"selecting_file_error": { "message": "Please select a file!" },
+	"sitemap_valid_message": { "message": "Valid sitemap" },
+	"selectorid_underscore": { "message": "Selector id cannot start with an underscore _" },
+	"selector_empty_message": { "message": "Selector is required and cannot be empty" },
+	"regex_regular_expressions_error_message": {
+		"message": "JavaScript does not support regular expressions that can match 0 characters."
+	},
+	"regex_group_numeric_error_message": { "message": "Regex group must be numeric" },
+	"selector_click_empty_message": { "message": "Click selector is required and cannot be empty" },
+	"selector_header_empty_message": {
+		"message": "Header row selector is required and cannot be empty"
+	},
+	"selector_data_row_empty_message": {
+		"message": "Data row selector is required and cannot be empty"
+	},
+	"delay_numeric_message": { "message": "Delay must be numeric" },
+	"pagination_limit_numeric_message": { "message": "Pagination limit must be numeric or empty" },
+	"pagination_limit_small_message": { "message": "Pagination limit must be 1 at least" },
+	"parent_selector_empty_message": { "message": "You must choose at least one parent selector" },
+	"handle_recursive_error_message": { "message": "Cannot handle recursive element selectors" },
+	"request_interval_empty_message": {
+		"message": "The request interval is required and cannot be empty"
+	},
+	"request_interval_numeric_message": { "message": "The request interval must be numeric" },
+	"request_interval_short_message": {
+		"message": "The request interval must be atleast 2000 milliseconds"
+	},
+	"request_interval_randomness_empty_message": {
+		"message": "The request interval randomness is required and cannot be empty"
+	},
+	"request_interval_randomness_numeric_message": {
+		"message": "The request interval randomness must be numeric"
+	},
+	"page_load_delay_empty_message": {
+		"message": "The page load delay is required and cannot be empty"
+	},
+	"page_load_delay_numeric_message": { "message": "The page laod delay must be numeric" },
+	"page_load_delay_short_message": {
+		"message": "The page load delay must be atleast 500 milliseconds"
+	},
+	"model_json_error_message": {
+		"message": "Each object in JSON array must contain keys entity, field, field_name."
+	},
+	"model_json_array_message": { "message": "JSON must be array" },
+	"model_empty_message": { "message": "Empty value is possible model" },
+	"model_correct_message": { "message": "Valid model" },
+
+	"content_selector_done_selecting_button": { "message": "Done selecting!" },
+	"content_selector_parent_selector_not_found": { "message": "Parent selector not found" },
+	"content_selector_parent_element_not_found": { "message": "Parent element not found!" },
+	"content_selector_different_element_selection_title": {
+		"message": "Enable different type element selection"
+	},
+	"content_selector_different_element_selection_error": {
+		"message": "Different type element selection is disabled. If the element  \n\t\t\tyou clicked should also be included then enable this and \n\t\t\tclick on the element again. Usually this is not needed."
+	},
+	"content_selector_enable_key_events_checker": { "message": "Enable key events" },
+	"content_selector_select_child_key": { "message": "Use C key to select child" },
+	"content_selector_select_parent_key": { "message": "Use P key to select parent" },
+	"content_selector_select_element_key": { "message": "Use S key to select element" },
+	"content_selector_enable_key_events_title": {
+		"message": "Click here to enable key press events for selection"
+	},
+	"content_selector_enable_key_events_text": { "message": "Enable key events" },
+	"selector_edit_refresh_button_title": {
+		"message": "Refresh if you manually changed the selector"
+	},
+	"content_script_width": { "message": "130px !important" },
+	"extension_name": { "message": "Web Scraper" },
+	"extension_short_name": { "message": "Web Scraper" },
+	"extension_description": { "message": "Tool for data extraction from websites" },
+	"browse_data_search": { "message": "Search in scraped data" }
+}

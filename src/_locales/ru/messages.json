@@ -1,0 +1,303 @@
+{
+	"data_preview": { "message": "Предпросмотр данных" },
+	"sitemaps_nav_button": { "message": "Список карт обхода" },
+	"sitemap_nav_button": { "message": "Карта обхода" },
+	"sitemap_selector_list_nav_button": { "message": "Селекторы" },
+	"sitemap_selector_graph_nav_button": { "message": "Граф селекторов" },
+	"sitemap_edit_metadata_nav_button": { "message": "Изменить метаданные" },
+	"sitemap_scrape_nav_button": { "message": "Запустить тестовый сбор" },
+	"sitemap_browse_nav_button": { "message": "Просмотр данных" },
+	"sitemap_export_nav_button": { "message": "Выгрузить карту обхода" },
+	"sitemap_export_data_nav_button": { "message": "Выгрузить данные" },
+	"create_sitemap_nav_button": { "message": "Добавить карту обхода" },
+	"create_sitemap_create_nav_button": { "message": "Создать" },
+	"create_sitemap_import_nav_button": { "message": "Загрузить" },
+	"sitemaplist_id": { "message": "Идентификатор карты" },
+	"sitemaplist_starturl": { "message": "Стартовые URL" },
+	"sitemaplist_actions": { "message": "Действия" },
+	"browse_sitemap_data": { "message": "Просмотр" },
+	"delete_sitemap": { "message": "Удалить" },
+	"sitemap_export_download_button": { "message": "Скачать карту обхода в виде JSON файла" },
+	"sitemap_import_submit_button": { "message": "Загрузить карту обхода" },
+	"sitemap_import_renam_field": { "message": "Переименовать карту обхода (опционально)" },
+	"sitemap_import_input_button": { "message": "Импортировать карту обхода из файла" },
+	"sitemap_import_JSON_field": { "message": "JSON представление карты обхода" },
+	"data_export_format": { "message": "Формат" },
+	"data_export_delimiter_field": { "message": "Разделитель полей" },
+	"data_export_newline_checker": { "message": "Добавить перевод строки в конце" },
+	"data_export_utf_bom_checker": { "message": "Добавить UTF-8 BOM" },
+	"data_export_generate_file_button": { "message": "Создать файл" },
+	"data_export_waiting": { "message": "Пожалуйста, подождите, данные скоро будут готовы" },
+	"data_export_download_file_button": { "message": "Скачать" },
+	"data_export_empty_delimiter": {
+		"message": "Пустая строка не может быть разделителем полей в CSV файле"
+	},
+	"selectorListItem_element_preview": { "message": "Элементы" },
+	"selectorListItem_data_preview": { "message": "Данные" },
+	"selectorListItem_edit": { "message": "Изменить" },
+	"selectorListItem_delete": { "message": "Удалить" },
+	"selectorList_id": { "message": "Идентификатор" },
+	"selectorList_selector": { "message": "CSS селектор" },
+	"selectorList_type": { "message": "Тип" },
+	"selectorList_multiple": { "message": "Множественность" },
+	"selectorList_parent_selector": { "message": "Родительские селекторы" },
+	"selectorList_actions": { "message": "Действия" },
+	"selectorList_add_selector_button": { "message": "Добавить новый селектор" },
+	"selector_edit_id_field": { "message": "Идентификатор" },
+	"selector_edit_type_placeholder": { "message": "Тип" },
+	"selector_edit_selector_css_field": { "message": "CSS селектор" },
+	"selector_edit_data_preview_button": { "message": "Предпросмотор данных" },
+	"selector_edit_click_selector": { "message": "Селектор клика" },
+	"selector_edit_select_button": { "message": "Выбрать" },
+	"selector_edit_element_preview_button": { "message": "Элементы" },
+	"selector_edit_refresh_button": { "message": "Обновить" },
+	"selector_edit_data_rows_selector": { "message": "Селектор строк с данными" },
+	"selector_edit_missing_columns_checker": { "message": "Извлечь недостающие колонки" },
+	"selector_edit_vertical_table_checker": { "message": "Это вертикальная таблица" },
+	"selector_edit_click_type": { "message": "Тип клика" },
+	"selector_edit_clickOnce": { "message": "Кликнуть один раз (страницы, вкладки)" },
+	"selector_edit_clickMore": {
+		"message": "Кликнуть много (Нажмите, чтобы загрузить больше элементов. Останавливается, когда не найдено новых элементов с уникальным текстовым содержимым.)"
+	},
+	"selector_edit_pagination_limit": { "message": "Лимит страниц" },
+	"selector_edit_click_element_uniqueness": { "message": "Уникальность элементов клика" },
+	"selector_edit_unique_text": { "message": "Уникальный текст" },
+	"selector_edit_unique_html_and_text": { "message": "Уникальный HTML и текст" },
+	"selector_edit_unique_html": { "message": "Уникальный HTML" },
+	"selector_edit_unique_css_selector": { "message": "Уникальный CSS селектор" },
+	"selector_edit_multiple": { "message": "Выбрать много" },
+	"selector_edit_discard_elements": { "message": "Отменить элементы" },
+	"selector_edit_discardInitialElements": {
+		"message": "Отменить начальные элементы, которые доступны до нажатия"
+	},
+	"selector_edit_download_image": { "message": "Сохранить картинку" },
+	"selector_edit_download_document": { "message": "Сохранить документ" },
+	"selector_edit_attribute_name": { "message": "Имя атрибута" },
+	"selector_edit_value": { "message": "Значение" },
+	"selector_edit_style_name": { "message": "Имя стиля" },
+	"selector_edit_header_css": { "message": "Селектор строки заголовка" },
+	"selector_edit_string_manipulation": { "message": "Преобразования строки" },
+	"selector_edit_regex_match": { "message": "Регулярное выражение:" },
+	"selector_edit_regex_group": { "message": "Группа регулярного выражения:" },
+	"selector_edit_trim_applying": {
+		"message": "Перед применением регулярного выражения текст будет обрезан."
+	},
+	"selector_edit_remove_html": { "message": "Убрать HTML" },
+	"selector_edit_trim_text": { "message": "Обрезка текста" },
+	"selector_edit_replace_text": { "message": "Заменить текст:" },
+	"selector_edit_replacement_text": { "message": "Замена" },
+	"selector_edit_text_prefix": { "message": "Префикс текста:" },
+	"selector_edit_text_suffix": { "message": "Суффикс текста:" },
+	"selector_edit_delay": { "message": "Задержка (ms)" },
+	"selector_edit_replace": { "message": "Преобразования строки" },
+	"selector_edit_parent_selector": { "message": "Родительские селекторы" },
+	"selector_edit_table_columns": { "message": "Таблица колонок" },
+	"selector_edit_column": { "message": "Колонка" },
+	"selector_edit_result_key": { "message": "Имя колонки" },
+	"selector_edit_include_into_result": { "message": "Добавить в результат" },
+	"selector_edit_save_selector": { "message": "Сохранить селектор" },
+	"selector_edit_cancel": { "message": "Отмена" },
+	"sitemap_scrape_config_requestInterval": { "message": "Интервал между запросами" },
+	"sitemap_scrape_config_requestIntervalRandomness": { "message": "Случайность между запросами" },
+	"sitemap_scrape_config_pageLoadDelay": { "message": "Задержка при загрузке страницы" },
+	"sitemap_scrape_config_request_interval_label": { "message": "Интервал между запросами (мс)" },
+	"sitemap_scrape_config_request_interval_randomness_label": {
+		"message": "Случайность между запросами (мс)"
+	},
+	"sitemap_scrape_config_page_load_delay": { "message": "Задержка при загрузке страницы (мс)" },
+	"sitemap_scrape_config_submit_scraping": { "message": "Запустить тестовый сбор" },
+	"sitemap_scrape_config_alert_success": {
+		"message": "<div class=\"alert alert_success col_lg_10 col_lg_offset_1 hide scraping_in_progress\" role=\"alert\">\n\t\t\tСбор в процессе. Закройте всплывающее окно для того, чтобы остановить сбор.<br />\n\t\t\tКогда сбор завершится вы можете посмотреть собранные данные и выгрузить их в CSV или JSON Lines.\n\t\t</div>"
+	},
+	"sitemap_edit_metadata_submit_model": { "message": "Сохранить карту обхода" },
+	"sitemap_edit_metadata_edit_sitemap_id": { "message": "Идентификатор карты обхода" },
+	"sitemap_edit_metadata_start_url": { "message": "Стартовые URL" },
+	"sitemap_edit_metadata_sitemap_model": { "message": "Модель карты обхода" },
+	"sitemap_edit_metadata_sitemap_name_placeholder": { "message": "Идентификатор карты обхода" },
+	"sitemap_edit_metadata_url_list_placeholder": { "message": "Список шаблонов URL" },
+	"sitemap_create_id": { "message": "Идентификатор карты обхода" },
+	"sitemap_create_start_url_block_label": { "message": "Стартовые URLs" },
+	"sitemap_create_sitemap_model": { "message": "Модель карты обхода" },
+	"sitemap_create_submit_create_sitemap": { "message": "Создать карту обхода" },
+
+	"url_patterns_hints": {
+		"message": "<div class=\"col_lg_10 col_lg_offset_1\">\n\t\t\tПоддерживаемые шаблоны URL:<br />\n\t\t\t1. <b>Числовой</b> с опциональным шагом и дозаполнением нулями – [<i>START</i>_<i>END</i>:<i>STEP</i>] – [001_010:10]<br />\n\t\t\t2. <b>На основе дат</b> – [date&lt;<i>PATTERN</i>&gt;&lt;<i>START</i>&gt;&lt;<i>END</i>&gt;] – [date&lt;dd.MM.yyyy&gt;&lt;01.01.2017&gt;&lt;now&gt;]<br />\n\t\t\t<ul>\n\t\t\t\tвместо дат можно использовать\n\t\t\t\t<b>yesterday</b\n\t\t\t\t>(вчера) /\n\t\t\t\t<b>now</b\n\t\t\t\t>(сейчас) /\n\t\t\t\t<b>tomorrow</b\n\t\t\t\t>(завтра)<br />\n\t\t\t\tостальные шаблоны (в стиле Java)\n\t\t\t\t<ul>\n\t\t\t\t\t<table border=\"0\">\n\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yyyy</td>\n\t\t\t\t\t\t\t\t<td>полный год (4 digits)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yy</td>\n\t\t\t\t\t\t\t\t<td>последние 2 цифры года</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MMM &emsp;</td>\n\t\t\t\t\t\t\t\t<td>Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MM</td>\n\t\t\t\t\t\t\t\t<td>номер месяца (01_12)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>dd</td>\n\t\t\t\t\t\t\t\t<td>день месяца</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t</table>\n\t\t\t\t</ul>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n"
+	},
+	"sitemap_model_hints": {
+		"message": "<div>\n\t\t\t<p>\n\t\t\t\tВы можете указать модель карты обхода в виде списка JSON объектов. <br />\n\t\t\t\tПример: [ { \"entity\": \"Имя сущности\", \"field\": \"Поле сущности\", \"fieldName\": \"Ожидаемый идентификатор поля\" } ]\n\t\t\t</p>\n\t\t</div>"
+	},
+
+	"SelectorText": { "message": "Текст" },
+	"SelectorLink": { "message": "Ссылка" },
+	"SelectorPopupLink": { "message": "Всплывающая ссылка" },
+	"SelectorImage": { "message": "Изображение" },
+	"SelectorDocument": { "message": "Документ" },
+	"SelectorTable": { "message": "Таблица" },
+	"SelectorElementAttribute": { "message": "Атрибут" },
+	"SelectorElementStyle": { "message": "Стиль" },
+	"SelectorHTML": { "message": "HTML" },
+	"SelectorElement": { "message": "Элемент" },
+	"SelectorElementScroll": { "message": "Прокрутка" },
+	"SelectorElementClick": { "message": "Клик на элемент" },
+	"SelectorGroup": { "message": "Группа" },
+	"ConstantValue": { "message": "Константа" },
+	"SelectorInputValue": { "message": "Вставка значения" },
+
+	"sitemap_scrape_requestInterval": { "message": "Интервал между запросами" },
+	"sitemap_scrape_requestIntervalRandomness": { "message": "Случайность между запросами" },
+	"sitemap_scrape_pageLoadDelay": { "message": "Задержка при загрузке страницы" },
+	"selector_edit_id": { "message": "Идентификатор селектора" },
+	"selector_edit_paginationLimit": { "message": "устой = бесконечно" },
+	"selector_edit_extractAttribute": { "message": "Имя аттрибута для извлечения" },
+	"selector_edit_value_placeholder": { "message": "Значения текста для вставки" },
+	"selector_edit_extractStyle": { "message": "Имя атрибута для извлечения" },
+	"selector_edit_regex": { "message": "Регулярное выражение" },
+	"selector_edit_regexgroup": { "message": "0" },
+	"selector_edit_replaceText": { "message": "Выражение заменяемого текста" },
+	"selector_edit_replacementText": { "message": "Текст замены" },
+	"selector_edit_textPrefix": { "message": "Префикс" },
+	"selector_edit_textSuffix": { "message": "Суффикс" },
+	"selector_edit_replaceString": { "message": "Заменяемый текст" },
+	"sitemap_create__id": { "message": "Идентификатор карты обхода" },
+	"sitemap_create_startUrls": { "message": "Список шаблонов URL через запятую" },
+	"sitemap_create_model": { "message": "Модель карты обхода" },
+
+	"options_title": { "message": "Web Scraper" },
+	"options_page_title": { "message": "Страница настроек" },
+	"options_plugin_settings": { "message": "Настройки хранилища" },
+	"options_storage_type": { "message": "Тип хранилища" },
+	"options_local_storage": { "message": "Локальное хранилище" },
+	"options_couchdb_storage": { "message": "CouchDB" },
+	"options_rest_api_storage": { "message": "Серверное хранилище" },
+	"options_submit": { "message": "Сохранить настройки" },
+	"options_successfully_updated": { "message": "Опции успешно сохранены" },
+	"options_error_updating": { "message": "Ошибка при сохранении опций " },
+	"options_couchdb_db_url_placeholder": { "message": "Url адрес базы CouchDB" },
+	"options_couchdb_db_url": { "message": "БД карт обхода" },
+	"options_couchdb_datadb": { "message": "БД данных" },
+	"options_couchdb_db_popup_title": { "message": "База данных для карт обхода" },
+	"options_couchdb_db_popup_content": {
+		"message": "Url адрес базы CouchDB. Для каждой карты обхода будет создана новая база данных."
+	},
+	"options_couchdb_datadb_popup_title": { "message": "База данных для собранных данных" },
+	"options_couchdb_datadb_popup_content": {
+		"message": "URL адрес базы CouchDB. Для каждой карты обхода будет создана новая база данных."
+	},
+	"options_rest_url": { "message": "URL адрес" },
+	"options_rest_url_popup_title": { "message": "URL адрес внешнего хранилища." },
+	"options_rest_url_popup_content": {
+		"message": "С этим URL будут синхронизироваться ваши карты обхода."
+	},
+
+	"popup_title": {
+		"message": "Откройте инструменты разработчика, где вы можете найти вкладку Web Scraper:"
+	},
+	"popup_windows_linux": { "message": "Windows, Linux: Ctrl+Shift+I или F12" },
+	"popup_mac": { "message": "Mac: Cmd+Opt+I" },
+	"popup_any_oc": { "message": "Любая OS: открыть Tools / Developer tools" },
+	"popup_documentation_link": { "message": "Документация доступна на сайте" },
+
+	"sitemapid_short_message": {
+		"message": "Длина идентификатора карты обхода должна быть как минимум 3 символа"
+	},
+	"sitemapid_invalid_char": {
+		"message": "Допустимые символы в идентификаторе буквы(a_z), цифры(0_9), или другие символы _, $, (, ), +, _, /. Должен начинаться с буквы."
+	},
+	"sitemapid_repeated_id": { "message": "Карта обхода с таким идентификатором уже существует" },
+	"sitemapid_empty_message": {
+		"message": "Идентификатор карты обхода обязателен и не может быть пустым"
+	},
+	"sitemapurl_empty_message": { "message": "Стартовый URL обязателен и не может быть пустым" },
+	"sitemapurl_invalid_message": {
+		"message": "Стартовые URL_ы не валидны. Пожалуйста используйте \",\"  в качестве разделителя."
+	},
+	"sitemapmodel_empty_message": { "message": "Пустые значения модели возможны" },
+	"sitemapjson_invalid_message": { "message": "Неправильный JSON карты обхода" },
+	"sitemapjson_empty_message": {
+		"message": "JSON карта обхода обязателен и не может быть пустым"
+	},
+	"selecting_file_error": { "message": "Пожалуйста, выберите файл!" },
+	"sitemap_valid_message": { "message": "Правильная карта обхода" },
+	"selectorid_underscore": {
+		"message": "Идентификатор не может начинаться с нижнего подчеркивания _"
+	},
+	"selector_empty_message": { "message": "Селектор необходим и не может быть пустым" },
+	"regex_regular_expressions_error_message": {
+		"message": "JavaScript не поддерживает регулярные выражения которые соответствуют 0 символов."
+	},
+	"regex_group_numeric_error_message": {
+		"message": "Группа регулярного выражения должна быть числом"
+	},
+	"selector_click_empty_message": {
+		"message": "Селектор клика обязателен и не может быть пустым."
+	},
+	"selector_header_empty_message": {
+		"message": "Селектор заголовка таблицы обязателен и не может быть пустым."
+	},
+	"selector_data_row_empty_message": {
+		"message": "Селектор данных таблицы обязателен и не может быть пустым."
+	},
+	"delay_numeric_message": { "message": "Задержка должна быть числовым значением" },
+	"pagination_limit_numeric_message": {
+		"message": "Лимит страниц должен быть числовым или пустым"
+	},
+	"pagination_limit_small_message": { "message": "Лимит страниц должен быть больше 1" },
+	"parent_selector_empty_message": {
+		"message": "Вы должны выбрать хотя бы один родительский селектор."
+	},
+	"handle_recursive_error_message": {
+		"message": "Невозможно обработать рекурсивные селекторы элементов."
+	},
+	"request_interval_empty_message": {
+		"message": "Задержка между запросами обязательна и не может быть пустой."
+	},
+	"request_interval_numeric_message": {
+		"message": "Задержка между запросами должна быть числом"
+	},
+	"request_interval_short_message": { "message": "Задержка между запросами должна быть числом" },
+	"request_interval_randomness_empty_message": {
+		"message": "Случайность в задержке между запросами обязательна и не может быть пустой."
+	},
+	"request_interval_randomness_numeric_message": {
+		"message": "Случайность в задержке между запросами должна быть числом"
+	},
+	"page_load_delay_empty_message": {
+		"message": "Задержка загрузки страницы обязательна и не может быть пустой."
+	},
+	"page_load_delay_numeric_message": {
+		"message": "Задержка загрузки страницы должна быть числом."
+	},
+	"page_load_delay_short_message": {
+		"message": "Задержка загрузки страницы должна быть не меньше 500 миллисекунд"
+	},
+	"model_json_error_message": {
+		"message": "Каждый объект в JSON массиве должен содержать ключи entity, field, fieldName."
+	},
+	"model_json_array_message": { "message": "JSON должен быть массивом" },
+	"model_empty_message": { "message": "Пустые значения модели возможны" },
+	"model_correct_message": { "message": "Модель правильная" },
+
+	"content_selector_done_selecting_button": { "message": "Закончить выбор!" },
+	"content_selector_parent_selector_not_found": { "message": "Не найден родительский селектор!" },
+	"content_selector_parent_element_not_found": { "message": "Не найден родительский элемент!" },
+	"content_selector_different_element_selection_title": {
+		"message": "Включить выбор элементов различного типа"
+	},
+	"content_selector_different_element_selection_error": {
+		"message": "Выбор элементов различного типа выключен. Если элемент на \n\t\t\tкоторый вы кликнули тоже должен быть выбран, то включите эту \n\t\t\tфункцию и кликните ещё раз. Обычно это не нужно."
+	},
+	"content_selector_enable_key_events_checker": { "message": "Включить события по клавишам" },
+	"content_selector_select_child_key": { "message": "Используйте C для выбора сына" },
+	"content_selector_select_parent_key": { "message": "Используйте P для выбора родителя" },
+	"content_selector_select_element_key": { "message": "Используйте S для выбора элемента" },
+	"content_selector_enable_key_events_title": { "message": "Включить события по клавишам" },
+	"content_selector_enable_key_events_text": { "message": "Клавиши" },
+	"selector_edit_refresh_button_title": {
+		"message": "Обновите, если вы вручную изменили селектор"
+	},
+	"extension_name": { "message": "Web Scraper" },
+	"extension_short_name": { "message": "Web Scraper" },
+	"extension_description": { "message": "Инструмент для извлечения данных с веб-сайтов." },
+	"browse_data_search": { "message": "Поиск в собранных данных" },
+	"content_script_width": { "message": "150px !important" }
+}

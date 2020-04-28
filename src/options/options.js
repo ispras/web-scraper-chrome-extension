@@ -1,46 +1,57 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap';
+import * as browser from 'webextension-polyfill';
+import * as $ from 'jquery';
 import Config from '../scripts/Config';
+import Translator from '../scripts/Translator';
 
-$(function() {
+// Extension configuration
+const config = new Config();
+
+function initPopups() {
 	// popups for Storage setting input fields
 	$('#sitemapDb')
 		.popover({
-			title: 'Database for sitemap storage',
+			title: Translator.getTranslationByKey('options_couchdb_db_popup_title'),
 			html: true,
-			content: 'CouchDB database url<br /> http://example.com/scraper-sitemaps/',
+			content: `${Translator.getTranslationByKey(
+				'options_couchdb_db_popup_content'
+			)} <br /> http://example.com/scraper-sitemaps/`,
 			placement: 'bottom',
 		})
-		.blur(function() {
+		.blur(function () {
 			$(this).popover('hide');
 		});
 
 	$('#dataDb')
 		.popover({
-			title: 'Database for scraped data',
+			title: Translator.getTranslationByKey('options_couchdb_datadb_popup_title'),
 			html: true,
-			content: 'CouchDB database url. For each sitemap a new DB will be created.<br />http://example.com/',
+			content: `${Translator.getTranslationByKey(
+				'options_couchdb_datadb_popup_content'
+			)} <br />http://example.com/`,
 			placement: 'bottom',
 		})
-		.blur(function() {
+		.blur(function () {
 			$(this).popover('hide');
 		});
 
 	$('#restUrl')
 		.popover({
-			title: 'Url to push your sitemaps.',
+			title: Translator.getTranslationByKey('options_rest_url_popup_title'),
 			html: true,
-			content: 'Rest api url.',
+			content: Translator.getTranslationByKey('options_rest_url_popup_content'),
 			placement: 'bottom',
 		})
-		.blur(function() {
+		.blur(function () {
 			$(this).popover('hide');
 		});
+}
 
+function initConfigSwitch() {
 	// switch between configuration types
-	$('select[name=storageType]').change(function() {
-		var type = $(this).val();
-
+	$('select[name=storageType]').change(function () {
+		let type = $(this).val();
 		if (type === 'couchdb') {
 			$('.form-group.couchdb').show();
 			$('.form-group.rest').hide();
@@ -52,25 +63,28 @@ $(function() {
 			$('.form-group.couchdb').hide();
 		}
 	});
+}
 
-	// Extension configuration
-	var config = new Config();
-
+function initConfig() {
 	// load previously synced data
 	config.loadConfiguration().then(() => {
 		$('#storageType').val(config.storageType);
 		$('#sitemapDb').val(config.sitemapDb);
 		$('#dataDb').val(config.dataDb);
 		$('#restUrl').val(config.restUrl);
-
 		$('select[name=storageType]').change();
+		if (browser.i18n.getUILanguage() === 'ru' && config.storageType !== 'couchdb') {
+			$('#storageType [value=couchdb]').hide();
+		}
 	});
+}
 
+function initFormSubmit() {
 	// Sync storage settings
-	$('form#storage_configuration').submit(function() {
+	$('form#storage_configuration').submit(() => {
 		const storageType = $('#storageType').val();
 		const newConfig = {
-			storageType: storageType,
+			storageType,
 			sitemapDb: '',
 			dataDb: '',
 			restUrl: '',
@@ -88,15 +102,26 @@ $(function() {
 			.then(() => {
 				$('.alert')
 					.attr('id', 'success')
-					.text('Options successfully updated.')
+					.text(Translator.getTranslationByKey('options_successfully_updated'))
 					.show();
+				Translator.translatePage();
 			})
-			.catch(() => {
+			.catch(error => {
+				console.error(error);
 				$('.alert')
 					.attr('id', 'error')
-					.text('Failed to save options ' + chrome.runtime.lastError.message)
+					.text(Translator.getTranslationByKey('options_error_updating'))
 					.show();
 			});
+
 		return false;
 	});
+}
+
+$(() => {
+	initPopups();
+	initConfigSwitch();
+	initConfig();
+	initFormSubmit();
+	Translator.translatePage();
 });

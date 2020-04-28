@@ -1,5 +1,5 @@
+import * as $ from 'jquery';
 import Selector from '../Selector';
-import '../../libs/jquery.whencallsequentially';
 
 export default class SelectorPopupLink extends Selector {
 	constructor(options) {
@@ -27,75 +27,23 @@ export default class SelectorPopupLink extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		var elements = this.getDataElements(parentElement);
-
-		var dfd = $.Deferred();
-
-		// return empty record if not multiple type and no elements found
-		if (this.multiple === false && elements.length === 0) {
-			var data = {};
-			data[this.id] = null;
-			dfd.resolve([data]);
-			return dfd;
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement);
+		if (!this.multiple && !elements.length) {
+			return [{ [this.id]: null }];
 		}
-
-		// extract links one by one
-		var deferredDataExtractionCalls = [];
-		$(elements).each(
-			function(k, element) {
-				deferredDataExtractionCalls.push(
-					function(element) {
-						var deferredData = $.Deferred();
-
-						var data = {};
-						data[this.id] = $(element).text();
-						data._followSelectorId = this.id;
-
-						var deferredPopupURL = this.getPopupURL(element);
-						deferredPopupURL.done(
-							function(url) {
-								data[this.id + '-href'] = url;
-								data._follow = url;
-								deferredData.resolve(data);
-							}.bind(this)
-						);
-
-						return deferredData;
-					}.bind(this, element)
-				);
-			}.bind(this)
-		);
-
-		$.whenCallSequentially(deferredDataExtractionCalls).done(function(responses) {
-			var result = [];
-			responses.forEach(function(dataResult) {
-				result.push(dataResult);
+		const links = [];
+		for (const element of elements) {
+			const text = $(element).text();
+			const url = await this.getPopupURL(element);
+			links.push({
+				[this.id]: text,
+				[`${this.id}-href`]: url,
+				_followSelectorId: this.id,
+				_follow: url,
 			});
-			dfd.resolve(result);
-		});
-
-		return dfd.promise();
-	}
-
-	getElementCSSSelector(element) {
-		var nthChild, prev;
-		for (nthChild = 1, prev = element.previousElementSibling; prev !== null; prev = prev.previousElementSibling, nthChild++);
-		var tagName = element.tagName.toLocaleLowerCase();
-		var cssSelector = tagName + ':nth-child(' + nthChild + ')';
-
-		while (element.parentElement) {
-			element = element.parentElement;
-			var tagName = element.tagName.toLocaleLowerCase();
-			if (tagName === 'body' || tagName === 'html') {
-				cssSelector = tagName + '>' + cssSelector;
-			} else {
-				for (nthChild = 1, prev = element.previousElementSibling; prev !== null; prev = prev.previousElementSibling, nthChild++);
-				cssSelector = tagName + ':nth-child(' + nthChild + ')>' + cssSelector;
-			}
 		}
-
-		return cssSelector;
+		return links;
 	}
 
 	/**
@@ -106,50 +54,45 @@ export default class SelectorPopupLink extends Selector {
 	getPopupURL(element) {
 		// override window.open function. we need to execute this in page scope.
 		// we need to know how to find this element from page scope.
-		var cssSelector = this.getElementCSSSelector(element);
+		const cssSelector = this.getElementCSSSelector(element);
 
 		// this function will catch window.open call and place the requested url as the elements data attribute
-		var script = document.createElement('script');
+		const script = document.createElement('script');
 		script.type = 'text/javascript';
-		script.text =
-			'' +
-			'(function(){ ' +
-			'var open = window.open; ' +
-			"var el = document.querySelectorAll('" +
-			cssSelector +
-			"')[0]; " +
-			'var openNew = function() { ' +
-			'var url = arguments[0]; ' +
-			'el.dataset.webScraperExtractUrl = url; ' +
-			'window.open = open; ' +
-			'};' +
-			'window.open = openNew; ' +
-			'el.click(); ' +
-			'})();';
+		script.text = `{
+			const { open } = window;
+			const el = document.querySelector('${cssSelector}');
+			window.open = url => {
+				el.dataset.webScraperExtractUrl = url;
+				window.open = open;
+			};
+			el.click();
+		}`;
 		document.body.appendChild(script);
 
 		// wait for url to be available
-		var deferredURL = $.Deferred();
-		var timeout = Math.abs(5000 / 30); // 5s timeout to generate an url for popup
-		var interval = setInterval(function() {
-			var url = $(element).data('web-scraper-extract-url');
-			if (url) {
-				deferredURL.resolve(url);
-				clearInterval(interval);
-				script.remove();
-			}
-			// timeout popup opening
-			if (timeout-- <= 0) {
-				clearInterval(interval);
-				script.remove();
-			}
-		}, 30);
-
-		return deferredURL.promise();
+		const timeout = 5000; // 5s timeout to generate an url for popup
+		const intervalTickRate = 30; // check each 30 ms
+		let ticks = Math.ceil(timeout / intervalTickRate);
+		return new Promise(resolve => {
+			const interval = setInterval(() => {
+				const url = $(element).data('web-scraper-extract-url');
+				if (url) {
+					clearInterval(interval);
+					script.remove();
+					resolve(url);
+				}
+				// timeout popup opening
+				if (!--ticks) {
+					clearInterval(interval);
+					script.remove();
+				}
+			}, intervalTickRate);
+		});
 	}
 
 	getDataColumns() {
-		return [this.id, this.id + '-href'];
+		return [this.id, `${this.id}-href`];
 	}
 
 	getFeatures() {

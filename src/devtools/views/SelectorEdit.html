@@ -1,13 +1,13 @@
 <form class="form-horizontal" role="form" id="edit-selector">
 	<div class="form-group">
-		<label for="selectorId" class="col-sm-2 control-label">Id</label>
+		<label for="selectorId" class="col-sm-2 control-label" data-i18n="selector_edit_id_field"></label>
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="id" id="selectorId" placeholder="Selector Id" value="{{selector.id}}" />
+			<input type="text" class="form-control" name="id" id="selectorId" placeholder="selector_edit_id" value="{{selector.id}}" />
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="type" class="col-sm-2 control-label">Type</label>
+		<label for="type" class="col-sm-2 control-label" data-i18n="selector_edit_type_placeholder"></label>
 
 		<div class="input-group col-sm-8">
 			<select class="form-control" id="type" name="type">
@@ -19,14 +19,14 @@
 	</div>
 
 	<div class="form-group feature feature-selector">
-		<label for="selector" class="col-sm-2 control-label">Selector</label>
+		<label for="selector" class="col-sm-2 control-label" data-i18n="selector_edit_selector_css_field"></label>
 
 		<div class="col-sm-8">
 			<div class="input-group">
 				<span class="input-group-btn">
-					<button class="btn btn-default" action="select-selector" type="button">Select</button>
-					<button class="btn btn-default" action="preview-selector" type="button" data-toggle="button">Element preview</button>
-					<button class="btn btn-default" action="preview-selector-data" type="button">Data preview</button>
+					<button class="btn btn-default" action="select-selector" type="button" data-i18n="selector_edit_select_button"></button>
+					<button class="btn btn-default" action="preview-selector" type="button" data-toggle="button" data-i18n="selector_edit_element_preview_button"></button>
+					<button class="btn btn-default" action="preview-selector-data" type="button" data-i18n="selector_edit_data_preview_button"></button>
 				</span>
 				<input type="text" class="form-control selector-value" id="selector" name="selector" value="{{selector.selector}}" />
 			</div>
@@ -34,13 +34,19 @@
 	</div>
 
 	<div class="form-group feature feature-clickElementSelector">
-		<label for="clickElementSelector" class="col-sm-2 control-label">Click selector</label>
+		<label for="clickElementSelector" class="col-sm-2 control-label" data-i18n="selector_edit_click_selector"></label>
 
 		<div class="col-sm-8">
 			<div class="input-group">
 				<span class="input-group-btn">
-					<button class="btn btn-default" action="select-selector" type="button">Select</button>
-					<button class="btn btn-default" action="preview-click-element-selector" type="button" data-toggle="button">Element preview</button>
+					<button class="btn btn-default" action="select-selector" type="button" data-i18n="selector_edit_select_button"></button>
+					<button
+						class="btn btn-default"
+						action="preview-click-element-selector"
+						type="button"
+						data-toggle="button"
+						data-i18n="selector_edit_element_preview_button"
+					></button>
 				</span>
 				<input type="text" class="form-control selector-value" id="clickElementSelector" name="clickElementSelector" value="{{selector.clickElementSelector}}" />
 			</div>
@@ -49,13 +55,18 @@
 
 	<!-- tableHeaderSelector -->
 	<div class="form-group feature feature-tableHeaderRowSelector">
-		<label for="tableHeaderRowSelector" class="col-sm-2 control-label">Header row selector</label>
+		<label for="tableHeaderRowSelector" class="col-sm-2 control-label" data-i18n="selector_edit_header_css">Header row selector</label>
 		<div class="col-sm-8">
 			<div class="input-group">
 				<span class="input-group-btn">
-					<button class="btn btn-default" action="select-table-header-row-selector" type="button">Select</button>
-					<button class="btn btn-default" action="preview-table-row-selector" type="button" data-toggle="button">Element preview</button>
-					<button class="btn btn-default" action="refresh-header-row-selector" title="Refresh if you manually changed the selector" type="button">Refresh</button>
+					<button class="btn btn-default" action="select-table-header-row-selector" type="button" data-i18n="selector_edit_select_button"></button>
+					<button
+						class="btn btn-default"
+						action="preview-table-row-selector"
+						type="button"
+						data-toggle="button"
+						data-i18n="selector_edit_element_preview_button"
+					></button>
 				</span>
 				<input type="text" class="form-control selector-value" id="tableHeaderRowSelector" name="tableHeaderRowSelector" value="{{selector.tableHeaderRowSelector}}" />
 			</div>
@@ -64,21 +75,39 @@
 
 	<!-- tableRowSelector -->
 	<div class="form-group feature feature-tableDataRowSelector">
-		<label for="tableDataRowSelector" class="col-sm-2 control-label">Data rows selector</label>
+		<label for="tableDataRowSelector" class="col-sm-2 control-label" data-i18n="selector_edit_data_rows_selector"></label>
 		<div class="col-sm-8">
 			<div class="input-group">
 				<span class="input-group-btn">
-					<button class="btn btn-default" action="select-table-data-row-selector" type="button">Select</button>
-					<button class="btn btn-default" action="preview-table-row-selector" type="button" data-toggle="button">Element preview</button>
+					<button class="btn btn-default" action="select-table-data-row-selector" type="button" data-i18n="selector_edit_select_button"></button>
+					<button
+						class="btn btn-default"
+						action="preview-table-row-selector"
+						type="button"
+						data-toggle="button"
+						data-i18n="selector_edit_element_preview_button"
+					></button>
 				</span>
 				<input type="text" class="form-control selector-value" id="tableDataRowSelector" name="tableDataRowSelector" value="{{selector.tableDataRowSelector}}" />
 			</div>
 		</div>
 	</div>
+ 
+  <!-- verticalTable -->  
+  <div class="form-group feature feature-verticalTable">
+		<label for="verticalTable" class="col-sm-2 control-label" data-i18n="selector_edit_vertical_table_checker"></label>
+		<div class="col-sm-8">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" id="verticalTable" name="verticalTable" {{#selector.verticalTable}} checked="checked" {{/selector.verticalTable}}>
+				</label>
+			</div>
+		</div>
+	</div>
 
-	<!-- tableAddMissingColumns -->
-	<div class="form-group feature feature-tableAddMissingColumns">
-		<label for="tableAddMissingColumns" class="col-sm-2 control-label">Extract missing columns</label>
+  <!-- tableAddMissingColumns -->
+  <div class="form-group feature feature-tableAddMissingColumns">
+		<label for="tableAddMissingColumns" class="col-sm-2 control-label" data-i18n="selector_edit_missing_columns_checker"></label>
 		<div class="col-sm-8">
 			<div class="checkbox">
 				<label>
@@ -89,53 +118,42 @@
 		</div>
 	</div>
 
-	<div class="form-group feature feature-verticalTable">
-		<label for="verticalTable" class="col-sm-2 control-label">This is vertical table</label>
-		<div class="col-sm-8">
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" id="verticalTable" name="verticalTable" {{#selector.verticalTable}} checked="checked" {{/selector.verticalTable}}>
-				</label>
-			</div>
-		</div>
-	</div>
-
 	<!-- ClickType -->
 	<div class="form-group feature feature-clickType">
-		<label for="clickType" class="col-sm-2 control-label">Click type</label>
+		<label for="clickType" class="col-sm-2 control-label" data-i18n="selector_edit_click_type"></label>
 
 		<div class="input-group col-sm-8">
 			<select class="form-control" id="clickType" name="clickType">
-				<option value="clickOnce">Click once (pagination, tabs)</option>
-				<option value="clickMore">Click more (click to load more elements. Stops when no new elements with unique text content are found.) </option>
+				<option value="clickOnce" data-i18n="selector_edit_clickOnce"></option>
+				<option value="clickMore" data-i18n="selector_edit_clickMore"></option>
 			</select>
 		</div>
 	</div>
 
 	<!-- Pagination Limit -->
 	<div class="form-group feature feature-paginationLimit">
-		<label for="paginationLimit" class="col-sm-2 control-label">Pagination limit</label>
+		<label for="paginationLimit" class="col-sm-2 control-label" data-i18n="selector_edit_pagination_limit"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="paginationLimit" id="paginationLimit" placeholder="empty = unlimited" value="{{selector.paginationLimit}}" />
+			<input type="text" class="form-control" name="paginationLimit" id="paginationLimit" placeholder="selector_edit_paginationLimit" value="{{selector.paginationLimit}}" />
 		</div>
 	</div>
 
 	<!-- clickElementUniquenessType -->
 	<div class="form-group feature feature-clickElementUniquenessType">
-		<label for="clickElementUniquenessType" class="col-sm-2 control-label">Click element uniqueness</label>
+		<label for="clickElementUniquenessType" class="col-sm-2 control-label" data-i18n="selector_edit_click_element_uniqueness"></label>
 		<div class="input-group col-sm-8">
 			<select class="form-control" id="clickElementUniquenessType" name="clickElementUniquenessType">
-				<option value="uniqueText">Unique Text</option>
-				<option value="uniqueHTMLText">Unique HTML+Text</option>
-				<option value="uniqueHTML">Unique HTML</option>
-				<option value="uniqueCSSSelector">unique CSS Selector</option>
+				<option value="uniqueText" data-i18n="selector_edit_unique_text"></option>
+				<option value="uniqueHTMLText" data-i18n="selector_edit_unique_html_and_text"></option>
+				<option value="uniqueHTML" data-i18n="selector_edit_unique_html"></option>
+				<option value="uniqueCSSSelector" data-i18n="selector_edit_unique_css_selector"></option>
 			</select>
 		</div>
 	</div>
 
 	<div class="form-group feature feature-multiple">
-		<label for="multiple" class="col-sm-2 control-label">Multiple Values</label>
+		<label for="multiple" class="col-sm-2 control-label" data-i18n="selector_edit_multiple"></label>
 		<div class="col-sm-8">
 			<div class="checkbox">
 				<label>
@@ -147,12 +165,12 @@
 
 	<!-- discardInitialElements -->
 	<div class="form-group feature feature-discardInitialElements">
-		<label for="discardInitialElements" class="col-sm-2 control-label">Discard elements</label>
+		<label for="discardInitialElements" class="col-sm-2 control-label" data-i18n="selector_edit_discard_elements"></label>
 		<div class="col-sm-8">
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" id="discardInitialElements" name="discardInitialElements" {{#selector.discardInitialElements}} checked="checked"
-					{{/selector.discardInitialElements}} /> Discard initial elements that are available before click
+					{{/selector.discardInitialElements}} data-i18n="selector_edit_discardInitialElements"/>
 				</label>
 			</div>
 		</div>
@@ -160,7 +178,7 @@
 
 	<!-- downloadImage -->
 	<div class="form-group feature feature-downloadImage">
-		<label for="downloadImage" class="col-sm-2 control-label">Download image</label>
+		<label for="downloadImage" class="col-sm-2 control-label" data-i18n="selector_edit_download_image"></label>
 		<div class="col-sm-8">
 			<div class="checkbox">
 				<label>
@@ -171,7 +189,7 @@
 	</div>
 	<!-- downloadDocument-->
 	<div class="form-group feature feature-downloadDocument">
-		<label for="downloadDocument" class="col-sm-2 control-label">Download document</label>
+		<label for="downloadDocument" class="col-sm-2 control-label" data-i18n="selector_edit_download_document"></label>
 		<div class="col-sm-8">
 			<div class="checkbox">
 				<label>
@@ -183,114 +201,148 @@
 
 	<!-- extractAttribute -->
 	<div class="form-group feature feature-extractAttribute">
-		<label for="extractAttribute" class="col-sm-2 control-label">Attribute name</label>
+		<label for="extractAttribute" class="col-sm-2 control-label" data-i18n="selector_edit_attribute_name"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="extractAttribute" id="extractAttribute" placeholder="Attribute name to extract" value="{{selector.extractAttribute}}" />
+			<input
+				type="text"
+				class="form-control"
+				name="extractAttribute"
+				id="extractAttribute"
+				placeholder="selector_edit_extractAttribute"
+				value="{{selector.extractAttribute}}"
+			/>
 		</div>
 	</div>
 
 	<!-- value -->
 	<div class="form-group feature feature-value">
-		<label for="value" class="col-sm-2 control-label">Value</label>
+		<label for="value" class="col-sm-2 control-label" data-i18n="selector_edit_value"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="value" id="value" placeholder="Text value to insert" value="{{selector.value}}" />
+			<input type="text" class="form-control" name="value" id="value" placeholder="selector_edit_value" value="{{selector.value}}" />
 		</div>
 	</div>
 
 	<!-- extractStyle -->
 	<div class="form-group feature feature-extractStyle">
-		<label for="extractStyle" class="col-sm-2 control-label">Style name</label>
+		<label for="extractStyle" class="col-sm-2 control-label" data-i18n="selector_edit_style_name"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="extractStyle" id="extractStyle" placeholder="Style name to extract" value="{{selector.extractStyle}}" />
+			<input type="text" class="form-control" name="extractStyle" id="extractStyle" placeholder="selector_edit_extractStyle" value="{{selector.extractStyle}}" />
 		</div>
 	</div>
 
 	<div class="form-group feature feature-textmanipulation">
-		<label class="col-sm-2 control-label">String Manipulation</label>
+		<label class="col-sm-2 control-label" data-i18n="selector_edit_string_manipulation"></label>
 		<div class="col-sm-8">
 			<div class="form-inline">
-				<label for="regex"
-					>Regex match:
-					<input type="text" class="form-control col-sm-8" name="regex" id="regex" placeholder="Regex" value="{{selector.textmanipulation.regex}}" />
+				<label for="regex">
+					<span data-i18n="selector_edit_regex_match"></span>
+					<input type="text" class="form-control col-sm-8" name="regex" id="regex" placeholder="selector_edit_regex" value="{{selector.textmanipulation.regex}}" />
 				</label>
-				<label for="regexgroup"
-					>Regex group:
-					<input type="text" class="form-control col-sm-2" name="regexgroup" id="regexgroup" placeholder="0" value="{{selector.textmanipulation.regexgroup}}" />
+				<label for="regexgroup">
+					<span data-i18n="selector_edit_regex_group"></span>
+					<input
+						type="text"
+						class="form-control col-sm-2"
+						name="regexgroup"
+						id="regexgroup"
+						placeholder="selector_edit_regexgroup"
+						value="{{selector.textmanipulation.regexgroup}}"
+					/>
 				</label>
-				<span class="help-block" style="margin-top: -5px;">Trim will be applied before regex.</span>
+				<span class="help-block" style="margin-top: -5px;" data-i18n="selector_edit_trim_applying"></span>
 			</div>
 			<div class="checkbox">
-				<label for="removeHtml">Remove HTML </label>
-				<input type="checkbox" id="removeHtml" name="removeHtml" {{#selector.textmanipulation.removeHtml}} checked="checked" {{/selector.textmanipulation.removeHtml}} />
+				<label for="removeHtml" data-i18n="selector_edit_remove_html"></label> <input type="checkbox" id="removeHtml" name="removeHtml"
+				{{#selector.textmanipulation.removeHtml}} checked="checked" {{/selector.textmanipulation.removeHtml}} />
 			</div>
 			<div class="checkbox">
-				<label for="trimText">Trim Text</label>
-				<input type="checkbox" id="trimText" name="trimText" {{#selector.textmanipulation.trimText}} checked="checked" {{/selector.textmanipulation.trimText}} />
+				<label for="trimText" data-i18n="selector_edit_trim_text"></label> <input type="checkbox" id="trimText" name="trimText" {{#selector.textmanipulation.trimText}}
+				checked="checked" {{/selector.textmanipulation.trimText}} />
 			</div>
 			<div class="form-inline" style="padding-top: 7px">
-				<label for="replaceText"
-					>Replace text:
+				<label for="replaceText">
+					<span data-i18n="selector_edit_replace_text"></span>
 					<input
 						type="text"
 						class="form-control col-sm-6"
 						name="replaceText"
 						id="replaceText"
-						placeholder="Replace text"
+						placeholder="selector_edit_replaceText"
 						value="{{selector.textmanipulation.replaceText}}"
 					/>
 				</label>
-				<label for="replacementText"
-					>Replacement text:
+				<label for="replacementText">
+					<span data-i18n="selector_edit_replacement_text"></span>
 					<input
 						type="text"
 						class="form-control col-sm-6"
 						name="replacementText"
 						id="replacementText"
-						placeholder="Replacement text"
+						placeholder="selector_edit_replacementText"
 						value="{{selector.textmanipulation.replacementText}}"
 					/>
 				</label>
 			</div>
 			<div class="form-inline">
-				<label for="textPrefix"
-					>Text Prefix:
-					<input type="text" class="form-control col-sm-6" name="textPrefix" id="textPrefix" placeholder="Prefix" value="{{selector.textmanipulation.textPrefix}}" />
+				<label for="textPrefix">
+					<span data-i18n="selector_edit_text_prefix"></span>
+					<input
+						type="text"
+						class="form-control col-sm-6"
+						name="textPrefix"
+						id="textPrefix"
+						placeholder="selector_edit_textPrefix"
+						value="{{selector.textmanipulation.textPrefix}}"
+					/>
 				</label>
-				<label for="textSuffix"
-					>Text Suffix:
-					<input type="text" class="form-control col-sm-6" name="textSuffix" id="textSuffix" placeholder="Suffix" value="{{selector.textmanipulation.textSuffix}}" />
+				<label for="textSuffix">
+					<span data-i18n="selector_edit_text_suffix"></span>
+					<input
+						type="text"
+						class="form-control col-sm-6"
+						name="textSuffix"
+						id="textSuffix"
+						placeholder="selector_edit_textSuffix"
+						value="{{selector.textmanipulation.textSuffix}}"
+					/>
 				</label>
 			</div>
 		</div>
 	</div>
 
 	<div class="form-group feature feature-delay">
-		<label for="delay" class="col-sm-2 control-label">Delay (ms)</label>
+		<label for="delay" class="col-sm-2 control-label" data-i18n="selector_edit_delay"></label>
 
 		<div class="col-sm-8">
-			<input type="text" class="form-control" name="delay" id="delay" placeholder="delay" value="{{selector.delay}}" />
+			<input type="text" class="form-control" name="delay" id="delay" placeholder="selector_edit_delay" value="{{selector.delay}}" />
 		</div>
 	</div>
 
 	<div class="form-group feature feature-stringReplacement">
-		<label for="replace" class="col-sm-2 control-label">Replace</label>
+		<label for="replace" class="col-sm-2 control-label" data-i18n="selector_edit_replace"></label>
 
 		<div class="col-sm-8">
 			<div id="replace" class="input-group">
-				<label
-					>Replace text:
-					<input type="text" class="form-control col-sm-6" name="replaceString" id="replaceString" placeholder="Replace text" value="{{selector.replaceString}}" />
+				<label data-i18n="selector_edit_replace_text">
+					<input
+						type="text"
+						class="form-control col-sm-6"
+						name="replaceString"
+						id="replaceString"
+						placeholder="selector_edit_replaceText"
+						value="{{selector.replaceString}}"
+					/>
 				</label>
-				<label
-					>Replacement text:<input
+				<label data-i18n="selector_edit_replacemet_text"
+					><input
 						type="text"
 						class="form-control col-sm-6"
 						name="replacementString"
 						id="replacementString"
-						placeholder="Replacement text"
+						placeholder="selector_edit_replacementText"
 						value="{{selector.replacementString}}"
 					/>
 				</label>
@@ -299,7 +351,7 @@
 	</div>
 
 	<div class="form-group">
-		<label for="parentSelectors" class="col-sm-2 control-label">Parent Selectors</label>
+		<label for="parentSelectors" class="col-sm-2 control-label" data-i18n="selector_edit_parent_selector"></label>
 
 		<div class="input-group col-sm-8">
 			<select multiple class="form-control" id="parentSelectors" name="parentSelectors">
@@ -311,36 +363,45 @@
 	</div>
 
 	<div class="form-group feature feature-columns">
-		<label class="col-sm-2 control-label">Table columns</label>
-
-		<div class="col-sm-8">
-			<table class="table table-bordered table-condensed">
-				<thead>
-					<tr>
-						<th>Column</th>
-						<th>Result key</th>
-						<th>Include into result</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{#selector.columns}}
-					<tr>
-						<td><input class="column-header" type="hidden" name="column[header][]" value="{{header}}" />{{header}}</td>
-						<td><input class="column-name form-control" type="text" name="column[name][]" value="{{name}}" /></td>
-						<td>
-							<input class="column-extract" type="checkbox" name="column[extract][]" {{#extract}} checked="checked" {{/extract}}>
-						</td>
-					</tr>
-					{{/selector.columns}}
-				</tbody>
-			</table>
+		<div class="row">
+			<label class="col-sm-2 control-label" data-i18n="selector_edit_table_columns"></label>
+		</div>
+		<div class="row">
+			<button class="col-sm-1 col-sm-offset-1 btn btn-default" 
+              action="refresh-header-row-selector" 
+              title="selector_edit_refresh_button_title" 
+              type="button" 
+              data-i18n="selector_edit_refresh_button">
+			</button>
+			<div class="col-sm-8">
+				<table class="table table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th data-i18n="selector_edit_column"></th>
+						  <th data-i18n="selector_edit_result_key"></th>
+						  <th data-i18n="selector_edit_include_into_result"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#selector.columns}}
+						<tr>
+							<td><input class="column-header" type="hidden" name="column[header][]" value="{{header}}" />{{header}}</td>
+							<td><input class="column-name form-control" type="text" name="column[name][]" value="{{name}}" /></td>
+							<td>
+								<input class="column-extract" type="checkbox" name="column[extract][]" {{#extract}} checked="checked" {{/extract}}>
+							</td>
+						</tr>
+						{{/selector.columns}}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 
 	<div class="form-group">
 		<div class="col-sm-offset-2 col-sm-8">
-			<button class="btn btn-primary" action="save-selector">Save selector</button>
-			<button action="cancel-selector-editing" class="btn btn-default">Cancel</button>
+			<button class="btn btn-primary" action="save-selector" data-i18n="selector_edit_save_selector"></button>
+			<button action="cancel-selector-editing" class="btn btn-default" data-i18n="selector_edit_cancel"></button>
 		</div>
 	</div>
 

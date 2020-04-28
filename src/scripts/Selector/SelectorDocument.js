@@ -1,5 +1,4 @@
 import Selector from '../Selector';
-import '../../libs/jquery.whencallsequentially';
 
 export default class SelectorDocument extends Selector {
 	constructor(options) {
@@ -8,7 +7,7 @@ export default class SelectorDocument extends Selector {
 	}
 
 	canReturnMultipleRecords() {
-		return true;
+		return false;
 	}
 
 	canHaveChildSelectors() {
@@ -27,76 +26,65 @@ export default class SelectorDocument extends Selector {
 		return false;
 	}
 
-	_getData(parentElement) {
-		var elements = this.getDataElements(parentElement);
+	downloadsAttachments() {
+		return !!this.downloadDocument;
+	}
 
-		var dfd = $.Deferred();
-
-		// return empty record if not multiple type and no elements found
-		if (this.multiple === false && elements.length === 0) {
-			var data = {};
-			data[this.id] = null;
-			dfd.resolve([data]);
-			return dfd;
-		}
-
-		// extract links one by one
-		var deferredDataExtractionCalls = [];
-		$(elements).each(
-			function(k, element) {
-				deferredDataExtractionCalls.push(
-					function(element) {
-						var href = this.stringReplace(element.href, this.stringReplacement);
-						var deferredData = $.Deferred();
-						var data = {};
-
-						data[this.id] = $(element).text();
-
-						data[this.id + '-href'] = href;
-
-						if (!this.downloadDocument) {
-							deferredData.resolve(data);
-						} else if (href) {
-							var deferredFileBase64 = this.downloadFileAsBase64(href);
-
-							deferredFileBase64
-								.done(
-									function(base64Response) {
-										data['_fileBase64-' + this.id] = base64Response.fileBase64;
-										data['_fileMimeType-' + this.id] = base64Response.mimeType;
-										data['_filename' + this.id] = base64Response.filename;
-
-										deferredData.resolve(data);
-									}.bind(this)
-								)
-								.fail(function() {
-									deferredData.resolve(data);
-								});
-						} else {
-							deferredData.resolve(data);
-						}
-						return deferredData.promise();
-					}.bind(this, element)
-				);
-			}.bind(this)
+	async _getData(parentElement) {
+		const elements = this.getDataElements(parentElement).filter(element => 'href' in element);
+		const urls = elements.map(element =>
+			this.stringReplace(element.href, this.stringReplacement)
 		);
 
-		$.whenCallSequentially(deferredDataExtractionCalls).done(function(responses) {
-			var result = [];
-			responses.forEach(function(dataResult) {
-				result.push(dataResult);
-			});
-			dfd.resolve(result);
-		});
+		const result = {};
+		if (this.multiple) {
+			result[`${this.id}-href`] = urls;
+		} else {
+			result[`${this.id}-href`] = urls.length ? urls[0] : null;
+		}
 
-		return dfd.promise();
+		if (this.downloadDocument) {
+			const documents = [];
+			for (const [i, url] of urls.entries()) {
+				try {
+					if (url) {
+						const document = await this.downloadFileAsBase64(url);
+						if (!document.filename) {
+							// TODO consider $(elements[i]).text() for filename
+							document.filename =
+								elements[i].download || this.getFilenameFromUrl(url);
+						}
+						documents.push(document);
+					}
+				} catch (e) {
+					console.warn(`Failed to download document by url ${url}`, e);
+				}
+			}
+			if (documents.length) {
+				result[`_attachments-${this.id}`] = documents;
+			}
+		}
+
+		return [result];
 	}
 
 	getDataColumns() {
-		return [this.id, this.id + '-href'];
+		const dataColumns = [`${this.id}-href`];
+		if (this.downloadDocument) {
+			dataColumns.push(`${this.id}-path`, `${this.id}-checksum`, `${this.id}-filename`);
+		}
+		return dataColumns;
+	}
+
+	getUrlColumn() {
+		return `${this.id}-href`;
 	}
 
 	getFeatures() {
 		return ['selector', 'multiple', 'delay', 'downloadDocument', 'stringReplacement'];
+	}
+
+	getItemCSSSelector() {
+		return 'a';
 	}
 }

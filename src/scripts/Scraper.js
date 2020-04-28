@@ -1,5 +1,7 @@
 import Job from './Job';
 import '../libs/jquery.whencallsequentially';
+import Base64 from './Base64';
+import * as nanoid from 'nanoid';
 
 export default class Scraper {
 	/**
@@ -16,28 +18,29 @@ export default class Scraper {
 		this.requestInterval = parseInt(options.requestInterval);
 		this.requestIntervalRandomness = parseInt(options.requestIntervalRandomness);
 		this.pageLoadDelay = parseInt(options.pageLoadDelay);
+		this.downloadPaths = new Map(); // url -> local path
 	}
 
 	initFirstJobs() {
-		var urls = this.sitemap.getStartUrls();
+		const urls = this.sitemap.getStartUrls();
 
 		urls.forEach(
-			function(url) {
-				var firstJob = new Job(url, '_root', this);
+			function (url) {
+				const firstJob = new Job(url, '_root', this);
 				this.queue.add(firstJob);
 			}.bind(this)
 		);
 	}
 
 	run(executionCallback) {
-		var scraper = this;
+		const scraper = this;
 
 		// callback when scraping is finished
 		this.executionCallback = executionCallback;
 
 		this.initFirstJobs();
 
-		this.store.initSitemapDataDb(this.sitemap._id).then(function(resultWriter) {
+		this.store.initSitemapDataDb(this.sitemap._id).then(function (resultWriter) {
 			scraper.resultWriter = resultWriter;
 			scraper._run();
 		});
@@ -48,23 +51,28 @@ export default class Scraper {
 			return false;
 		}
 
-		var selectorId = record._followSelectorId;
-		var childSelectors = this.sitemap.getDirectChildSelectors(selectorId);
+		const selectorId = record._followSelectorId;
+		const childSelectors = this.sitemap.getDirectChildSelectors(selectorId);
 		if (childSelectors.length === 0) {
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	}
 
-	getFileFilename(url) {
-		var parts = url.split('/');
-		var filename = parts[parts.length - 1];
-		filename = filename.replace(/\?/g, '');
-		if (filename.length > 130) {
-			filename = filename.substr(0, 130);
+	generateDownloadPath(filename, maxLength = 100) {
+		// TODO consider using URL-based hash
+		const path = `${this.sitemap._id}/${nanoid(8)}--${filename}`;
+		if (path.length <= maxLength) {
+			return path;
 		}
-		return filename;
+		const extensionMatch = /\.[^/]*$/.exec(path);
+		if (extensionMatch) {
+			const [extension] = extensionMatch;
+			if (extension.length <= maxLength) {
+				return path.substr(0, maxLength - extension.length) + extension;
+			}
+		}
+		return path.substr(0, maxLength);
 	}
 
 	/**
@@ -72,71 +80,40 @@ export default class Scraper {
 	 * @param record
 	 */
 	saveFile(record) {
-		let deferredResponse = $.Deferred();
-		let deferredFileStoreCalls = [];
-		let prefixLength = '_fileBase64-'.length;
-
-		for (let attr in record) {
-			if (attr.substr(0, prefixLength) === '_fileBase64-') {
-				var selectorId = attr.substring(prefixLength, attr.length);
-				deferredFileStoreCalls.push(
-					function(selectorId) {
-						var fileBase64 = record['_fileBase64-' + selectorId];
-						var documentFilename = record['_filename' + selectorId];
-
-						var deferredDownloadDone = $.Deferred();
-						var deferredBlob = Base64.base64ToBlob(fileBase64, record['_fileMimeType-' + selectorId]);
-
-						delete record['_fileMimeType-' + selectorId];
-						delete record['_fileBase64-' + selectorId];
-						delete record['_filename' + selectorId];
-
-						deferredBlob.done(
-							function(blob) {
-								var downloadUrl = window.URL.createObjectURL(blob);
-								var fileSavePath = this.sitemap._id + '/' + selectorId + '/' + documentFilename;
-
-								// download file using chrome api
-								var downloadRequest = {
-									url: downloadUrl,
-									filename: fileSavePath,
-								};
-
-								// wait for the download to finish
-								chrome.downloads.download(downloadRequest, function(downloadId) {
-									var cbDownloaded = function(downloadItem) {
-										if (downloadItem.id === downloadId && downloadItem.state) {
-											if (downloadItem.state.current === 'complete') {
-												deferredDownloadDone.resolve();
-												chrome.downloads.onChanged.removeListener(cbDownloaded);
-											} else if (downloadItem.state.current === 'interrupted') {
-												deferredDownloadDone.reject('download failed');
-												chrome.downloads.onChanged.removeListener(cbDownloaded);
-											}
-										}
-									};
-
-									chrome.downloads.onChanged.addListener(cbDownloaded);
-								});
-							}.bind(this)
-						);
-
-						return deferredDownloadDone.promise();
-					}.bind(this, selectorId)
-				);
-			}
+		const deferredResponse = $.Deferred();
+		if (!('_attachments' in record)) {
+			deferredResponse.resolve();
+			return deferredResponse.promise();
 		}
 
-		$.whenCallSequentially(deferredFileStoreCalls).done(function() {
-			deferredResponse.resolve();
+		const downloads = record._attachments.map(async attachment => {
+			const { url, mimeType, fileBase64, checksum, filename } = attachment;
+			if (this.downloadPaths.has(url)) {
+				return { url, filename, checksum, path: this.downloadPaths.get(url) };
+			}
+			const downloadPath = this.generateDownloadPath(filename);
+			try {
+				const blob = await Base64.base64ToBlob(fileBase64, mimeType);
+				const downloadUrl = window.URL.createObjectURL(blob);
+				await this.browser.downloadFile(downloadUrl, downloadPath);
+				this.downloadPaths.set(url, downloadPath);
+				return { url, filename, checksum, path: downloadPath };
+			} catch (e) {
+				console.error(`Failed to save attachment for url ${url}`, e);
+				return attachment;
+			}
 		});
 
+		Promise.all(downloads).then(attachments => {
+			record._attachments = attachments;
+			deferredResponse.resolve();
+		});
 		return deferredResponse.promise();
 	}
 
 	// @TODO remove recursion and add an iterative way to run these jobs.
 	_run() {
-		var job = this.queue.getNextJob();
+		const job = this.queue.getNextJob();
 		if (job === false) {
 			console.log('Scraper execution is finished');
 			this.executionCallback();
@@ -145,25 +122,25 @@ export default class Scraper {
 
 		job.execute(
 			this.browser,
-			function(job) {
-				var scrapedRecords = [];
-				var deferredDatamanipulations = [];
+			function (job) {
+				const scrapedRecords = [];
+				const deferredDatamanipulations = [];
 
-				var records = job.getResults();
+				const records = job.getResults();
 				records.forEach(
-					function(record) {
-						//var record = JSON.parse(JSON.stringify(rec));
+					function (record) {
+						// var record = JSON.parse(JSON.stringify(rec));
 
 						deferredDatamanipulations.push(this.saveFile.bind(this, record));
 
 						// @TODO refactor job exstraction to a seperate method
 						if (this.recordCanHaveChildJobs(record)) {
 							// var followSelectorId = record._followSelectorId;
-							var followURL = record['_follow'];
-							var followSelectorId = record['_followSelectorId'];
-							delete record['_follow'];
-							delete record['_followSelectorId'];
-							var newJob = new Job(followURL, followSelectorId, this, job, record);
+							const followURL = record._follow;
+							const followSelectorId = record._followSelectorId;
+							delete record._follow;
+							delete record._followSelectorId;
+							const newJob = new Job(followURL, followSelectorId, this, job, record);
 							if (this.queue.canBeAdded(newJob)) {
 								this.queue.add(newJob);
 							}
@@ -175,8 +152,8 @@ export default class Scraper {
 							}
 						} else {
 							if (record._follow !== undefined) {
-								delete record['_follow'];
-								delete record['_followSelectorId'];
+								delete record._follow;
+								delete record._followSelectorId;
 							}
 							scrapedRecords.push(record);
 						}
@@ -184,27 +161,27 @@ export default class Scraper {
 				);
 
 				$.whenCallSequentially(deferredDatamanipulations).done(
-					function() {
-						this.store.saveSitemap(this.sitemap, function() {});
-						this.resultWriter.writeDocs(
-							scrapedRecords,
-							function() {
-								var now = new Date().getTime();
-								// delay next job if needed
-								this._timeNextScrapeAvailable = now + this.requestInterval + Math.random() * this.requestIntervalRandomness;
-								if (now >= this._timeNextScrapeAvailable) {
-									this._run();
-								} else {
-									var delay = this._timeNextScrapeAvailable - now;
-									setTimeout(
-										function() {
-											this._run();
-										}.bind(this),
-										delay
-									);
-								}
-							}.bind(this)
-						);
+					function () {
+						this.store.saveSitemap(this.sitemap, function () {});
+						this.resultWriter.writeDocs(scrapedRecords).then(() => {
+							const now = new Date().getTime();
+							// delay next job if needed
+							this._timeNextScrapeAvailable =
+								now +
+								this.requestInterval +
+								Math.random() * this.requestIntervalRandomness;
+							if (now >= this._timeNextScrapeAvailable) {
+								this._run();
+							} else {
+								const delay = this._timeNextScrapeAvailable - now;
+								setTimeout(
+									function () {
+										this._run();
+									}.bind(this),
+									delay
+								);
+							}
+						});
 					}.bind(this)
 				);
 			}.bind(this)

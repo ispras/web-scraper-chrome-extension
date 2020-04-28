@@ -15,7 +15,7 @@ describe("Scraper", function () {
 
 	it("should be able to scrape one page", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			id: 'test',
 			startUrls: 'http://test.lv/',
 			selectors: [
@@ -60,7 +60,7 @@ describe("Scraper", function () {
 
 	it("should be able to scrape a child page", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			id: 'test',
 			startUrls: 'http://test.lv/',
 			selectors: [
@@ -114,7 +114,7 @@ describe("Scraper", function () {
 
 	it("should be able to tell whether a data record can have child jobs", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			id: 'test',
 			startUrls: 'http://test.lv/',
 			selectors: [
@@ -164,7 +164,7 @@ describe("Scraper", function () {
 
 	it("should be able to create multiple start jobs", function () {
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			startUrls: 'http://test.lv/[1-100].html'
 		});
 
@@ -180,7 +180,7 @@ describe("Scraper", function () {
 
 	it("should create multiple start jobs if multiple urls provided", function(){
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			startUrls: ['http://example.com/1', 'http://example.com/2', 'http://example.com/3']
 		});
 
@@ -232,7 +232,7 @@ describe("Scraper", function () {
 			"test-src": "http://images/image.png"
 		};
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			id: 'test'
 		});
 
@@ -263,7 +263,7 @@ describe("Scraper", function () {
 
 		$el.append('<div id="scraper-test-img"><img src="../docs/images/chrome-store-logo.png"></div>');
 
-		var sitemap = new Sitemap({
+		var sitemap = Sitemap.sitemapFromObj({
 			id: 'test',
 			startUrls: 'http://test.com/',
 			selectors: [

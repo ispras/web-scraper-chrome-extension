@@ -1,12 +1,10 @@
-<div id="sitemap-data">
-	<table class="table table-bordered table-condensed table-hover">
-		<thead>
-			<tr>
-				{{#columns}}
-				<th>{{.}}</th>
-				{{/columns}}
-			</tr>
-		</thead>
-		<tbody></tbody>
-	</table>
+<div class="md-form mt-0 search-form">
+	<input
+		id="search-input"
+		class="form-control"
+		type="text"
+		placeholder="browse_data_search"
+		aria-label="Search"
+	/>
 </div>
+<div id="sitemap-data" class="accordion"></div>

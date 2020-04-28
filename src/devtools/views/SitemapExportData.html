@@ -1,0 +1,75 @@
+<form id="data-export-form" class="form-horizontal" role="form">
+	<div class="form-group">
+		<label
+			for="export-format"
+			class="col-lg-1 control-label"
+			data-i18n="data_export_format"
+		></label>
+		<div class="col-lg-2">
+			<select
+				name="export-format"
+				id="export-format"
+				class="form-control data-export-control"
+			>
+				<option value="jsonl">JSON Lines</option>
+				<option value="csv">CSV</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="form-group" id="delimiter-option" style="display: none;">
+		<label
+			for="delimiter"
+			class="col-lg-1 control-label"
+			data-i18n="data_export_delimiter_field"
+		></label>
+		<div class="col-lg-2">
+			<input
+				class="form-control data-export-control"
+				name="delimiter"
+				id="delimiter"
+				type="text"
+				value=","
+			/>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-lg-offset-1 col-lg-11">
+			<input
+				class="data-export-control"
+				name="newline"
+				id="newline"
+				type="checkbox"
+				checked
+			/>
+			<label for="newline" data-i18n="data_export_newline_checker"></label>
+		</div>
+		<div class="col-lg-offset-1 col-lg-11">
+			<input class="data-export-control" name="utf-bom" id="utf-bom" type="checkbox" />
+			<label for="utf-bom" data-i18n="data_export_utf_bom_checker"></label>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-lg-offset-1 col-lg-11">
+			<a
+				id="data-export-generate-file"
+				class="btn btn-default"
+				data-i18n="data_export_generate_file_button"
+			></a>
+			<a
+				id="data-export-download-file"
+				class="btn btn-primary"
+				style="display: none;"
+				data-i18n="data_export_download_file_button"
+			></a>
+		</div>
+	</div>
+	<div
+		id="wait-message"
+		class="col-lg-offset-1 col-lg-5 alert alert-info"
+		style="display: none;"
+		data-i18n="data_export_waiting"
+	></div>
+</form>

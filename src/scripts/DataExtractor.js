@@ -8,7 +8,7 @@ export default class DataExtractor {
 		if (options.sitemap instanceof Sitemap) {
 			this.sitemap = options.sitemap;
 		} else {
-			this.sitemap = new Sitemap(options.sitemap);
+			this.sitemap = Sitemap.sitemapFromObj(options.sitemap);
 		}
 
 		this.parentSelectorId = options.parentSelectorId;
@@ -38,7 +38,10 @@ export default class DataExtractor {
 
 		// Link selectors which will follow to a new page also cannot be common
 		// to all selectors
-		if (selector.canCreateNewJobs() && this.sitemap.getDirectChildSelectors(selector.id).length > 0) {
+		if (
+			selector.canCreateNewJobs() &&
+			this.sitemap.getDirectChildSelectors(selector.id).length > 0
+		) {
 			return false;
 		}
 
@@ -58,13 +61,13 @@ export default class DataExtractor {
 		let childSelectors = this.sitemap.getDirectChildSelectors(parentSelectorId);
 
 		childSelectors.forEach(
-			function(childSelector) {
+			function (childSelector) {
 				if (this.selectorIsCommonToAllTrees(childSelector)) {
 					commonSelectors.push(childSelector);
 					// also add all child selectors which. Child selectors were also checked
 
 					let selectorChildSelectors = this.sitemap.getAllSelectors(childSelector.id);
-					selectorChildSelectors.forEach(function(selector) {
+					selectorChildSelectors.forEach(function (selector) {
 						if (commonSelectors.indexOf(selector) === -1) {
 							commonSelectors.push(selector);
 						}
@@ -77,13 +80,15 @@ export default class DataExtractor {
 	}
 
 	_findSelectorTrees(parentSelectorId, commonSelectorsFromParent) {
-		let commonSelectors = commonSelectorsFromParent.concat(this.getSelectorsCommonToAllTrees(parentSelectorId));
+		let commonSelectors = commonSelectorsFromParent.concat(
+			this.getSelectorsCommonToAllTrees(parentSelectorId)
+		);
 
 		// find selectors that will be making a selector tree
 		let selectorTrees = [];
 		let childSelectors = this.sitemap.getDirectChildSelectors(parentSelectorId);
 		childSelectors.forEach(
-			function(selector) {
+			function (selector) {
 				if (!this.selectorIsCommonToAllTrees(selector)) {
 					// this selector will be making a new selector tree. But this selector might contain some child
 					// selectors that are making more trees so here should be a some kind of seperation for that
@@ -93,7 +98,10 @@ export default class DataExtractor {
 					} else {
 						// find selector tree within this selector
 						let commonSelectorsFromParent = commonSelectors.concat([selector]);
-						let childSelectorTrees = this._findSelectorTrees(selector.id, commonSelectorsFromParent);
+						let childSelectorTrees = this._findSelectorTrees(
+							selector.id,
+							commonSelectorsFromParent
+						);
 						selectorTrees = selectorTrees.concat(childSelectorTrees);
 					}
 				}
@@ -112,17 +120,19 @@ export default class DataExtractor {
 		let childSelectors = selectors.getDirectChildSelectors(parentSelectorId);
 		let deferredDataCalls = [];
 		childSelectors.forEach(
-			function(selector) {
+			function (selector) {
 				if (!selectors.willReturnMultipleRecords(selector.id)) {
-					deferredDataCalls.push(this.getSelectorCommonData.bind(this, selectors, selector, parentElement));
+					deferredDataCalls.push(
+						this.getSelectorCommonData.bind(this, selectors, selector, parentElement)
+					);
 				}
 			}.bind(this)
 		);
 
 		let deferredResponse = $.Deferred();
-		$.whenCallSequentially(deferredDataCalls).done(function(responses) {
+		$.whenCallSequentially(deferredDataCalls).done(function (responses) {
 			let commonData = {};
-			responses.forEach(function(data) {
+			responses.forEach(function (data) {
 				commonData = Object.merge(commonData, data);
 			});
 			deferredResponse.resolve(commonData);
@@ -134,12 +144,16 @@ export default class DataExtractor {
 	getSelectorCommonData(selectors, selector, parentElement) {
 		let d = $.Deferred();
 		let deferredData = selector.getData(parentElement);
-		deferredData.done(
-			function(data) {
+		deferredData.then(
+			function (data) {
 				if (selector.willReturnElements()) {
 					let newParentElement = data[0];
-					let deferredChildCommonData = this.getSelectorTreeCommonData(selectors, selector.id, newParentElement);
-					deferredChildCommonData.done(function(data) {
+					let deferredChildCommonData = this.getSelectorTreeCommonData(
+						selectors,
+						selector.id,
+						newParentElement
+					);
+					deferredChildCommonData.done(function (data) {
 						d.resolve(data);
 					});
 				} else {
@@ -160,13 +174,13 @@ export default class DataExtractor {
 		// if the selector is not an Element selector then its fetched data is the result.
 		if (!selector.willReturnElements()) {
 			let deferredData = selector.getData(parentElement);
-			deferredData.done(
-				function(selectorData) {
+			deferredData.then(
+				function (selectorData) {
 					let newCommonData = Object.clone(commonData, true);
 					let resultData = [];
 
 					selectorData.forEach(
-						function(record) {
+						function (record) {
 							Object.merge(record, newCommonData, true);
 							resultData.push(record);
 						}.bind(this)
@@ -179,23 +193,29 @@ export default class DataExtractor {
 
 		// handle situation when this selector is an elementSelector
 		let deferredData = selector.getData(parentElement);
-		deferredData.done(
-			function(selectorData) {
+		deferredData.then(
+			function (selectorData) {
 				let deferredDataCalls = [];
 
 				selectorData.forEach(
-					function(element) {
+					function (element) {
 						let newCommonData = Object.clone(commonData, true);
-						let childRecordDeferredCall = this.getSelectorTreeData.bind(this, selectors, selector.id, element, newCommonData);
+						let childRecordDeferredCall = this.getSelectorTreeData.bind(
+							this,
+							selectors,
+							selector.id,
+							element,
+							newCommonData
+						);
 						deferredDataCalls.push(childRecordDeferredCall);
 					}.bind(this)
 				);
 
 				$.whenCallSequentially(deferredDataCalls).done(
-					function(responses) {
+					function (responses) {
 						let resultData = [];
-						responses.forEach(function(childRecordList) {
-							childRecordList.forEach(function(childRecord) {
+						responses.forEach(function (childRecordList) {
+							childRecordList.forEach(function (childRecord) {
 								let rec = {};
 								Object.merge(rec, childRecord, true);
 								resultData.push(rec);
@@ -212,20 +232,30 @@ export default class DataExtractor {
 
 	getSelectorTreeData(selectors, parentSelectorId, parentElement, commonData) {
 		let childSelectors = selectors.getDirectChildSelectors(parentSelectorId);
-		let childCommonDataDeferred = this.getSelectorTreeCommonData(selectors, parentSelectorId, parentElement);
+		let childCommonDataDeferred = this.getSelectorTreeCommonData(
+			selectors,
+			parentSelectorId,
+			parentElement
+		);
 		let deferredResponse = $.Deferred();
 
 		childCommonDataDeferred.done(
-			function(childCommonData) {
+			function (childCommonData) {
 				commonData = Object.merge(commonData, childCommonData);
 
 				let dataDeferredCalls = [];
 
 				childSelectors.forEach(
-					function(selector) {
+					function (selector) {
 						if (selectors.willReturnMultipleRecords(selector.id)) {
 							let newCommonData = Object.clone(commonData, true);
-							let dataDeferredCall = this.getMultiSelectorData.bind(this, selectors, selector, parentElement, newCommonData);
+							let dataDeferredCall = this.getMultiSelectorData.bind(
+								this,
+								selectors,
+								selector,
+								parentElement,
+								newCommonData
+							);
 							dataDeferredCalls.push(dataDeferredCall);
 						}
 					}.bind(this)
@@ -233,10 +263,10 @@ export default class DataExtractor {
 
 				// merge all data records together
 				$.whenCallSequentially(dataDeferredCalls).done(
-					function(responses) {
+					function (responses) {
 						let resultData = [];
-						responses.forEach(function(childRecords) {
-							childRecords.forEach(function(childRecord) {
+						responses.forEach(function (childRecords) {
+							childRecords.forEach(function (childRecord) {
 								let rec = {};
 								Object.merge(rec, childRecord, true);
 								resultData.push(rec);
@@ -262,26 +292,72 @@ export default class DataExtractor {
 		return deferredResponse;
 	}
 
+	/**
+	 * Extracts '_attachments-XXX' properties and merges them into single top-level
+	 * '_attachments' property.
+	 */
+	manageAttachments(dataObject) {
+		function popAttachments(data) {
+			if (Array.isArray(data)) {
+				return data.flatMap(popAttachments);
+			}
+			if (Object.isObject(data)) {
+				return Object.entries(data).flatMap(([key, value]) => {
+					if (key.startsWith('_attachments-')) {
+						delete data[key];
+						return value;
+					}
+					return popAttachments(value);
+				});
+			}
+			return [];
+		}
+
+		const attachments = popAttachments(dataObject);
+		const uniqueAttachments = new Map();
+		attachments.forEach(attachment => {
+			const { url } = attachment;
+			if (!uniqueAttachments.has(url)) {
+				uniqueAttachments.set(url, attachment);
+			}
+		});
+
+		if (uniqueAttachments.size) {
+			dataObject._attachments = [...uniqueAttachments.values()];
+		}
+	}
+
 	getData() {
 		let selectorTrees = this.findSelectorTrees();
 		let dataDeferredCalls = [];
 
 		selectorTrees.forEach(
-			function(selectorTree) {
-				let deferredTreeDataCall = this.getSelectorTreeData.bind(this, selectorTree, this.parentSelectorId, this.parentElement, {});
+			function (selectorTree) {
+				let deferredTreeDataCall = this.getSelectorTreeData.bind(
+					this,
+					selectorTree,
+					this.parentSelectorId,
+					this.parentElement,
+					{}
+				);
 				dataDeferredCalls.push(deferredTreeDataCall);
 			}.bind(this)
 		);
 
 		let responseDeferred = $.Deferred();
 		$.whenCallSequentially(dataDeferredCalls).done(
-			function(responses) {
+			function (responses) {
 				let results = [];
 				responses.forEach(
-					function(dataResults) {
+					function (dataResults) {
 						results = results.concat(dataResults);
 					}.bind(this)
 				);
+				results.forEach(this.manageAttachments);
+				results.forEach(dataObject => {
+					dataObject._url = window.location.href;
+					dataObject._timestamp = Date.now();
+				});
 				responseDeferred.resolve(results);
 			}.bind(this)
 		);

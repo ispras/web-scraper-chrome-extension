@@ -1,5 +1,7 @@
+import * as browser from 'webextension-polyfill';
 import CssSelector from '../libs/css-selector/lib/CssSelector';
 import ElementQuery from './ElementQuery';
+import Translator from './Translator';
 
 export default class ContentSelector {
 	/**
@@ -15,7 +17,7 @@ export default class ContentSelector {
 		this.parentCSSSelector = options.parentCSSSelector.trim();
 		this.alert =
 			options.alert ||
-			function(txt) {
+			function (txt) {
 				alert(txt);
 			};
 
@@ -44,7 +46,6 @@ export default class ContentSelector {
 
 			// initialize css selector
 			this.initCssSelector(false);
-
 			this.initGUI();
 		}
 
@@ -59,10 +60,13 @@ export default class ContentSelector {
 			if (this.isParentSelected()) {
 				if (this.selectedElements.length === 1) {
 					cssSelector = '_parent_';
-				} else if ($('#-selector-toolbar [name=diferentElementSelection]').prop('checked')) {
+				} else if (
+					$('#-selector-toolbar [name=diferentElementSelection]').prop('checked')
+				) {
 					var selectedElements = this.selectedElements.clone();
 					selectedElements.splice(selectedElements.indexOf(this.parent), 1);
-					cssSelector = '_parent_, ' + this.cssSelector.getCssSelector(selectedElements, this.top);
+					cssSelector =
+						'_parent_, ' + this.cssSelector.getCssSelector(selectedElements, this.top);
 				} else {
 					// will trigger error where multiple selections are not allowed
 					cssSelector = this.cssSelector.getCssSelector(this.selectedElements, this.top);
@@ -89,7 +93,13 @@ export default class ContentSelector {
 			enableSmartTableSelector: true,
 			parent: this.parent,
 			allowMultipleSelectors: allowMultipleSelectors,
-			ignoredClasses: ['-sitemap-select-item-selected', '-sitemap-select-item-hover', '-sitemap-parent', '-web-scraper-img-on-top', '-web-scraper-selection-active'],
+			ignoredClasses: [
+				'-sitemap-select-item-selected',
+				'-sitemap-select-item-hover',
+				'-sitemap-parent',
+				'-web-scraper-img-on-top',
+				'-web-scraper-selection-active',
+			],
 			query: jQuery,
 		});
 	}
@@ -97,18 +107,23 @@ export default class ContentSelector {
 	previewSelector(elementCSSSelector) {
 		if (this.deferredCSSSelectorResponse.state() !== 'rejected') {
 			this.highlightParent();
-			$(ElementQuery(elementCSSSelector, this.parent)).addClass('-sitemap-select-item-selected');
+			$(ElementQuery(elementCSSSelector, this.parent)).addClass(
+				'-sitemap-select-item-selected'
+			);
 			this.deferredCSSSelectorResponse.resolve();
 		}
 
 		return this.deferredCSSSelectorResponse.promise();
 	}
 
-	initGUI() {
+	async initGUI() {
 		this.highlightParent();
 
 		// all elements except toolbar
-		this.$allElements = $(this.allowedElements + ':not(#-selector-toolbar):not(#-selector-toolbar *)', this.parent);
+		this.$allElements = $(
+			this.allowedElements + ':not(#-selector-toolbar):not(#-selector-toolbar *)',
+			this.parent
+		);
 		// allow selecting parent also
 		if (this.parent !== document.body) {
 			this.$allElements.push(this.parent);
@@ -117,16 +132,17 @@ export default class ContentSelector {
 		this.bindElementHighlight();
 		this.bindElementSelection();
 		this.bindKeyboardSelectionManipulations();
-		this.attachToolbar();
+		await this.attachToolbar();
 		this.bindMultipleGroupCheckbox();
 		this.bindMultipleGroupPopupHide();
 		this.bindMoveImagesToTop();
+		Translator.translatePage();
 	}
 
 	bindElementSelection() {
 		this.$allElements.bind(
 			'click.elementSelector',
-			function(e) {
+			function (e) {
 				var element = e.currentTarget;
 				if (this.selectedElements.indexOf(element) === -1) {
 					this.selectedElements.push(element);
@@ -154,7 +170,7 @@ export default class ContentSelector {
 		$(this.$allElements)
 			.bind(
 				'mouseover.elementSelector',
-				function(e) {
+				function (e) {
 					// allow event bubbling for other event listeners but not for web scraper.
 					if (e.target !== e.currentTarget) {
 						return;
@@ -167,7 +183,7 @@ export default class ContentSelector {
 			)
 			.bind(
 				'mouseout.elementSelector',
-				function(e) {
+				function (e) {
 					// allow event bubbling for other event listeners but not for web scraper.
 					if (e.target !== e.currentTarget) {
 						return;
@@ -186,7 +202,7 @@ export default class ContentSelector {
 		// do this only when selecting images
 		if (this.allowedElements === 'img') {
 			$('img')
-				.filter(function(i, element) {
+				.filter(function (i, element) {
 					return $(element).css('position') === 'static';
 				})
 				.addClass('-web-scraper-img-on-top');
@@ -214,7 +230,7 @@ export default class ContentSelector {
 		// check for focus
 		var lastFocusStatus;
 		this.keyPressFocusInterval = setInterval(
-			function() {
+			function () {
 				var focus = document.hasFocus();
 				if (focus === lastFocusStatus) return;
 				lastFocusStatus = focus;
@@ -229,7 +245,7 @@ export default class ContentSelector {
 		// selected element
 		$(document).bind(
 			'keydown.selectionManipulation',
-			function(event) {
+			function (event) {
 				// select child C
 				if (event.keyCode === 67) {
 					this.animateClickedKey($('#-selector-toolbar .key-button-child'));
@@ -252,12 +268,10 @@ export default class ContentSelector {
 	}
 
 	animateClickedKey(element) {
-		$(element)
-			.removeClass('clicked')
-			.removeClass('clicked-animation');
-		setTimeout(function() {
+		$(element).removeClass('clicked').removeClass('clicked-animation');
+		setTimeout(function () {
 			$(element).addClass('clicked');
-			setTimeout(function() {
+			setTimeout(function () {
 				$(element).addClass('clicked-animation');
 			}, 100);
 		}, 1);
@@ -270,7 +284,9 @@ export default class ContentSelector {
 			$('body #-selector-toolbar .selector').text(resultCssSelector);
 			// highlight selected elements
 			$('.-sitemap-select-item-selected').removeClass('-sitemap-select-item-selected');
-			$(ElementQuery(resultCssSelector, this.parent)).addClass('-sitemap-select-item-selected');
+			$(ElementQuery(resultCssSelector, this.parent)).addClass(
+				'-sitemap-select-item-selected'
+			);
 		} catch (err) {
 			if (err === 'found multiple element groups, but allowMultipleSelectors disabled') {
 				console.log('multiple different element selection disabled');
@@ -301,7 +317,7 @@ export default class ContentSelector {
 
 	bindMultipleGroupCheckbox() {
 		$('#-selector-toolbar [name=diferentElementSelection]').change(
-			function(e) {
+			function (e) {
 				if ($(e.currentTarget).is(':checked')) {
 					this.initCssSelector(true);
 				} else {
@@ -314,38 +330,14 @@ export default class ContentSelector {
 		$('#-selector-toolbar .diferentElementSelection').unbind('change');
 	}
 
-	attachToolbar() {
-		var $toolbar =
-			'<div id="-selector-toolbar">' +
-			'<div class="list-item"><div class="selector-container"><div class="selector"></div></div></div>' +
-			'<div class="input-group-addon list-item">' +
-			'<input type="checkbox" title="Enable different type element selection" name="diferentElementSelection">' +
-			'<div class="popover top">' +
-			'<div class="close">×</div>' +
-			'<div class="arrow"></div>' +
-			'<div class="popover-content">' +
-			'<div class="txt">' +
-			'Different type element selection is disabled. If the element ' +
-			'you clicked should also be included then enable this and ' +
-			'click on the element again. Usually this is not needed.' +
-			'</div>' +
-			'</div>' +
-			'</div>' +
-			'</div>' +
-			'<div class="list-item key-events"><div title="Click here to enable key press events for selection">Enable key events</div></div>' +
-			'<div class="list-item key-button key-button-select hide" title="Use S key to select element">S</div>' +
-			'<div class="list-item key-button key-button-parent hide" title="Use P key to select parent">P</div>' +
-			'<div class="list-item key-button key-button-child hide" title="Use C key to select child">C</div>' +
-			'<div class="list-item done-selecting-button">Done selecting!</div>' +
-			'</div>';
+	async attachToolbar() {
+		const toolbarUrl = browser.runtime.getURL('content_script/AttachedToolbar.html');
+		const toolbarFile = await fetch(toolbarUrl);
+		const $toolbar = await toolbarFile.text();
 		$('body').append($toolbar);
-
-		$('body #-selector-toolbar .done-selecting-button').click(
-			function() {
-				this.selectionFinished();
-			}.bind(this)
-		);
+		$('body #-selector-toolbar .done-selecting-button').click(() => this.selectionFinished());
 	}
+
 	highlightParent() {
 		// do not highlight parent if its the body
 		if (!$(this.parent).is('body') && !$(this.parent).is('#webpage')) {
@@ -363,9 +355,7 @@ export default class ContentSelector {
 		$('.-sitemap-parent').removeClass('-sitemap-parent');
 	}
 	unbindElementHighlight() {
-		$(this.$allElements)
-			.unbind('mouseover.elementSelector')
-			.unbind('mouseout.elementSelector');
+		$(this.$allElements).unbind('mouseover.elementSelector').unbind('mouseout.elementSelector');
 	}
 	unbindKeyboardSelectionMaipulatios() {
 		$(document).unbind('keydown.selectionManipulation');

@@ -20,7 +20,6 @@ export default class ChromePopupBrowser {
 			callback.call(scope);
 			return;
 		}
-
 		let createWindowOptions = {
 			type: 'popup',
 			width: 1042,
@@ -88,5 +87,12 @@ export default class ChromePopupBrowser {
 				}.bind(this)
 			);
 		}, this);
+	}
+
+	downloadFile(url, savePath) {
+		return browser.downloads.download({
+			url: url,
+			filename: savePath,
+		});
 	}
 }

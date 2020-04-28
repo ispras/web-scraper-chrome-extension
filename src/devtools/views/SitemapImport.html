@@ -1,21 +1,45 @@
-<form class="form-horizontal" role="form">
+<form class="form-horizontal">
 	<div class="form-group">
-		<label for="sitemapJSON" class="col-lg-1 control-label">Sitemap JSON</label>
-
+		<label
+			for="sitemapJSON"
+			class="col-lg-1 control-label"
+			data-i18n="sitemap_import_JSON_field"
+		></label>
 		<div class="col-lg-10">
 			<textarea rows="7" class="form-control" name="sitemapJSON" id="sitemapJSON"></textarea>
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="edit_sitemap_id" class="col-lg-1 control-label">Rename Sitemap (optional)</label>
-
+		<div class="col-lg-offset-1 col-lg-10">
+			<div class="btn btn-default">
+				<span data-i18n="sitemap_import_input_button"></span>
+				<input type="file" id="sitemapFiles" name="file" />
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label
+			for="edit_sitemap_id"
+			class="col-lg-1 control-label"
+			data-i18n="sitemap_import_renam_field"
+		></label>
 		<div class="col-lg-10">
-			<input type="text" class="form-control" name="_id" id="edit_sitemap_id" placeholder="Sitemap name" value="{{_id}}" />
+			<input
+				type="text"
+				class="form-control"
+				name="_id"
+				id="edit_sitemap_id"
+				value="{{_id}}"
+			/>
 		</div>
 	</div>
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-10">
-			<button class="btn btn-default" id="submit-import-sitemap">Import Sitemap</button>
+			<button
+				class="btn btn-primary"
+				id="submit-import-sitemap"
+				data-i18n="sitemap_import_submit_button"
+			></button>
 		</div>
 	</div>
 </form>

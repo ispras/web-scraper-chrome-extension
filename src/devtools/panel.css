@@ -49,6 +49,15 @@ textarea.form-control {
 	height: auto;
 }
 
+#sitemapFiles {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+}
+
 form .btn {
 	font-size: 12px;
 	padding: 3px 12px;
@@ -99,4 +108,55 @@ select[size] {
 
 .form-inline .form-control {
 	width: 100%;
+}
+
+.renderjson a {
+	color: green;
+	text-decoration: none;
+}
+
+.renderjson .disclosure {
+	color: darkred;
+	font-size: 150%;
+}
+
+.renderjson .syntax {
+	color: black;
+}
+
+.renderjson .string {
+	color: green;
+}
+
+.renderjson .key {
+	color: darkred;
+}
+
+.renderjson .keyword {
+	color: yellow;
+}
+
+.renderjson .object.syntax {
+	color: black;
+}
+
+.renderjson .array.syntax {
+	color: black;
+}
+
+.search-form {
+	margin-bottom: 1em;
+}
+
+.panel-data > .panel-heading {
+	background-color: #337ab7;
+	border-color: #337ab7;
+}
+
+.panel-data > .panel-heading .btn {
+	color: #fff;
+}
+
+.panel-data > .panel-heading .btn:hover {
+	color: #fff;
 }

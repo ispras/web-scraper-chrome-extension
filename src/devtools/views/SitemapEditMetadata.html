@@ -1,96 +1,73 @@
 <div id="edit-sitemap">
 	<form class="form-horizontal" role="form" id="edit-sitemap-metadata-form">
 		<div class="form-group">
-			<label for="edit_sitemap_id" class="col-lg-1 control-label">Sitemap name</label>
+			<label
+				for="edit_sitemap_id"
+				class="col-lg-1 control-label"
+				data-i18n="sitemap_edit_metadata_edit_sitemap_id"
+			></label>
 
 			<div class="col-lg-10">
-				<input type="text" class="form-control" name="_id" id="edit_sitemap_id" placeholder="Sitemap name" value="{{_id}}" />
+				<input
+					type="text"
+					class="form-control"
+					name="_id"
+					id="edit_sitemap_id"
+					placeholder="sitemap_edit_metadata_sitemap_name_placeholder"
+					value="{{_id}}"
+				/>
 			</div>
 		</div>
 		<div class="form-group start-url-block">
-			<label class="col-lg-1 control-label">Start URL</label>
+			<label
+				class="col-lg-1 control-label"
+				data-i18n="sitemap_edit_metadata_start_url"
+			></label>
 			<div class="col-lg-10">
 				<div class="input-group">
-					<textarea rows="5" cols="100" class="form-control input-start-url" name="startUrls" placeholder="URL List">{{startUrls}}</textarea>
+					<textarea
+						rows="5"
+						cols="100"
+						class="form-control input-start-url"
+						name="startUrls"
+						placeholder="sitemap_edit_metadata_url_list_placeholder"
+					>
+{{startUrls}}</textarea
+					>
 				</div>
 			</div>
-			<div class="col-lg-10 col-lg-offset-1">
-				Supported URL patterns:<br />
-				1. <b>Numeric</b> with optional step and zero padding – [<i>START</i>-<i>END</i>:<i>STEP</i>] – [001-010:10]<br />
-				2. <b>Date interval</b> – [date&lt;<i>PATTERN</i>&gt;&lt;<i>START</i>&gt;&lt;<i>END</i>&gt;] – [date&lt;dd.MM.yyyy&gt;&lt;01.01.2017&gt;&lt;now&gt;]<br />
-				<ul>
-					date placeholder may be
-					<b>yesterday</b>
-					/
-					<b>now</b>
-					/
-					<b>tomorrow</b
-					><br />
-					other template components (in Java style)
-					<ul>
-						<table border="0">
-							<tbody>
-								<tr>
-									<td>yyyy</td>
-									<td>full year (4 digits)</td>
-								</tr>
-								<tr>
-									<td>yy</td>
-									<td>last 2 digits of year</td>
-								</tr>
-								<tr>
-									<td>MMM &emsp;</td>
-									<td>Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec</td>
-								</tr>
-								<tr>
-									<td>MM</td>
-									<td>month number (01-12)</td>
-								</tr>
-								<tr>
-									<td>dd</td>
-									<td>day of month</td>
-								</tr>
-								<!--							<tr>
-								<td></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>hh</td>
-								<td>hours</td>
-							</tr>
-							<tr>
-								<td>mm</td>
-								<td>minutes</td>
-							</tr>
-							<tr>
-								<td>ss</td>
-								<td>seconds</td>
-							</tr>
-							<tr>
-								<td>sss</td>
-								<td>milliseconds</td>
-							</tr>-->
-							</tbody>
-						</table>
-					</ul>
-				</ul>
-			</div>
+			<div class="col-lg-10 col-lg-offset-1" data-i18n="url_patterns_hints"></div>
 		</div>
 		<div class="form-group model">
-			<label class="col-lg-1 control-label" for="model">Sitemap Model</label>
+			<label
+				class="col-lg-1 control-label"
+				for="model"
+				data-i18n="sitemap_edit_metadata_sitemap_model"
+			></label>
 			<div class="col-lg-10">
 				<div class="input-group">
-					<textarea rows="20" cols="100" class="form-control input-model" id="model" name="model" placeholder="Sitemap model">{{model}}</textarea>
+					<textarea
+						rows="20"
+						cols="100"
+						class="form-control input-model"
+						id="model"
+						name="model"
+						placeholder="sitemap_edit_metadata_sitemap_model"
+					>
+{{model}}</textarea
+					>
 				</div>
-				<p>
-					You can specify sitemap model as a list of json objects. <br />
-					Example: [ { "entity": "EntityName", "field": "FieldName", "field_name": "Expected Field Id" } ]
-				</p>
+				<p data-i18n="sitemap_model_hints"></p>
 			</div>
 		</div>
 		<div class="form-group">
 			<div class="col-lg-offset-1 col-lg-10">
-				<button type="submit" class="btn btn-primary" id="submit-edit-sitemap">Save Sitemap</button>
+				<button
+					type="submit"
+					class="btn btn-primary"
+					id="submit-edit-sitemap"
+					data-i18n="sitemap_edit_metadata_submit_model"
+				></button>
 			</div>
 		</div>
 	</form>

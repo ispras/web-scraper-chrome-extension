@@ -13,7 +13,7 @@
 <div id="body"></div>
 <script>
 	d3.json("sitemap.json", function(json) {
-		var sitemap = new Sitemap(json);
+		var sitemap = Sitemap.sitemapFromObj(json);
 		var graph = new SelectorGraphv2(sitemap);
 		graph.draw(document.getElementById("body"), 1200, 200);
 	});

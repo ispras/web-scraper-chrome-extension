@@ -2,86 +2,125 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<link rel="stylesheet" href="../../extension/assets/bootstrap-3.0.0/css/bootstrap.css" />
-		<link rel="stylesheet" href="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.css" />
-		<link rel="stylesheet" href="../../extension/devtools/devtools_scraper_panel.css" />
-		<link rel="stylesheet" href="../../extension/content_script/content_script.css" />
 		<link rel="stylesheet" href="webpage.css" />
-		<script src="../../extension/assets/jquery-2.0.3.js"></script>
-		<script src="../../extension/assets/papaparse.min.js"></script>
-		<script src="../../extension/assets/pouchdb-nightly.min.js"></script>
-		<script src="../../extension/assets/bootstrap-3.0.0/js/bootstrap.js"></script>
-		<script src="../../extension/assets/d3.v3.js"></script>
-		<script src="../../extension/assets/ICanHaz.js"></script>
-		<script src="../../extension/assets/sugar-1.4.1.js"></script>
-		<script src="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.js"></script>
-		<script src="../../extension/assets/jquery.whencallsequentially.js"></script>
-		<script src="../../extension/assets/base64.js"></script>
-		<script src="../../extension/scripts/ContentScript.js"></script>
-		<script src="../../extension/scripts/BackgroundScript.js"></script>
-		<script src="../../extension/scripts/Config.js"></script>
-		<script src="../../extension/scripts/Selector.js"></script>
-		<script src="../../extension/scripts/SelectorList.js"></script>
-		<script src="../../extension/scripts/ElementQuery.js"></script>
-		<script src="../../extension/scripts/UniqueElementList.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorLink.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorPopupLink.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorImage.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorGroup.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorElement.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorText.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorInputValue.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorHTML.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorElementAttribute.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorElementStyle.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorTable.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorElementScroll.js"></script>
-		<script src="../../extension/scripts/Selector/SelectorElementClick.js"></script>
-		<script src="../../extension/scripts/DateUtils/SimpleDateFormatter.js"></script>
-		<script src="../../extension/scripts/DateUtils/DateRoller.js"></script>
-		<script src="../../extension/scripts/DateUtils/DatePatternSupport.js"></script>
-		<script src="../../extension/scripts/Sitemap.js"></script>
-		<script src="../../extension/scripts/SelectorGraph.js"></script>
-		<script src="../../extension/scripts/SelectorGraphv2.js"></script>
-		<script src="../../extension/scripts/StorePouchDB.js"></script>
-		<script src="../../extension/scripts/StoreDevtools.js"></script>
-		<script src="../../extension/assets/css-selector/lib/CssSelector.js"></script>
-		<script src="../../extension/scripts/ContentSelector.js"></script>
-		<script src="../../extension/scripts/Queue.js"></script>
-		<script src="../../extension/scripts/Job.js"></script>
-		<script src="../../extension/scripts/DataExtractor.js"></script>
-		<script src="../../extension/scripts/ChromePopupBrowser.js"></script>
-		<script src="../../extension/scripts/Scraper.js"></script>
-
-		<script src="../../extension/scripts/Controller.js"></script>
-
-		<!-- Simulates chrome API -->
-		<script src="../../tests/ChromeAPI.js"></script>
-		<script>
-			new ChromeAPI();
-		</script>
-
-		<script src="../../extension/background_page/background_script.js"></script>
-		<script src="../../extension/content_script/content_script.js"></script>
-
-		<script>
-			$(function() {
-				// init bootstrap alerts
-				$('.alert').alert();
-
-				var config = new Config();
-				config.loadConfiguration(function() {
-					var store = new StorePouchDB(config);
-					new SitemapController({
-						store: store,
-						templateDir: '../../extension/devtools/views/',
-					});
-				});
-			});
-		</script>
 	</head>
 	<body>
 		<div id="webpage">
+			<h3>Table with thead and tbody</h3>
+			<table class="table">
+				<thead>
+					<tr>
+						<th class="otable-col-sticky" rowspan="3">Year</th>
+						<th colspan="4">Final decision</th>
+						<th colspan="4">Score</th>
+						<th class="otable-col-head" rowspan="3">Best student</th>
+					</tr>
+					<tr>
+						<th class="otable-col-head" colspan="2">First examiner</th>
+						<th class="otable-col-head" colspan="2">Second examiner</th>
+						<th class="otable-col-head" rowspan="2">Kolya</th>
+						<th class="otable-col-head" rowspan="2">Vasya</th>
+						<th class="otable-col-head" rowspan="2">Alex</th>
+						<th class="otable-col-head" rowspan="2">Roma</th>
+					</tr>
+					<tr>
+						<th class="otable-col-head">I</th>
+						<th class="otable-col-head">II</th>
+						<th class="otable-col-head">I</th>
+						<th class="otable-col-head">II</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th class="otable-col-sticky">2019</th>
+						<td>Good</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>5</td>
+						<td>6</td>
+						<td>3</td>
+						<td>8</td>
+						<td>Roma</td>
+					</tr>
+					<tr>
+						<th class="otable-col-sticky">2018</th>
+						<td>Excellent</td>
+						<td>Excellent</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>8</td>
+						<td>7</td>
+						<td>9</td>
+						<td>6</td>
+						<td>Alex</td>
+					</tr>
+					<tr>
+						<th class="otable-col-sticky">2017</th>
+						<td>Satisfactory</td>
+						<td>Satisfactory</td>
+						<td>Bad</td>
+						<td>Bad</td>
+						<td>4</td>
+						<td>2</td>
+						<td>3</td>
+						<td>5</td>
+						<td>Roma</td>
+					</tr>
+					<tr>
+						<th class="otable-col-sticky">2016</th>
+						<td>Good</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>Good</td>
+						<td>5</td>
+						<td>3</td>
+						<td>10</td>
+						<td>8</td>
+						<td>Alex</td>
+					</tr>
+				</tbody>
+			</table>
+			<br />
+			<hr />
+			<br />
+			<h3>Table with complicated rows</h3>
+			<table>
+				<tbody>
+					<tr>
+						<th>Student</th>
+						<th>Test</th>
+						<th>Class</th>
+						<th>Mark</th>
+					</tr>
+					<tr>
+						<td rowspan="2">Roma</td>
+						<td>Math</td>
+						<td rowspan="2">9-A</td>
+						<td>GooD</td>
+					</tr>
+					<tr>
+						<td>Proga</td>
+						<td>Excellent</td>
+					</tr>
+					<tr>
+						<td>Alex</td>
+						<td>Math</td>
+						<td>10-B</td>
+						<td>Excellent</td>
+					</tr>
+					<tr>
+						<td>Denis</td>
+						<td>Proga</td>
+						<td>12-B</td>
+						<td>Excellent</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<br />
+			<hr />
+			<br />
 			<h3>Table in table</h3>
 			<table border="1" class="table">
 				<tr>
@@ -136,6 +175,42 @@
 					</tr>
 				</thead>
 				<tbody>
+					<tr>
+						<td>1</td>
+						<td>Mark</td>
+						<td>Otto</td>
+						<td>@mdo</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>Jacob</td>
+						<td>Thornton</td>
+						<td>@fat</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>Larry</td>
+						<td>the Bird</td>
+						<td>@twitter</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<br />
+			<hr />
+			<br />
+
+			<h3>Table with th and td inside tbody</h3>
+
+			<table class="table">
+				<tbody>
+					<tr>
+						<th>#</th>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Username</th>
+					</tr>
+
 					<tr>
 						<td>1</td>
 						<td>Mark</td>
@@ -265,8 +340,8 @@
 			</style>
 			<table class="table">
 				<tr>
-					<td rowspan="2"></td>
-					<td colspan="2">flowers</td>
+					<td rowspan="2">name</td>
+					<td colspan="2">parameter</td>
 				</tr>
 				<tr>
 					<td>color</td>
@@ -282,6 +357,66 @@
 					<td>white</td>
 					<td>30</td>
 				</tr>
+			</table>
+
+			<br />
+			<hr />
+			<br />
+
+			<h3>Table with thead and tbody</h3>
+			<table class="table">
+				<thead>
+					<tr>
+						<th class="otable-col-sticky" rowspan="2">Year</th>
+						<th class="otable-col-sticky" rowspan="2">Final decision</th>
+						<th class="otable-col-head" colspan="4">Score</th>
+						<th class="otable-col-head" rowspan="2">Best student</th>
+					</tr>
+					<tr>
+						<th class="otable-col-head">Kolya</th>
+						<th class="otable-col-head">Vasya</th>
+						<th class="otable-col-head">Alex</th>
+						<th class="otable-col-head">Roma</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th class="otable-col-sticky">2019</th>
+						<td>Good</td>
+						<td>5</td>
+						<td>6</td>
+						<td>6</td>
+						<td>3</td>
+						<td>Roma</td>
+					</tr>
+					<tr>
+						<th class="otable-col-sticky">2018</th>
+						<td>Good</td>
+						<td>8</td>
+						<td>7</td>
+						<td>6</td>
+						<td>9</td>
+						<td>Alex</td>
+					</tr>
+					<tr>
+						<th class="otable-col-sticky">2017</th>
+						<td>Bad</td>
+						<td>4</td>
+						<td>2</td>
+						<td>3</td>
+						<td>5</td>
+						<td>Roma</td>
+					</tr>
+					<tr>
+						<th class="otable-col-sticky">2016</th>
+						<td>Good</td>
+						<td>5</td>
+						<td>3</td>
+						<td>6</td>
+						<td>10</td>
+						<td>Alex</td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 	</body>

@@ -20,6 +20,7 @@ const config = {
 		'devtools/devtools': './devtools/devtools.js',
 		'devtools/app': './scripts/App.js',
 		'options/options': './options/options.js',
+		'popup/popup': './popup/popup.js',
 		'content_script/content_script': './content_script/content_script.js',
 	},
 	output: {
@@ -82,11 +83,21 @@ const config = {
 		}),
 		new CopyWebpackPlugin([
 			{ from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
-			{ from: 'devtools/views', to: 'devtools/views/', transform: transformHtml },
+			{ from: '_locales', to: '_locales' },
 			{ from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
 			{ from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
 			{ from: 'devtools/panel.html', to: 'devtools/panel.html', transform: transformHtml },
-			{ from: 'devtools/devtools.html', to: 'devtools/devtools.html', transform: transformHtml },
+			{ from: 'devtools/views', to: 'devtools/views/', transform: transformHtml },
+			{
+				from: 'content_script/AttachedToolbar.html',
+				to: 'content_script/AttachedToolbar.html',
+				transform: transformHtml,
+			},
+			{
+				from: 'devtools/devtools.html',
+				to: 'devtools/devtools.html',
+				transform: transformHtml,
+			},
 			{
 				from: 'manifest.json',
 				to: 'manifest.json',
@@ -95,7 +106,8 @@ const config = {
 					jsonContent.version = version;
 
 					if (config.mode === 'development') {
-						jsonContent.content_security_policy = "script-src 'self' 'unsafe-eval'; object-src 'self'";
+						jsonContent.content_security_policy =
+							"script-src 'self' 'unsafe-eval'; object-src 'self'";
 					}
 
 					return JSON.stringify(jsonContent, null, 2);

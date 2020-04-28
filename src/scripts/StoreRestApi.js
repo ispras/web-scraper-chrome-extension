@@ -1,109 +1,75 @@
+import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
 
 export default class StoreRestApi {
 	constructor(config) {
-		this.base_uri = config.restUrl;
 		this.localDataStore = new StorePouchDB(config);
+		this.axiosInstance = axios.create({
+			baseURL: config.restUrl,
+		});
+		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
+		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
 	}
 
 	createSitemap(sitemap) {
-		return this.saveSitemap(sitemap);
+		return this.axiosInstance
+			.post('/sitemaps/', Sitemap.sitemapFromObj(sitemap).exportSitemap())
+			.then(() => {
+				return sitemap;
+			})
+			.catch(() => {
+				alert('StoreApi: Error creating sitemap.');
+			});
 	}
 
-	saveSitemap(sitemap) {
-		let base_uri = this.base_uri;
-		return new Promise(resolve => {
-			this.sitemapExists(sitemap._id).then(function(exists) {
-				if (exists) {
-					//update sitemap
-					$.ajax({
-						type: 'PUT',
-						url: new URL('/sitemaps/' + sitemap._id, base_uri).href,
-						data: new Sitemap(sitemap).exportSitemap(),
-						success: function() {
-							resolve(sitemap);
-						},
-						error: function(jqXHR, textStatus, errorThrown) {
-							alert('StoreApi: Error updating sitemap.');
-						},
-						contentType: 'application/json',
-					});
-				} else {
-					//create new sitemap
-					$.ajax({
-						type: 'POST',
-						url: new URL('/sitemaps/', base_uri).href,
-						data: new Sitemap(sitemap).exportSitemap(),
-						success: function() {
-							resolve(sitemap);
-						},
-						error: function(jqXHR, textStatus, errorThrown) {
-							alert('StoreApi: Error creating sitemap.');
-						},
-						contentType: 'application/json',
-					});
-				}
-			});
-		});
+	async saveSitemap(sitemap) {
+		const sitemapExists = await this.sitemapExists(sitemap._id);
+		if (sitemapExists) {
+			return this.axiosInstance
+				.put(`/sitemaps/${sitemap._id}`, Sitemap.sitemapFromObj(sitemap).exportSitemap())
+				.then(() => {
+					return sitemap;
+				})
+				.catch(response => {
+					if (response.statusCode() === 304) {
+						return sitemap;
+					}
+					alert('StoreApi: Error updating sitemap.');
+				});
+		}
+		return this.createSitemap(sitemap);
 	}
 
 	deleteSitemap(sitemap) {
-		return new Promise(resolve => {
-			$.ajax({
-				type: 'DELETE',
-				url: new URL('/sitemaps/' + sitemap._id, this.base_uri).href,
-				success: function(response) {
-					resolve(response);
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					alert('StoreApi: Error deleting sitemap.');
-				},
-				contentType: 'application/json',
+		return this.axiosInstance
+			.delete(`/sitemaps/${sitemap._id}`)
+			.then(response => {
+				return response.data;
+			})
+			.catch(() => {
+				alert('StoreApi: Error deleting sitemap.');
 			});
-		});
 	}
 
 	getAllSitemaps() {
-		return new Promise(resolve => {
-			$.ajax({
-				type: 'GET',
-				url: new URL('/sitemaps/', this.base_uri).href,
-				success: function(data) {
-					let sitemaps = [];
-					for (let i in data) {
-						sitemaps.push(new Sitemap(data[i]));
-					}
-					resolve(sitemaps);
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					alert('StoreApi: Could not get all sitemaps.');
-				},
-				contentType: 'application/json',
+		return this.axiosInstance
+			.get('/sitemaps/')
+			.then(response => {
+				return Array.from(response.data, sitemapObj => {
+					return Sitemap.sitemapFromObj(sitemapObj);
+				});
+			})
+			.catch(() => {
+				alert('StoreApi: Could not get all sitemaps.');
 			});
-		});
 	}
 
-	sitemapExists(sitemapId) {
-		return new Promise(resolve => {
-			$.ajax({
-				type: 'GET',
-				url: new URL('/sitemaps/', this.base_uri).href,
-				success: function(data) {
-					let exists = false;
-					for (let i in data) {
-						if (data[i]._id === sitemapId) {
-							exists = true;
-						}
-					}
-					resolve(exists);
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					alert('StoreApi: Could not get all sitemaps.');
-				},
-				contentType: 'application/json',
-			});
+	async sitemapExists(sitemapId) {
+		const sitemaps = await this.getAllSitemaps().catch(() => {
+			alert('StoreApi: Error checking sitemap exists.');
 		});
+		return sitemaps.some(sitemap => sitemap._id === sitemapId);
 	}
 
 	initSitemapDataDb(sitemapId) {
