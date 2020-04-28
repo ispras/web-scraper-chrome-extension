@@ -33,7 +33,8 @@ To install the program, you must perform the following actions:
 8. Click on the file selection confirmation button.
    ![Fig. Selecting a program distribution file][choose-addon-file]
 9. Confirm the installation of the extension in the pop-up window.
-   ![Fig. Confirm install extension][confirm-install]
+
+    ![Fig. Confirm install extension][confirm-install]
 
 [install-chrome]: images/installation/chrome_scraper_1.png
 [change-config]: images/installation/Firefox_scraper_1.png
