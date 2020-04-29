@@ -147,7 +147,7 @@
 	"sitemap_scrape_requestIntervalRandomness": { "message": "Случайность между запросами" },
 	"sitemap_scrape_pageLoadDelay": { "message": "Задержка при загрузке страницы" },
 	"selector_edit_id": { "message": "Идентификатор селектора" },
-	"selector_edit_paginationLimit": { "message": "устой = бесконечно" },
+	"selector_edit_paginationLimit": { "message": "Пустой = бесконечно" },
 	"selector_edit_extractAttribute": { "message": "Имя аттрибута для извлечения" },
 	"selector_edit_value_placeholder": { "message": "Значения текста для вставки" },
 	"selector_edit_extractStyle": { "message": "Имя атрибута для извлечения" },
