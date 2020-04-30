@@ -2,11 +2,11 @@ import * as $ from 'jquery';
 import * as ich from 'icanhaz/ICanHaz';
 import * as browser from 'webextension-polyfill';
 import * as renderjson from 'renderjson/renderjson';
+import * as Papa from 'papaparse';
+import 'sugar';
 import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
-import 'sugar';
-import * as Papa from 'papaparse';
 
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
@@ -71,8 +71,7 @@ export default class SitemapController {
 		];
 
 		this.selectorTypes = this.selectorTypes.map(typeObj => {
-			typeObj.title = Translator.getTranslationByKey(typeObj.type);
-			return typeObj;
+			return { ...typeObj, title: Translator.getTranslationByKey(typeObj.type) };
 		});
 
 		this.jsonRenderer = renderjson
@@ -738,7 +737,6 @@ export default class SitemapController {
 	_editSitemap(sitemap) {
 		this.setStateEditSitemap(sitemap);
 		this.setActiveNavigationButton('sitemap');
-
 		this.showSitemapSelectorList();
 	}
 
@@ -1150,13 +1148,10 @@ export default class SitemapController {
 		return sitemap;
 	}
 
-	cancelSelectorEditing(button) {
+	cancelSelectorEditing() {
 		// cancel possible element selection
-		this.contentScript.removeCurrentContentSelector().done(
-			function () {
-				this.showSitemapSelectorList();
-			}.bind(this)
-		);
+		this.contentScript.removeCurrentContentSelector();
+		this.showSitemapSelectorList();
 	}
 
 	addSelector() {
@@ -1172,24 +1167,19 @@ export default class SitemapController {
 		this._editSelector(selector, sitemap);
 	}
 
-	deleteSelector(button) {
+	async deleteSelector(button) {
 		const sitemap = this.state.currentSitemap;
 		const selector = $(button).closest('tr').data('selector');
 		sitemap.deleteSelector(selector);
 
-		this.store.saveSitemap(sitemap).then(
-			function () {
-				this.showSitemapSelectorList();
-			}.bind(this)
-		);
+		await this.store.saveSitemap(sitemap);
+		this.showSitemapSelectorList();
 	}
 
-	deleteSitemap(button) {
+	async deleteSitemap(button) {
 		const sitemap = $(button).closest('tr').data('sitemap');
-		const controller = this;
-		this.store.deleteSitemap(sitemap).then(function () {
-			controller.showSitemaps();
-		});
+		await this.store.deleteSitemap(sitemap);
+		await this.showSitemaps();
 	}
 
 	initScrapeSitemapConfigValidation() {

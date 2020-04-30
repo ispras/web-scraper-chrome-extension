@@ -160,3 +160,8 @@ select[size] {
 .panel-data > .panel-heading .btn:hover {
 	color: #fff;
 }
+
+#removeHtml,
+#trimText {
+	margin-left: auto;
+}
