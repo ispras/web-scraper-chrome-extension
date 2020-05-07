@@ -25,6 +25,7 @@
 		"jquery": "^3.5.0",
 		"jquery-flexdatalist": "^2.2.4",
 		"jquery-searcher": "^0.3.0",
+		"jquery-highlight": "^3.5.0",
 		"nanoid": "^2.1.11",
 		"papaparse": "^4.1.0",
 		"pouchdb": "^7.1.1",

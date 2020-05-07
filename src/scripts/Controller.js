@@ -4,6 +4,7 @@ import * as browser from 'webextension-polyfill';
 import * as renderjson from 'renderjson/renderjson';
 import * as Papa from 'papaparse';
 import 'sugar';
+import 'jquery-highlight/jquery.highlight';
 import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
@@ -1333,6 +1334,11 @@ export default class SitemapController {
 				itemSelector: '.panel', // jQuery selector for the data item element
 				textSelector: '.panel-body', // jQuery selector for the element which contains the text
 				inputSelector: '#search-input', // jQuery selector for the input element
+				toggle: (item, containsText) => {
+					$(item).unhighlight();
+					$(item).toggle(containsText);
+					$(item).highlight($('#search-input').val());
+				},
 			});
 
 			$('.collapse').collapse('show');

@@ -148,6 +148,10 @@ select[size] {
 	margin-bottom: 1em;
 }
 
+.highlight {
+	background-color: #ffeb3b;
+}
+
 .panel-data > .panel-heading {
 	background-color: #337ab7;
 	border-color: #337ab7;
