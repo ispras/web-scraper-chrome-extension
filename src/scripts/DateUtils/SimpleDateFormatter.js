@@ -10,7 +10,20 @@
 export default class SimpleDateFormatter {
 	constructor(pattern) {
 		this.pattern = pattern || 'dd.MM.yyyy';
-		this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		this.months = [
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec',
+		];
 	}
 
 	/**
@@ -35,14 +48,14 @@ export default class SimpleDateFormatter {
 		 */
 		function lzero(value, digits) {
 			digits = digits || 2;
-			var result = value.toString();
+			let result = value.toString();
 			while (result.length < digits) {
-				result = '0' + result;
+				result = `0${result}`;
 			}
 			return result;
 		}
 
-		var variants = {
+		const variants = {
 			yyyy: date.getFullYear(),
 			yy: lzero(date.getFullYear() % 100),
 			MMM: this.months[date.getMonth()],
@@ -54,9 +67,9 @@ export default class SimpleDateFormatter {
 			ss: lzero(date.getSeconds()),
 		};
 
-		var format = this.pattern;
+		let format = this.pattern;
 
-		for (var i in variants) {
+		for (const i in variants) {
 			format = format.replace(i, variants[i]);
 		}
 
@@ -71,37 +84,53 @@ export default class SimpleDateFormatter {
 	 * @returns {Date}
 	 */
 	parse(string) {
-		var date = new Date(0);
-		var pat = this.pattern;
-		var input = string;
-		var variants = {
-			yyyy: 'date.setFullYear(parseInt(value));',
-			yy: 'date.setYear(parseInt(value) + 2000);',
-			MMM: 'date.setMonth(parseInt(value));',
-			MM: 'date.setMonth(parseInt(value) - 1);',
-			dd: 'date.setDate(parseInt(value));',
-			hh: 'date.setHours(parseInt(value));',
-			mm: 'date.setMinutes(parseInt(value));',
-			sss: 'date.setMilliseconds(parseInt(value));',
-			ss: 'date.setSeconds(parseInt(value));',
+		const date = new Date(0);
+		let pat = this.pattern;
+		let input = string;
+		const variants = {
+			yyyy(value) {
+				return date.setFullYear(parseInt(value, 10));
+			},
+			yy(value) {
+				return date.setFullYear(parseInt(value, 10) + 2000);
+			},
+			MMM(value) {
+				return date.setMonth(parseInt(value, 10));
+			},
+			MM(value) {
+				return date.setMonth(parseInt(value, 10) - 1);
+			},
+			dd(value) {
+				return date.setDate(parseInt(value, 10));
+			},
+			hh(value) {
+				return date.setHours(parseInt(value, 10));
+			},
+			mm(value) {
+				return date.setMinutes(parseInt(value, 10));
+			},
+			sss(value) {
+				return date.setMilliseconds(parseInt(value, 10));
+			},
+			ss(value) {
+				return date.setSeconds(parseInt(value, 10));
+			},
 		};
-
-		for (var i in variants) {
-			var pos = pat.search(i);
+		for (const i in variants) {
+			const pos = pat.search(i);
 			if (pos !== -1) {
-				var value = input.substr(pos, i.length);
+				const value = input.substr(pos, i.length);
 				input = input.substring(0, pos) + input.substring(pos + i.length);
 				pat = pat.substring(0, pos) + pat.substring(pos + i.length);
 				if (i === 'MMM') {
-					for (var j in this.months) {
+					for (const j in this.months) {
 						if (value === this.months[j]) {
-							value = j;
-							eval(variants[i]);
+							variants[i](j);
 							break;
 						}
 					}
 				} else {
-					eval(variants[i]);
+					variants[i](value);
 				}
 			}
 		}
