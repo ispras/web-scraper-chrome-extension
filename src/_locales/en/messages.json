@@ -101,7 +101,7 @@
 	"sitemap_scrape_config_page_load_delay": { "message": "Page load delay (ms)" },
 	"sitemap_scrape_config_submit_scraping": { "message": "Start scraping" },
 	"sitemap_scrape_config_alert_success": {
-		"message": "Scraping in progress. Close the popup to stop scraping.\n\t\t\tWhen scraping is finished you can browse the data or export it as CSV or JSON Lines."
+		"message": "Scraping in progress. Close the popup to stop scraping. <br/> When scraping is finished you can browse the data or export it as CSV or JSON Lines."
 	},
 	"sitemap_edit_metadata_submit_model": { "message": "Save Sitemap" },
 	"sitemap_edit_metadata_edit_sitemap_id": { "message": "Sitemap name" },
