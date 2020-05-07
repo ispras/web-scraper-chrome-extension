@@ -107,7 +107,7 @@
 	"sitemap_scrape_config_page_load_delay": { "message": "Задержка при загрузке страницы (мс)" },
 	"sitemap_scrape_config_submit_scraping": { "message": "Запустить тестовый сбор" },
 	"sitemap_scrape_config_alert_success": {
-		"message": "Сбор в процессе. Закройте всплывающее окно для того, чтобы остановить сбор.<br />\n\t\t\tКогда сбор завершится вы можете посмотреть собранные данные и выгрузить их в CSV или JSON Lines.\n\t\t"
+		"message": "Сбор в процессе. Закройте всплывающее окно для того, чтобы остановить сбор. <br/> Когда сбор завершится вы можете посмотреть собранные данные и выгрузить их в CSV или JSON Lines."
 	},
 	"sitemap_edit_metadata_submit_model": { "message": "Сохранить карту обхода" },
 	"sitemap_edit_metadata_edit_sitemap_id": { "message": "Идентификатор карты обхода" },
