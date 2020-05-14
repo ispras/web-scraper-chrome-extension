@@ -131,7 +131,7 @@ export default class SelectorTable extends Selector {
 		const getDataCells = this.verticalTable
 			? this.getVerticalDataCells
 			: this.getHorizontalDataCells;
-		return tables.flatMap(getDataCells);
+		return tables.flatMap(getDataCells.bind(this));
 	}
 
 	getDataColumns() {
