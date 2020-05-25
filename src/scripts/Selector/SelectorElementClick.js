@@ -57,7 +57,7 @@ export default class SelectorElementClick extends Selector {
 		const foundDataElements = new UniqueElementList('uniqueHTMLText');
 		if (!this.discardInitialElements) {
 			// add elements that are available before clicking
-			this.getDataElements(parentElement).forEach(foundDataElements.push);
+			this.getDataElements(parentElement).forEach(element => foundDataElements.push(element));
 		}
 
 		let clickElements = this.getClickElements(parentElement);
