@@ -521,8 +521,9 @@
 		></label>
 
 		<div class="col-sm-8">
-			<div id="replace" class="input-group">
-				<label data-i18n="selector_edit_replace_text">
+			<div id="replace" class="form-inline">
+				<label for="replaceString">
+					<span data-i18n="selector_edit_replace_text"></span>
 					<input
 						type="text"
 						class="form-control col-sm-6"
@@ -532,8 +533,9 @@
 						value="{{selector.replaceString}}"
 					/>
 				</label>
-				<label data-i18n="selector_edit_replacemet_text"
-					><input
+				<label for="replacementString">
+					<span data-i18n="selector_edit_replacement_text"></span>
+					<input
 						type="text"
 						class="form-control col-sm-6"
 						name="replacementString"
