@@ -58,12 +58,12 @@ export default class Selector {
 		let regex = function (content, regex, regexgroup) {
 			try {
 				content = $.trim(content);
-				let matches = content.match(new RegExp(regex, 'gm')),
+				let matches = content.match(new RegExp(regex, 'm')),
 					groupDefined = regexgroup !== '';
 
 				regexgroup = groupDefined ? regexgroup : 0;
 
-				if (matches !== null) {
+				if (matches !== null && regexgroup in matches) {
 					return matches[regexgroup];
 				} else {
 					return '';
