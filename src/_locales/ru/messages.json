@@ -15,7 +15,7 @@
 	"sitemaplist_id": { "message": "Идентификатор карты" },
 	"sitemaplist_starturl": { "message": "Стартовые URL" },
 	"sitemaplist_actions": { "message": "Действия" },
-	"browse_sitemap_data": { "message": "Данные" },
+	"browse_sitemap_data": { "message": "Просмотр данных" },
 	"delete_sitemap": { "message": "Удалить" },
 	"sitemap_export_download_button": { "message": "Скачать карту обхода в виде JSON файла" },
 	"sitemap_import_submit_button": { "message": "Загрузить карту обхода" },
