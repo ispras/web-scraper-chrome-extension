@@ -1547,7 +1547,7 @@ export default class SitemapController {
 			.promise();
 
 		selector = this.getCurrentlyEditedSelector();
-		await selector.afterSelect(result.CSSSelector, this);
+		await selector.afterSelect(result.CSSSelector, this, input.attr('id'));
 
 		// update validation for selector field
 		const validator = this.getFormValidator();
