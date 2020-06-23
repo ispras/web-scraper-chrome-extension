@@ -169,3 +169,11 @@ select[size] {
 #trimText {
 	margin-left: auto;
 }
+
+.actions-block {
+	display: flex;
+}
+
+.actions-block > button:not(:last-of-type) {
+	margin-right: 5px;
+}
