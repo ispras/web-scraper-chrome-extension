@@ -1596,7 +1596,7 @@ export default class SitemapController {
 		const tableHeaderRowSelector = result.CSSSelector;
 		selector.tableHeaderRowSelector = tableHeaderRowSelector;
 
-		const html = this.getSelectorHTML().promise();
+		const html = await this.getSelectorHTML().promise();
 		selector.getTableHeaderColumnsFromHTML(html);
 		this.renderTableHeaderColumns(selector.headerColumns);
 
