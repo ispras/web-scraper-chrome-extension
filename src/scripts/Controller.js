@@ -1054,9 +1054,6 @@ export default class SitemapController {
 		if (!this.isValidForm()) {
 			return false;
 		}
-		// if (newSelector.parentSelectors.length === 1 && newSelector.parentSelectors[0] ===  newSelector.id){
-		// 	return false
-		// }
 		// cancel possible element selection
 		this.contentScript.removeCurrentContentSelector().done(
 			function () {
