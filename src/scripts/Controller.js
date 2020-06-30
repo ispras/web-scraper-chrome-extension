@@ -917,12 +917,31 @@ export default class SitemapController {
 							),
 						},
 						callback: {
-							message: Translator.getTranslationByKey(
-								'handle_recursive_error_message'
-							),
-							callback: function (value, validator, $field) {
+							message: 'perent_selector_callback_error',
+							callback: function (value, validator) {
 								const sitemap = this.getCurrentlyEditedSelectorSitemap();
-								return !sitemap.selectors.hasRecursiveElementSelectors();
+								const newSelector = this.getCurrentlyEditedSelector();
+
+								if (
+									newSelector.parentSelectors.length === 1 &&
+									newSelector.parentSelectors[0] === newSelector.id
+								) {
+									return {
+										valid: false,
+										message: Translator.getTranslationByKey(
+											'parent_selector_self_citation'
+										),
+									};
+								}
+								if (sitemap.selectors.hasRecursiveElementSelectors()) {
+									return {
+										valid: false,
+										message: Translator.getTranslationByKey(
+											'handle_recursive_error_message'
+										),
+									};
+								}
+								return true;
 							}.bind(this),
 						},
 					},
@@ -1035,7 +1054,6 @@ export default class SitemapController {
 		if (!this.isValidForm()) {
 			return false;
 		}
-
 		// cancel possible element selection
 		this.contentScript.removeCurrentContentSelector().done(
 			function () {

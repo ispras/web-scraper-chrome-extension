@@ -300,5 +300,6 @@
 	"extension_short_name": { "message": "Web Scraper" },
 	"extension_description": { "message": "Инструмент для извлечения данных с веб-сайтов." },
 	"browse_data_search": { "message": "Поиск в собранных данных" },
-	"content_script_width": { "message": "150px !important" }
+	"content_script_width": { "message": "150px !important" },
+	"parent_selector_self_citation": { "message": "Селектор не может указывать только на себя" }
 }
