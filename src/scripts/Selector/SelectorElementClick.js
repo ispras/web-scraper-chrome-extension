@@ -117,6 +117,15 @@ export default class SelectorElementClick extends Selector {
 		});
 	}
 
+	async afterSelect(cssSelector, controller, inputId) {
+		if (inputId === 'clickElementSelector') {
+			this.clickElementSelector = cssSelector;
+		} else {
+			this.selector = cssSelector;
+		}
+		controller._editSelector(this);
+	}
+
 	getDataColumns() {
 		return [];
 	}

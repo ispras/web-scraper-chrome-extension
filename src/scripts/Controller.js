@@ -1547,7 +1547,7 @@ export default class SitemapController {
 			.promise();
 
 		selector = this.getCurrentlyEditedSelector();
-		await selector.afterSelect(result.CSSSelector, this);
+		await selector.afterSelect(result.CSSSelector, this, input.attr('id'));
 
 		// update validation for selector field
 		const validator = this.getFormValidator();
@@ -1596,7 +1596,7 @@ export default class SitemapController {
 		const tableHeaderRowSelector = result.CSSSelector;
 		selector.tableHeaderRowSelector = tableHeaderRowSelector;
 
-		const html = this.getSelectorHTML().promise();
+		const html = await this.getSelectorHTML().promise();
 		selector.getTableHeaderColumnsFromHTML(html);
 		this.renderTableHeaderColumns(selector.headerColumns);
 
