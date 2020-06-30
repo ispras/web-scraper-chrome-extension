@@ -141,8 +141,9 @@ export default class Sitemap {
 	}
 
 	updateSelector(selector, selectorData) {
-		// selector is undefined when creating a new one
+		// selector is undefined when creating a new one and delete old one, if it exist
 		if (selector === undefined || selector.type !== selectorData.type) {
+			this.deleteSelector(selector);
 			selector = SelectorList.createSelector(selectorData);
 		}
 
