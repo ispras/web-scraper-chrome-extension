@@ -46,6 +46,9 @@ export default class SitemapController {
 				type: 'SelectorDocument',
 			},
 			{
+				type: 'SelectorFile',
+			},
+			{
 				type: 'SelectorTable',
 			},
 			{
@@ -1109,6 +1112,7 @@ export default class SitemapController {
 		const multiple = $('#edit-selector [name=multiple]').is(':checked');
 		const downloadImage = $('#edit-selector [name=downloadImage]').is(':checked');
 		const downloadDocument = $('#edit-selector [name=downloadDocument]').is(':checked');
+		const downloadFile = $('#edit-selector [name=downloadFile]').is(':checked');
 		const clickPopup = $('#edit-selector [name=clickPopup]').is(':checked');
 		const delay = $('#edit-selector [name=delay]').val();
 		const extractAttribute = $('#edit-selector [name=extractAttribute]').val();
@@ -1161,6 +1165,7 @@ export default class SitemapController {
 			multiple,
 			downloadImage,
 			downloadDocument,
+			downloadFile,
 			clickPopup,
 			extractAttribute,
 			extractStyle,

@@ -71,6 +71,7 @@
 		"message": "Отменить начальные элементы, которые доступны до нажатия"
 	},
 	"selector_edit_download_image": { "message": "Сохранить картинку" },
+	"selector_edit_download_file": { "message": "Сохранить файл" },
 	"selector_edit_download_document": { "message": "Сохранить документ" },
 	"selector_edit_attribute_name": { "message": "Имя атрибута" },
 	"selector_edit_value": { "message": "Значение" },
@@ -126,7 +127,7 @@
 	"sitemap_model_hints": {
 		"message": "<div>\n\t\t\t<p>\n\t\t\t\tВы можете указать модель карты обхода в виде списка JSON объектов. <br />\n\t\t\t\tПример: [ { \"entity\": \"Имя сущности\", \"field\": \"Поле сущности\", \"fieldName\": \"Ожидаемый идентификатор поля\" } ]\n\t\t\t</p>\n\t\t</div>"
 	},
-
+	"SelectorFile": { "message": "Файл" },
 	"SelectorText": { "message": "Текст" },
 	"SelectorLink": { "message": "Ссылка" },
 	"SelectorPopupLink": { "message": "Всплывающая ссылка" },
