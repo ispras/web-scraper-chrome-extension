@@ -70,8 +70,7 @@
 	"selector_edit_discardInitialElements": {
 		"message": "Отменить начальные элементы, которые доступны до нажатия"
 	},
-	"selector_edit_download_image": { "message": "Сохранить картинку" },
-	"selector_edit_download_document": { "message": "Сохранить документ" },
+	"selector_edit_download_file": { "message": "Сохранить файл" },
 	"selector_edit_attribute_name": { "message": "Имя атрибута" },
 	"selector_edit_value": { "message": "Значение" },
 	"selector_edit_style_name": { "message": "Имя стиля" },
@@ -126,12 +125,10 @@
 	"sitemap_model_hints": {
 		"message": "<div>\n\t\t\t<p>\n\t\t\t\tВы можете указать модель карты обхода в виде списка JSON объектов. <br />\n\t\t\t\tПример: [ { \"entity\": \"Имя сущности\", \"field\": \"Поле сущности\", \"fieldName\": \"Ожидаемый идентификатор поля\" } ]\n\t\t\t</p>\n\t\t</div>"
 	},
-
+	"SelectorFile": { "message": "Файл" },
 	"SelectorText": { "message": "Текст" },
 	"SelectorLink": { "message": "Ссылка" },
 	"SelectorPopupLink": { "message": "Всплывающая ссылка" },
-	"SelectorImage": { "message": "Изображение" },
-	"SelectorDocument": { "message": "Документ" },
 	"SelectorTable": { "message": "Таблица" },
 	"SelectorElementAttribute": { "message": "Атрибут" },
 	"SelectorElementStyle": { "message": "Стиль" },
@@ -255,7 +252,9 @@
 	"request_interval_numeric_message": {
 		"message": "Задержка между запросами должна быть числом"
 	},
-	"request_interval_short_message": { "message": "Задержка между запросами должна быть числом" },
+	"request_interval_short_message": {
+		"message": "Задержка между запросами должна быть не меньше 2000 миллисекунд"
+	},
 	"request_interval_randomness_empty_message": {
 		"message": "Случайность в задержке между запросами обязательна и не может быть пустой."
 	},
