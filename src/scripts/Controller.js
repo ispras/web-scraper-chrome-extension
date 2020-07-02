@@ -169,7 +169,7 @@ export default class SitemapController {
 			'#sitemapFiles': {
 				change: this.readBlob,
 			},
-			'.copyText': {
+			'#copyTextButton': {
 				click: this.copyText,
 			},
 			'#sitemaps-nav-button': {
@@ -590,16 +590,11 @@ export default class SitemapController {
 	}
 
 	copyText() {
-		var copyText = document.getElementById('copyText');
-		var range = document.createRange();
+		const copyText = document.getElementById('copyTextArea');
+		const range = document.createRange();
 		range.selectNode(copyText);
 		window.getSelection().removeAllRanges();
 		window.getSelection().addRange(range);
-		try {
-			document.execCommand('copy');
-		} catch (err) {
-			console.log('Can`t copy, boss');
-		}
 		document.execCommand('copy');
 		window.getSelection().removeAllRanges();
 	}
