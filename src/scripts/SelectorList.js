@@ -1,13 +1,11 @@
 import Selector from './Selector';
 import ConstantValue from './Selector/ConstantValue';
 import SelectorText from './Selector/SelectorText';
-import SelectorDocument from './Selector/SelectorDocument';
 import SelectorFile from './Selector/SelectorFile';
 import SelectorPopupLink from './Selector/SelectorPopupLink';
 import SelectorInputValue from './Selector/SelectorInputValue';
 import SelectorElement from './Selector/SelectorElement';
 import SelectorLink from './Selector/SelectorLink';
-import SelectorImage from './Selector/SelectorImage';
 import SelectorHTML from './Selector/SelectorHTML';
 import SelectorGroup from './Selector/SelectorGroup';
 import SelectorElementStyle from './Selector/SelectorElementStyle';
@@ -21,8 +19,6 @@ export default class SelectorList extends Array {
 		switch (options.type) {
 			case 'ConstantValue':
 				return new ConstantValue(options);
-			case 'SelectorDocument':
-				return new SelectorDocument(options);
 			case 'SelectorFile':
 				return new SelectorFile(options);
 			case 'SelectorElement':
@@ -39,8 +35,6 @@ export default class SelectorList extends Array {
 				return new SelectorGroup(options);
 			case 'SelectorHTML':
 				return new SelectorHTML(options);
-			case 'SelectorImage':
-				return new SelectorImage(options);
 			case 'SelectorInputValue':
 				return new SelectorInputValue(options);
 			case 'SelectorLink':

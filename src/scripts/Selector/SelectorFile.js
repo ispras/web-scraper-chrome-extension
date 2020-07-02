@@ -1,4 +1,5 @@
 import Selector from '../Selector';
+import * as $ from 'jquery';
 
 export default class SelectorFile extends Selector {
 	constructor(options) {
@@ -31,16 +32,27 @@ export default class SelectorFile extends Selector {
 	}
 
 	async _getData(parentElement) {
-		const elements = this.getDataElements(parentElement).filter(element => 'href' in element);
-		const urls = elements.map(element =>
+		const elements = this.getDataElements(parentElement);
+
+		const urlsHref = elements.map(element =>
 			this.stringReplace(element.href, this.stringReplacement)
 		);
-
+		const urlsSrc = elements.map(element => {
+			let { src } = element;
+			// get url from style
+			if (src == null) {
+				src = $(element).css('background-image');
+				src = /^url\((['"]?)(.*)\1\)$/.exec(src);
+				src = src ? src[2] : '';
+			}
+			return this.stringReplace(src, this.stringReplacement);
+		});
+		const urls = urlsSrc[0].length ? urlsSrc : urlsHref;
 		const result = {};
 		if (this.multiple) {
-			result[`${this.id}-href`] = urls;
+			result[`${this.id}-url`] = urls;
 		} else {
-			result[`${this.id}-href`] = urls.length ? urls[0] : null;
+			result[`${this.id}-url`] = urls.length ? urls[0] : null;
 		}
 
 		if (this.downloadFile) {
@@ -68,7 +80,7 @@ export default class SelectorFile extends Selector {
 	}
 
 	getDataColumns() {
-		const dataColumns = [`${this.id}-href`];
+		const dataColumns = [`${this.id}-url`];
 		if (this.downloadFile) {
 			dataColumns.push(`${this.id}-path`, `${this.id}-checksum`, `${this.id}-filename`);
 		}
@@ -76,7 +88,7 @@ export default class SelectorFile extends Selector {
 	}
 
 	getUrlColumn() {
-		return `${this.id}-href`;
+		return `${this.id}-url`;
 	}
 
 	getFeatures() {
