@@ -170,7 +170,7 @@ export default class SitemapController {
 				change: this.readBlob,
 			},
 			'#copyTextButton': {
-				click: this.copyText,
+				click: this.copySitemapToClipboard,
 			},
 			'#sitemaps-nav-button': {
 				click: this.showSitemaps,
@@ -589,8 +589,8 @@ export default class SitemapController {
 		return true;
 	}
 
-	copyText() {
-		const copyText = document.getElementById('copyTextArea');
+	copySitemapToClipboard() {
+		const copyText = document.getElementById('sitemap-area');
 		const range = document.createRange();
 		range.selectNode(copyText);
 		window.getSelection().removeAllRanges();
@@ -598,6 +598,7 @@ export default class SitemapController {
 		document.execCommand('copy');
 		window.getSelection().removeAllRanges();
 	}
+
 	async showSitemaps() {
 		this.clearState();
 		this.setActiveNavigationButton('sitemaps');
