@@ -271,5 +271,6 @@
 	"extension_short_name": { "message": "Web Scraper" },
 	"extension_description": { "message": "Tool for data extraction from websites" },
 	"browse_data_search": { "message": "Search in scraped data" },
-	"parent_selector_self_citation": { "message": "The selector cannot only point to itself" }
+	"parent_selector_self_citation": { "message": "The selector cannot only point to itself" },
+	"sitemap_export_copy_text_button": { "message": "Copy the sitemap to the clipboard" }
 }

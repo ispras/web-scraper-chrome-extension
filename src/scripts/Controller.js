@@ -169,6 +169,9 @@ export default class SitemapController {
 			'#sitemapFiles': {
 				change: this.readBlob,
 			},
+			'#copyTextButton': {
+				click: this.copySitemapToClipboard,
+			},
 			'#sitemaps-nav-button': {
 				click: this.showSitemaps,
 			},
@@ -584,6 +587,16 @@ export default class SitemapController {
 		downloadButton.attr('download', `${sitemap._id}.json`);
 
 		return true;
+	}
+
+	copySitemapToClipboard() {
+		const copyText = document.getElementById('sitemap-area');
+		const range = document.createRange();
+		range.selectNode(copyText);
+		window.getSelection().removeAllRanges();
+		window.getSelection().addRange(range);
+		document.execCommand('copy');
+		window.getSelection().removeAllRanges();
 	}
 
 	async showSitemaps() {
@@ -1190,7 +1203,6 @@ export default class SitemapController {
 		const sitemap = this.state.currentSitemap;
 		const selector = $(button).closest('tr').data('selector');
 		sitemap.deleteSelector(selector);
-
 		await this.store.saveSitemap(sitemap);
 		this.showSitemapSelectorList();
 	}

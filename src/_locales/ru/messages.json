@@ -301,5 +301,6 @@
 	"extension_description": { "message": "Инструмент для извлечения данных с веб-сайтов." },
 	"browse_data_search": { "message": "Поиск в собранных данных" },
 	"content_script_width": { "message": "150px !important" },
-	"parent_selector_self_citation": { "message": "Селектор не может указывать только на себя" }
+	"parent_selector_self_citation": { "message": "Селектор не может указывать только на себя" },
+	"sitemap_export_copy_text_button": { "message": "Скопировать карту обхода в буфер обмена" }
 }
