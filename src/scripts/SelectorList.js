@@ -14,12 +14,15 @@ import SelectorElementClick from './Selector/SelectorElementClick';
 import SelectorElementScroll from './Selector/SelectorElementScroll';
 import SelectorElementAttribute from './Selector/SelectorElementAttribute';
 import SelectorTable from './Selector/SelectorTable';
+import SelectorPageURL from './Selector/SelectorPageURL';
 
 export default class SelectorList extends Array {
 	static createSelector(options) {
 		switch (options.type) {
 			case 'ConstantValue':
 				return new ConstantValue(options);
+			case 'SelectorPageURL':
+				return new SelectorPageURL(options);
 			case 'SelectorDocument':
 				return new SelectorDocument(options);
 			case 'SelectorElement':
@@ -96,9 +99,9 @@ export default class SelectorList extends Array {
 			return this;
 		}
 
-		let getAllChildSelectors = function(parentSelectorId, resultSelectors) {
+		let getAllChildSelectors = function (parentSelectorId, resultSelectors) {
 			this.forEach(
-				function(selector) {
+				function (selector) {
 					if (selector.hasParentSelector(parentSelectorId)) {
 						if (resultSelectors.indexOf(selector) === -1) {
 							resultSelectors.push(selector);
@@ -121,7 +124,7 @@ export default class SelectorList extends Array {
 	 */
 	getDirectChildSelectors(parentSelectorId) {
 		let resultSelectors = new SelectorList();
-		this.forEach(function(selector) {
+		this.forEach(function (selector) {
 			if (selector.hasParentSelector(parentSelectorId)) {
 				resultSelectors.push(selector);
 			}
@@ -131,7 +134,7 @@ export default class SelectorList extends Array {
 
 	clone() {
 		let resultList = new SelectorList();
-		this.forEach(function(selector) {
+		this.forEach(function (selector) {
 			resultList.push(selector);
 		});
 		return resultList;
@@ -139,7 +142,7 @@ export default class SelectorList extends Array {
 
 	fullClone() {
 		let resultList = new SelectorList();
-		this.forEach(function(selector) {
+		this.forEach(function (selector) {
 			resultList.push(JSON.parse(JSON.stringify(selector)));
 		});
 		return resultList;
@@ -149,7 +152,7 @@ export default class SelectorList extends Array {
 		let resultList = this.clone();
 		for (let i in arguments) {
 			arguments[i].forEach(
-				function(selector) {
+				function (selector) {
 					resultList.push(selector);
 				}.bind(this)
 			);
@@ -178,9 +181,9 @@ export default class SelectorList extends Array {
 		resultList.push(this.getSelector(selectorId));
 
 		// recursively find all parent selectors that could lead to the page where selectorId is used.
-		let findParentSelectors = function(selector) {
+		let findParentSelectors = function (selector) {
 			selector.parentSelectors.forEach(
-				function(parentSelectorId) {
+				function (parentSelectorId) {
 					if (parentSelectorId === '_root') return;
 					let parentSelector = this.getSelector(parentSelectorId);
 					if (resultList.indexOf(parentSelector) !== -1) return;
@@ -205,11 +208,11 @@ export default class SelectorList extends Array {
 	 */
 	getSinglePageAllChildSelectors(parentSelectorId) {
 		let resultList = new SelectorList();
-		let addChildSelectors = function(parentSelector) {
+		let addChildSelectors = function (parentSelector) {
 			if (parentSelector.willReturnElements()) {
 				let childSelectors = this.getDirectChildSelectors(parentSelector.id);
 				childSelectors.forEach(
-					function(childSelector) {
+					function (childSelector) {
 						if (resultList.indexOf(childSelector) === -1) {
 							resultList.push(childSelector);
 							addChildSelectors(childSelector);
@@ -249,7 +252,7 @@ export default class SelectorList extends Array {
 	 */
 	toJSON() {
 		let result = [];
-		this.forEach(function(selector) {
+		this.forEach(function (selector) {
 			result.push(selector);
 		});
 		return result;
@@ -303,10 +306,10 @@ export default class SelectorList extends Array {
 		let RecursionFound = false;
 
 		this.forEach(
-			function(topSelector) {
+			function (topSelector) {
 				let visitedSelectors = [];
 
-				let checkRecursion = function(parentSelector) {
+				let checkRecursion = function (parentSelector) {
 					// already visited
 					if (visitedSelectors.indexOf(parentSelector) !== -1) {
 						RecursionFound = true;

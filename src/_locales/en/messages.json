@@ -136,6 +136,7 @@
 	"SelectorElementScroll": { "message": "Element scroll down" },
 	"SelectorElementClick": { "message": "Element click" },
 	"SelectorGroup": { "message": "Grouped" },
+	"SelectorPageURL": { "message": "Page URL" },
 
 	"sitemap_scrape_config_requestInterval": { "message": "Request interval" },
 	"sitemap_scrape_config_requestIntervalRandomness": { "message": "Request interval randomness" },

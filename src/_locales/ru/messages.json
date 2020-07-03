@@ -142,6 +142,7 @@
 	"SelectorGroup": { "message": "Группа" },
 	"ConstantValue": { "message": "Константа" },
 	"SelectorInputValue": { "message": "Вставка значения" },
+	"SelectorPageURL": { "message": "URL страницы" },
 
 	"sitemap_scrape_requestInterval": { "message": "Интервал между запросами" },
 	"sitemap_scrape_requestIntervalRandomness": { "message": "Случайность между запросами" },
