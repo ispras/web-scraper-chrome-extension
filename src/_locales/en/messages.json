@@ -70,8 +70,7 @@
 	"selector_edit_discardInitialElements": {
 		"message": "Discard initial elements that are available before click"
 	},
-	"selector_edit_download_image": { "message": "Download image" },
-	"selector_edit_download_document": { "message": "Download document" },
+	"selector_edit_download_file": { "message": "Download as file" },
 	"selector_edit_attribute_name": { "message": "Attribute name" },
 	"selector_edit_value": { "message": "Value" },
 	"selector_edit_style_name": { "message": "Style name" },

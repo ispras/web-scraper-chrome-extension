@@ -28,7 +28,7 @@ export default class SelectorImage extends Selector {
 	}
 
 	downloadsAttachments() {
-		return !!this.downloadImage;
+		return !!this.downloadFile;
 	}
 
 	async _getData(parentElement) {
@@ -51,7 +51,7 @@ export default class SelectorImage extends Selector {
 			result[`${this.id}-src`] = urls.length ? urls[0] : null;
 		}
 
-		if (this.downloadImage) {
+		if (this.downloadFile) {
 			const images = [];
 			for (const [i, url] of urls.entries()) {
 				try {
@@ -87,7 +87,7 @@ export default class SelectorImage extends Selector {
 	}
 
 	getFeatures() {
-		return ['selector', 'multiple', 'delay', 'downloadImage', 'stringReplacement'];
+		return ['selector', 'multiple', 'delay', 'downloadFile', 'stringReplacement'];
 	}
 
 	getItemCSSSelector() {

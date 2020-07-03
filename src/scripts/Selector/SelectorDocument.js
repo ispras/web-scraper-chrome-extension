@@ -27,7 +27,7 @@ export default class SelectorDocument extends Selector {
 	}
 
 	downloadsAttachments() {
-		return !!this.downloadDocument;
+		return !!this.downloadFile;
 	}
 
 	async _getData(parentElement) {
@@ -43,7 +43,7 @@ export default class SelectorDocument extends Selector {
 			result[`${this.id}-href`] = urls.length ? urls[0] : null;
 		}
 
-		if (this.downloadDocument) {
+		if (this.downloadFile) {
 			const documents = [];
 			for (const [i, url] of urls.entries()) {
 				try {
@@ -70,7 +70,7 @@ export default class SelectorDocument extends Selector {
 
 	getDataColumns() {
 		const dataColumns = [`${this.id}-href`];
-		if (this.downloadDocument) {
+		if (this.downloadFile) {
 			dataColumns.push(`${this.id}-path`, `${this.id}-checksum`, `${this.id}-filename`);
 		}
 		return dataColumns;
@@ -81,7 +81,7 @@ export default class SelectorDocument extends Selector {
 	}
 
 	getFeatures() {
-		return ['selector', 'multiple', 'delay', 'downloadDocument', 'stringReplacement'];
+		return ['selector', 'multiple', 'delay', 'downloadFile', 'stringReplacement'];
 	}
 
 	getItemCSSSelector() {
