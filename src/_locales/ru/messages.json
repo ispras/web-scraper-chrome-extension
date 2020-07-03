@@ -255,7 +255,9 @@
 	"request_interval_numeric_message": {
 		"message": "Задержка между запросами должна быть числом"
 	},
-	"request_interval_short_message": { "message": "Задержка между запросами должна быть числом" },
+	"request_interval_short_message": {
+		"message": "Задержка между запросами должна быть не меньше 2000 миллисекунд"
+	},
 	"request_interval_randomness_empty_message": {
 		"message": "Случайность в задержке между запросами обязательна и не может быть пустой."
 	},
