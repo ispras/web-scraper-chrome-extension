@@ -70,8 +70,7 @@
 	"selector_edit_discardInitialElements": {
 		"message": "Отменить начальные элементы, которые доступны до нажатия"
 	},
-	"selector_edit_download_image": { "message": "Сохранить картинку" },
-	"selector_edit_download_document": { "message": "Сохранить документ" },
+	"selector_edit_download_file": { "message": "Сохранить в файл" },
 	"selector_edit_attribute_name": { "message": "Имя атрибута" },
 	"selector_edit_value": { "message": "Значение" },
 	"selector_edit_style_name": { "message": "Имя стиля" },
