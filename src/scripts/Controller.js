@@ -55,6 +55,9 @@ export default class SitemapController {
 				type: 'SelectorElementStyle',
 			},
 			{
+				type: 'SelectorPageURL',
+			},
+			{
 				type: 'SelectorHTML',
 			},
 			{
