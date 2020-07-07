@@ -177,3 +177,8 @@ select[size] {
 .actions-block > button:not(:last-of-type) {
 	margin-right: 5px;
 }
+
+.form-control::placeholder {
+	font-style: normal;
+	font-weight: normal;
+}

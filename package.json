@@ -1,6 +1,6 @@
 {
 	"name": "web-scraper-chrome-extension",
-	"version": "0.3.616",
+	"version": "0.3.617",
 	"description": "Web data extraction tool implemented as chrome extension",
 	"scripts": {
 		"lint": "eslint --ext .js src",
