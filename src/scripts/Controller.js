@@ -220,6 +220,9 @@ export default class SitemapController {
 			'#sitemaps button[action=delete-sitemap]': {
 				click: this.deleteSitemap,
 			},
+			'#sitemaps button[action=create-copy-sitemap]': {
+				click: this.copySitemap,
+			},
 			'#sitemap-scrape-nav-button': {
 				click: this.showScrapeSitemapConfigPanel,
 			},
@@ -686,9 +689,20 @@ export default class SitemapController {
 		}
 	}
 
+	async copySitemap(button) {
+		let sitemap = $(button).closest('tr').data('sitemap');
+		sitemap = new Sitemap(
+			sitemap._id + '_copy',
+			sitemap.startUrls,
+			sitemap.model,
+			sitemap.selectors
+		);
+		sitemap = await this.store.createSitemap(sitemap);
+		this._editSitemap(sitemap, ['_root']);
+	}
+
 	editSitemapMetadata() {
 		this.setActiveNavigationButton('sitemap-edit-metadata');
-
 		const sitemap = this.state.currentSitemap.clone();
 		if (sitemap.model) {
 			sitemap.model = sitemap.model.toString();

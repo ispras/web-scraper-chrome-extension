@@ -304,5 +304,6 @@
 	"browse_data_search": { "message": "Поиск в собранных данных" },
 	"content_script_width": { "message": "150px !important" },
 	"parent_selector_self_citation": { "message": "Селектор не может указывать только на себя" },
-	"sitemap_export_copy_text_button": { "message": "Скопировать карту обхода в буфер обмена" }
+	"sitemap_export_copy_text_button": { "message": "Скопировать карту обхода в буфер обмена" },
+	"create_copy_sitemap": { "message": "Сделать копию" }
 }
