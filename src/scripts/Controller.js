@@ -1218,7 +1218,9 @@ export default class SitemapController {
 				resolve(false);
 			});
 		});
-		return await promise.then($('.modal fade confirm-action-model in').remove());
+		let answer = await promise.then($('.modal.fade.confirm-action-model in').remove());
+		$('.modal-backdrop.fade.in').remove();
+		return answer;
 	}
 
 	async deleteSelector(button) {
