@@ -1201,39 +1201,37 @@ export default class SitemapController {
 		this._editSelector(selector, sitemap);
 	}
 
-	async showConfirmActionPanel(title) {
+	async showConfirmActionPanel(title, id) {
 		const $actionConfirm = ich.ActionConfirm();
 		$('#viewport').append($actionConfirm);
 		let $title = $('.modal-title');
 		$title.attr('data-i18n', title);
 		Translator.translatePage();
+		// $title.append(id);
 		$actionConfirm.modal('show');
 		let $submitButton = $('#submit');
-		let $canceltButton = $('#cancel');
+		let $cancelButton = $('#cancel');
 		let $outOfModalClick = $('.modal.fade.confirm-action-model');
-		let promise = new Promise(async function (resolve, reject) {
-			await $submitButton.click(function (e) {
-				resolve(true);
-			});
-			await $canceltButton.click(function (e) {
-				resolve(false);
-			});
-			await $outOfModalClick.click(function (e) {
-				resolve(false);
-			});
+		let promise = new Promise(async resolve => {
+			$submitButton.click(() => resolve(true));
+			$cancelButton.click(() => resolve(false));
+			$outOfModalClick.click(event => resolve(false));
 		});
 		return await promise.then(value => {
 			$('.modal.fade.confirm-action-model').remove();
 			$('.modal-backdrop.fade.in').remove();
+			$('.modal-open').removeClass('modal-open');
 			return value;
 		});
 	}
 
 	async deleteSelector(button) {
-		let f = await this.showConfirmActionPanel('modal_confirm_action_title_delete_selector');
-		if (await this.showConfirmActionPanel('modal_confirm_action_title_delete_selector')) {
+		const selector = $(button).closest('tr').data('selector');
+		if (
+			(await this.showConfirmActionPanel('modal_confirm_action_title_delete_selector'),
+			selector.id)
+		) {
 			const sitemap = this.state.currentSitemap;
-			const selector = $(button).closest('tr').data('selector');
 			sitemap.deleteSelector(selector);
 			await this.store.saveSitemap(sitemap);
 		}
@@ -1241,8 +1239,13 @@ export default class SitemapController {
 	}
 
 	async deleteSitemap(button) {
-		if (await this.showConfirmActionPanel('modal_confirm_action_title_delete_sitemap')) {
-			const sitemap = $(button).closest('tr').data('sitemap');
+		const sitemap = $(button).closest('tr').data('sitemap');
+		if (
+			await this.showConfirmActionPanel(
+				'modal_confirm_action_title_delete_sitemap',
+				sitemap.id
+			)
+		) {
 			await this.store.deleteSitemap(sitemap);
 		}
 		await this.showSitemaps();
