@@ -1210,6 +1210,7 @@ export default class SitemapController {
 		$actionConfirm.modal('show');
 		let $submitButton = $('#submit');
 		let $canceltButton = $('#cancel');
+		let $outOfModalClick = $('.modal.fade.confirm-action-model');
 		let promise = new Promise(async function (resolve, reject) {
 			await $submitButton.click(function (e) {
 				resolve(true);
@@ -1217,13 +1218,19 @@ export default class SitemapController {
 			await $canceltButton.click(function (e) {
 				resolve(false);
 			});
+			await $outOfModalClick.click(function (e) {
+				resolve(false);
+			});
 		});
-		let answer = await promise.then($('.modal.fade.confirm-action-model in').remove());
-		$('.modal-backdrop.fade.in').remove();
-		return answer;
+		return await promise.then(value => {
+			$('.modal.fade.confirm-action-model').remove();
+			$('.modal-backdrop.fade.in').remove();
+			return value;
+		});
 	}
 
 	async deleteSelector(button) {
+		let f = await this.showConfirmActionPanel('modal_confirm_action_title_delete_selector');
 		if (await this.showConfirmActionPanel('modal_confirm_action_title_delete_selector')) {
 			const sitemap = this.state.currentSitemap;
 			const selector = $(button).closest('tr').data('selector');
