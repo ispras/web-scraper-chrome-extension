@@ -276,12 +276,12 @@
 	"modal_confirm_action_submit": { "message": "Yes" },
 	"modal_confirm_action_cancel": { "message": "No" },
 	"modal_confirm_action_title_delete_selector": {
-		"message": "Are you sure you want to delete selector _mainMessage_?"
+		"message": "Are you sure you want to delete selector <span id='selector-id'></span>?"
 	},
 	"modal_confirm_action_title_delete_sitemap": {
-		"message": "Are you sure you want to delete sitemap _mainMessage_?"
+		"message": "Are you sure you want to delete sitemap <span id='sitemap-id'></span>?"
 	},
 	"modal_confirm_action_child_delete": {
-		"message": "The selector that is being deleted has child selectors _extraMessage_ obj, which will be deleted"
+		"message": "The selector that is being deleted has child selectors <span id='child-count'></span> obj, which will be deleted"
 	}
 }

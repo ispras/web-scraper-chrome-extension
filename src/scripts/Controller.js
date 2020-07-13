@@ -1204,24 +1204,24 @@ export default class SitemapController {
 	async showConfirmActionPanel(message) {
 		const $actionConfirm = ich.ActionConfirm();
 		$('#viewport').append($actionConfirm);
-		let $title = $('.modal-title');
-		$title.attr('data-i18n', message.datai18n);
-		Translator.translatePage();
+		const $title = $('.modal-title');
+		const $subtitle = $('.modal-subtitle');
+		$title.attr('data-i18n', message.title_i18n);
+		$subtitle.attr('data-i18n', message.subtitle_i18n);
 		$actionConfirm.modal('show');
+		Translator.translatePage();
 
 		if (message.type === 'deleteSelector') {
-			$title.html($title.text().replace('_mainMessage_', message.mainMessage));
-			if (message.extraMessage) {
-				let $childElement = $('.modal-child-message');
-				$childElement.html(
-					$childElement.text().replace('_extraMessage_', message.extraMessage)
-				);
-				$childElement.show();
+			$('#selector-id').append(message.title_replace['selector-id']);
+			if (message.subtitle_replace['child-count']) {
+				$('#child-count').append(message.subtitle_replace['child-count']);
+				$subtitle.show();
 			}
 		}
 		if (message.type === 'deleteSitemap') {
-			$title.html($title.text().replace('_mainMessage_', message.mainMessage));
+			$('#sitemap-id').append(message.title_replace['sitemap-id']);
 		}
+
 		let promise = new Promise(async resolve => {
 			$('#submit').click(() => resolve(true));
 			$('#cancel').click(() => resolve(false));
@@ -1240,9 +1240,12 @@ export default class SitemapController {
 		const sitemap = this.state.currentSitemap;
 		let message = {
 			type: 'deleteSelector',
-			mainMessage: selector.id,
-			datai18n: 'modal_confirm_action_title_delete_selector',
-			extraMessage: sitemap.getDirectChildSelectors(selector.id).length,
+			title_i18n: 'modal_confirm_action_title_delete_selector',
+			title_replace: { 'selector-id': selector.id },
+			subtitle_i18n: 'modal_confirm_action_child_delete',
+			subtitle_replace: {
+				'child-count': sitemap.getDirectChildSelectors(selector.id).length,
+			},
 		};
 		if (await this.showConfirmActionPanel(message)) {
 			sitemap.deleteSelector(selector);
@@ -1255,15 +1258,14 @@ export default class SitemapController {
 		const sitemap = $(button).closest('tr').data('sitemap');
 		const message = {
 			type: 'deleteSitemap',
-			mainMessage: sitemap._id,
-			datai18n: 'modal_confirm_action_title_delete_sitemap',
+			title_i18n: 'modal_confirm_action_title_delete_sitemap',
+			title_replace: { 'sitemap-id': sitemap._id },
 		};
 		if (await this.showConfirmActionPanel(message)) {
 			await this.store.deleteSitemap(sitemap);
 		}
 		await this.showSitemaps();
 	}
-
 	initScrapeSitemapConfigValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
