@@ -273,15 +273,15 @@
 	"browse_data_search": { "message": "Search in scraped data" },
 	"parent_selector_self_citation": { "message": "The selector cannot only point to itself" },
 	"sitemap_export_copy_text_button": { "message": "Copy the sitemap to the clipboard" },
-	"modal_confirm_action_submit": { "message": "Submit" },
-	"modal_confirm_action_cancel": { "message": "Cancel" },
+	"modal_confirm_action_submit": { "message": "Yes" },
+	"modal_confirm_action_cancel": { "message": "No" },
 	"modal_confirm_action_title_delete_selector": {
-		"message": "Do you really want to delete selector _mainMessage_?"
+		"message": "Are you sure you want to delete selector _mainMessage_?"
 	},
 	"modal_confirm_action_title_delete_sitemap": {
-		"message": "Do you really want to delete sitemap _mainMessage_?"
+		"message": "Are you sure you want to delete sitemap _mainMessage_?"
 	},
 	"modal_confirm_action_child_delete": {
-		"message": "The selector that is being deleted has child selectors _extraMessage_ things, which will be deleted"
+		"message": "The selector that is being deleted has child selectors _extraMessage_ obj, which will be deleted"
 	}
 }
