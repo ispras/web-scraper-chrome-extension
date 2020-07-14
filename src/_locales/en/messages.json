@@ -282,6 +282,6 @@
 		"message": "Are you sure you want to delete sitemap <span id='sitemap-id'></span>?"
 	},
 	"modal_confirm_action_child_delete": {
-		"message": "The selector that is being deleted has child selectors <span id='child-count'></span> obj, which will be deleted"
+		"message": "The selector that is being deleted has child selectors (<span id='child-count'></span> obj), which will be deleted"
 	}
 }

@@ -1200,18 +1200,18 @@ export default class SitemapController {
 		this._editSelector(selector, sitemap);
 	}
 
-	async showConfirmActionPanel(message) {
+	showConfirmActionPanel(message) {
 		const $actionConfirm = ich.ActionConfirm();
 		$('#viewport').append($actionConfirm);
-		Object.entries(message).forEach(selector => $(selector[0]).attr('data-i18n', selector[1]));
+		Object.entries(message).forEach(([selector, i18n]) => $(selector).attr('data-i18n', i18n));
 		$actionConfirm.modal('show');
 		Translator.translatePage();
 	}
 
 	waitConfirmActionPanel() {
-		let promise = new Promise(resolve => {
-			$('#submit').click(() => resolve(true));
-			$('#cancel,.modal-backdrop').click(event => resolve(false));
+		const promise = new Promise(resolve => {
+			$('#modal-submit').click(() => resolve(true));
+			$('#modal-cancel,.modal-backdrop').click(() => resolve(false));
 		});
 		return promise.then(value => {
 			$('.modal, .modal-backdrop').remove();
@@ -1224,19 +1224,19 @@ export default class SitemapController {
 		const selector = $(button).closest('tr').data('selector');
 		const sitemap = this.state.currentSitemap;
 		const childCount = sitemap.getDirectChildSelectors(selector.id).length;
-		const replace = {
-			'#child-count': childCount ? childCount : '',
-			'#selector-id': selector.id,
-		};
-		const attributes_i18n = {
+		const attributesI18n = {
 			'.modal-title': 'modal_confirm_action_title_delete_selector',
 			'.modal-subtitle': 'modal_confirm_action_child_delete',
-			'#submit': 'modal_confirm_action_submit',
-			'#cancel': 'modal_confirm_action_cancel',
+			'#modal-submit': 'modal_confirm_action_submit',
+			'#modal-cancel': 'modal_confirm_action_cancel',
 		};
-		this.showConfirmActionPanel(attributes_i18n);
-		Object.entries(replace).forEach(selector => $(selector[0]).append(selector[1]));
-		if ($('#child-count').text()) {
+		this.showConfirmActionPanel(attributesI18n);
+		$('#selector-id').append(selector.id);
+		if (
+			$('#child-count')
+				.append(childCount || '')
+				.text()
+		) {
 			$('.modal-subtitle').show();
 		}
 		if (await this.waitConfirmActionPanel()) {
@@ -1248,14 +1248,13 @@ export default class SitemapController {
 
 	async deleteSitemap(button) {
 		const sitemap = $(button).closest('tr').data('sitemap');
-		const replace = { '#sitemap-id': sitemap._id };
-		const attributes_i18n = {
+		const attributesI18n = {
 			'.modal-title': 'modal_confirm_action_title_delete_sitemap',
-			'#submit': 'modal_confirm_action_submit',
-			'#cancel': 'modal_confirm_action_cancel',
+			'#modal-submit': 'modal_confirm_action_submit',
+			'#modal-cancel': 'modal_confirm_action_cancel',
 		};
-		this.showConfirmActionPanel(attributes_i18n);
-		Object.entries(replace).forEach(selector => $(selector[0]).append(selector[1]));
+		this.showConfirmActionPanel(attributesI18n);
+		$('#sitemap').append(sitemap._id);
 		if (await this.waitConfirmActionPanel()) {
 			await this.store.deleteSitemap(sitemap);
 		}
