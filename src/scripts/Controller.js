@@ -1205,6 +1205,7 @@ export default class SitemapController {
 		$('#viewport').append($actionConfirm);
 		Object.entries(message).forEach(([selector, i18n]) => $(selector).attr('data-i18n', i18n));
 		$actionConfirm.modal('show');
+		$('#viewport').append('<div class="modal-backdrop fade show" />');
 		Translator.translatePage();
 	}
 
