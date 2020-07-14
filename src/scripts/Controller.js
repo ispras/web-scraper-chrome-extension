@@ -1201,24 +1201,21 @@ export default class SitemapController {
 	}
 
 	showConfirmActionPanel(message) {
+		$('#confirm-action-modal').remove();
 		const $actionConfirm = ich.ActionConfirm();
-		$('#viewport').append($actionConfirm);
+		$('#viewport').after($actionConfirm);
 		Object.entries(message).forEach(([selector, i18n]) => $(selector).attr('data-i18n', i18n));
 		$actionConfirm.modal('show');
-		$('#viewport').append('<div class="modal-backdrop fade show" />');
 		Translator.translatePage();
 	}
 
-	waitConfirmActionPanel() {
-		const promise = new Promise(resolve => {
-			$('#modal-submit').click(() => resolve(true));
-			$('#modal-cancel,.modal-backdrop').click(() => resolve(false));
+	waitConfirmActionPanel(onSubmit) {
+		const hide = () => $('#confirm-action-modal').modal('hide');
+		$('#modal-submit').click(() => {
+			hide();
+			onSubmit();
 		});
-		return promise.then(value => {
-			$('.modal, .modal-backdrop').remove();
-			$('.modal-open').removeClass('modal-open');
-			return value;
-		});
+		$('#modal-cancel').click(hide);
 	}
 
 	async deleteSelector(button) {
@@ -1233,18 +1230,15 @@ export default class SitemapController {
 		};
 		this.showConfirmActionPanel(attributesI18n);
 		$('#selector-id').append(selector.id);
-		if (
-			$('#child-count')
-				.append(childCount || '')
-				.text()
-		) {
+		if (childCount) {
+			$('#child-count').append(childCount);
 			$('.modal-subtitle').show();
 		}
-		if (await this.waitConfirmActionPanel()) {
+		this.waitConfirmActionPanel(async () => {
 			sitemap.deleteSelector(selector);
 			await this.store.saveSitemap(sitemap);
-		}
-		this.showSitemapSelectorList();
+			this.showSitemapSelectorList();
+		});
 	}
 
 	async deleteSitemap(button) {
@@ -1256,10 +1250,10 @@ export default class SitemapController {
 		};
 		this.showConfirmActionPanel(attributesI18n);
 		$('#sitemap').append(sitemap._id);
-		if (await this.waitConfirmActionPanel()) {
+		this.waitConfirmActionPanel(async () => {
 			await this.store.deleteSitemap(sitemap);
-		}
-		await this.showSitemaps();
+			await this.showSitemaps();
+		});
 	}
 
 	initScrapeSitemapConfigValidation() {
