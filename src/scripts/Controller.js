@@ -1197,7 +1197,6 @@ export default class SitemapController {
 			type: 'SelectorText',
 			multiple: false,
 		});
-
 		this._editSelector(selector, sitemap);
 	}
 
@@ -1208,6 +1207,7 @@ export default class SitemapController {
 		$actionConfirm.modal('show');
 		Translator.translatePage();
 	}
+
 	waitConfirmActionPanel() {
 		let promise = new Promise(resolve => {
 			$('#submit').click(() => resolve(true));
@@ -1234,7 +1234,6 @@ export default class SitemapController {
 			'#submit': 'modal_confirm_action_submit',
 			'#cancel': 'modal_confirm_action_cancel',
 		};
-
 		this.showConfirmActionPanel(attributes_i18n);
 		Object.entries(replace).forEach(selector => $(selector[0]).append(selector[1]));
 		if ($('#child-count').text()) {
@@ -1262,6 +1261,7 @@ export default class SitemapController {
 		}
 		await this.showSitemaps();
 	}
+
 	initScrapeSitemapConfigValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
