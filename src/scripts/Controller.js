@@ -141,6 +141,7 @@ export default class SitemapController {
 			'SitemapSelectorGraph',
 			'DataPreview',
 			'ItemCard',
+			'ActionConfirm',
 		];
 
 		return Promise.all(
@@ -1196,22 +1197,49 @@ export default class SitemapController {
 			type: 'SelectorText',
 			multiple: false,
 		});
-
 		this._editSelector(selector, sitemap);
 	}
 
+	initConfirmActionPanel(action) {
+		$('#confirm-action-modal').remove(); // remove old panel
+		$('#viewport').after(ich.ActionConfirm(action));
+		Translator.translatePage();
+	}
+
+	showConfirmActionPanel(onConfirm) {
+		const $confirmActionModal = $('#confirm-action-modal');
+		$('#modal-submit').click(() => {
+			$confirmActionModal.modal('hide');
+			onConfirm();
+		});
+		$confirmActionModal.modal('show');
+	}
+
 	async deleteSelector(button) {
-		const sitemap = this.state.currentSitemap;
 		const selector = $(button).closest('tr').data('selector');
-		sitemap.deleteSelector(selector);
-		await this.store.saveSitemap(sitemap);
-		this.showSitemapSelectorList();
+		const sitemap = this.state.currentSitemap;
+		const childCount = sitemap.getDirectChildSelectors(selector.id).length;
+		this.initConfirmActionPanel({ action: 'delete_selector' });
+		$('#modal-selector-id').text(selector.id);
+		if (childCount) {
+			$('#modal-child-count').text(childCount);
+			$('#modal-message').show();
+		}
+		this.showConfirmActionPanel(async () => {
+			sitemap.deleteSelector(selector);
+			await this.store.saveSitemap(sitemap);
+			this.showSitemapSelectorList();
+		});
 	}
 
 	async deleteSitemap(button) {
 		const sitemap = $(button).closest('tr').data('sitemap');
-		await this.store.deleteSitemap(sitemap);
-		await this.showSitemaps();
+		this.initConfirmActionPanel({ action: 'delete_sitemap' });
+		$('#modal-sitemap-id').text(sitemap._id);
+		this.showConfirmActionPanel(async () => {
+			await this.store.deleteSitemap(sitemap);
+			await this.showSitemaps();
+		});
 	}
 
 	initScrapeSitemapConfigValidation() {

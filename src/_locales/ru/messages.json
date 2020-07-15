@@ -304,5 +304,18 @@
 	"browse_data_search": { "message": "Поиск в собранных данных" },
 	"content_script_width": { "message": "150px !important" },
 	"parent_selector_self_citation": { "message": "Селектор не может указывать только на себя" },
-	"sitemap_export_copy_text_button": { "message": "Скопировать карту обхода в буфер обмена" }
+	"sitemap_export_copy_text_button": { "message": "Скопировать карту обхода в буфер обмена" },
+	"modal_confirm_action_title_delete_selector": {
+		"message": "Вы действительно хотите удалить селектор <span id='modal-selector-id'></span>?"
+	},
+	"modal_confirm_action_title_delete_sitemap": {
+		"message": "Вы действительно хотите удалить карту обхода <span id='modal-sitemap-id'></span>?"
+	},
+	"modal_confirm_action_message_delete_selector": {
+		"message": "У удаляемого селектора имеются дочерние (<span id='modal-child-count'></span> шт.), которые будут удалены"
+	},
+	"modal_confirm_action_submit_delete_selector": { "message": "Подтвердить" },
+	"modal_confirm_action_cancel_delete_selector": { "message": "Отмена" },
+	"modal_confirm_action_submit_delete_sitemap": { "message": "Подтвердить" },
+	"modal_confirm_action_cancel_delete_sitemap": { "message": "Отмена" }
 }

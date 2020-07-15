@@ -272,5 +272,18 @@
 	"extension_description": { "message": "Tool for data extraction from websites" },
 	"browse_data_search": { "message": "Search in scraped data" },
 	"parent_selector_self_citation": { "message": "The selector cannot only point to itself" },
-	"sitemap_export_copy_text_button": { "message": "Copy the sitemap to the clipboard" }
+	"sitemap_export_copy_text_button": { "message": "Copy the sitemap to the clipboard" },
+	"modal_confirm_action_title_delete_selector": {
+		"message": "Are you sure you want to delete selector <span id='modal-selector-id'></span>?"
+	},
+	"modal_confirm_action_title_delete_sitemap": {
+		"message": "Are you sure you want to delete sitemap <span id='modal-sitemap-id'></span>?"
+	},
+	"modal_confirm_action_message_delete_selector": {
+		"message": "The selector that is being deleted has child selectors (<span id='modal-child-count'></span> obj), which will be deleted"
+	},
+	"modal_confirm_action_submit_delete_selector": { "message": "Confirm" },
+	"modal_confirm_action_cancel_delete_selector": { "message": "Cancel" },
+	"modal_confirm_action_submit_delete_sitemap": { "message": "Confirm" },
+	"modal_confirm_action_cancel_delete_sitemap": { "message": "Cancel" }
 }
