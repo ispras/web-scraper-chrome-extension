@@ -1206,7 +1206,7 @@ export default class SitemapController {
 		Translator.translatePage();
 	}
 
-	askConfirmation(onConfirm) {
+	showConfirmActionPanel(onConfirm) {
 		const $confirmActionModal = $('#confirm-action-modal');
 		$('#modal-submit').click(() => {
 			$confirmActionModal.modal('hide');
@@ -1225,7 +1225,7 @@ export default class SitemapController {
 			$('#modal-child-count').text(childCount);
 			$('#modal-message').show();
 		}
-		this.askConfirmation(async () => {
+		this.showConfirmActionPanel(async () => {
 			sitemap.deleteSelector(selector);
 			await this.store.saveSitemap(sitemap);
 			this.showSitemapSelectorList();
@@ -1236,7 +1236,7 @@ export default class SitemapController {
 		const sitemap = $(button).closest('tr').data('sitemap');
 		this.initConfirmActionPanel({ action: 'delete_sitemap' });
 		$('#modal-sitemap-id').text(sitemap._id);
-		this.askConfirmation(async () => {
+		this.showConfirmActionPanel(async () => {
 			await this.store.deleteSitemap(sitemap);
 			await this.showSitemaps();
 		});
