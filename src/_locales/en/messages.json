@@ -273,7 +273,7 @@
 	"browse_data_search": { "message": "Search in scraped data" },
 	"parent_selector_self_citation": { "message": "The selector cannot only point to itself" },
 	"sitemap_export_copy_text_button": { "message": "Copy the sitemap to the clipboard" },
-	"modal_confirm_action_submit": { "message": "Delete" },
+	"modal_confirm_action_submit": { "message": "Confirm" },
 	"modal_confirm_action_cancel": { "message": "Cancel" },
 	"modal_confirm_action_title_delete_selector": {
 		"message": "Are you sure you want to delete selector <span id='modal-selector-id'></span>?"
