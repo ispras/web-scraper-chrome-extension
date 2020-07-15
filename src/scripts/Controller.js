@@ -221,6 +221,9 @@ export default class SitemapController {
 			'#sitemaps button[action=delete-sitemap]': {
 				click: this.deleteSitemap,
 			},
+			'#sitemaps button[action=create-copy-sitemap]': {
+				click: this.copySitemap,
+			},
 			'#sitemap-scrape-nav-button': {
 				click: this.showScrapeSitemapConfigPanel,
 			},
@@ -1206,13 +1209,25 @@ export default class SitemapController {
 		Translator.translatePage();
 	}
 
-	showConfirmActionPanel(onConfirm) {
+	askConfirmation(onConfirm) {
 		const $confirmActionModal = $('#confirm-action-modal');
 		$('#modal-submit').click(() => {
 			$confirmActionModal.modal('hide');
 			onConfirm();
 		});
 		$confirmActionModal.modal('show');
+	}
+
+	async copySitemap(button) {
+		let sitemap = $(button).closest('tr').data('sitemap');
+		sitemap = new Sitemap(
+			sitemap._id + '_copy',
+			sitemap.startUrls,
+			sitemap.model,
+			sitemap.selectors
+		);
+		sitemap = await this.store.createSitemap(sitemap);
+		this._editSitemap(sitemap, ['_root']);
 	}
 
 	async deleteSelector(button) {
@@ -1225,7 +1240,7 @@ export default class SitemapController {
 			$('#modal-child-count').text(childCount);
 			$('#modal-message').show();
 		}
-		this.showConfirmActionPanel(async () => {
+		this.askConfirmation(async () => {
 			sitemap.deleteSelector(selector);
 			await this.store.saveSitemap(sitemap);
 			this.showSitemapSelectorList();
@@ -1236,7 +1251,7 @@ export default class SitemapController {
 		const sitemap = $(button).closest('tr').data('sitemap');
 		this.initConfirmActionPanel({ action: 'delete_sitemap' });
 		$('#modal-sitemap-id').text(sitemap._id);
-		this.showConfirmActionPanel(async () => {
+		this.askConfirmation(async () => {
 			await this.store.deleteSitemap(sitemap);
 			await this.showSitemaps();
 		});
