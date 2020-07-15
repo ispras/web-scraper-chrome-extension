@@ -308,12 +308,12 @@
 	"modal_confirm_action_submit": { "message": "Удалить" },
 	"modal_confirm_action_cancel": { "message": "Отмена" },
 	"modal_confirm_action_title_delete_selector": {
-		"message": "Вы действительно хотите удалить селектор  <span id='selector-id'></span>?"
-	},
-	"modal_confirm_action_child_delete": {
-		"message": "У удаляемого селектора имеются дочерние (<span id='child-count'></span> шт.), которые будут удалены"
+		"message": "Вы действительно хотите удалить селектор <span id='modal-selector-id'></span>?"
 	},
 	"modal_confirm_action_title_delete_sitemap": {
-		"message": "Вы действительно хотите удалить карту обхода <span id='sitemap-id'></span>?"
+		"message": "Вы действительно хотите удалить карту обхода <span id='modal-sitemap-id'></span>?"
+	},
+	"modal_confirm_action_message_delete_selector": {
+		"message": "У удаляемого селектора имеются дочерние (<span id='modal-child-count'></span> шт.), которые будут удалены"
 	}
 }

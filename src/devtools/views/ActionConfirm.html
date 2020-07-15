@@ -2,12 +2,29 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title"></h4>
-				<h5 class="modal-subtitle" hidden="true"></h5>
+				<h4
+					class="modal-title"
+					id="modal-title"
+					data-i18n="modal_confirm_action_title_{{action}}"
+				></h4>
+				<h5
+					id="modal-message"
+					data-i18n="modal_confirm_action_message_{{action}}"
+					hidden
+				></h5>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-default" id="modal-cancel"></button>
-				<button class="btn btn-primary" id="modal-submit"></button>
+				<button
+					class="btn btn-default"
+					id="modal-cancel"
+					data-i18n="modal_confirm_action_cancel"
+					data-dismiss="modal"
+				></button>
+				<button
+					class="btn btn-primary"
+					id="modal-submit"
+					data-i18n="modal_confirm_action_submit"
+				></button>
 			</div>
 		</div>
 	</div>
