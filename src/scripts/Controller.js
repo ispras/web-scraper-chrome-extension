@@ -442,6 +442,32 @@ export default class SitemapController {
 		return true;
 	}
 
+	initCopySitemapValidator() {
+		$('#viewport form').bootstrapValidator({
+			fields: {
+				_id: {
+					validators: {
+						stringLength: {
+							min: 3,
+							message: Translator.getTranslationByKey('sitemapid_short_message'),
+						},
+						regexp: {
+							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
+							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
+						},
+						// placeholder for sitemap id existance validation
+						callback: {
+							message: Translator.getTranslationByKey('sitemapid_repeated_id'),
+							callback(value, validator) {
+								validator.revalidateField('sitemapJSON');
+								return true;
+							},
+						},
+					},
+				},
+			},
+		});
+	}
 	initImportSitemapValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
@@ -1203,9 +1229,10 @@ export default class SitemapController {
 		this._editSelector(selector, sitemap);
 	}
 
-	initConfirmActionPanel(action) {
+	initConfirmActionPanel(action, extraExtion) {
 		$('#confirm-action-modal').remove(); // remove old panel
 		$('#viewport').after(ich.ActionConfirm(action));
+		extraExtion();
 		Translator.translatePage();
 	}
 
@@ -1220,14 +1247,31 @@ export default class SitemapController {
 
 	async copySitemap(button) {
 		let sitemap = $(button).closest('tr').data('sitemap');
-		sitemap = new Sitemap(
-			sitemap._id + '_copy',
-			sitemap.startUrls,
-			sitemap.model,
-			sitemap.selectors
-		);
-		sitemap = await this.store.createSitemap(sitemap);
-		this._editSitemap(sitemap, ['_root']);
+		this.initConfirmActionPanel({ action: 'copy_sitemap' }, async () => {
+			$('.modal-header').append(
+				'<input type="text" class="form-control" id="selectorId" placeholder="selector_edit_id"/>'
+			);
+		});
+		$('#modal-message').show();
+		$('#modal-sitemap-id').text(sitemap._id);
+
+		this.askConfirmation(async () => {
+			// const validator = this.getFormValidator();
+			// validator.revalidateField('id');
+			// // cancel submit if invalid form
+			// if (!this.isValidForm()) {
+			// 	return await this.copySitemap(button);
+			// }
+
+			sitemap = new Sitemap(
+				sitemap._id + '_copy',
+				sitemap.startUrls,
+				sitemap.model,
+				sitemap.selectors
+			);
+			sitemap = await this.store.createSitemap(sitemap);
+			this._editSitemap(sitemap, ['_root']);
+		});
 	}
 
 	async deleteSelector(button) {
