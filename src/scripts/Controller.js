@@ -221,6 +221,9 @@ export default class SitemapController {
 			'#sitemaps button[action=delete-sitemap]': {
 				click: this.deleteSitemap,
 			},
+			'#sitemaps button[action=create-copy-sitemap]': {
+				click: this.copySitemap,
+			},
 			'#sitemap-scrape-nav-button': {
 				click: this.showScrapeSitemapConfigPanel,
 			},
@@ -260,6 +263,12 @@ export default class SitemapController {
 			},
 			'#selector-tree tr button[action=delete-selector]': {
 				click: this.deleteSelector,
+			},
+			'#selector-tree tr button[action=move-up-selector]': {
+				click: this.selectorMoveUp,
+			},
+			'#selector-tree tr button[action=move-down-selector]': {
+				click: this.selectorMoveDown,
 			},
 			'#selector-tree tr button[action=preview-selector]': {
 				click: this.previewSelectorFromSelectorTree,
@@ -439,6 +448,32 @@ export default class SitemapController {
 		return true;
 	}
 
+	initCopySitemapValidator() {
+		$('#viewport form').bootstrapValidator({
+			fields: {
+				_id: {
+					validators: {
+						stringLength: {
+							min: 3,
+							message: Translator.getTranslationByKey('sitemapid_short_message'),
+						},
+						regexp: {
+							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
+							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
+						},
+						// placeholder for sitemap id existance validation
+						callback: {
+							message: Translator.getTranslationByKey('sitemapid_repeated_id'),
+							callback(value, validator) {
+								validator.revalidateField('sitemapJSON');
+								return true;
+							},
+						},
+					},
+				},
+			},
+		});
+	}
 	initImportSitemapValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
@@ -1200,19 +1235,57 @@ export default class SitemapController {
 		this._editSelector(selector, sitemap);
 	}
 
-	initConfirmActionPanel(action) {
+	initConfirmActionPanel(action, extraExtion) {
 		$('#confirm-action-modal').remove(); // remove old panel
 		$('#viewport').after(ich.ActionConfirm(action));
+		extraExtion();
 		Translator.translatePage();
 	}
 
-	showConfirmActionPanel(onConfirm) {
+	askConfirmation(onConfirm) {
 		const $confirmActionModal = $('#confirm-action-modal');
 		$('#modal-submit').click(() => {
 			$confirmActionModal.modal('hide');
 			onConfirm();
 		});
 		$confirmActionModal.modal('show');
+	}
+
+	async copySitemap(button) {
+		let sitemap = $(button).closest('tr').data('sitemap');
+		this.initConfirmActionPanel({ action: 'copy_sitemap' }, async () => {
+			$('.modal-header').append(
+				'<textarea type="text" class="form-control" id="selectorId" placeholder="selector_edit_id"/>'
+			);
+		});
+		$('#modal-message').show();
+		$('#modal-sitemap-id').text(sitemap._id);
+
+		this.askConfirmation(async () => {
+			// const validator = this.getFormValidator();
+			// validator.revalidateField('id');
+			// // cancel submit if invalid form
+			// if (!this.isValidForm()) {
+			// 	return await this.copySitemap(button);
+			// }
+
+			sitemap = new Sitemap(
+				sitemap._id + '_copy',
+				sitemap.startUrls,
+				sitemap.model,
+				sitemap.selectors
+			);
+			sitemap = await this.store.createSitemap(sitemap);
+			this._editSitemap(sitemap, ['_root']);
+		});
+	}
+	async selectorMoveUp(button) {
+		const selector = $(button).closest('tr').data('selector');
+		const sitemap = this.state.currentSitemap;
+	}
+	async selectorMoveDown(button) {
+		const selector = $(button).closest('tr').data('selector');
+		const sitemap = this.state.currentSitemap;
 	}
 
 	async deleteSelector(button) {
@@ -1225,7 +1298,7 @@ export default class SitemapController {
 			$('#modal-child-count').text(childCount);
 			$('#modal-message').show();
 		}
-		this.showConfirmActionPanel(async () => {
+		this.askConfirmation(async () => {
 			sitemap.deleteSelector(selector);
 			await this.store.saveSitemap(sitemap);
 			this.showSitemapSelectorList();
@@ -1236,7 +1309,7 @@ export default class SitemapController {
 		const sitemap = $(button).closest('tr').data('sitemap');
 		this.initConfirmActionPanel({ action: 'delete_sitemap' });
 		$('#modal-sitemap-id').text(sitemap._id);
-		this.showConfirmActionPanel(async () => {
+		this.askConfirmation(async () => {
 			await this.store.deleteSitemap(sitemap);
 			await this.showSitemaps();
 		});
