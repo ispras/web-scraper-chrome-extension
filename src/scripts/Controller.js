@@ -1238,6 +1238,8 @@ export default class SitemapController {
 		$('#confirm-action-modal').remove(); // remove old panel
 		$('#viewport').after(ich.ActionConfirm(action));
 		extraExtion();
+		const $confirmActionModal = $('#confirm-action-modal');
+		$confirmActionModal.modal('show');
 		Translator.translatePage();
 	}
 
@@ -1290,7 +1292,6 @@ export default class SitemapController {
 			$('#modal-child-count').text(childCount);
 			$('#modal-message').show();
 		}
-
 		this.onConfirm = async () => {
 			sitemap.deleteSelector(selector);
 			await this.store.saveSitemap(sitemap);
