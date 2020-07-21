@@ -22,7 +22,7 @@ export default class SitemapController {
 		this.store = store;
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');
-
+		this.onConfirm = () => {};
 		this.selectorTypes = [
 			{
 				type: 'SelectorText',
@@ -190,6 +190,9 @@ export default class SitemapController {
 			},
 			'#sitemap-export-data-nav-button': {
 				click: this.showSitemapExportDataPanel,
+			},
+			'#modal-submit': {
+				click: this.askConfirmation,
 			},
 			'#submit-create-sitemap': {
 				click: this.createSitemap,
@@ -447,6 +450,9 @@ export default class SitemapController {
 			fields: {
 				sitemapId: {
 					validators: {
+						notEmpty: {
+							message: Translator.getTranslationByKey('sitemapid_empty_message'),
+						},
 						stringLength: {
 							min: 3,
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
@@ -1235,14 +1241,15 @@ export default class SitemapController {
 		Translator.translatePage();
 	}
 
-	askConfirmation(onConfirm) {
+	async askConfirmation() {
 		const $confirmActionModal = $('#confirm-action-modal');
-		$('#modal-submit').click(() => {
-			if (!onConfirm()) {
-				$confirmActionModal.modal('hide');
-			}
-		});
-		$confirmActionModal.modal('show');
+		const confirm = await this.onConfirm();
+		if (confirm) {
+			$confirmActionModal.modal('hide');
+			this.onConfirm = () => {};
+		} else {
+			$confirmActionModal.modal('show');
+		}
 	}
 
 	async copySitemap(button) {
@@ -1255,8 +1262,7 @@ export default class SitemapController {
 		});
 		$('#modal-message').show();
 		$('#modal-sitemap-id').text(sitemap._id);
-
-		this.askConfirmation(async () => {
+		this.onConfirm = async () => {
 			const id = $('#sitemapId').val();
 			if (!this.isValidForm('#confirm-action-modal')) {
 				return false;
@@ -1271,7 +1277,7 @@ export default class SitemapController {
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap, ['_root']);
 			return true;
-		});
+		};
 	}
 
 	async deleteSelector(button) {
@@ -1284,21 +1290,24 @@ export default class SitemapController {
 			$('#modal-child-count').text(childCount);
 			$('#modal-message').show();
 		}
-		this.askConfirmation(async () => {
+
+		this.onConfirm = async () => {
 			sitemap.deleteSelector(selector);
 			await this.store.saveSitemap(sitemap);
 			this.showSitemapSelectorList();
-		});
+			return true;
+		};
 	}
 
 	async deleteSitemap(button) {
 		const sitemap = $(button).closest('tr').data('sitemap');
 		this.initConfirmActionPanel({ action: 'delete_sitemap' });
 		$('#modal-sitemap-id').text(sitemap._id);
-		this.askConfirmation(async () => {
+		this.onConfirm = async () => {
 			await this.store.deleteSitemap(sitemap);
 			await this.showSitemaps();
-		});
+			return true;
+		};
 	}
 
 	initScrapeSitemapConfigValidation() {
