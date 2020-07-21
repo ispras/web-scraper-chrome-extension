@@ -343,16 +343,16 @@ export default class SitemapController {
 	/**
 	 * Returns bootstrapValidator object for current form in viewport
 	 */
-	getFormValidator() {
-		return $('#viewport form').data('bootstrapValidator');
+	getFormValidator(selector = '#viewport form') {
+		return $(selector).data('bootstrapValidator');
 	}
 
 	/**
 	 * Returns whether current form in the viewport is valid
 	 * @returns {Boolean}
 	 */
-	isValidForm() {
-		const validator = this.getFormValidator();
+	isValidForm(selector = '#viewport form') {
+		const validator = this.getFormValidator(selector);
 		// validator.validate();
 		// validate method calls submit which is not needed in this case.
 		for (const field in validator.options.fields) {
@@ -442,10 +442,10 @@ export default class SitemapController {
 		return true;
 	}
 
-	initCopySitemapValidator() {
-		$('#viewport form').bootstrapValidator({
+	initCopySitemapValidation() {
+		$('#confirm-action-modal').bootstrapValidator({
 			fields: {
-				_id: {
+				sitemapId: {
 					validators: {
 						stringLength: {
 							min: 3,
@@ -455,11 +455,9 @@ export default class SitemapController {
 							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
-						// placeholder for sitemap id existance validation
 						callback: {
 							message: Translator.getTranslationByKey('sitemapid_repeated_id'),
 							callback(value, validator) {
-								validator.revalidateField('sitemapJSON');
 								return true;
 							},
 						},
@@ -468,6 +466,7 @@ export default class SitemapController {
 			},
 		});
 	}
+
 	initImportSitemapValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
@@ -1229,7 +1228,7 @@ export default class SitemapController {
 		this._editSelector(selector, sitemap);
 	}
 
-	initConfirmActionPanel(action, extraExtion) {
+	initConfirmActionPanel(action, extraExtion = () => {}) {
 		$('#confirm-action-modal').remove(); // remove old panel
 		$('#viewport').after(ich.ActionConfirm(action));
 		extraExtion();
@@ -1239,8 +1238,9 @@ export default class SitemapController {
 	askConfirmation(onConfirm) {
 		const $confirmActionModal = $('#confirm-action-modal');
 		$('#modal-submit').click(() => {
-			$confirmActionModal.modal('hide');
-			onConfirm();
+			if (!onConfirm()) {
+				$confirmActionModal.modal('hide');
+			}
 		});
 		$confirmActionModal.modal('show');
 	}
@@ -1249,28 +1249,28 @@ export default class SitemapController {
 		let sitemap = $(button).closest('tr').data('sitemap');
 		this.initConfirmActionPanel({ action: 'copy_sitemap' }, async () => {
 			$('.modal-header').append(
-				'<input type="text" class="form-control" id="selectorId" placeholder="selector_edit_id"/>'
+				'<form class="form-group"><input type="text" class="form-control" id="sitemapId" name="sitemapId" placeholder="sitemap_create_id"/></form>'
 			);
+			this.initCopySitemapValidation();
 		});
 		$('#modal-message').show();
 		$('#modal-sitemap-id').text(sitemap._id);
 
 		this.askConfirmation(async () => {
-			// const validator = this.getFormValidator();
-			// validator.revalidateField('id');
-			// // cancel submit if invalid form
-			// if (!this.isValidForm()) {
-			// 	return await this.copySitemap(button);
-			// }
-
-			sitemap = new Sitemap(
-				sitemap._id + '_copy',
-				sitemap.startUrls,
-				sitemap.model,
-				sitemap.selectors
-			);
+			const id = $('#sitemapId').val();
+			if (!this.isValidForm('#confirm-action-modal')) {
+				return false;
+			}
+			const sitemapExist = await this.store.sitemapExists(id);
+			if (sitemapExist) {
+				const validator = $('#confirm-action-modal').data('bootstrapValidator');
+				validator.updateStatus('sitemapId', 'INVALID', 'callback');
+				return false;
+			}
+			sitemap = new Sitemap(id, sitemap.startUrls, sitemap.model, sitemap.selectors);
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap, ['_root']);
+			return true;
 		});
 	}
 
