@@ -22,7 +22,6 @@ export default class SitemapController {
 		this.store = store;
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');
-		this.onConfirm = () => {};
 		this.selectorTypes = [
 			{
 				type: 'SelectorText',
@@ -455,7 +454,7 @@ export default class SitemapController {
 	initCopySitemapValidation() {
 		$('#confirm-action-modal').bootstrapValidator({
 			fields: {
-				sitemapId: {
+				modal_confirm_action_input_copy_sitemap: {
 					validators: {
 						notEmpty: {
 							message: Translator.getTranslationByKey('sitemapid_empty_message'),
@@ -1256,21 +1255,25 @@ export default class SitemapController {
 		});
 		$('#modal-message').show();
 		$('#modal-sitemap-id').text(sitemap._id);
-		this.sitemap = sitemap;
+		this.state.currentSitemap = sitemap;
 		$('#modal-submit').addClass('copy-sitemap-submit');
-		$('#sitemapId').show();
+		$('#modal_confirm_action_input_copy_sitemap').show();
 	}
 
 	async copySitemapConfirmation(button) {
-		const id = $('#sitemapId').val();
-		let sitemap = this.sitemap;
+		const id = $('#modal_confirm_action_input_copy_sitemap').val();
+		let sitemap = this.state.currentSitemap;
 		if (!this.isValidForm('#confirm-action-modal')) {
 			return false;
 		}
 		const sitemapExist = await this.store.sitemapExists(id);
 		if (sitemapExist) {
 			const validator = $('#confirm-action-modal').data('bootstrapValidator');
-			validator.updateStatus('sitemapId', 'INVALID', 'callback');
+			validator.updateStatus(
+				'modal_confirm_action_input_copy_sitemap',
+				'INVALID',
+				'callback'
+			);
 			return false;
 		}
 		sitemap = new Sitemap(id, sitemap.startUrls, sitemap.model, sitemap.selectors);
@@ -1290,13 +1293,16 @@ export default class SitemapController {
 			$('#modal-child-count').text(childCount);
 			$('#modal-message').show();
 		}
-		this.sitemap = sitemap;
-		this.selector = selector;
+		this.state.currentSelector = selector;
+		this.state.currentSitemap = sitemap;
 		$('#modal-submit').addClass('delete-selector-submit');
 	}
+
 	async deleteSelectorConfirmation(button) {
-		this.sitemap.deleteSelector(this.selector);
-		await this.store.saveSitemap(this.sitemap);
+		const selector = this.state.currentSelector;
+		const sitemap = this.state.currentSitemap;
+		sitemap.deleteSelector(selector);
+		await this.store.saveSitemap(sitemap);
 		this.showSitemapSelectorList();
 		$('#confirm-action-modal').modal('hide');
 		return true;
@@ -1307,10 +1313,10 @@ export default class SitemapController {
 		this.initConfirmActionPanel({ action: 'delete_sitemap' });
 		$('#modal-sitemap-id').text(sitemap._id);
 		$('#modal-submit').addClass('delete-sitemap-submit');
-		this.sitemap = sitemap;
+		this.state.currentSitemap = sitemap;
 	}
 	async deleteSitemapConfirmation(button) {
-		await this.store.deleteSitemap(this.sitemap);
+		await this.store.deleteSitemap(this.state.currentSitemap);
 		await this.showSitemaps();
 		$('#confirm-action-modal').modal('hide');
 		return true;
