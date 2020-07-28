@@ -190,14 +190,14 @@ export default class SitemapController {
 			'#sitemap-export-data-nav-button': {
 				click: this.showSitemapExportDataPanel,
 			},
-			'.delete-selector-submit': {
-				click: this.deleteSelectorConfirmation,
+			'.delete_selector_submit': {
+				click: this.confirmDeleteSelector,
 			},
-			'.delete-sitemap-submit': {
-				click: this.deleteSitemapConfirmation,
+			'.delete_sitemap_submit': {
+				click: this.confirmDeleteSitemap,
 			},
-			'.copy-sitemap-submit': {
-				click: this.copySitemapConfirmation,
+			'.copy_sitemap_submit': {
+				click: this.confirmCopySitemap,
 			},
 
 			'#submit-create-sitemap': {
@@ -1240,27 +1240,24 @@ export default class SitemapController {
 		this._editSelector(selector, sitemap);
 	}
 
-	initConfirmActionPanel(action, extraAction = () => {}) {
+	initConfirmActionPanel(action) {
 		$('#confirm-action-modal').remove(); // remove old panel
 		$('#viewport').after(ich.ActionConfirm(action));
-		extraAction();
 		$('#confirm-action-modal').modal('show');
 		Translator.translatePage();
 	}
 
 	async copySitemap(button) {
 		let sitemap = $(button).closest('tr').data('sitemap');
-		this.initConfirmActionPanel({ action: 'copy_sitemap' }, async () => {
-			this.initCopySitemapValidation();
-		});
+		this.initConfirmActionPanel({ action: 'copy_sitemap' });
+		this.initCopySitemapValidation();
 		$('#modal-message').show();
 		$('#modal-sitemap-id').text(sitemap._id);
 		this.state.currentSitemap = sitemap;
-		$('#modal-submit').addClass('copy-sitemap-submit');
 		$('#modal_confirm_action_input_copy_sitemap').show();
 	}
 
-	async copySitemapConfirmation(button) {
+	async confirmCopySitemap(button) {
 		const id = $('#modal_confirm_action_input_copy_sitemap').val();
 		let sitemap = this.state.currentSitemap;
 		if (!this.isValidForm('#confirm-action-modal')) {
@@ -1280,7 +1277,6 @@ export default class SitemapController {
 		sitemap = await this.store.createSitemap(sitemap);
 		this._editSitemap(sitemap, ['_root']);
 		$('#confirm-action-modal').modal('hide');
-		return true;
 	}
 
 	async deleteSelector(button) {
@@ -1295,31 +1291,28 @@ export default class SitemapController {
 		}
 		this.state.currentSelector = selector;
 		this.state.currentSitemap = sitemap;
-		$('#modal-submit').addClass('delete-selector-submit');
 	}
 
-	async deleteSelectorConfirmation(button) {
+	async confirmDeleteSelector(button) {
 		const selector = this.state.currentSelector;
 		const sitemap = this.state.currentSitemap;
 		sitemap.deleteSelector(selector);
 		await this.store.saveSitemap(sitemap);
 		this.showSitemapSelectorList();
 		$('#confirm-action-modal').modal('hide');
-		return true;
 	}
 
 	async deleteSitemap(button) {
 		const sitemap = $(button).closest('tr').data('sitemap');
 		this.initConfirmActionPanel({ action: 'delete_sitemap' });
 		$('#modal-sitemap-id').text(sitemap._id);
-		$('#modal-submit').addClass('delete-sitemap-submit');
 		this.state.currentSitemap = sitemap;
 	}
-	async deleteSitemapConfirmation(button) {
+
+	async confirmDeleteSitemap(button) {
 		await this.store.deleteSitemap(this.state.currentSitemap);
 		await this.showSitemaps();
 		$('#confirm-action-modal').modal('hide');
-		return true;
 	}
 
 	initScrapeSitemapConfigValidation() {
