@@ -47,7 +47,6 @@ export default class Selector {
 		}
 
 		// TODO refactor + selector group semantics
-		// TODO refactor + selector group semantics
 		if (Array.isArray(data)) {
 			return data.map(e => this.manipulateData(e));
 		}

@@ -289,7 +289,5 @@
 	"create_copy_sitemap": { "message": "Copy" },
 	"modal_confirm_action_submit_copy_sitemap": { "message": "Create sitemap" },
 	"modal_confirm_action_cancel_copy_sitemap": { "message": "Cancel" },
-	"selectorListItem_move_up": { "message": "Up" },
-	"selectorListItem_move_down": { "message": "Down" },
 	"modal_confirm_action_input_copy_sitemap": { "message": "Sitemap name" }
 }

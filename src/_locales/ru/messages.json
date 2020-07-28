@@ -327,7 +327,5 @@
 	"modal_confirm_action_message_copy_sitemap": {
 		"message": "Идентификатор карты обхода"
 	},
-	"selectorListItem_move_up": { "message": "Вверх" },
-	"selectorListItem_move_down": { "message": "Вниз" },
 	"modal_confirm_action_input_copy_sitemap": { "message": "Идентификатор карты обхода" }
 }
