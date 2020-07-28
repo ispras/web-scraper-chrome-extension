@@ -317,5 +317,13 @@
 	"modal_confirm_action_submit_delete_selector": { "message": "Подтвердить" },
 	"modal_confirm_action_cancel_delete_selector": { "message": "Отмена" },
 	"modal_confirm_action_submit_delete_sitemap": { "message": "Подтвердить" },
-	"modal_confirm_action_cancel_delete_sitemap": { "message": "Отмена" }
+	"modal_confirm_action_cancel_delete_sitemap": { "message": "Отмена" },
+	"create_copy_sitemap": { "message": "Копировать" },
+	"modal_confirm_action_submit_copy_sitemap": { "message": "Создать карту обхода" },
+	"modal_confirm_action_cancel_copy_sitemap": { "message": "Отменить" },
+	"modal_confirm_action_title_copy_sitemap": {
+		"message": "Копирование карты <span id='modal-sitemap-id'></span>?"
+	},
+	"modal_confirm_action_message_copy_sitemap": { "message": "Идентификатор карты обхода" },
+	"modal_confirm_action_input_copy_sitemap": { "message": "Идентификатор карты обхода" }
 }

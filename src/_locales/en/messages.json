@@ -285,5 +285,13 @@
 	"modal_confirm_action_submit_delete_selector": { "message": "Confirm" },
 	"modal_confirm_action_cancel_delete_selector": { "message": "Cancel" },
 	"modal_confirm_action_submit_delete_sitemap": { "message": "Confirm" },
-	"modal_confirm_action_cancel_delete_sitemap": { "message": "Cancel" }
+	"modal_confirm_action_cancel_delete_sitemap": { "message": "Cancel" },
+	"create_copy_sitemap": { "message": "Copy" },
+	"modal_confirm_action_submit_copy_sitemap": { "message": "Create sitemap" },
+	"modal_confirm_action_cancel_copy_sitemap": { "message": "Cancel" },
+	"modal_confirm_action_title_copy_sitemap": {
+		"message": "Copying sitemap <span id='modal-sitemap-id'></span>?"
+	},
+	"modal_confirm_action_message_copy_sitemap": { "message": "Sitemap name" },
+	"modal_confirm_action_input_copy_sitemap": { "message": "Sitemap name" }
 }
