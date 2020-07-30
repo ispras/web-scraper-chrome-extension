@@ -46,8 +46,8 @@ let BackgroundScript = {
 		this.getActiveTabId().then(function (tabId) {
 			browser.tabs.sendMessage(tabId, reqToContentScript).then(function (response) {
 				deferredResponse.resolve(response);
-				deferredResponse.reject(err);
 			});
+			deferredResponse.reject(err => reject(err));
 		});
 
 		return deferredResponse;
@@ -79,8 +79,8 @@ export default function getBackgroundScript(location) {
 
 					browser.runtime.sendMessage(reqToBackgroundScript).then(function (response) {
 						deferredResponse.resolve(response);
-						deferredResponse.reject(err);
 					});
+					deferredResponse.reject(err => reject(err));
 					return deferredResponse;
 				};
 			} else {
