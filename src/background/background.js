@@ -117,7 +117,7 @@ browser.runtime.onMessage.addListener(async request => {
 			// TODO change to promises
 			const deferredResponse = backgroundScript[request.fn](request.request);
 			deferredResponse
-				.done(function (resp) {
+				.done(resp => {
 					resolve(resp);
 				})
 				.reject(err => {

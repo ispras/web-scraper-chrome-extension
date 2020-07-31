@@ -43,12 +43,13 @@ let BackgroundScript = {
 			request: request.request,
 		};
 		var deferredResponse = $.Deferred();
-		this.getActiveTabId().then(function (tabId) {
-			browser.tabs.sendMessage(tabId, reqToContentScript).then(function (response) {
-				deferredResponse.resolve(response);
-			});
-			deferredResponse.reject(err => reject(err));
-		});
+		this.getActiveTabId()
+			.then(function (tabId) {
+				browser.tabs.sendMessage(tabId, reqToContentScript).then(function (response) {
+					deferredResponse.resolve(response);
+				});
+			})
+			.catch(err => deferredResponse.reject(err));
 
 		return deferredResponse;
 	},
@@ -77,10 +78,12 @@ export default function getBackgroundScript(location) {
 
 					var deferredResponse = $.Deferred();
 
-					browser.runtime.sendMessage(reqToBackgroundScript).then(function (response) {
-						deferredResponse.resolve(response);
-					});
-					deferredResponse.reject(err => reject(err));
+					browser.runtime
+						.sendMessage(reqToBackgroundScript)
+						.then(response => {
+							deferredResponse.resolve(response);
+						})
+						.catch(err => deferredResponse.reject(err));
 					return deferredResponse;
 				};
 			} else {
