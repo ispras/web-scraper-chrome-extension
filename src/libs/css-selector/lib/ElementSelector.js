@@ -14,7 +14,12 @@ export default class ElementSelector {
 
 		// do not add additinal info to html, body tags.
 		// html:nth-of-type(1) cannot be selected
-		if (this.tag === 'html' || this.tag === 'HTML' || this.tag === 'body' || this.tag === 'BODY') {
+		if (
+			this.tag === 'html' ||
+			this.tag === 'HTML' ||
+			this.tag === 'body' ||
+			this.tag === 'BODY'
+		) {
 			this.index = null;
 			return;
 		}

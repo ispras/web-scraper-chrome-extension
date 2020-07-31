@@ -1,31 +1,32 @@
-describe("Value Selector", function () {
+describe('Value Selector', function () {
+	var $el;
 
-    var $el;
+	beforeEach(function () {});
 
-    beforeEach(function () {
-    });
+	it('should place value in input element', function () {
+		var selector = new Selector({
+			id: 'a',
+			type: 'SelectorValue',
+			multiple: false,
+			selector: '#selector-value-input',
+			insertValue: 'test',
+		});
 
-    it("should place value in input element", function () {
+		var dataDeferred = selector.getData($('#selector-value'));
 
-        var selector = new Selector({
-            id: 'a',
-            type: 'SelectorValue',
-            multiple: false,
-            selector: "#selector-value-input",
-            insertValue: "test"
-        });
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data input',
+			5000
+		);
 
-        var dataDeferred = selector.getData($("#selector-value"));
-
-        waitsFor(function () {
-            return dataDeferred.state() === 'resolved';
-        }, "wait for data input", 5000);
-
-        runs(function () {
-            dataDeferred.done(function (data) {
-                var input = $("#selector-value-input").val();
-                expect(data[0].a).toEqual(input);
-            });
-        });
-    });
+		runs(function () {
+			dataDeferred.done(function (data) {
+				var input = $('#selector-value-input').val();
+				expect(data[0].a).toEqual(input);
+			});
+		});
+	});
 });

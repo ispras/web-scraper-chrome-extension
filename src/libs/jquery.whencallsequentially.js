@@ -6,7 +6,7 @@
  *
  * @returns $.Deferred().promise()
  */
-$.whenCallSequentially = function(functionCalls) {
+$.whenCallSequentially = function (functionCalls) {
 	var deferredResonse = $.Deferred();
 	var resultData = new Array();
 
@@ -18,7 +18,7 @@ $.whenCallSequentially = function(functionCalls) {
 	var currentDeferred = functionCalls.shift()();
 	// execute synchronous calls synchronously
 	while (currentDeferred.state() === 'resolved') {
-		currentDeferred.done(function(data) {
+		currentDeferred.done(function (data) {
 			resultData.push(data);
 		});
 		if (functionCalls.length === 0) {
@@ -28,10 +28,10 @@ $.whenCallSequentially = function(functionCalls) {
 	}
 
 	// handle async calls
-	var interval = setInterval(function() {
+	var interval = setInterval(function () {
 		// handle mixed sync calls
 		while (currentDeferred.state() === 'resolved') {
-			currentDeferred.done(function(data) {
+			currentDeferred.done(function (data) {
 				resultData.push(data);
 			});
 			if (functionCalls.length === 0) {

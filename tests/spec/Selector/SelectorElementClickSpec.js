@@ -1,172 +1,181 @@
-describe("Click Element Selector", function () {
-
+describe('Click Element Selector', function () {
 	var $el;
 
 	beforeEach(function () {
-
 		this.addMatchers(selectorMatchers);
 
-		$el = jQuery("#tests").html("");
-		if($el.length === 0) {
-			$el = $("<div id='tests' style='display:none'></div>").appendTo("body");
+		$el = jQuery('#tests').html('');
+		if ($el.length === 0) {
+			$el = $("<div id='tests' style='display:none'></div>").appendTo('body');
 		}
 	});
 
-	it("should return one element", function () {
-
-		$el.append("<div>a</div><div>b</div>");
+	it('should return one element', function () {
+		$el.append('<div>a</div><div>b</div>');
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorElementClick',
 			multiple: false,
-			selector: "div",
-			clickType: 'clickOnce'
+			selector: 'div',
+			clickType: 'clickOnce',
 		});
 
 		var dataDeferred = selector.getData($el[0]);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
-				expect($(data).text()).toEqual("a");
+			dataDeferred.done(function (data) {
+				expect($(data).text()).toEqual('a');
 			});
 		});
 	});
 
-	it("should return multiple elements", function () {
-
-		$el.append("<div>a</div><div>b</div>");
+	it('should return multiple elements', function () {
+		$el.append('<div>a</div><div>b</div>');
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorElementClick',
 			multiple: true,
-			selector: "div",
-			clickType: 'clickOnce'
+			selector: 'div',
+			clickType: 'clickOnce',
 		});
 
 		var dataDeferred = selector.getData($el[0]);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
-				expect($(data).text()).toEqual("ab");
+			dataDeferred.done(function (data) {
+				expect($(data).text()).toEqual('ab');
 			});
 		});
 	});
 
-	it("should be able to click on elemenets with numeric id #123", function () {
-
+	it('should be able to click on elemenets with numeric id #123', function () {
 		$el.append($("<a id='123'>a</a>"));
-		$el.find("a").click(function() {
-			$el.append("<div>test</div>");
+		$el.find('a').click(function () {
+			$el.append('<div>test</div>');
 		});
 
 		var selector = new Selector({
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a#123",
-			selector: "div",
-			clickType: 'clickOnce'
+			clickElementSelector: 'a#123',
+			selector: 'div',
+			clickType: 'clickOnce',
 		});
 
 		var dataDeferred = selector.getData($el[0]);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
 			var data;
-			dataDeferred.done(function(resultData) {
+			dataDeferred.done(function (resultData) {
 				data = resultData;
 			});
 			expect(data.length).toEqual(1);
-			expect($(data).text()).toEqual("test");
+			expect($(data).text()).toEqual('test');
 		});
 	});
 
-	it("should get elements that are available immediately after clicking", function() {
-
-		$el.append($("<a>a</a>"));
-		$el.find("a").click(function() {
-			$el.append("<div>test</div>");
+	it('should get elements that are available immediately after clicking', function () {
+		$el.append($('<a>a</a>'));
+		$el.find('a').click(function () {
+			$el.append('<div>test</div>');
 		});
 
 		var selector = new Selector({
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
-			clickType: 'clickOnce'
+			clickElementSelector: 'a',
+			selector: 'div',
+			clickType: 'clickOnce',
 		});
 
 		var dataDeferred = selector.getData($el[0]);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
 			var data;
-			dataDeferred.done(function(resultData) {
+			dataDeferred.done(function (resultData) {
 				data = resultData;
 			});
 			expect(data.length).toEqual(1);
-			expect($(data).text()).toEqual("test");
+			expect($(data).text()).toEqual('test');
 		});
 	});
 
-	it("should skip clicking if click element is removed from dom", function() {
-
+	it('should skip clicking if click element is removed from dom', function () {
 		$el.append($("<a>a</a><a class='remove'>b</a>"));
-		$el.find("a").click(function() {
-			$el.append("<div>test</div>");
-			$el.find(".remove").remove();
+		$el.find('a').click(function () {
+			$el.append('<div>test</div>');
+			$el.find('.remove').remove();
 		});
 
 		var selector = new Selector({
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
+			clickElementSelector: 'a',
+			selector: 'div',
 			delay: 100,
-			clickType: 'clickOnce'
+			clickType: 'clickOnce',
 		});
 
 		var dataDeferred = selector.getData($el[0]);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
 			var data;
-			dataDeferred.done(function(resultData) {
+			dataDeferred.done(function (resultData) {
 				data = resultData;
 			});
 			expect(data.length).toEqual(1);
-			expect($(data).text()).toEqual("test");
+			expect($(data).text()).toEqual('test');
 		});
 	});
 
-	it("should get elements that are not available immediately after clicking but after some time", function() {
-
-		$el.append($("<a>a</a>"));
-		$el.find("a").click(function() {
-			setTimeout(function(){
-				$el.append("<div>test</div>");
+	it('should get elements that are not available immediately after clicking but after some time', function () {
+		$el.append($('<a>a</a>'));
+		$el.find('a').click(function () {
+			setTimeout(function () {
+				$el.append('<div>test</div>');
 			}, 50);
 		});
 
@@ -174,47 +183,49 @@ describe("Click Element Selector", function () {
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
+			clickElementSelector: 'a',
+			selector: 'div',
 			delay: 100,
-			clickType: 'clickOnce'
+			clickType: 'clickOnce',
 		});
 
 		var dataDeferred = selector.getData($el[0]);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
 			var data;
-			dataDeferred.done(function(resultData) {
+			dataDeferred.done(function (resultData) {
 				data = resultData;
 			});
 			expect(data.length).toEqual(1);
-			expect($(data).text()).toEqual("test");
+			expect($(data).text()).toEqual('test');
 		});
 	});
 
-	it("should return no data columns", function () {
+	it('should return no data columns', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorElement',
 			multiple: true,
-			selector: "div"
+			selector: 'div',
 		});
 
 		var columns = selector.getDataColumns();
 		expect(columns).toEqual([]);
 	});
 
-	it("should return multiple elements if only contents is changed", function() {
-
-		$el.append($("<a>a</a><div>a</div>"));
-		$el.find("a").click(function() {
-			setTimeout(function() {
-				$el.find("div").text("b");
+	it('should return multiple elements if only contents is changed', function () {
+		$el.append($('<a>a</a><div>a</div>'));
+		$el.find('a').click(function () {
+			setTimeout(function () {
+				$el.find('div').text('b');
 			}, 50);
 		});
 
@@ -222,45 +233,46 @@ describe("Click Element Selector", function () {
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
+			clickElementSelector: 'a',
+			selector: 'div',
 			delay: 100,
-			clickType: 'clickOnce'
+			clickType: 'clickOnce',
 		});
 
 		var dataDeferred = selector.getData($el);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
 			var data;
-			dataDeferred.done(function(resultData) {
+			dataDeferred.done(function (resultData) {
 				data = resultData;
 			});
 
 			expect(data.length).toEqual(2);
-			expect($(data[0]).text()).toEqual("a");
-			expect($(data[1]).text()).toEqual("b");
+			expect($(data[0]).text()).toEqual('a');
+			expect($(data[1]).text()).toEqual('b');
 		});
 	});
 
-	it("should click buttons that are not yet added", function() {
-
-		$el.append($("<a>1</a><div>a</div>"));
-		$el.find("a").click(function() {
-			setTimeout(function() {
-				$el.find("div").text("b");
-				$el.find("a").remove();
-				$el.append("<a>2</a>");
-				$el.find("a").click(function() {
-					setTimeout(function() {
-						$el.find("div").text("c");
+	it('should click buttons that are not yet added', function () {
+		$el.append($('<a>1</a><div>a</div>'));
+		$el.find('a').click(function () {
+			setTimeout(function () {
+				$el.find('div').text('b');
+				$el.find('a').remove();
+				$el.append('<a>2</a>');
+				$el.find('a').click(function () {
+					setTimeout(function () {
+						$el.find('div').text('c');
 					}, 50);
 				});
-
 			}, 50);
 		});
 
@@ -268,47 +280,48 @@ describe("Click Element Selector", function () {
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
+			clickElementSelector: 'a',
+			selector: 'div',
 			delay: 100,
-			clickType: 'clickOnce'
+			clickType: 'clickOnce',
 		});
 
 		var dataDeferred = selector.getData($el);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
-			dataDeferred.done(function(resultData) {
+			dataDeferred.done(function (resultData) {
 				expect(resultData.length).toEqual(3);
 				var resultText = [
 					$(resultData[0]).text(),
 					$(resultData[1]).text(),
-					$(resultData[2]).text()
+					$(resultData[2]).text(),
 				];
 
-				expect(resultText.sort()).toEqual(["a", "b", "c"]);
+				expect(resultText.sort()).toEqual(['a', 'b', 'c']);
 			});
 		});
 	});
 
-	it("should discard initial elements for ClickOnce selector type", function() {
-
-		$el.append($("<a>1</a><div>a</div>"));
-		$el.find("a").click(function() {
-			setTimeout(function() {
-				$el.find("div").text("b");
-				$el.find("a").remove();
-				$el.append("<a>2</a>");
-				$el.find("a").click(function() {
-					setTimeout(function() {
-						$el.find("div").text("c");
+	it('should discard initial elements for ClickOnce selector type', function () {
+		$el.append($('<a>1</a><div>a</div>'));
+		$el.find('a').click(function () {
+			setTimeout(function () {
+				$el.find('div').text('b');
+				$el.find('a').remove();
+				$el.append('<a>2</a>');
+				$el.find('a').click(function () {
+					setTimeout(function () {
+						$el.find('div').text('c');
 					}, 50);
 				});
-
 			}, 50);
 		});
 
@@ -316,47 +329,46 @@ describe("Click Element Selector", function () {
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
+			clickElementSelector: 'a',
+			selector: 'div',
 			delay: 100,
 			clickType: 'clickOnce',
-			discardInitialElements: true
+			discardInitialElements: true,
 		});
 
 		var dataDeferred = selector.getData($el);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
-			dataDeferred.done(function(resultData) {
+			dataDeferred.done(function (resultData) {
 				expect(resultData.length).toEqual(2);
-				var resultText = [
-					$(resultData[0]).text(),
-					$(resultData[1]).text(),
-				];
+				var resultText = [$(resultData[0]).text(), $(resultData[1]).text()];
 
-				expect(resultText.sort()).toEqual(["b", "c"]);
+				expect(resultText.sort()).toEqual(['b', 'c']);
 			});
 		});
 	});
 
-	it("should extract elements with clickMore type", function(){
-
-		$el.append($("<a>1</a><div>a</div>"));
-		var moreElements = ['b','c'];
-		$el.find("a").click(function() {
+	it('should extract elements with clickMore type', function () {
+		$el.append($('<a>1</a><div>a</div>'));
+		var moreElements = ['b', 'c'];
+		$el.find('a').click(function () {
 			var next = moreElements.shift();
-			if(next) {
-				setTimeout(function() {
-					$el.append("<div>"+next+"</div>");
+			if (next) {
+				setTimeout(function () {
+					$el.append('<div>' + next + '</div>');
 				}, 50);
 			}
 			// remove if there won't be new elements
-			if(moreElements.length === 0) {
-				$el.find("a").remove();
+			if (moreElements.length === 0) {
+				$el.find('a').remove();
 			}
 		});
 
@@ -364,140 +376,96 @@ describe("Click Element Selector", function () {
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
+			clickElementSelector: 'a',
+			selector: 'div',
 			delay: 200,
-			clickType: 'clickMore'
+			clickType: 'clickMore',
 		});
 
 		var dataDeferred = selector.getData($el);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
-			dataDeferred.done(function(resultData) {
+			dataDeferred.done(function (resultData) {
 				expect(resultData.length).toEqual(3);
 				var resultText = [
 					$(resultData[0]).text(),
 					$(resultData[1]).text(),
-					$(resultData[2]).text()
+					$(resultData[2]).text(),
 				];
 
-				expect(resultText.sort()).toEqual(["a", "b", "c"]);
+				expect(resultText.sort()).toEqual(['a', 'b', 'c']);
 			});
 		});
 	});
 
-	it("should click buttons that are added", function(){
-
-		$el.append($("<a>1</a><div>a</div>"));
-		var moreElements = ['b','c'];
-		var clickHandler = function() {
-			setTimeout(function() {
+	it('should click buttons that are added', function () {
+		$el.append($('<a>1</a><div>a</div>'));
+		var moreElements = ['b', 'c'];
+		var clickHandler = function () {
+			setTimeout(function () {
 				var next = moreElements.shift();
-				if(next) {
-					$el.append("<div>"+next+"</div>");
-					$el.find("a").remove();
-					$el.append($("<a>1</a>"));
-					$el.find("a").click(clickHandler);
+				if (next) {
+					$el.append('<div>' + next + '</div>');
+					$el.find('a').remove();
+					$el.append($('<a>1</a>'));
+					$el.find('a').click(clickHandler);
 				}
 			}, 50);
 		};
 
-		$el.find("a").click(clickHandler);
+		$el.find('a').click(clickHandler);
 
 		var selector = new Selector({
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
-			delay: 100,
-			clickType: 'clickMore'
-		});
-
-		var dataDeferred = selector.getData($el);
-
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
-
-		runs(function () {
-
-			dataDeferred.done(function(resultData) {
-				expect(resultData.length).toEqual(3);
-				var resultText = [
-					$(resultData[0]).text(),
-					$(resultData[1]).text(),
-					$(resultData[2]).text()
-				];
-
-				expect(resultText.sort()).toEqual(["a", "b", "c"]);
-			});
-		});
-	});
-
-	it("should discard initial elements for ClickMore selector type", function(){
-
-		$el.append($("<a>1</a><div>a</div>"));
-		var moreElements = ['b','c'];
-		$el.find("a").click(function() {
-			setTimeout(function() {
-				$el.find("div:contains('a')").remove();
-				var next = moreElements.shift();
-				if(next) {
-					$el.append("<div>"+next+"</div>");
-				}
-			}, 50);
-		});
-
-		var selector = new Selector({
-			id: 'div',
-			type: 'SelectorElementClick',
-			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
+			clickElementSelector: 'a',
+			selector: 'div',
 			delay: 100,
 			clickType: 'clickMore',
-			discardInitialElements: true
 		});
 
 		var dataDeferred = selector.getData($el);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
-			dataDeferred.done(function(resultData) {
-				expect(resultData.length).toEqual(2);
+			dataDeferred.done(function (resultData) {
+				expect(resultData.length).toEqual(3);
 				var resultText = [
 					$(resultData[0]).text(),
-					$(resultData[1]).text()
+					$(resultData[1]).text(),
+					$(resultData[2]).text(),
 				];
 
-				expect(resultText.sort()).toEqual(["b", "c"]);
+				expect(resultText.sort()).toEqual(['a', 'b', 'c']);
 			});
 		});
 	});
 
-	it("should scrape elements with clickMore type when previous elements are removed after click", function() {
-
-		$el.append($("<a>1</a><div>a</div>"));
-		var moreElements = ['b','c'];
-		$el.find("a").click(function() {
-			setTimeout(function() {
+	it('should discard initial elements for ClickMore selector type', function () {
+		$el.append($('<a>1</a><div>a</div>'));
+		var moreElements = ['b', 'c'];
+		$el.find('a').click(function () {
+			setTimeout(function () {
+				$el.find("div:contains('a')").remove();
 				var next = moreElements.shift();
-
-				if(next) {
-					$el.find("div").text(next);
-				}
-				else {
-					$el
+				if (next) {
+					$el.append('<div>' + next + '</div>');
 				}
 			}, 50);
 		});
@@ -506,31 +474,79 @@ describe("Click Element Selector", function () {
 			id: 'div',
 			type: 'SelectorElementClick',
 			multiple: true,
-			clickElementSelector: "a",
-			selector: "div",
+			clickElementSelector: 'a',
+			selector: 'div',
 			delay: 100,
-			clickType: 'clickMore'
+			clickType: 'clickMore',
+			discardInitialElements: true,
 		});
 
 		var dataDeferred = selector.getData($el);
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
+			dataDeferred.done(function (resultData) {
+				expect(resultData.length).toEqual(2);
+				var resultText = [$(resultData[0]).text(), $(resultData[1]).text()];
 
-			dataDeferred.done(function(resultData) {
+				expect(resultText.sort()).toEqual(['b', 'c']);
+			});
+		});
+	});
+
+	it('should scrape elements with clickMore type when previous elements are removed after click', function () {
+		$el.append($('<a>1</a><div>a</div>'));
+		var moreElements = ['b', 'c'];
+		$el.find('a').click(function () {
+			setTimeout(function () {
+				var next = moreElements.shift();
+
+				if (next) {
+					$el.find('div').text(next);
+				} else {
+					$el;
+				}
+			}, 50);
+		});
+
+		var selector = new Selector({
+			id: 'div',
+			type: 'SelectorElementClick',
+			multiple: true,
+			clickElementSelector: 'a',
+			selector: 'div',
+			delay: 100,
+			clickType: 'clickMore',
+		});
+
+		var dataDeferred = selector.getData($el);
+
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
+
+		runs(function () {
+			dataDeferred.done(function (resultData) {
 				expect(resultData.length).toEqual(3);
 				var resultText = [
 					$(resultData[0]).text(),
 					$(resultData[1]).text(),
-					$(resultData[2]).text()
+					$(resultData[2]).text(),
 				];
 
-				expect(resultText.sort()).toEqual(["a", "b", "c"]);
+				expect(resultText.sort()).toEqual(['a', 'b', 'c']);
 			});
 		});
-
 	});
 });

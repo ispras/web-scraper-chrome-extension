@@ -1,11 +1,11 @@
 {
 	"name": "web-scraper-chrome-extension",
-	"version": "0.3.7",
+	"version": "0.3.701",
 	"description": "Web data extraction tool implemented as chrome extension",
 	"scripts": {
 		"lint": "eslint --ext .js src",
-		"prettier": "prettier \"src/**/*.{js}\"",
-		"prettier:write": "npm run prettier -- --write",
+		"prettier": "prettier --check . ",
+		"prettier:write": "npm run prettier -- --write .",
 		"build": "cross-env NODE_ENV=production webpack --hide-modules",
 		"build:dev": "cross-env NODE_ENV=development webpack --hide-modules",
 		"build-zip": "node scripts/build-zip.js",

@@ -21,8 +21,18 @@ export default class Job {
 		let childMatches = childUrl.match(urlMatcher);
 
 		// special case for urls like this: ?a=1  or like-this/
-		if (childMatches[1] === undefined && childMatches[2] === undefined && childMatches[5] === undefined && childMatches[6] === undefined) {
-			let url = parentMatches[1] + parentMatches[2] + parentMatches[5] + parentMatches[6] + childMatches[7];
+		if (
+			childMatches[1] === undefined &&
+			childMatches[2] === undefined &&
+			childMatches[5] === undefined &&
+			childMatches[6] === undefined
+		) {
+			let url =
+				parentMatches[1] +
+				parentMatches[2] +
+				parentMatches[5] +
+				parentMatches[6] +
+				childMatches[7];
 			return url;
 		}
 
@@ -47,7 +57,9 @@ export default class Job {
 			childMatches[7] = '';
 		}
 
-		return childMatches[1] + childMatches[2] + childMatches[5] + childMatches[6] + childMatches[7];
+		return (
+			childMatches[1] + childMatches[2] + childMatches[5] + childMatches[6] + childMatches[7]
+		);
 	}
 
 	execute(popupBrowser, callback, scope) {
@@ -57,7 +69,7 @@ export default class Job {
 			this.url,
 			sitemap,
 			this.parentSelector,
-			function(results) {
+			function (results) {
 				// merge data with data from initialization
 				for (let i in results) {
 					let result = results[i];

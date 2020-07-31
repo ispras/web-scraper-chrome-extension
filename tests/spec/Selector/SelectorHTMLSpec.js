@@ -1,150 +1,162 @@
-describe("HTML Selector", function () {
+describe('HTML Selector', function () {
+	beforeEach(function () {});
 
-	beforeEach(function () {
-
-	});
-
-	it("should extract single html element", function () {
-
+	it('should extract single html element', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorHTML',
 			multiple: false,
-			selector: "div"
+			selector: 'div',
 		});
 
-		var dataDeferred = selector.getData($("#selector-html-single-html"));
+		var dataDeferred = selector.getData($('#selector-html-single-html'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: "aaa<b>bbb</b>ccc"
-					}
+						a: 'aaa<b>bbb</b>ccc',
+					},
 				]);
 			});
 		});
 	});
 
-	it("should extract multiple html elements", function () {
-
+	it('should extract multiple html elements', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorHTML',
 			multiple: true,
-			selector: "div"
+			selector: 'div',
 		});
 
-		var dataDeferred = selector.getData($("#selector-html-multiple-html"));
+		var dataDeferred = selector.getData($('#selector-html-multiple-html'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: "aaa<b>bbb</b>ccc"
+						a: 'aaa<b>bbb</b>ccc',
 					},
 					{
-						a: "ddd<b>eee</b>fff"
-					}
+						a: 'ddd<b>eee</b>fff',
+					},
 				]);
 			});
 		});
 	});
 
-	it("should extract null when there are no elements", function () {
-
+	it('should extract null when there are no elements', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorHTML',
 			multiple: false,
-			selector: "div"
+			selector: 'div',
 		});
 
-		var dataDeferred = selector.getData($("#selector-html-single-not-exist"));
+		var dataDeferred = selector.getData($('#selector-html-single-not-exist'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: null
-					}
+						a: null,
+					},
 				]);
 			});
 		});
 	});
 
-	it("should extract empty string when there is no regex match", function () {
-
+	it('should extract empty string when there is no regex match', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorHTML',
 			multiple: false,
-			selector: "div",
-            textmanipulation: { regex: "wontmatch" }
+			selector: 'div',
+			textmanipulation: { regex: 'wontmatch' },
 		});
 
-		var dataDeferred = selector.getData($("#selector-html-single-html"));
+		var dataDeferred = selector.getData($('#selector-html-single-html'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: ''
-					}
+						a: '',
+					},
 				]);
 			});
 		});
 	});
 
-	it("should extract html+text using regex", function () {
-
+	it('should extract html+text using regex', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorHTML',
 			multiple: false,
-			selector: "div",
-            textmanipulation: { regex: "<b>\\w+" }
+			selector: 'div',
+			textmanipulation: { regex: '<b>\\w+' },
 		});
 
-		var dataDeferred = selector.getData($("#selector-html-single-html"));
+		var dataDeferred = selector.getData($('#selector-html-single-html'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: '<b>bbb'
-					}
+						a: '<b>bbb',
+					},
 				]);
 			});
 		});
 	});
 
-	it("should return only one data column", function () {
+	it('should return only one data column', function () {
 		var selector = new Selector({
 			id: 'id',
 			type: 'SelectorHTML',
 			multiple: true,
-			selector: "div"
+			selector: 'div',
 		});
 
 		var columns = selector.getDataColumns();

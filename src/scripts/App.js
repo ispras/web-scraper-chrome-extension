@@ -6,7 +6,7 @@ import 'bootstrap/dist/js/bootstrap';
 import StoreDevtools from './StoreDevtools';
 import SitemapController from './Controller';
 
-$(function() {
+$(function () {
 	// init bootstrap alerts
 	$('.alert').alert();
 

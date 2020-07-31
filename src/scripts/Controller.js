@@ -1101,7 +1101,7 @@ export default class SitemapController {
 		}
 	}
 
-	saveSelector(button) {
+	async saveSelector(button) {
 		const sitemap = this.state.currentSitemap;
 		const selector = this.state.currentSelector;
 		const newSelector = this.getCurrentlyEditedSelector();
@@ -1112,16 +1112,19 @@ export default class SitemapController {
 			return false;
 		}
 		// cancel possible element selection
-		this.contentScript.removeCurrentContentSelector().done(
-			function () {
-				sitemap.updateSelector(selector, newSelector);
-				this.store.saveSitemap(sitemap).then(
-					function () {
-						this.showSitemapSelectorList();
-					}.bind(this)
-				);
-			}.bind(this)
-		);
+		try {
+			await this.contentScript.removeCurrentContentSelector().promise();
+		} catch (err) {
+			console.error(err);
+		}
+		try {
+			sitemap.updateSelector(selector, newSelector);
+			await this.store.saveSitemap(sitemap);
+		} catch (err) {
+			console.error(err);
+		} finally {
+			this.showSitemapSelectorList();
+		}
 	}
 
 	/**
@@ -1222,10 +1225,15 @@ export default class SitemapController {
 		return sitemap;
 	}
 
-	cancelSelectorEditing() {
+	async cancelSelectorEditing() {
 		// cancel possible element selection
-		this.contentScript.removeCurrentContentSelector();
-		this.showSitemapSelectorList();
+		try {
+			await this.contentScript.removeCurrentContentSelector().promise();
+		} catch (err) {
+			console.error(err);
+		} finally {
+			this.showSitemapSelectorList();
+		}
 	}
 
 	addSelector() {
@@ -1789,7 +1797,7 @@ export default class SitemapController {
 		return this.contentScript.getHTML({ CSSSelector }).promise();
 	}
 
-	previewSelector(button) {
+	async previewSelector(button) {
 		if (!$(button).hasClass('preview')) {
 			const sitemap = this.getCurrentlyEditedSelectorSitemap();
 			const selector = this.getCurrentlyEditedSelector();
@@ -1806,12 +1814,17 @@ export default class SitemapController {
 				$(button).addClass('preview');
 			});
 		} else {
-			this.contentScript.removeCurrentContentSelector();
-			$(button).removeClass('preview');
+			try {
+				await this.contentScript.removeCurrentContentSelector().promise();
+			} catch (err) {
+				console.error(err);
+			} finally {
+				$(button).removeClass('preview');
+			}
 		}
 	}
 
-	previewClickElementSelector(button) {
+	async previewClickElementSelector(button) {
 		if (!$(button).hasClass('preview')) {
 			const sitemap = this.state.currentSitemap;
 			const selector = this.getCurrentlyEditedSelector();
@@ -1829,12 +1842,17 @@ export default class SitemapController {
 				$(button).addClass('preview');
 			});
 		} else {
-			this.contentScript.removeCurrentContentSelector();
-			$(button).removeClass('preview');
+			try {
+				await this.contentScript.removeCurrentContentSelector().promise();
+			} catch (err) {
+				console.error(err);
+			} finally {
+				$(button).removeClass('preview');
+			}
 		}
 	}
 
-	previewTableRowSelector(button) {
+	async previewTableRowSelector(button) {
 		if (!$(button).hasClass('preview')) {
 			const sitemap = this.getCurrentlyEditedSelectorSitemap();
 			const selector = this.getCurrentlyEditedSelector();
@@ -1854,12 +1872,17 @@ export default class SitemapController {
 				$(button).addClass('preview');
 			});
 		} else {
-			this.contentScript.removeCurrentContentSelector();
-			$(button).removeClass('preview');
+			try {
+				await this.contentScript.removeCurrentContentSelector().promise();
+			} catch (err) {
+				console.error(err);
+			} finally {
+				$(button).removeClass('preview');
+			}
 		}
 	}
 
-	previewSelectorFromSelectorTree(button) {
+	async previewSelectorFromSelectorTree(button) {
 		if (!$(button).hasClass('preview')) {
 			const sitemap = this.state.currentSitemap;
 			const selector = $(button).closest('tr').data('selector');
@@ -1876,8 +1899,13 @@ export default class SitemapController {
 				$(button).addClass('preview');
 			});
 		} else {
-			this.contentScript.removeCurrentContentSelector();
-			$(button).removeClass('preview');
+			try {
+				await this.contentScript.removeCurrentContentSelector().promise();
+			} catch (err) {
+				console.error(err);
+			} finally {
+				$(button).removeClass('preview');
+			}
 		}
 	}
 

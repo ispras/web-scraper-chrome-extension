@@ -10,13 +10,9 @@ let ContentScript = {
 	 * @param request.CSSSelector	css selector as string
 	 * @returns $.Deferred()
 	 */
-	getHTML: function(request) {
+	getHTML: function (request) {
 		let deferredHTML = $.Deferred();
-		let html = $(request.CSSSelector)
-			.clone()
-			.wrap('<p>')
-			.parent()
-			.html();
+		let html = $(request.CSSSelector).clone().wrap('<p>').parent().html();
 		deferredHTML.resolve(html);
 		return deferredHTML.promise();
 	},
@@ -25,7 +21,7 @@ let ContentScript = {
 	 * Removes current content selector if is in use within the page
 	 * @returns $.Deferred()
 	 */
-	removeCurrentContentSelector: function() {
+	removeCurrentContentSelector: function () {
 		let deferredResponse = $.Deferred();
 		let contentSelector = window.cs;
 		if (contentSelector === undefined) {
@@ -44,11 +40,11 @@ let ContentScript = {
 	 * @param request.parentCSSSelector
 	 * @param request.allowedElements
 	 */
-	selectSelector: function(request) {
+	selectSelector: function (request) {
 		const deferredResponse = $.Deferred();
 
 		this.removeCurrentContentSelector().done(
-			function() {
+			function () {
 				let contentSelector = new ContentSelector({
 					parentCSSSelector: request.parentCSSSelector,
 					allowedElements: request.allowedElements,
@@ -58,9 +54,9 @@ let ContentScript = {
 				const deferredCSSSelector = contentSelector.getCSSSelector();
 				deferredCSSSelector
 					.done(
-						function(response) {
+						function (response) {
 							this.removeCurrentContentSelector().done(
-								function() {
+								function () {
 									deferredResponse.resolve(response);
 									window.cs = undefined;
 								}.bind(this)
@@ -68,7 +64,7 @@ let ContentScript = {
 						}.bind(this)
 					)
 					.fail(
-						function(message) {
+						function (message) {
 							deferredResponse.reject(message);
 							window.cs = undefined;
 						}.bind(this)
@@ -84,20 +80,22 @@ let ContentScript = {
 	 * @param request.parentCSSSelector
 	 * @param request.elementCSSSelector
 	 */
-	previewSelector: function(request) {
+	previewSelector: function (request) {
 		let deferredResponse = $.Deferred();
-		this.removeCurrentContentSelector().done(function() {
+		this.removeCurrentContentSelector().done(function () {
 			let contentSelector = new ContentSelector({
 				parentCSSSelector: request.parentCSSSelector,
 			});
 			window.cs = contentSelector;
 
-			let deferredSelectorPreview = contentSelector.previewSelector(request.elementCSSSelector);
+			let deferredSelectorPreview = contentSelector.previewSelector(
+				request.elementCSSSelector
+			);
 			deferredSelectorPreview
-				.done(function() {
+				.done(function () {
 					deferredResponse.resolve();
 				})
-				.fail(function(message) {
+				.fail(function (message) {
 					deferredResponse.reject(message);
 					window.cs = undefined;
 				});
@@ -125,9 +123,9 @@ export default function getContentScript(location) {
 
 		// if called within background script proxy calls to content script
 		contentScript = {};
-		Object.keys(ContentScript).forEach(function(attr) {
+		Object.keys(ContentScript).forEach(function (attr) {
 			if (typeof ContentScript[attr] === 'function') {
-				contentScript[attr] = function(request) {
+				contentScript[attr] = function (request) {
 					let reqToContentScript = {
 						contentScriptCall: true,
 						fn: attr,

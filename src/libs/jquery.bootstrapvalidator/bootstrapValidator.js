@@ -7,8 +7,8 @@
  * @copyright   (c) 2013 - 2014 Nguyen Huu Phuoc
  * @license     MIT
  */
-(function($) {
-	var BootstrapValidator = function(form, options) {
+(function ($) {
+	var BootstrapValidator = function (form, options) {
 		this.$form = $(form);
 		this.options = $.extend({}, $.fn.bootstrapValidator.DEFAULT_OPTIONS, options);
 
@@ -26,7 +26,7 @@
 		// IE 9 supports input event but the event is still not fired if I press the backspace key.
 		// Get IE version
 		// https://gist.github.com/padolsey/527683/#comment-7595
-		var ieVersion = (function() {
+		var ieVersion = (function () {
 			var v = 3,
 				div = document.createElement('div'),
 				a = div.all || [];
@@ -52,7 +52,7 @@
 		/**
 		 * Init form
 		 */
-		_init: function() {
+		_init: function () {
 			var that = this,
 				options = {
 					excluded: this.$form.attr('data-bv-excluded'),
@@ -78,18 +78,18 @@
 				.attr('novalidate', 'novalidate')
 				.addClass(this.options.elementClass)
 				// Disable the default submission first
-				.on('submit.bv', function(e) {
+				.on('submit.bv', function (e) {
 					e.preventDefault();
 					that.validate();
 				})
-				.on('click.bv', this.options.submitButtons, function() {
+				.on('click.bv', this.options.submitButtons, function () {
 					that.$submitButton = $(this);
 					// The user just click the submit button
 					that._submitIfValid = true;
 				})
 				// Find all fields which have either "name" or "data-bv-field" attribute
 				.find('[name], [data-bv-field]')
-				.each(function() {
+				.each(function () {
 					var $field = $(this),
 						field = $field.attr('name') || $field.attr('data-bv-field'),
 						opts = that._parseOptions($field);
@@ -111,12 +111,12 @@
 
 			// Prepare the events
 			if (this.options.onSuccess) {
-				this.$form.on('success.form.bv', function(e) {
+				this.$form.on('success.form.bv', function (e) {
 					$.fn.bootstrapValidator.helpers.call(that.options.onSuccess, [e]);
 				});
 			}
 			if (this.options.onError) {
-				this.$form.on('error.form.bv', function(e) {
+				this.$form.on('error.form.bv', function (e) {
 					$.fn.bootstrapValidator.helpers.call(that.options.onError, [e]);
 				});
 			}
@@ -128,7 +128,7 @@
 		 * @param {jQuery} $field The field element
 		 * @returns {Object}
 		 */
-		_parseOptions: function($field) {
+		_parseOptions: function ($field) {
 			var field = $field.attr('name') || $field.attr('data-bv-field'),
 				validators = {},
 				validator,
@@ -142,16 +142,32 @@
 			for (v in $.fn.bootstrapValidator.validators) {
 				validator = $.fn.bootstrapValidator.validators[v];
 				enabled = $field.attr('data-bv-' + v.toLowerCase()) + '';
-				html5AttrMap = 'function' === typeof validator.enableByHtml5 ? validator.enableByHtml5($field) : null;
+				html5AttrMap =
+					'function' === typeof validator.enableByHtml5
+						? validator.enableByHtml5($field)
+						: null;
 
-				if ((html5AttrMap && enabled !== 'false') || (html5AttrMap !== true && ('' === enabled || 'true' === enabled))) {
+				if (
+					(html5AttrMap && enabled !== 'false') ||
+					(html5AttrMap !== true && ('' === enabled || 'true' === enabled))
+				) {
 					// Try to parse the options via attributes
-					validator.html5Attributes = $.extend({}, { message: 'message', onerror: 'onError', onsuccess: 'onSuccess' }, validator.html5Attributes);
-					validators[v] = $.extend({}, html5AttrMap === true ? {} : html5AttrMap, validators[v]);
+					validator.html5Attributes = $.extend(
+						{},
+						{ message: 'message', onerror: 'onError', onsuccess: 'onSuccess' },
+						validator.html5Attributes
+					);
+					validators[v] = $.extend(
+						{},
+						html5AttrMap === true ? {} : html5AttrMap,
+						validators[v]
+					);
 
 					for (html5AttrName in validator.html5Attributes) {
 						optionName = validator.html5Attributes[html5AttrName];
-						optionValue = $field.attr('data-bv-' + v.toLowerCase() + '-' + html5AttrName);
+						optionValue = $field.attr(
+							'data-bv-' + v.toLowerCase() + '-' + html5AttrName
+						);
 						if (optionValue) {
 							if ('true' === optionValue) {
 								optionValue = true;
@@ -181,7 +197,10 @@
 				emptyOptions = $.isEmptyObject(opts), // Check if the field options are set using HTML attributes
 				emptyValidators = $.isEmptyObject(validators); // Check if the field validators are set using HTML attributes
 
-			if (!emptyValidators || (!emptyOptions && this.options.fields && this.options.fields[field])) {
+			if (
+				!emptyValidators ||
+				(!emptyOptions && this.options.fields && this.options.fields[field])
+			) {
 				opts.validators = validators;
 				return opts;
 			} else {
@@ -194,7 +213,7 @@
 		 *
 		 * @param {String|jQuery} field The field name or field element
 		 */
-		_initField: function(field) {
+		_initField: function (field) {
 			var fields = $([]);
 			switch (typeof field) {
 				case 'object':
@@ -209,7 +228,10 @@
 					break;
 			}
 
-			if (this.options.fields[field] === null || this.options.fields[field].validators === null) {
+			if (
+				this.options.fields[field] === null ||
+				this.options.fields[field].validators === null
+			) {
 				return;
 			}
 
@@ -232,9 +254,19 @@
 				total = fields.length,
 				type = fields.attr('type'),
 				updateAll = total === 1 || 'radio' === type || 'checkbox' === type,
-				event = 'radio' === type || 'checkbox' === type || 'file' === type || 'SELECT' === fields.eq(0).get(0).tagName ? 'change' : this._changeEvent,
-				trigger = (this.options.fields[field].trigger || this.options.trigger || event).split(' '),
-				events = $.map(trigger, function(item) {
+				event =
+					'radio' === type ||
+					'checkbox' === type ||
+					'file' === type ||
+					'SELECT' === fields.eq(0).get(0).tagName
+						? 'change'
+						: this._changeEvent,
+				trigger = (
+					this.options.fields[field].trigger ||
+					this.options.trigger ||
+					event
+				).split(' '),
+				events = $.map(trigger, function (item) {
 					return item + '.update.bv';
 				}).join(' ');
 
@@ -244,18 +276,23 @@
 					$parent = $field.parents(group),
 					// Allow user to indicate where the error messages are shown
 					container = this.options.fields[field].container || this.options.container,
-					$message = container && container !== 'tooltip' && container !== 'popover' ? $(container) : this._getMessageContainer($field, group);
+					$message =
+						container && container !== 'tooltip' && container !== 'popover'
+							? $(container)
+							: this._getMessageContainer($field, group);
 
 				if (container && container !== 'tooltip' && container !== 'popover') {
 					$message.addClass('has-error');
 				}
 
 				// Remove all error messages and feedback icons
-				$message.find('.help-block[data-bv-validator][data-bv-for="' + field + '"]').remove();
+				$message
+					.find('.help-block[data-bv-validator][data-bv-for="' + field + '"]')
+					.remove();
 				$parent.find('i[data-bv-icon-for="' + field + '"]').remove();
 
 				// Whenever the user change the field value, mark it as not validated yet
-				$field.off(events).on(events, function() {
+				$field.off(events).on(events, function () {
 					that.updateStatus($(this), that.STATUS_NOT_VALIDATED);
 				});
 
@@ -277,13 +314,19 @@
 
 					// Prepare the validator events
 					if (this.options.fields[field].validators[validatorName].onSuccess) {
-						$field.on('success.validator.bv', function(e, data) {
-							$.fn.bootstrapValidator.helpers.call(that.options.fields[field].validators[validatorName].onSuccess, [e, data]);
+						$field.on('success.validator.bv', function (e, data) {
+							$.fn.bootstrapValidator.helpers.call(
+								that.options.fields[field].validators[validatorName].onSuccess,
+								[e, data]
+							);
 						});
 					}
 					if (this.options.fields[field].validators[validatorName].onError) {
-						$field.on('error.validator.bv', function(e, data) {
-							$.fn.bootstrapValidator.helpers.call(that.options.fields[field].validators[validatorName].onError, [e, data]);
+						$field.on('error.validator.bv', function (e, data) {
+							$.fn.bootstrapValidator.helpers.call(
+								that.options.fields[field].validators[validatorName].onError,
+								[e, data]
+							);
 						});
 					}
 				}
@@ -309,7 +352,9 @@
 						.attr('data-bv-icon-for', field)
 						// Place it after the label containing the checkbox/radio
 						// so when clicking the icon, it doesn't effect to the checkbox/radio element
-						.insertAfter('checkbox' === type || 'radio' === type ? $field.parent() : $field);
+						.insertAfter(
+							'checkbox' === type || 'radio' === type ? $field.parent() : $field
+						);
 
 					// The feedback icon does not render correctly if there is no label
 					// https://github.com/twbs/bootstrap/issues/12873
@@ -330,23 +375,32 @@
 
 			// Prepare the events
 			if (this.options.fields[field].onSuccess) {
-				fields.on('success.field.bv', function(e, data) {
-					$.fn.bootstrapValidator.helpers.call(that.options.fields[field].onSuccess, [e, data]);
+				fields.on('success.field.bv', function (e, data) {
+					$.fn.bootstrapValidator.helpers.call(that.options.fields[field].onSuccess, [
+						e,
+						data,
+					]);
 				});
 			}
 			if (this.options.fields[field].onError) {
-				fields.on('error.field.bv', function(e, data) {
-					$.fn.bootstrapValidator.helpers.call(that.options.fields[field].onError, [e, data]);
+				fields.on('error.field.bv', function (e, data) {
+					$.fn.bootstrapValidator.helpers.call(that.options.fields[field].onError, [
+						e,
+						data,
+					]);
 				});
 			}
 			if (this.options.fields[field].onStatus) {
-				fields.on('status.field.bv', function(e, data) {
-					$.fn.bootstrapValidator.helpers.call(that.options.fields[field].onStatus, [e, data]);
+				fields.on('status.field.bv', function (e, data) {
+					$.fn.bootstrapValidator.helpers.call(that.options.fields[field].onStatus, [
+						e,
+						data,
+					]);
 				});
 			}
 
 			// Set live mode
-			events = $.map(trigger, function(item) {
+			events = $.map(trigger, function (item) {
 				return item + '.live.bv';
 			}).join(' ');
 			switch (this.options.live) {
@@ -358,7 +412,7 @@
 				case 'enabled':
 				/* falls through */
 				default:
-					fields.off(events).on(events, function() {
+					fields.off(events).on(events, function () {
 						if (that._exceedThreshold($(this))) {
 							that.validateField($(this));
 						}
@@ -380,7 +434,7 @@
 		 * @param {String} validatorName The validator name
 		 * @returns {String}
 		 */
-		_getMessage: function(field, validatorName) {
+		_getMessage: function (field, validatorName) {
 			if (
 				!this.options.fields[field] ||
 				!$.fn.bootstrapValidator.validators[validatorName] ||
@@ -410,7 +464,7 @@
 		 * @param {String} group
 		 * @returns {jQuery}
 		 */
-		_getMessageContainer: function($field, group) {
+		_getMessageContainer: function ($field, group) {
 			var $parent = $field.parent();
 			if ($parent.is(group)) {
 				return $parent;
@@ -424,7 +478,10 @@
 			cssClasses = cssClasses.split(' ');
 			var n = cssClasses.length;
 			for (var i = 0; i < n; i++) {
-				if (/^col-(xs|sm|md|lg)-\d+$/.test(cssClasses[i]) || /^col-(xs|sm|md|lg)-offset-\d+$/.test(cssClasses[i])) {
+				if (
+					/^col-(xs|sm|md|lg)-\d+$/.test(cssClasses[i]) ||
+					/^col-(xs|sm|md|lg)-offset-\d+$/.test(cssClasses[i])
+				) {
 					return $parent;
 				}
 			}
@@ -435,7 +492,7 @@
 		/**
 		 * Called when all validations are completed
 		 */
-		_submit: function() {
+		_submit: function () {
 			var isValid = this.isValid(),
 				eventType = isValid ? 'success.form.bv' : 'error.form.bv',
 				e = $.Event(eventType);
@@ -456,7 +513,7 @@
 		 * @param {jQuery} $field The field element
 		 * @returns {Boolean}
 		 */
-		_isExcluded: function($field) {
+		_isExcluded: function ($field) {
 			var excludedAttr = $field.attr('data-bv-excluded'),
 				// I still need to check the 'name' attribute while initializing the field
 				field = $field.attr('data-bv-field') || $field.attr('name');
@@ -465,7 +522,8 @@
 				case !!field &&
 					this.options.fields &&
 					this.options.fields[field] &&
-					(this.options.fields[field].excluded === 'true' || this.options.fields[field].excluded === true):
+					(this.options.fields[field].excluded === 'true' ||
+						this.options.fields[field].excluded === true):
 				case excludedAttr === 'true':
 				case excludedAttr === '':
 					return true;
@@ -473,7 +531,8 @@
 				case !!field &&
 					this.options.fields &&
 					this.options.fields[field] &&
-					(this.options.fields[field].excluded === 'false' || this.options.fields[field].excluded === false):
+					(this.options.fields[field].excluded === 'false' ||
+						this.options.fields[field].excluded === false):
 				case excludedAttr === 'false':
 					return false;
 
@@ -481,17 +540,22 @@
 					if (this.options.excluded) {
 						// Convert to array first
 						if ('string' === typeof this.options.excluded) {
-							this.options.excluded = $.map(this.options.excluded.split(','), function(item) {
-								// Trim the spaces
-								return $.trim(item);
-							});
+							this.options.excluded = $.map(
+								this.options.excluded.split(','),
+								function (item) {
+									// Trim the spaces
+									return $.trim(item);
+								}
+							);
 						}
 
 						var length = this.options.excluded.length;
 						for (var i = 0; i < length; i++) {
 							if (
-								('string' === typeof this.options.excluded[i] && $field.is(this.options.excluded[i])) ||
-								('function' === typeof this.options.excluded[i] && this.options.excluded[i].call(this, $field, this) === true)
+								('string' === typeof this.options.excluded[i] &&
+									$field.is(this.options.excluded[i])) ||
+								('function' === typeof this.options.excluded[i] &&
+									this.options.excluded[i].call(this, $field, this) === true)
 							) {
 								return true;
 							}
@@ -507,13 +571,23 @@
 		 * @param {jQuery} $field The field element
 		 * @returns {Boolean}
 		 */
-		_exceedThreshold: function($field) {
+		_exceedThreshold: function ($field) {
 			var field = $field.attr('data-bv-field'),
 				threshold = this.options.fields[field].threshold || this.options.threshold;
 			if (!threshold) {
 				return true;
 			}
-			var cannotType = $.inArray($field.attr('type'), ['button', 'checkbox', 'file', 'hidden', 'image', 'radio', 'reset', 'submit']) !== -1;
+			var cannotType =
+				$.inArray($field.attr('type'), [
+					'button',
+					'checkbox',
+					'file',
+					'hidden',
+					'image',
+					'radio',
+					'reset',
+					'submit',
+				]) !== -1;
 			return cannotType || $field.val().length >= threshold;
 		},
 
@@ -527,7 +601,7 @@
 		 *
 		 * @param {jQuery.Event} e The jQuery event object
 		 */
-		_onError: function(e) {
+		_onError: function (e) {
 			if (e.isDefaultPrevented()) {
 				return;
 			}
@@ -537,17 +611,26 @@
 				this.options.live = 'enabled';
 				var that = this;
 				for (var field in this.options.fields) {
-					(function(f) {
+					(function (f) {
 						var fields = that.getFieldElements(f);
 						if (fields.length) {
 							var type = $(fields[0]).attr('type'),
-								event = 'radio' === type || 'checkbox' === type || 'file' === type || 'SELECT' === $(fields[0]).get(0).tagName ? 'change' : that._changeEvent,
-								trigger = that.options.fields[field].trigger || that.options.trigger || event,
-								events = $.map(trigger.split(' '), function(item) {
+								event =
+									'radio' === type ||
+									'checkbox' === type ||
+									'file' === type ||
+									'SELECT' === $(fields[0]).get(0).tagName
+										? 'change'
+										: that._changeEvent,
+								trigger =
+									that.options.fields[field].trigger ||
+									that.options.trigger ||
+									event,
+								events = $.map(trigger.split(' '), function (item) {
 									return item + '.live.bv';
 								}).join(' ');
 
-							fields.off(events).on(events, function() {
+							fields.off(events).on(events, function () {
 								if (that._exceedThreshold($(this))) {
 									that.validateField($(this));
 								}
@@ -577,7 +660,7 @@
 		 *
 		 * @param {jQuery.Event} e The jQuery event object
 		 */
-		_onSuccess: function(e) {
+		_onSuccess: function (e) {
 			if (e.isDefaultPrevented()) {
 				return;
 			}
@@ -592,7 +675,7 @@
 		 * @param {jQuery} $field The field element
 		 * @param {String} [validatorName] The validator name
 		 */
-		_onFieldValidated: function($field, validatorName) {
+		_onFieldValidated: function ($field, validatorName) {
 			var field = $field.attr('data-bv-field'),
 				validators = this.options.fields[field].validators,
 				counter = {},
@@ -642,7 +725,11 @@
 				$field.trigger($.Event('success.field.bv'), data);
 			}
 			// If all validators are completed and there is at least one validator which doesn't pass
-			else if (counter[this.STATUS_NOT_VALIDATED] === 0 && counter[this.STATUS_VALIDATING] === 0 && counter[this.STATUS_INVALID] > 0) {
+			else if (
+				counter[this.STATUS_NOT_VALIDATED] === 0 &&
+				counter[this.STATUS_VALIDATING] === 0 &&
+				counter[this.STATUS_INVALID] > 0
+			) {
 				// Add to the list of invalid fields
 				this.$invalidFields = this.$invalidFields.add($field);
 
@@ -660,10 +747,12 @@
 		 * @param {String} field The field name
 		 * @returns {null|jQuery[]}
 		 */
-		getFieldElements: function(field) {
+		getFieldElements: function (field) {
 			if (!this._cacheFields[field]) {
 				this._cacheFields[field] =
-					this.options.fields[field] && this.options.fields[field].selector ? $(this.options.fields[field].selector) : this.$form.find('[name="' + field + '"]');
+					this.options.fields[field] && this.options.fields[field].selector
+						? $(this.options.fields[field].selector)
+						: this.$form.find('[name="' + field + '"]');
 			}
 
 			return this._cacheFields[field];
@@ -675,7 +764,7 @@
 		 * @param {Boolean} disabled Can be true or false
 		 * @returns {BootstrapValidator}
 		 */
-		disableSubmitButtons: function(disabled) {
+		disableSubmitButtons: function (disabled) {
 			if (!disabled) {
 				this.$form.find(this.options.submitButtons).removeAttr('disabled');
 			} else if (this.options.live !== 'disabled') {
@@ -691,7 +780,7 @@
 		 *
 		 * @returns {BootstrapValidator}
 		 */
-		validate: function() {
+		validate: function () {
 			if (!this.options.fields) {
 				return this;
 			}
@@ -712,7 +801,7 @@
 		 * @param {String|jQuery} field The field name or field element
 		 * @returns {BootstrapValidator}
 		 */
-		validateField: function(field) {
+		validateField: function (field) {
 			var fields = $([]);
 			switch (typeof field) {
 				case 'object':
@@ -751,27 +840,43 @@
 
 					// Don't validate field if it is already done
 					var result = $field.data('bv.result.' + validatorName);
-					if (result === this.STATUS_VALID || result === this.STATUS_INVALID || validators[validatorName].enabled === false) {
+					if (
+						result === this.STATUS_VALID ||
+						result === this.STATUS_INVALID ||
+						validators[validatorName].enabled === false
+					) {
 						this._onFieldValidated($field, validatorName);
 						continue;
 					}
 
 					$field.data('bv.result.' + validatorName, this.STATUS_VALIDATING);
-					validateResult = $.fn.bootstrapValidator.validators[validatorName].validate(this, $field, validators[validatorName]);
+					validateResult = $.fn.bootstrapValidator.validators[validatorName].validate(
+						this,
+						$field,
+						validators[validatorName]
+					);
 
 					// validateResult can be a $.Deferred object ...
 					if ('object' === typeof validateResult && validateResult.resolve) {
-						this.updateStatus(updateAll ? field : $field, this.STATUS_VALIDATING, validatorName);
+						this.updateStatus(
+							updateAll ? field : $field,
+							this.STATUS_VALIDATING,
+							validatorName
+						);
 						$field.data('bv.dfs.' + validatorName, validateResult);
 
-						validateResult.done(function($f, v, isValid, message) {
+						validateResult.done(function ($f, v, isValid, message) {
 							// v is validator name
 							$f.removeData('bv.dfs.' + v);
 							if (message) {
 								that.updateMessage($f, v, message);
 							}
 
-							that.updateStatus(updateAll ? $f.attr('data-bv-field') : $f, isValid ? that.STATUS_VALID : that.STATUS_INVALID, v);
+							that.updateStatus(
+								updateAll ? $f.attr('data-bv-field') : $f,
+								isValid ? that.STATUS_VALID : that.STATUS_INVALID,
+								v
+							);
 
 							if (isValid && that._submitIfValid === true) {
 								// If a remote validator returns true and the form is ready to submit, then do it
@@ -780,13 +885,29 @@
 						});
 					}
 					// ... or object { valid: true/false, message: 'dynamic message' }
-					else if ('object' === typeof validateResult && validateResult.valid !== undefined && validateResult.message !== undefined) {
-						this.updateMessage(updateAll ? field : $field, validatorName, validateResult.message);
-						this.updateStatus(updateAll ? field : $field, validateResult.valid ? this.STATUS_VALID : this.STATUS_INVALID, validatorName);
+					else if (
+						'object' === typeof validateResult &&
+						validateResult.valid !== undefined &&
+						validateResult.message !== undefined
+					) {
+						this.updateMessage(
+							updateAll ? field : $field,
+							validatorName,
+							validateResult.message
+						);
+						this.updateStatus(
+							updateAll ? field : $field,
+							validateResult.valid ? this.STATUS_VALID : this.STATUS_INVALID,
+							validatorName
+						);
 					}
 					// ... or a boolean value
 					else if ('boolean' === typeof validateResult) {
-						this.updateStatus(updateAll ? field : $field, validateResult ? this.STATUS_VALID : this.STATUS_INVALID, validatorName);
+						this.updateStatus(
+							updateAll ? field : $field,
+							validateResult ? this.STATUS_VALID : this.STATUS_INVALID,
+							validatorName
+						);
 					}
 				}
 			}
@@ -802,7 +923,7 @@
 		 * @param {String} message The message
 		 * @returns {BootstrapValidator}
 		 */
-		updateMessage: function(field, validator, message) {
+		updateMessage: function (field, validator, message) {
 			var $fields = $([]);
 			switch (typeof field) {
 				case 'object':
@@ -816,10 +937,16 @@
 					break;
 			}
 
-			$fields.each(function() {
+			$fields.each(function () {
 				$(this)
 					.data('bv.messages')
-					.find('.help-block[data-bv-validator="' + validator + '"][data-bv-for="' + field + '"]')
+					.find(
+						'.help-block[data-bv-validator="' +
+							validator +
+							'"][data-bv-for="' +
+							field +
+							'"]'
+					)
 					.html(message);
 			});
 		},
@@ -832,7 +959,7 @@
 		 * @param {String} [validatorName] The validator name. If null, the method updates validity result for all validators
 		 * @returns {BootstrapValidator}
 		 */
-		updateStatus: function(field, status, validatorName) {
+		updateStatus: function (field, status, validatorName) {
 			var fields = $([]);
 			switch (typeof field) {
 				case 'object':
@@ -864,9 +991,15 @@
 
 				var $parent = $field.parents(group),
 					$message = $field.data('bv.messages'),
-					$allErrors = $message.find('.help-block[data-bv-validator][data-bv-for="' + field + '"]'),
-					$errors = validatorName ? $allErrors.filter('[data-bv-validator="' + validatorName + '"]') : $allErrors,
-					$icon = $parent.find('.form-control-feedback[data-bv-icon-for="' + field + '"]'),
+					$allErrors = $message.find(
+						'.help-block[data-bv-validator][data-bv-for="' + field + '"]'
+					),
+					$errors = validatorName
+						? $allErrors.filter('[data-bv-validator="' + validatorName + '"]')
+						: $allErrors,
+					$icon = $parent.find(
+						'.form-control-feedback[data-bv-icon-for="' + field + '"]'
+					),
 					container = this.options.fields[field].container || this.options.container,
 					isValidField = null;
 
@@ -926,26 +1059,41 @@
 					case this.STATUS_VALID:
 						// If the field is valid (passes all validators)
 						isValidField =
-							$allErrors.filter('[data-bv-result="' + this.STATUS_NOT_VALIDATED + '"]').length === 0
-								? $allErrors.filter('[data-bv-result="' + this.STATUS_VALID + '"]').length === $allErrors.length // All validators are completed
+							$allErrors.filter(
+								'[data-bv-result="' + this.STATUS_NOT_VALIDATED + '"]'
+							).length === 0
+								? $allErrors.filter('[data-bv-result="' + this.STATUS_VALID + '"]')
+										.length === $allErrors.length // All validators are completed
 								: null; // There are some validators that have not done
 						if (isValidField !== null) {
-							this.disableSubmitButtons(this.$submitButton ? !this.isValid() : !isValidField);
+							this.disableSubmitButtons(
+								this.$submitButton ? !this.isValid() : !isValidField
+							);
 							if ($icon) {
 								$icon
 									.removeClass(this.options.feedbackIcons.invalid)
 									.removeClass(this.options.feedbackIcons.validating)
 									.removeClass(this.options.feedbackIcons.valid)
-									.addClass(isValidField ? this.options.feedbackIcons.valid : this.options.feedbackIcons.invalid)
+									.addClass(
+										isValidField
+											? this.options.feedbackIcons.valid
+											: this.options.feedbackIcons.invalid
+									)
 									.show();
 							}
 						}
 
-						$parent.removeClass('has-error has-success').addClass(this.isValidContainer($parent) ? 'has-success' : 'has-error');
+						$parent
+							.removeClass('has-error has-success')
+							.addClass(this.isValidContainer($parent) ? 'has-success' : 'has-error');
 						if ($tab) {
 							$tab.removeClass('bv-tab-success')
 								.removeClass('bv-tab-error')
-								.addClass(this.isValidContainer($tabPane) ? 'bv-tab-success' : 'bv-tab-error');
+								.addClass(
+									this.isValidContainer($tabPane)
+										? 'bv-tab-success'
+										: 'bv-tab-error'
+								);
 						}
 						break;
 
@@ -979,7 +1127,9 @@
 										html: true,
 										placement: 'top',
 										title: $allErrors
-											.filter('[data-bv-result="' + that.STATUS_INVALID + '"]')
+											.filter(
+												'[data-bv-result="' + that.STATUS_INVALID + '"]'
+											)
 											.eq(0)
 											.html(),
 									})
@@ -993,7 +1143,9 @@
 									.popover('destroy')
 									.popover({
 										content: $allErrors
-											.filter('[data-bv-result="' + that.STATUS_INVALID + '"]')
+											.filter(
+												'[data-bv-result="' + that.STATUS_INVALID + '"]'
+											)
 											.eq(0)
 											.html(),
 										html: true,
@@ -1025,7 +1177,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		isValid: function() {
+		isValid: function () {
 			for (var field in this.options.fields) {
 				if (!this.isValidField(field)) {
 					return false;
@@ -1041,7 +1193,7 @@
 		 * @param {String|jQuery} field The field name or field element
 		 * @returns {Boolean}
 		 */
-		isValidField: function(field) {
+		isValidField: function (field) {
 			var fields = $([]);
 			switch (typeof field) {
 				case 'object':
@@ -1054,7 +1206,11 @@
 				default:
 					break;
 			}
-			if (fields.length === 0 || this.options.fields[field] === null || this.options.fields[field].enabled === false) {
+			if (
+				fields.length === 0 ||
+				this.options.fields[field] === null ||
+				this.options.fields[field].enabled === false
+			) {
 				return true;
 			}
 
@@ -1091,7 +1247,7 @@
 		 * @param {String|jQuery} container The container selector or element
 		 * @returns {Boolean}
 		 */
-		isValidContainer: function(container) {
+		isValidContainer: function (container) {
 			var that = this,
 				map = {},
 				$container = 'string' === typeof container ? $(container) : container;
@@ -1099,7 +1255,7 @@
 				return true;
 			}
 
-			$container.find('[data-bv-field]').each(function() {
+			$container.find('[data-bv-field]').each(function () {
 				var $field = $(this),
 					field = $field.attr('data-bv-field');
 				if (!that._isExcluded($field) && !map[field]) {
@@ -1113,10 +1269,14 @@
 					$f
 						.data('bv.messages')
 						.find('.help-block[data-bv-validator][data-bv-for="' + field + '"]')
-						.filter(function() {
+						.filter(function () {
 							var v = $(this).attr('data-bv-validator'),
 								f = $(this).attr('data-bv-for');
-							return that.options.fields[f].validators[v].enabled !== false && $f.data('bv.result.' + v) && $f.data('bv.result.' + v) !== that.STATUS_VALID;
+							return (
+								that.options.fields[f].validators[v].enabled !== false &&
+								$f.data('bv.result.' + v) &&
+								$f.data('bv.result.' + v) !== that.STATUS_VALID
+							);
 						}).length !== 0
 				) {
 					// The field is not valid
@@ -1131,7 +1291,7 @@
 		 * Submit the form using default submission.
 		 * It also does not perform any validations when submitting the form
 		 */
-		defaultSubmit: function() {
+		defaultSubmit: function () {
 			if (this.$submitButton) {
 				// Create hidden input to send the submit buttons
 				$('<input/>')
@@ -1155,7 +1315,7 @@
 		 *
 		 * @returns {jQuery[]}
 		 */
-		getInvalidFields: function() {
+		getInvalidFields: function () {
 			return this.$invalidFields;
 		},
 
@@ -1164,7 +1324,7 @@
 		 *
 		 * @returns {jQuery}
 		 */
-		getSubmitButton: function() {
+		getSubmitButton: function () {
 			return this.$submitButton;
 		},
 
@@ -1177,7 +1337,7 @@
 		 * If the validator is not defined, the method returns error messages of all validators
 		 * @returns {String[]}
 		 */
-		getMessages: function(field, validator) {
+		getMessages: function (field, validator) {
 			var that = this,
 				messages = [],
 				$fields = $([]);
@@ -1199,15 +1359,24 @@
 			}
 
 			var filter = validator ? '[data-bv-validator="' + validator + '"]' : '';
-			$fields.each(function() {
+			$fields.each(function () {
 				messages = messages.concat(
 					$(this)
 						.data('bv.messages')
-						.find('.help-block[data-bv-for="' + $(this).attr('data-bv-field') + '"][data-bv-result="' + that.STATUS_INVALID + '"]' + filter)
-						.map(function() {
+						.find(
+							'.help-block[data-bv-for="' +
+								$(this).attr('data-bv-field') +
+								'"][data-bv-result="' +
+								that.STATUS_INVALID +
+								'"]' +
+								filter
+						)
+						.map(function () {
 							var v = $(this).attr('data-bv-validator'),
 								f = $(this).attr('data-bv-for');
-							return that.options.fields[f].validators[v].enabled === false ? '' : $(this).html();
+							return that.options.fields[f].validators[v].enabled === false
+								? ''
+								: $(this).html();
 						})
 						.get()
 				);
@@ -1224,7 +1393,7 @@
 		 * @param {String} [option] The option name
 		 * @return {String|Object}
 		 */
-		getOptions: function(field, validator, option) {
+		getOptions: function (field, validator, option) {
 			if (!field) {
 				return this.options;
 			}
@@ -1255,7 +1424,7 @@
 		 * @param {String} value The value to set
 		 * @returns {BootstrapValidator}
 		 */
-		updateOption: function(field, validator, option, value) {
+		updateOption: function (field, validator, option, value) {
 			if ('object' === typeof field) {
 				field = field.attr('data-bv-field');
 			}
@@ -1274,7 +1443,7 @@
 		 * @param {Object} [options] The validator rules
 		 * @returns {BootstrapValidator}
 		 */
-		addField: function(field, options) {
+		addField: function (field, options) {
 			var fields = $([]);
 			switch (typeof field) {
 				case 'object':
@@ -1304,7 +1473,9 @@
 				this.options.fields[field] = $.extend(true, this.options.fields[field], opts);
 
 				// Update the cache
-				this._cacheFields[field] = this._cacheFields[field] ? this._cacheFields[field].add($field) : $field;
+				this._cacheFields[field] = this._cacheFields[field]
+					? this._cacheFields[field].add($field)
+					: $field;
 
 				// Init the element
 				this._initField('checkbox' === type || 'radio' === type ? field : $field);
@@ -1327,7 +1498,7 @@
 		 * @param {String|jQuery} field The field name or field element
 		 * @returns {BootstrapValidator}
 		 */
-		removeField: function(field) {
+		removeField: function (field) {
 			var fields = $([]);
 			switch (typeof field) {
 				case 'object':
@@ -1383,7 +1554,7 @@
 		 * @param {Boolean} [resetValue] If true, the method resets field value to empty or remove checked/selected attribute (for radio/checkbox)
 		 * @returns {BootstrapValidator}
 		 */
-		resetField: function(field, resetValue) {
+		resetField: function (field, resetValue) {
 			var $fields = $([]);
 			switch (typeof field) {
 				case 'object':
@@ -1411,7 +1582,9 @@
 
 			if (resetValue) {
 				var type = $fields.attr('type');
-				'radio' === type || 'checkbox' === type ? $fields.removeAttr('checked').removeAttr('selected') : $fields.val('');
+				'radio' === type || 'checkbox' === type
+					? $fields.removeAttr('checked').removeAttr('selected')
+					: $fields.val('');
 			}
 
 			return this;
@@ -1423,7 +1596,7 @@
 		 * @param {Boolean} [resetValue] If true, the method resets field value to empty or remove checked/selected attribute (for radio/checkbox)
 		 * @returns {BootstrapValidator}
 		 */
-		resetForm: function(resetValue) {
+		resetForm: function (resetValue) {
 			for (var field in this.options.fields) {
 				this.resetField(field, resetValue);
 			}
@@ -1444,7 +1617,7 @@
 		 * @param {String|jQuery} field The field name of field element
 		 * @returns {BootstrapValidator}
 		 */
-		revalidateField: function(field) {
+		revalidateField: function (field) {
 			this.updateStatus(field, this.STATUS_NOT_VALIDATED).validateField(field);
 
 			return this;
@@ -1458,11 +1631,16 @@
 		 * @param {String} [validatorName] The validator name. If null, all validators will be enabled/disabled
 		 * @returns {BootstrapValidator}
 		 */
-		enableFieldValidators: function(field, enabled, validatorName) {
+		enableFieldValidators: function (field, enabled, validatorName) {
 			var validators = this.options.fields[field].validators;
 
 			// Enable/disable particular validator
-			if (validatorName && validators && validators[validatorName] && validators[validatorName].enabled !== enabled) {
+			if (
+				validatorName &&
+				validators &&
+				validators[validatorName] &&
+				validators[validatorName].enabled !== enabled
+			) {
 				this.options.fields[field].validators[validatorName].enabled = enabled;
 				this.updateStatus(field, this.STATUS_NOT_VALIDATED, validatorName);
 			}
@@ -1497,7 +1675,7 @@
 		 *
 		 * @returns {String}
 		 */
-		getDynamicOption: function(field, option) {
+		getDynamicOption: function (field, option) {
 			var $field = 'string' === typeof field ? this.getFieldElements(field) : field,
 				value = $field.val();
 
@@ -1525,11 +1703,12 @@
 		 * Destroy the plugin
 		 * It will remove all error messages, feedback icons and turn off the events
 		 */
-		destroy: function() {
+		destroy: function () {
 			var field, fields, $field, validator, $icon, container, group;
 			for (field in this.options.fields) {
 				fields = this.getFieldElements(field);
-				(container = this.options.fields[field].container || this.options.container), (group = this.options.fields[field].group || this.options.group);
+				(container = this.options.fields[field].container || this.options.container),
+					(group = this.options.fields[field].group || this.options.group);
 				for (var i = 0; i < fields.length; i++) {
 					$field = fields.eq(i);
 					$field
@@ -1568,7 +1747,9 @@
 						if ($field.data('bv.dfs.' + validator)) {
 							$field.data('bv.dfs.' + validator).reject();
 						}
-						$field.removeData('bv.result.' + validator).removeData('bv.dfs.' + validator);
+						$field
+							.removeData('bv.result.' + validator)
+							.removeData('bv.dfs.' + validator);
 					}
 				}
 			}
@@ -1587,9 +1768,9 @@
 	};
 
 	// Plugin definition
-	$.fn.bootstrapValidator = function(option) {
+	$.fn.bootstrapValidator = function (option) {
 		var params = arguments;
-		return this.each(function() {
+		return this.each(function () {
 			var $this = $(this),
 				data = $this.data('bootstrapValidator'),
 				options = 'object' === typeof option && option;
@@ -1712,7 +1893,7 @@
 		 * - a function
 		 * @param {Array} args The callback arguments
 		 */
-		call: function(functionName, args) {
+		call: function (functionName, args) {
 			if ('function' === typeof functionName) {
 				return functionName.apply(this, args);
 			} else if ('string' === typeof functionName) {
@@ -1738,7 +1919,7 @@
 		 * @param {Array} parameters
 		 * @returns {String}
 		 */
-		format: function(message, parameters) {
+		format: function (message, parameters) {
 			if (!$.isArray(parameters)) {
 				parameters = [parameters];
 			}
@@ -1759,7 +1940,7 @@
 		 * @param {Boolean} [notInFuture] If true, the date must not be in the future
 		 * @returns {Boolean}
 		 */
-		date: function(year, month, day, notInFuture) {
+		date: function (year, month, day, notInFuture) {
 			if (isNaN(year) || isNaN(month) || isNaN(day)) {
 				return false;
 			}
@@ -1787,7 +1968,11 @@
 					currentYear = currentDate.getFullYear(),
 					currentMonth = currentDate.getMonth(),
 					currentDay = currentDate.getDate();
-				return year < currentYear || (year === currentYear && month - 1 < currentMonth) || (year === currentYear && month - 1 === currentMonth && day < currentDay);
+				return (
+					year < currentYear ||
+					(year === currentYear && month - 1 < currentMonth) ||
+					(year === currentYear && month - 1 === currentMonth && day < currentDay)
+				);
 			}
 
 			return true;
@@ -1801,7 +1986,7 @@
 		 * @param {String} value
 		 * @returns {Boolean}
 		 */
-		luhn: function(value) {
+		luhn: function (value) {
 			var length = value.length,
 				mul = 0,
 				prodArr = [
@@ -1824,7 +2009,7 @@
 		 * @param {String} value
 		 * @returns {Boolean}
 		 */
-		mod11And10: function(value) {
+		mod11And10: function (value) {
 			var check = 5,
 				length = value.length;
 			for (var i = 0; i < length; i++) {
@@ -1843,19 +2028,22 @@
 		 * @param {String} [alphabet]
 		 * @returns {Boolean}
 		 */
-		mod37And36: function(value, alphabet) {
+		mod37And36: function (value, alphabet) {
 			alphabet = alphabet || '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 			var modulus = alphabet.length,
 				length = value.length,
 				check = Math.floor(modulus / 2);
 			for (var i = 0; i < length; i++) {
-				check = ((((check || modulus) * 2) % (modulus + 1)) + alphabet.indexOf(value.charAt(i))) % modulus;
+				check =
+					((((check || modulus) * 2) % (modulus + 1)) +
+						alphabet.indexOf(value.charAt(i))) %
+					modulus;
 			}
 			return check === 1;
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.base64 = $.extend($.fn.bootstrapValidator.i18n.base64 || {}, {
 		default: 'Please enter a valid base 64 encoded',
 	});
@@ -1870,17 +2058,19 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
 			}
 
-			return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(value);
+			return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(
+				value
+			);
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.between = $.extend($.fn.bootstrapValidator.i18n.between || {}, {
 		default: 'Please enter a value between %s and %s',
 		notInclusive: 'Please enter a value between %s and %s strictly',
@@ -1894,7 +2084,7 @@
 			inclusive: 'inclusive',
 		},
 
-		enableByHtml5: function($field) {
+		enableByHtml5: function ($field) {
 			if ('range' === $field.attr('type')) {
 				return {
 					min: $field.attr('min'),
@@ -1924,29 +2114,39 @@
 		 * - message: The invalid message
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
 			}
 
-			var min = $.isNumeric(options.min) ? options.min : validator.getDynamicOption($field, options.min),
-				max = $.isNumeric(options.max) ? options.max : validator.getDynamicOption($field, options.max);
+			var min = $.isNumeric(options.min)
+					? options.min
+					: validator.getDynamicOption($field, options.min),
+				max = $.isNumeric(options.max)
+					? options.max
+					: validator.getDynamicOption($field, options.max);
 
 			value = parseFloat(value);
 			return options.inclusive === true || options.inclusive === undefined
 				? {
 						valid: value >= min && value <= max,
-						message: $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.between['default'], [min, max]),
+						message: $.fn.bootstrapValidator.helpers.format(
+							options.message || $.fn.bootstrapValidator.i18n.between['default'],
+							[min, max]
+						),
 				  }
 				: {
 						valid: value > min && value < max,
-						message: $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.between.notInclusive, [min, max]),
+						message: $.fn.bootstrapValidator.helpers.format(
+							options.message || $.fn.bootstrapValidator.i18n.between.notInclusive,
+							[min, max]
+						),
 				  };
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.callback = $.extend($.fn.bootstrapValidator.i18n.callback || {}, {
 		default: 'Please enter a valid value',
 	});
@@ -1972,12 +2172,16 @@
 		 * - message: The invalid message
 		 * @returns {Boolean|Deferred}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 
 			if (options.callback) {
 				var dfd = new $.Deferred(),
-					response = $.fn.bootstrapValidator.helpers.call(options.callback, [value, validator, $field]);
+					response = $.fn.bootstrapValidator.helpers.call(options.callback, [
+						value,
+						validator,
+						$field,
+					]);
 				dfd.resolve(
 					$field,
 					'callback',
@@ -1991,7 +2195,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.choice = $.extend($.fn.bootstrapValidator.i18n.choice || {}, {
 		default: 'Please enter a valid value',
 		less: 'Please choose %s options at minimum',
@@ -2025,33 +2229,54 @@
 		 * - message: The invalid message
 		 * @returns {Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var numChoices = $field.is('select')
 					? validator
 							.getFieldElements($field.attr('data-bv-field'))
 							.find('option')
 							.filter(':selected').length
-					: validator.getFieldElements($field.attr('data-bv-field')).filter(':checked').length,
-				min = options.min ? ($.isNumeric(options.min) ? options.min : validator.getDynamicOption($field, options.min)) : null,
-				max = options.max ? ($.isNumeric(options.max) ? options.max : validator.getDynamicOption($field, options.max)) : null,
+					: validator.getFieldElements($field.attr('data-bv-field')).filter(':checked')
+							.length,
+				min = options.min
+					? $.isNumeric(options.min)
+						? options.min
+						: validator.getDynamicOption($field, options.min)
+					: null,
+				max = options.max
+					? $.isNumeric(options.max)
+						? options.max
+						: validator.getDynamicOption($field, options.max)
+					: null,
 				isValid = true,
 				message = options.message || $.fn.bootstrapValidator.i18n.choice['default'];
 
-			if ((min && numChoices < parseInt(min, 10)) || (max && numChoices > parseInt(max, 10))) {
+			if (
+				(min && numChoices < parseInt(min, 10)) ||
+				(max && numChoices > parseInt(max, 10))
+			) {
 				isValid = false;
 			}
 
 			switch (true) {
 				case !!min && !!max:
-					message = $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.choice.between, [parseInt(min, 10), parseInt(max, 10)]);
+					message = $.fn.bootstrapValidator.helpers.format(
+						options.message || $.fn.bootstrapValidator.i18n.choice.between,
+						[parseInt(min, 10), parseInt(max, 10)]
+					);
 					break;
 
 				case !!min:
-					message = $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.choice.less, parseInt(min, 10));
+					message = $.fn.bootstrapValidator.helpers.format(
+						options.message || $.fn.bootstrapValidator.i18n.choice.less,
+						parseInt(min, 10)
+					);
 					break;
 
 				case !!max:
-					message = $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.choice.more, parseInt(max, 10));
+					message = $.fn.bootstrapValidator.helpers.format(
+						options.message || $.fn.bootstrapValidator.i18n.choice.more,
+						parseInt(max, 10)
+					);
 					break;
 
 				default:
@@ -2062,10 +2287,13 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
-	$.fn.bootstrapValidator.i18n.creditCard = $.extend($.fn.bootstrapValidator.i18n.creditCard || {}, {
-		default: 'Please enter a valid credit card number',
-	});
+(function ($) {
+	$.fn.bootstrapValidator.i18n.creditCard = $.extend(
+		$.fn.bootstrapValidator.i18n.creditCard || {},
+		{
+			default: 'Please enter a valid credit card number',
+		}
+	);
 
 	$.fn.bootstrapValidator.validators.creditCard = {
 		/**
@@ -2078,7 +2306,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2157,7 +2385,19 @@
 				},
 				MAESTRO: {
 					length: [12, 13, 14, 15, 16, 17, 18, 19],
-					prefix: ['5018', '5020', '5038', '6304', '6759', '6761', '6762', '6763', '6764', '6765', '6766'],
+					prefix: [
+						'5018',
+						'5020',
+						'5038',
+						'6304',
+						'6759',
+						'6761',
+						'6762',
+						'6763',
+						'6764',
+						'6765',
+						'6766',
+					],
 				},
 				MASTERCARD: {
 					length: [16],
@@ -2221,7 +2461,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.cusip = $.extend($.fn.bootstrapValidator.i18n.cusip || {}, {
 		default: 'Please enter a valid CUSIP number',
 	});
@@ -2240,7 +2480,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2251,7 +2491,7 @@
 				return false;
 			}
 
-			var converted = $.map(value.split(''), function(item) {
+			var converted = $.map(value.split(''), function (item) {
 					var code = item.charCodeAt(0);
 					return code >= 'A'.charCodeAt(0) && code <= 'Z'.charCodeAt(0)
 						? // Replace A, B, C, ..., Z with 10, 11, ..., 35
@@ -2276,7 +2516,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.cvv = $.extend($.fn.bootstrapValidator.i18n.cvv || {}, {
 		default: 'Please enter a valid CVV number',
 	});
@@ -2297,7 +2537,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2382,7 +2622,19 @@
 				},
 				MAESTRO: {
 					length: [12, 13, 14, 15, 16, 17, 18, 19],
-					prefix: ['5018', '5020', '5038', '6304', '6759', '6761', '6762', '6763', '6764', '6765', '6766'],
+					prefix: [
+						'5018',
+						'5020',
+						'5038',
+						'6304',
+						'6759',
+						'6761',
+						'6762',
+						'6763',
+						'6764',
+						'6765',
+						'6766',
+					],
 				},
 				MASTERCARD: {
 					length: [16],
@@ -2434,7 +2686,8 @@
 			for (type in cards) {
 				for (i in cards[type].prefix) {
 					if (
-						creditCard.substr(0, cards[type].prefix[i].length) === cards[type].prefix[i] && // Check the prefix
+						creditCard.substr(0, cards[type].prefix[i].length) ===
+							cards[type].prefix[i] && // Check the prefix
 						$.inArray(creditCard.length, cards[type].length) !== -1
 					) {
 						// and length
@@ -2444,11 +2697,15 @@
 				}
 			}
 
-			return creditCardType === null ? false : 'AMERICAN_EXPRESS' === creditCardType ? value.length === 4 : value.length === 3;
+			return creditCardType === null
+				? false
+				: 'AMERICAN_EXPRESS' === creditCardType
+				? value.length === 4
+				: value.length === 3;
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.date = $.extend($.fn.bootstrapValidator.i18n.date || {}, {
 		default: 'Please enter a valid date',
 	});
@@ -2478,7 +2735,7 @@
 		 * ii) date, time and A (indicating AM or PM)
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2568,10 +2825,13 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
-	$.fn.bootstrapValidator.i18n.different = $.extend($.fn.bootstrapValidator.i18n.different || {}, {
-		default: 'Please enter a different value',
-	});
+(function ($) {
+	$.fn.bootstrapValidator.i18n.different = $.extend(
+		$.fn.bootstrapValidator.i18n.different || {},
+		{
+			default: 'Please enter a different value',
+		}
+	);
 
 	$.fn.bootstrapValidator.validators.different = {
 		html5Attributes: {
@@ -2589,7 +2849,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2609,7 +2869,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.digits = $.extend($.fn.bootstrapValidator.i18n.digits || {}, {
 		default: 'Please enter only digits',
 	});
@@ -2623,7 +2883,7 @@
 		 * @param {Object} [options]
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2633,7 +2893,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.ean = $.extend($.fn.bootstrapValidator.i18n.ean || {}, {
 		default: 'Please enter a valid EAN number',
 	});
@@ -2652,7 +2912,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2673,13 +2933,16 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
-	$.fn.bootstrapValidator.i18n.emailAddress = $.extend($.fn.bootstrapValidator.i18n.emailAddress || {}, {
-		default: 'Please enter a valid email address',
-	});
+(function ($) {
+	$.fn.bootstrapValidator.i18n.emailAddress = $.extend(
+		$.fn.bootstrapValidator.i18n.emailAddress || {},
+		{
+			default: 'Please enter a valid email address',
+		}
+	);
 
 	$.fn.bootstrapValidator.validators.emailAddress = {
-		enableByHtml5: function($field) {
+		enableByHtml5: function ($field) {
 			return 'email' === $field.attr('type');
 		},
 
@@ -2691,7 +2954,7 @@
 		 * @param {Object} [options]
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2704,7 +2967,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.file = $.extend($.fn.bootstrapValidator.i18n.file || {}, {
 		default: 'Please choose a valid file',
 	});
@@ -2729,7 +2992,7 @@
 		 * - type: The allowed MIME type, separated by a comma
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2773,11 +3036,14 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
-	$.fn.bootstrapValidator.i18n.greaterThan = $.extend($.fn.bootstrapValidator.i18n.greaterThan || {}, {
-		default: 'Please enter a value greater than or equal to %s',
-		notInclusive: 'Please enter a value greater than %s',
-	});
+(function ($) {
+	$.fn.bootstrapValidator.i18n.greaterThan = $.extend(
+		$.fn.bootstrapValidator.i18n.greaterThan || {},
+		{
+			default: 'Please enter a value greater than or equal to %s',
+			notInclusive: 'Please enter a value greater than %s',
+		}
+	);
 
 	$.fn.bootstrapValidator.validators.greaterThan = {
 		html5Attributes: {
@@ -2786,7 +3052,7 @@
 			inclusive: 'inclusive',
 		},
 
-		enableByHtml5: function($field) {
+		enableByHtml5: function ($field) {
 			var min = $field.attr('min');
 			if (min) {
 				return {
@@ -2813,28 +3079,37 @@
 		 * - message: The invalid message
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
 			}
 
-			var compareTo = $.isNumeric(options.value) ? options.value : validator.getDynamicOption($field, options.value);
+			var compareTo = $.isNumeric(options.value)
+				? options.value
+				: validator.getDynamicOption($field, options.value);
 
 			value = parseFloat(value);
 			return options.inclusive === true || options.inclusive === undefined
 				? {
 						valid: value >= compareTo,
-						message: $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.greaterThan['default'], compareTo),
+						message: $.fn.bootstrapValidator.helpers.format(
+							options.message || $.fn.bootstrapValidator.i18n.greaterThan['default'],
+							compareTo
+						),
 				  }
 				: {
 						valid: value > compareTo,
-						message: $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.greaterThan.notInclusive, compareTo),
+						message: $.fn.bootstrapValidator.helpers.format(
+							options.message ||
+								$.fn.bootstrapValidator.i18n.greaterThan.notInclusive,
+							compareTo
+						),
 				  };
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.grid = $.extend($.fn.bootstrapValidator.i18n.grid || {}, {
 		default: 'Please enter a valid GRId number',
 	});
@@ -2853,14 +3128,18 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
 			}
 
 			value = value.toUpperCase();
-			if (!/^[GRID:]*([0-9A-Z]{2})[-\s]*([0-9A-Z]{5})[-\s]*([0-9A-Z]{10})[-\s]*([0-9A-Z]{1})$/g.test(value)) {
+			if (
+				!/^[GRID:]*([0-9A-Z]{2})[-\s]*([0-9A-Z]{5})[-\s]*([0-9A-Z]{10})[-\s]*([0-9A-Z]{1})$/g.test(
+					value
+				)
+			) {
 				return false;
 			}
 			value = value.replace(/\s/g, '').replace(/-/g, '');
@@ -2871,7 +3150,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.hex = $.extend($.fn.bootstrapValidator.i18n.hex || {}, {
 		default: 'Please enter a valid hexadecimal number',
 	});
@@ -2886,7 +3165,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2896,13 +3175,13 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.hexColor = $.extend($.fn.bootstrapValidator.i18n.hexColor || {}, {
 		default: 'Please enter a valid hex color',
 	});
 
 	$.fn.bootstrapValidator.validators.hexColor = {
-		enableByHtml5: function($field) {
+		enableByHtml5: function ($field) {
 			return 'color' === $field.attr('type');
 		},
 
@@ -2915,7 +3194,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -2924,7 +3203,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.iban = $.extend($.fn.bootstrapValidator.i18n.iban || {}, {
 		default: 'Please enter a valid IBAN number',
 		countryNotSupported: 'The country code %s is not supported',
@@ -3118,7 +3397,7 @@
 		 *      - A callback function that returns the country code
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -3136,7 +3415,10 @@
 			if (!this.REGEX[country]) {
 				return {
 					valid: false,
-					message: $.fn.bootstrapValidator.helpers.format($.fn.bootstrapValidator.i18n.iban.countryNotSupported, country),
+					message: $.fn.bootstrapValidator.helpers.format(
+						$.fn.bootstrapValidator.i18n.iban.countryNotSupported,
+						country
+					),
 				};
 			}
 
@@ -3151,7 +3433,7 @@
 			}
 
 			value = value.substr(4) + value.substr(0, 4);
-			value = $.map(value.split(''), function(n) {
+			value = $.map(value.split(''), function (n) {
 				var code = n.charCodeAt(0);
 				return code >= 'A'.charCodeAt(0) && code <= 'Z'.charCodeAt(0)
 					? // Replace A, B, C, ..., Z with 10, 11, ..., 35
@@ -3168,12 +3450,15 @@
 
 			return {
 				valid: temp === 1,
-				message: $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.iban.country, $.fn.bootstrapValidator.i18n.iban.countries[country]),
+				message: $.fn.bootstrapValidator.helpers.format(
+					options.message || $.fn.bootstrapValidator.i18n.iban.country,
+					$.fn.bootstrapValidator.i18n.iban.countries[country]
+				),
 			};
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.id = $.extend($.fn.bootstrapValidator.i18n.id || {}, {
 		default: 'Please enter a valid identification number',
 		countryNotSupported: 'The country code %s is not supported',
@@ -3214,7 +3499,33 @@
 		},
 
 		// Supported country codes
-		COUNTRY_CODES: ['BA', 'BG', 'BR', 'CH', 'CL', 'CZ', 'DK', 'EE', 'ES', 'FI', 'HR', 'IE', 'IS', 'LT', 'LV', 'ME', 'MK', 'NL', 'RO', 'RS', 'SE', 'SI', 'SK', 'SM', 'ZA'],
+		COUNTRY_CODES: [
+			'BA',
+			'BG',
+			'BR',
+			'CH',
+			'CL',
+			'CZ',
+			'DK',
+			'EE',
+			'ES',
+			'FI',
+			'HR',
+			'IE',
+			'IS',
+			'LT',
+			'LV',
+			'ME',
+			'MK',
+			'NL',
+			'RO',
+			'RS',
+			'SE',
+			'SI',
+			'SK',
+			'SM',
+			'ZA',
+		],
 
 		/**
 		 * Validate identification number in different countries
@@ -3231,7 +3542,7 @@
 		 *      - A callback function that returns the country code
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -3240,13 +3551,22 @@
 			var country = options.country;
 			if (!country) {
 				country = value.substr(0, 2);
-			} else if (typeof country !== 'string' || $.inArray(country.toUpperCase(), this.COUNTRY_CODES) === -1) {
+			} else if (
+				typeof country !== 'string' ||
+				$.inArray(country.toUpperCase(), this.COUNTRY_CODES) === -1
+			) {
 				// Determine the country code
 				country = validator.getDynamicOption($field, country);
 			}
 
 			if ($.inArray(country, this.COUNTRY_CODES) === -1) {
-				return { valid: false, message: $.fn.bootstrapValidator.helpers.format($.fn.bootstrapValidator.i18n.id.countryNotSupported, country) };
+				return {
+					valid: false,
+					message: $.fn.bootstrapValidator.helpers.format(
+						$.fn.bootstrapValidator.i18n.id.countryNotSupported,
+						country
+					),
+				};
 			}
 
 			var method = ['_', country.toLowerCase()].join('');
@@ -3274,7 +3594,7 @@
 		 * @param {String} countryCode The ISO country code, can be BA, MK, ME, RS, SI
 		 * @returns {Boolean}
 		 */
-		_validateJMBG: function(value, countryCode) {
+		_validateJMBG: function (value, countryCode) {
 			if (!/^\d{13}$/.test(value)) {
 				return false;
 			}
@@ -3293,7 +3613,8 @@
 			// Validate checksum
 			var sum = 0;
 			for (var i = 0; i < 6; i++) {
-				sum += (7 - i) * (parseInt(value.charAt(i), 10) + parseInt(value.charAt(i + 6), 10));
+				sum +=
+					(7 - i) * (parseInt(value.charAt(i), 10) + parseInt(value.charAt(i + 6), 10));
 			}
 			sum = 11 - (sum % 11);
 			if (sum === 10 || sum === 11) {
@@ -3329,23 +3650,23 @@
 			}
 		},
 
-		_ba: function(value) {
+		_ba: function (value) {
 			return this._validateJMBG(value, 'BA');
 		},
-		_mk: function(value) {
+		_mk: function (value) {
 			return this._validateJMBG(value, 'MK');
 		},
-		_me: function(value) {
+		_me: function (value) {
 			return this._validateJMBG(value, 'ME');
 		},
-		_rs: function(value) {
+		_rs: function (value) {
 			return this._validateJMBG(value, 'RS');
 		},
 
 		/**
 		 * Examples: 0101006500006
 		 */
-		_si: function(value) {
+		_si: function (value) {
 			return this._validateJMBG(value, 'SI');
 		},
 
@@ -3359,7 +3680,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_bg: function(value) {
+		_bg: function (value) {
 			if (!/^\d{10}$/.test(value) && !/^\d{6}\s\d{3}\s\d{1}$/.test(value)) {
 				return false;
 			}
@@ -3399,7 +3720,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_br: function(value) {
+		_br: function (value) {
 			if (/^1{11}|2{11}|3{11}|4{11}|5{11}|6{11}|7{11}|8{11}|9{11}|0{11}$/.test(value)) {
 				return false;
 			}
@@ -3442,7 +3763,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_ch: function(value) {
+		_ch: function (value) {
 			if (!/^756[\.]{0,1}[0-9]{4}[\.]{0,1}[0-9]{4}[\.]{0,1}[0-9]{2}$/.test(value)) {
 				return false;
 			}
@@ -3467,7 +3788,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_cl: function(value) {
+		_cl: function (value) {
 			if (!/^\d{7,8}[-]{0,1}[0-9K]$/i.test(value)) {
 				return false;
 			}
@@ -3498,7 +3819,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_cz: function(value) {
+		_cz: function (value) {
 			if (!/^\d{9,10}$/.test(value)) {
 				return false;
 			}
@@ -3542,7 +3863,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_dk: function(value) {
+		_dk: function (value) {
 			if (!/^[0-9]{6}[-]{0,1}[0-9]{4}$/.test(value)) {
 				return false;
 			}
@@ -3576,7 +3897,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_ee: function(value) {
+		_ee: function (value) {
 			// Use the same format as Lithuanian Personal Code
 			return this._lt(value);
 		},
@@ -3593,7 +3914,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_es: function(value) {
+		_es: function (value) {
 			if (
 				!/^[0-9A-Z]{8}[-]{0,1}[0-9A-Z]$/.test(value) && // DNI
 				!/^[XYZ][-]{0,1}[0-9]{7}[-]{0,1}[0-9A-Z]$/.test(value)
@@ -3623,7 +3944,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_fi: function(value) {
+		_fi: function (value) {
 			if (!/^[0-9]{6}[-+A][0-9]{3}[0-9ABCDEFHJKLMNPRSTUVWXY]$/.test(value)) {
 				return false;
 			}
@@ -3659,7 +3980,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_hr: function(value) {
+		_hr: function (value) {
 			if (!/^[0-9]{11}$/.test(value)) {
 				return false;
 			}
@@ -3676,12 +3997,12 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_ie: function(value) {
+		_ie: function (value) {
 			if (!/^\d{7}[A-W][AHWTX]?$/.test(value)) {
 				return false;
 			}
 
-			var getCheckDigit = function(value) {
+			var getCheckDigit = function (value) {
 				while (value.length < 7) {
 					value = '0' + value;
 				}
@@ -3713,7 +4034,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_is: function(value) {
+		_is: function (value) {
 			if (!/^[0-9]{6}[-]{0,1}[0-9]{4}$/.test(value)) {
 				return false;
 			}
@@ -3748,7 +4069,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_lt: function(value) {
+		_lt: function (value) {
 			if (!/^[0-9]{11}$/.test(value)) {
 				return false;
 			}
@@ -3796,7 +4117,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_lv: function(value) {
+		_lv: function (value) {
 			if (!/^[0-9]{6}[-]{0,1}[0-9]{5}$/.test(value)) {
 				return false;
 			}
@@ -3831,7 +4152,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_nl: function(value) {
+		_nl: function (value) {
 			while (value.length < 9) {
 				value = '0' + value;
 			}
@@ -3864,7 +4185,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_ro: function(value) {
+		_ro: function (value) {
 			if (!/^[0-9]{13}$/.test(value)) {
 				return false;
 			}
@@ -3920,7 +4241,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_se: function(value) {
+		_se: function (value) {
 			if (!/^[0-9]{10}$/.test(value) && !/^[0-9]{6}[-|+][0-9]{4}$/.test(value)) {
 				return false;
 			}
@@ -3946,7 +4267,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_sk: function(value) {
+		_sk: function (value) {
 			// Slovakia uses the same format as Czech Republic
 			return this._cz(value);
 		},
@@ -3958,7 +4279,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_sm: function(value) {
+		_sm: function (value) {
 			return /^\d{5}$/.test(value);
 		},
 
@@ -3972,7 +4293,7 @@
 		 * @param {String} value The ID
 		 * @returns {Boolean}
 		 */
-		_za: function(value) {
+		_za: function (value) {
 			if (!/^[0-9]{10}[0|1][8|9][0-9]$/.test(value)) {
 				return false;
 			}
@@ -3991,10 +4312,13 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
-	$.fn.bootstrapValidator.i18n.identical = $.extend($.fn.bootstrapValidator.i18n.identical || {}, {
-		default: 'Please enter the same value',
-	});
+(function ($) {
+	$.fn.bootstrapValidator.i18n.identical = $.extend(
+		$.fn.bootstrapValidator.i18n.identical || {},
+		{
+			default: 'Please enter the same value',
+		}
+	);
 
 	$.fn.bootstrapValidator.validators.identical = {
 		html5Attributes: {
@@ -4011,7 +4335,7 @@
 		 * - field: The name of field that will be used to compare with current one
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4031,7 +4355,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.imei = $.extend($.fn.bootstrapValidator.i18n.imei || {}, {
 		default: 'Please enter a valid IMEI number',
 	});
@@ -4050,7 +4374,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4075,14 +4399,17 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.integer = $.extend($.fn.bootstrapValidator.i18n.integer || {}, {
 		default: 'Please enter a valid number',
 	});
 
 	$.fn.bootstrapValidator.validators.integer = {
-		enableByHtml5: function($field) {
-			return 'number' === $field.attr('type') && ($field.attr('step') === undefined || $field.attr('step') % 1 === 0);
+		enableByHtml5: function ($field) {
+			return (
+				'number' === $field.attr('type') &&
+				($field.attr('step') === undefined || $field.attr('step') % 1 === 0)
+			);
 		},
 
 		/**
@@ -4094,7 +4421,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4103,7 +4430,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.ip = $.extend($.fn.bootstrapValidator.i18n.ip || {}, {
 		default: 'Please enter a valid IP address',
 		ipv4: 'Please enter a valid IPv4 address',
@@ -4128,7 +4455,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4137,7 +4464,9 @@
 
 			if (options.ipv4) {
 				return {
-					valid: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value),
+					valid: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+						value
+					),
 					message: options.message || $.fn.bootstrapValidator.i18n.ip.ipv4,
 				};
 			} else if (options.ipv6) {
@@ -4153,7 +4482,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.isbn = $.extend($.fn.bootstrapValidator.i18n.isbn || {}, {
 		default: 'Please enter a valid ISBN number',
 	});
@@ -4176,7 +4505,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4239,7 +4568,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.isin = $.extend($.fn.bootstrapValidator.i18n.isin || {}, {
 		default: 'Please enter a valid ISIN number',
 	});
@@ -4263,7 +4592,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4299,7 +4628,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.ismn = $.extend($.fn.bootstrapValidator.i18n.ismn || {}, {
 		default: 'Please enter a valid ISMN number',
 	});
@@ -4318,7 +4647,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4358,7 +4687,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.issn = $.extend($.fn.bootstrapValidator.i18n.issn || {}, {
 		default: 'Please enter a valid ISSN number',
 	});
@@ -4377,7 +4706,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4404,7 +4733,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.lessThan = $.extend($.fn.bootstrapValidator.i18n.lessThan || {}, {
 		default: 'Please enter a value less than or equal to %s',
 		notInclusive: 'Please enter a value less than %s',
@@ -4417,7 +4746,7 @@
 			inclusive: 'inclusive',
 		},
 
-		enableByHtml5: function($field) {
+		enableByHtml5: function ($field) {
 			var max = $field.attr('max');
 			if (max) {
 				return {
@@ -4444,28 +4773,36 @@
 		 * - message: The invalid message
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
 			}
 
-			var compareTo = $.isNumeric(options.value) ? options.value : validator.getDynamicOption($field, options.value);
+			var compareTo = $.isNumeric(options.value)
+				? options.value
+				: validator.getDynamicOption($field, options.value);
 
 			value = parseFloat(value);
 			return options.inclusive === true || options.inclusive === undefined
 				? {
 						valid: value <= compareTo,
-						message: $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.lessThan['default'], compareTo),
+						message: $.fn.bootstrapValidator.helpers.format(
+							options.message || $.fn.bootstrapValidator.i18n.lessThan['default'],
+							compareTo
+						),
 				  }
 				: {
 						valid: value < compareTo,
-						message: $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.lessThan.notInclusive, compareTo),
+						message: $.fn.bootstrapValidator.helpers.format(
+							options.message || $.fn.bootstrapValidator.i18n.lessThan.notInclusive,
+							compareTo
+						),
 				  };
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.mac = $.extend($.fn.bootstrapValidator.i18n.mac || {}, {
 		default: 'Please enter a valid MAC address',
 	});
@@ -4480,7 +4817,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4490,13 +4827,13 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.notEmpty = $.extend($.fn.bootstrapValidator.i18n.notEmpty || {}, {
 		default: 'Please enter a value',
 	});
 
 	$.fn.bootstrapValidator.validators.notEmpty = {
-		enableByHtml5: function($field) {
+		enableByHtml5: function ($field) {
 			var required = $field.attr('required') + '';
 			return 'required' === required || 'true' === required;
 		},
@@ -4509,17 +4846,20 @@
 		 * @param {Object} options
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var type = $field.attr('type');
 			if ('radio' === type || 'checkbox' === type) {
-				return validator.getFieldElements($field.attr('data-bv-field')).filter(':checked').length > 0;
+				return (
+					validator.getFieldElements($field.attr('data-bv-field')).filter(':checked')
+						.length > 0
+				);
 			}
 
 			return $.trim($field.val()) !== '';
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.numeric = $.extend($.fn.bootstrapValidator.i18n.numeric || {}, {
 		default: 'Please enter a valid float number',
 	});
@@ -4530,8 +4870,12 @@
 			separator: 'separator',
 		},
 
-		enableByHtml5: function($field) {
-			return 'number' === $field.attr('type') && $field.attr('step') !== undefined && $field.attr('step') % 1 !== 0;
+		enableByHtml5: function ($field) {
+			return (
+				'number' === $field.attr('type') &&
+				$field.attr('step') !== undefined &&
+				$field.attr('step') % 1 !== 0
+			);
 		},
 
 		/**
@@ -4544,7 +4888,7 @@
 		 * - separator: The decimal separator. Can be "." (default), ","
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4558,7 +4902,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.phone = $.extend($.fn.bootstrapValidator.i18n.phone || {}, {
 		default: 'Please enter a valid phone number',
 		countryNotSupported: 'The country code %s is not supported',
@@ -4595,7 +4939,7 @@
 		 * Currently it only supports United State (US) or United Kingdom (GB) countries
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4610,7 +4954,10 @@
 			if (!country || $.inArray(country.toUpperCase(), this.COUNTRY_CODES) === -1) {
 				return {
 					valid: false,
-					message: $.fn.bootstrapValidator.helpers.format($.fn.bootstrapValidator.i18n.phone.countryNotSupported, country),
+					message: $.fn.bootstrapValidator.helpers.format(
+						$.fn.bootstrapValidator.i18n.phone.countryNotSupported,
+						country
+					),
 				};
 			}
 
@@ -4633,7 +4980,10 @@
 					// Area code may be delimited with (), & sections may be delimited with . or -
 					// Test: http://regexr.com/38mqi
 					value = value.replace(/\D/g, '');
-					isValid = /^(?:(1\-?)|(\+1 ?))?\(?(\d{3})[\)\-\.]?(\d{3})[\-\.]?(\d{4})$/.test(value) && value.length === 10;
+					isValid =
+						/^(?:(1\-?)|(\+1 ?))?\(?(\d{3})[\)\-\.]?(\d{3})[\-\.]?(\d{4})$/.test(
+							value
+						) && value.length === 10;
 					break;
 			}
 
@@ -4647,7 +4997,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.regexp = $.extend($.fn.bootstrapValidator.i18n.regexp || {}, {
 		default: 'Please enter a value matching the pattern',
 	});
@@ -4658,7 +5008,7 @@
 			regexp: 'regexp',
 		},
 
-		enableByHtml5: function($field) {
+		enableByHtml5: function ($field) {
 			var pattern = $field.attr('pattern');
 			if (pattern) {
 				return {
@@ -4678,18 +5028,19 @@
 		 * - regexp: The regular expression you need to check
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
 			}
 
-			var regexp = 'string' === typeof options.regexp ? new RegExp(options.regexp) : options.regexp;
+			var regexp =
+				'string' === typeof options.regexp ? new RegExp(options.regexp) : options.regexp;
 			return regexp.test(value);
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.remote = $.extend($.fn.bootstrapValidator.i18n.remote || {}, {
 		default: 'Please enter a valid value',
 	});
@@ -4717,7 +5068,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean|Deferred}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4747,11 +5098,16 @@
 				dataType: 'json',
 				data: data,
 			});
-			xhr.then(function(response) {
-				dfd.resolve($field, 'remote', response.valid === true || response.valid === 'true', response.message ? response.message : null);
+			xhr.then(function (response) {
+				dfd.resolve(
+					$field,
+					'remote',
+					response.valid === true || response.valid === 'true',
+					response.message ? response.message : null
+				);
 			});
 
-			dfd.fail(function() {
+			dfd.fail(function () {
 				xhr.abort();
 			});
 
@@ -4759,7 +5115,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.rtn = $.extend($.fn.bootstrapValidator.i18n.rtn || {}, {
 		default: 'Please enter a valid RTN number',
 	});
@@ -4777,7 +5133,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4789,13 +5145,16 @@
 
 			var sum = 0;
 			for (var i = 0; i < value.length; i += 3) {
-				sum += parseInt(value.charAt(i), 10) * 3 + parseInt(value.charAt(i + 1), 10) * 7 + parseInt(value.charAt(i + 2), 10);
+				sum +=
+					parseInt(value.charAt(i), 10) * 3 +
+					parseInt(value.charAt(i + 1), 10) * 7 +
+					parseInt(value.charAt(i + 2), 10);
 			}
 			return sum !== 0 && sum % 10 === 0;
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.sedol = $.extend($.fn.bootstrapValidator.i18n.sedol || {}, {
 		default: 'Please enter a valid SEDOL number',
 	});
@@ -4813,7 +5172,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4835,7 +5194,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.siren = $.extend($.fn.bootstrapValidator.i18n.siren || {}, {
 		default: 'Please enter a valid SIREN number',
 	});
@@ -4850,7 +5209,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4863,7 +5222,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.siret = $.extend($.fn.bootstrapValidator.i18n.siret || {}, {
 		default: 'Please enter a valid SIRET number',
 	});
@@ -4878,7 +5237,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4901,7 +5260,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.step = $.extend($.fn.bootstrapValidator.i18n.step || {}, {
 		default: 'Please enter a valid step of %s',
 	});
@@ -4924,7 +5283,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4936,7 +5295,7 @@
 				return false;
 			}
 
-			var round = function(x, precision) {
+			var round = function (x, precision) {
 					var m = Math.pow(10, precision);
 					x = x * m;
 					var sign = (x > 0) | -(x < 0),
@@ -4947,29 +5306,37 @@
 						return Math.round(x) / m;
 					}
 				},
-				floatMod = function(x, y) {
+				floatMod = function (x, y) {
 					if (y === 0.0) {
 						return 1.0;
 					}
 					var dotX = (x + '').split('.'),
 						dotY = (y + '').split('.'),
-						precision = (dotX.length === 1 ? 0 : dotX[1].length) + (dotY.length === 1 ? 0 : dotY[1].length);
+						precision =
+							(dotX.length === 1 ? 0 : dotX[1].length) +
+							(dotY.length === 1 ? 0 : dotY[1].length);
 					return round(x - y * Math.floor(x / y), precision);
 				};
 
 			var mod = floatMod(value - options.baseValue, options.step);
 			return {
 				valid: mod === 0.0 || mod === options.step,
-				message: $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.step['default'], [options.step]),
+				message: $.fn.bootstrapValidator.helpers.format(
+					options.message || $.fn.bootstrapValidator.i18n.step['default'],
+					[options.step]
+				),
 			};
 		},
 	};
 })(window.jQuery);
-(function($) {
-	$.fn.bootstrapValidator.i18n.stringCase = $.extend($.fn.bootstrapValidator.i18n.stringCase || {}, {
-		default: 'Please enter only lowercase characters',
-		upper: 'Please enter only uppercase characters',
-	});
+(function ($) {
+	$.fn.bootstrapValidator.i18n.stringCase = $.extend(
+		$.fn.bootstrapValidator.i18n.stringCase || {},
+		{
+			default: 'Please enter only lowercase characters',
+			upper: 'Please enter only uppercase characters',
+		}
+	);
 
 	$.fn.bootstrapValidator.validators.stringCase = {
 		html5Attributes: {
@@ -4987,7 +5354,7 @@
 		 * - case: Can be 'lower' (default) or 'upper'
 		 * @returns {Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -4995,19 +5362,29 @@
 
 			var stringCase = (options['case'] || 'lower').toLowerCase();
 			return {
-				valid: 'upper' === stringCase ? value === value.toUpperCase() : value === value.toLowerCase(),
-				message: options.message || ('upper' === stringCase ? $.fn.bootstrapValidator.i18n.stringCase.upper : $.fn.bootstrapValidator.i18n.stringCase['default']),
+				valid:
+					'upper' === stringCase
+						? value === value.toUpperCase()
+						: value === value.toLowerCase(),
+				message:
+					options.message ||
+					('upper' === stringCase
+						? $.fn.bootstrapValidator.i18n.stringCase.upper
+						: $.fn.bootstrapValidator.i18n.stringCase['default']),
 			};
 		},
 	};
 })(window.jQuery);
-(function($) {
-	$.fn.bootstrapValidator.i18n.stringLength = $.extend($.fn.bootstrapValidator.i18n.stringLength || {}, {
-		default: 'Please enter a value with valid length',
-		less: 'Please enter less than %s characters',
-		more: 'Please enter more than %s characters',
-		between: 'Please enter value between %s and %s characters long',
-	});
+(function ($) {
+	$.fn.bootstrapValidator.i18n.stringLength = $.extend(
+		$.fn.bootstrapValidator.i18n.stringLength || {},
+		{
+			default: 'Please enter a value with valid length',
+			less: 'Please enter less than %s characters',
+			more: 'Please enter more than %s characters',
+			between: 'Please enter value between %s and %s characters long',
+		}
+	);
 
 	$.fn.bootstrapValidator.validators.stringLength = {
 		html5Attributes: {
@@ -5016,7 +5393,7 @@
 			max: 'max',
 		},
 
-		enableByHtml5: function($field) {
+		enableByHtml5: function ($field) {
 			var maxLength = $field.attr('maxlength');
 			if (maxLength) {
 				return {
@@ -5045,14 +5422,18 @@
 		 * - message: The invalid message
 		 * @returns {Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
 			}
 
-			var min = $.isNumeric(options.min) ? options.min : validator.getDynamicOption($field, options.min),
-				max = $.isNumeric(options.max) ? options.max : validator.getDynamicOption($field, options.max),
+			var min = $.isNumeric(options.min)
+					? options.min
+					: validator.getDynamicOption($field, options.min),
+				max = $.isNumeric(options.max)
+					? options.max
+					: validator.getDynamicOption($field, options.max),
 				length = value.length,
 				isValid = true,
 				message = options.message || $.fn.bootstrapValidator.i18n.stringLength['default'];
@@ -5063,15 +5444,24 @@
 
 			switch (true) {
 				case !!min && !!max:
-					message = $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.stringLength.between, [parseInt(min, 10), parseInt(max, 10)]);
+					message = $.fn.bootstrapValidator.helpers.format(
+						options.message || $.fn.bootstrapValidator.i18n.stringLength.between,
+						[parseInt(min, 10), parseInt(max, 10)]
+					);
 					break;
 
 				case !!min:
-					message = $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.stringLength.more, parseInt(min, 10));
+					message = $.fn.bootstrapValidator.helpers.format(
+						options.message || $.fn.bootstrapValidator.i18n.stringLength.more,
+						parseInt(min, 10)
+					);
 					break;
 
 				case !!max:
-					message = $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.stringLength.less, parseInt(max, 10));
+					message = $.fn.bootstrapValidator.helpers.format(
+						options.message || $.fn.bootstrapValidator.i18n.stringLength.less,
+						parseInt(max, 10)
+					);
 					break;
 
 				default:
@@ -5082,7 +5472,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.uri = $.extend($.fn.bootstrapValidator.i18n.uri || {}, {
 		default: 'Please enter a valid URI',
 	});
@@ -5093,7 +5483,7 @@
 			allowlocal: 'allowLocal',
 		},
 
-		enableByHtml5: function($field) {
+		enableByHtml5: function ($field) {
 			return 'url' === $field.attr('type');
 		},
 
@@ -5107,7 +5497,7 @@
 		 * - allowLocal: Allow the private and local network IP. Default to false
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -5153,7 +5543,9 @@
 						// private & local networks
 						(allowLocal
 							? ''
-							: '(?!(?:10|127)(?:\\.\\d{1,3}){3})' + '(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})' + '(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})') +
+							: '(?!(?:10|127)(?:\\.\\d{1,3}){3})' +
+							  '(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})' +
+							  '(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})') +
 						// IP address dotted notation octets
 						// excludes loopback network 0.0.0.0
 						// excludes reserved space >= 224.0.0.0
@@ -5182,7 +5574,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.uuid = $.extend($.fn.bootstrapValidator.i18n.uuid || {}, {
 		default: 'Please enter a valid UUID number',
 		version: 'Please enter a valid UUID version %s number',
@@ -5205,7 +5597,7 @@
 		 * - version: Can be 3, 4, 5, null
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -5222,13 +5614,16 @@
 			return {
 				valid: null === patterns[version] ? true : patterns[version].test(value),
 				message: options.version
-					? $.fn.bootstrapValidator.helpers.format(options.message || $.fn.bootstrapValidator.i18n.uuid.version, options.version)
+					? $.fn.bootstrapValidator.helpers.format(
+							options.message || $.fn.bootstrapValidator.i18n.uuid.version,
+							options.version
+					  )
 					: options.message || $.fn.bootstrapValidator.i18n.uuid['default'],
 			};
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.vat = $.extend($.fn.bootstrapValidator.i18n.vat || {}, {
 		default: 'Please enter a valid VAT number',
 		countryNotSupported: 'The country code %s is not supported',
@@ -5327,7 +5722,7 @@
 		 *      - A callback function that returns the country code
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -5336,7 +5731,10 @@
 			var country = options.country;
 			if (!country) {
 				country = value.substr(0, 2);
-			} else if (typeof country !== 'string' || $.inArray(country.toUpperCase(), this.COUNTRY_CODES) === -1) {
+			} else if (
+				typeof country !== 'string' ||
+				$.inArray(country.toUpperCase(), this.COUNTRY_CODES) === -1
+			) {
 				// Determine the country code
 				country = validator.getDynamicOption($field, country);
 			}
@@ -5344,7 +5742,10 @@
 			if ($.inArray(country, this.COUNTRY_CODES) === -1) {
 				return {
 					valid: false,
-					message: $.fn.bootstrapValidator.helpers.format($.fn.bootstrapValidator.i18n.vat.countryNotSupported, country),
+					message: $.fn.bootstrapValidator.helpers.format(
+						$.fn.bootstrapValidator.i18n.vat.countryNotSupported,
+						country
+					),
 				};
 			}
 
@@ -5371,7 +5772,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_at: function(value) {
+		_at: function (value) {
 			if (!/^ATU[0-9]{8}$/.test(value)) {
 				return false;
 			}
@@ -5406,7 +5807,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_be: function(value) {
+		_be: function (value) {
 			if (!/^BE[0]{0,1}[0-9]{9}$/.test(value)) {
 				return false;
 			}
@@ -5436,7 +5837,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_bg: function(value) {
+		_bg: function (value) {
 			if (!/^BG[0-9]{9,10}$/.test(value)) {
 				return false;
 			}
@@ -5463,7 +5864,7 @@
 			// Physical persons, foreigners and others
 			else if (value.length === 10) {
 				// Validate Bulgarian national identification numbers
-				var egn = function(value) {
+				var egn = function (value) {
 						// Check the birth date
 						var year = parseInt(value.substr(0, 2), 10) + 1900,
 							month = parseInt(value.substr(2, 2), 10),
@@ -5489,7 +5890,7 @@
 						return sum + '' === value.substr(9, 1);
 					},
 					// Validate Bulgarian personal number of a foreigner
-					pnf = function(value) {
+					pnf = function (value) {
 						var sum = 0,
 							weight = [21, 19, 17, 13, 11, 9, 7, 3, 1];
 						for (var i = 0; i < 9; i++) {
@@ -5499,7 +5900,7 @@
 						return sum + '' === value.substr(9, 1);
 					},
 					// Finally, consider it as a VAT number
-					vat = function(value) {
+					vat = function (value) {
 						var sum = 0,
 							weight = [4, 3, 2, 7, 6, 5, 4, 3, 2];
 						for (var i = 0; i < 9; i++) {
@@ -5526,7 +5927,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_ch: function(value) {
+		_ch: function (value) {
 			if (!/^CHE[0-9]{9}(MWST)?$/.test(value)) {
 				return false;
 			}
@@ -5558,7 +5959,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_cy: function(value) {
+		_cy: function (value) {
 			if (!/^CY[0-5|9]{1}[0-9]{7}[A-Z]{1}$/.test(value)) {
 				return false;
 			}
@@ -5610,7 +6011,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_cz: function(value) {
+		_cz: function (value) {
 			if (!/^CZ[0-9]{8,10}$/.test(value)) {
 				return false;
 			}
@@ -5697,7 +6098,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_de: function(value) {
+		_de: function (value) {
 			if (!/^DE[0-9]{9}$/.test(value)) {
 				return false;
 			}
@@ -5715,7 +6116,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_dk: function(value) {
+		_dk: function (value) {
 			if (!/^DK[0-9]{8}$/.test(value)) {
 				return false;
 			}
@@ -5739,7 +6140,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_ee: function(value) {
+		_ee: function (value) {
 			if (!/^EE[0-9]{9}$/.test(value)) {
 				return false;
 			}
@@ -5769,24 +6170,24 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_es: function(value) {
+		_es: function (value) {
 			if (!/^ES[0-9A-Z][0-9]{7}[0-9A-Z]$/.test(value)) {
 				return false;
 			}
 
 			value = value.substr(2);
-			var dni = function(value) {
+			var dni = function (value) {
 					var check = parseInt(value.substr(0, 8), 10);
 					check = 'TRWAGMYFPDXBNJZSQVHLCKE'[check % 23];
 					return check + '' === value.substr(8, 1);
 				},
-				nie = function(value) {
+				nie = function (value) {
 					var check = ['XYZ'.indexOf(value.charAt(0)), value.substr(1)].join('');
 					check = parseInt(check, 10);
 					check = 'TRWAGMYFPDXBNJZSQVHLCKE'[check % 23];
 					return check + '' === value.substr(8, 1);
 				},
-				cif = function(value) {
+				cif = function (value) {
 					var first = value.charAt(0),
 						check;
 					if ('KLM'.indexOf(first) !== -1) {
@@ -5809,7 +6210,10 @@
 							sum += temp;
 						}
 						sum = 10 - (sum % 10);
-						return sum + '' === value.substr(8, 1) || 'JABCDEFGHI'[sum] === value.substr(8, 1);
+						return (
+							sum + '' === value.substr(8, 1) ||
+							'JABCDEFGHI'[sum] === value.substr(8, 1)
+						);
 					}
 
 					return false;
@@ -5834,7 +6238,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_fi: function(value) {
+		_fi: function (value) {
 			if (!/^FI[0-9]{8}$/.test(value)) {
 				return false;
 			}
@@ -5861,7 +6265,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_fr: function(value) {
+		_fr: function (value) {
 			if (!/^FR[0-9A-Z]{2}[0-9]{9}$/.test(value)) {
 				return false;
 			}
@@ -5881,11 +6285,19 @@
 					check;
 				// First one is digit
 				if (/^[0-9]{1}$/.test(value.charAt(0))) {
-					check = alphabet.indexOf(value.charAt(0)) * 24 + alphabet.indexOf(value.charAt(1)) - 10;
+					check =
+						alphabet.indexOf(value.charAt(0)) * 24 +
+						alphabet.indexOf(value.charAt(1)) -
+						10;
 				} else {
-					check = alphabet.indexOf(value.charAt(0)) * 34 + alphabet.indexOf(value.charAt(1)) - 100;
+					check =
+						alphabet.indexOf(value.charAt(0)) * 34 +
+						alphabet.indexOf(value.charAt(1)) -
+						100;
 				}
-				return (parseInt(value.substr(2), 10) + 1 + Math.floor(check / 11)) % 11 === check % 11;
+				return (
+					(parseInt(value.substr(2), 10) + 1 + Math.floor(check / 11)) % 11 === check % 11
+				);
 			}
 		},
 
@@ -5898,7 +6310,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_gb: function(value) {
+		_gb: function (value) {
 			if (
 				!/^GB[0-9]{9}$/.test(value) /* Standard */ &&
 				!/^GB[0-9]{12}$/.test(value) /* Branches */ &&
@@ -5914,9 +6326,18 @@
 			if (length === 5) {
 				var firstTwo = value.substr(0, 2),
 					lastThree = parseInt(value.substr(2), 10);
-				return ('GD' === firstTwo && lastThree < 500) || ('HA' === firstTwo && lastThree >= 500);
-			} else if (length === 11 && ('GD8888' === value.substr(0, 6) || 'HA8888' === value.substr(0, 6))) {
-				if (('GD' === value.substr(0, 2) && parseInt(value.substr(6, 3), 10) >= 500) || ('HA' === value.substr(0, 2) && parseInt(value.substr(6, 3), 10) < 500)) {
+				return (
+					('GD' === firstTwo && lastThree < 500) ||
+					('HA' === firstTwo && lastThree >= 500)
+				);
+			} else if (
+				length === 11 &&
+				('GD8888' === value.substr(0, 6) || 'HA8888' === value.substr(0, 6))
+			) {
+				if (
+					('GD' === value.substr(0, 2) && parseInt(value.substr(6, 3), 10) >= 500) ||
+					('HA' === value.substr(0, 2) && parseInt(value.substr(6, 3), 10) < 500)
+				) {
 					return false;
 				}
 				return parseInt(value.substr(6, 3), 10) % 97 === parseInt(value.substr(9, 2), 10);
@@ -5947,7 +6368,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_gr: function(value) {
+		_gr: function (value) {
 			if (!/^GR[0-9]{9}$/.test(value)) {
 				return false;
 			}
@@ -5968,7 +6389,7 @@
 		},
 
 		// EL is traditionally prefix of Greek VAT numbers
-		_el: function(value) {
+		_el: function (value) {
 			if (!/^EL[0-9]{9}$/.test(value)) {
 				return false;
 			}
@@ -5986,7 +6407,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_hu: function(value) {
+		_hu: function (value) {
 			if (!/^HU[0-9]{8}$/.test(value)) {
 				return false;
 			}
@@ -6011,7 +6432,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_hr: function(value) {
+		_hr: function (value) {
 			if (!/^HR[0-9]{11}$/.test(value)) {
 				return false;
 			}
@@ -6029,13 +6450,13 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_ie: function(value) {
+		_ie: function (value) {
 			if (!/^IE[0-9]{1}[0-9A-Z\*\+]{1}[0-9]{5}[A-Z]{1,2}$/.test(value)) {
 				return false;
 			}
 
 			value = value.substr(2);
-			var getCheckDigit = function(value) {
+			var getCheckDigit = function (value) {
 				while (value.length < 7) {
 					value = '0' + value;
 				}
@@ -6054,7 +6475,9 @@
 				return value.charAt(7) === getCheckDigit(value.substr(0, 7) + value.substr(8) + '');
 			} else if ('ABCDEFGHIJKLMNOPQRSTUVWXYZ+*'.indexOf(value.charAt(1)) !== -1) {
 				// Old system
-				return value.charAt(7) === getCheckDigit(value.substr(2, 5) + value.substr(0, 1) + '');
+				return (
+					value.charAt(7) === getCheckDigit(value.substr(2, 5) + value.substr(0, 1) + '')
+				);
 			}
 
 			return true;
@@ -6073,7 +6496,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_it: function(value) {
+		_it: function (value) {
 			if (!/^IT[0-9]{11}$/.test(value)) {
 				return false;
 			}
@@ -6104,7 +6527,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_lt: function(value) {
+		_lt: function (value) {
 			if (!/^LT([0-9]{7}1[0-9]{1}|[0-9]{10}1[0-9]{1})$/.test(value)) {
 				return false;
 			}
@@ -6136,7 +6559,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_lu: function(value) {
+		_lu: function (value) {
 			if (!/^LU[0-9]{8}$/.test(value)) {
 				return false;
 			}
@@ -6154,7 +6577,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_lv: function(value) {
+		_lv: function (value) {
 			if (!/^LV[0-9]{11}$/.test(value)) {
 				return false;
 			}
@@ -6205,7 +6628,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_mt: function(value) {
+		_mt: function (value) {
 			if (!/^MT[0-9]{8}$/.test(value)) {
 				return false;
 			}
@@ -6230,7 +6653,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_nl: function(value) {
+		_nl: function (value) {
 			if (!/^NL[0-9]{9}B[0-9]{2}$/.test(value)) {
 				return false;
 			}
@@ -6255,7 +6678,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_no: function(value) {
+		_no: function (value) {
 			if (!/^NO[0-9]{9}$/.test(value)) {
 				return false;
 			}
@@ -6282,7 +6705,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_pl: function(value) {
+		_pl: function (value) {
 			if (!/^PL[0-9]{10}$/.test(value)) {
 				return false;
 			}
@@ -6307,7 +6730,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_pt: function(value) {
+		_pt: function (value) {
 			if (!/^PT[0-9]{9}$/.test(value)) {
 				return false;
 			}
@@ -6335,7 +6758,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_ro: function(value) {
+		_ro: function (value) {
 			if (!/^RO[1-9][0-9]{1,9}$/.test(value)) {
 				return false;
 			}
@@ -6358,7 +6781,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_ru: function(value) {
+		_ru: function (value) {
 			if (!/^RU([0-9]{9}|[0-9]{12})$/.test(value)) {
 				return false;
 			}
@@ -6408,7 +6831,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_rs: function(value) {
+		_rs: function (value) {
 			if (!/^RS[0-9]{9}$/.test(value)) {
 				return false;
 			}
@@ -6436,7 +6859,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_se: function(value) {
+		_se: function (value) {
 			if (!/^SE[0-9]{10}01$/.test(value)) {
 				return false;
 			}
@@ -6454,7 +6877,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_si: function(value) {
+		_si: function (value) {
 			if (!/^SI[0-9]{8}$/.test(value)) {
 				return false;
 			}
@@ -6482,7 +6905,7 @@
 		 * @param {String} value VAT number
 		 * @returns {Boolean}
 		 */
-		_sk: function(value) {
+		_sk: function (value) {
 			if (!/^SK[1-9][0-9][(2-4)|(6-9)][0-9]{7}$/.test(value)) {
 				return false;
 			}
@@ -6491,7 +6914,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.vin = $.extend($.fn.bootstrapValidator.i18n.vin || {}, {
 		default: 'Please enter a valid VIN number',
 	});
@@ -6506,7 +6929,7 @@
 		 * - message: The invalid message
 		 * @returns {Boolean}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '') {
 				return true;
@@ -6569,7 +6992,7 @@
 		},
 	};
 })(window.jQuery);
-(function($) {
+(function ($) {
 	$.fn.bootstrapValidator.i18n.zipCode = $.extend($.fn.bootstrapValidator.i18n.zipCode || {}, {
 		default: 'Please enter a valid zip code',
 		countryNotSupported: 'The country code %s is not supported',
@@ -6627,7 +7050,7 @@
 		 *
 		 * @returns {Boolean|Object}
 		 */
-		validate: function(validator, $field, options) {
+		validate: function (validator, $field, options) {
 			var value = $field.val();
 			if (value === '' || !options.country) {
 				return true;
@@ -6640,7 +7063,13 @@
 			}
 
 			if (!country || $.inArray(country.toUpperCase(), this.COUNTRY_CODES) === -1) {
-				return { valid: false, message: $.fn.bootstrapValidator.helpers.format($.fn.bootstrapValidator.i18n.zipCode.countryNotSupported, country) };
+				return {
+					valid: false,
+					message: $.fn.bootstrapValidator.helpers.format(
+						$.fn.bootstrapValidator.i18n.zipCode.countryNotSupported,
+						country
+					),
+				};
 			}
 
 			var isValid = false;
@@ -6675,7 +7104,9 @@
 					break;
 
 				case 'SG':
-					isValid = /^([0][1-9]|[1-6][0-9]|[7]([0-3]|[5-9])|[8][0-2])(\d{4})$/i.test(value);
+					isValid = /^([0][1-9]|[1-6][0-9]|[7]([0-3]|[5-9])|[8][0-2])(\d{4})$/i.test(
+						value
+					);
 					break;
 
 				case 'US':
@@ -6705,7 +7136,7 @@
 		 * @param {String} value The postcode
 		 * @returns {Boolean}
 		 */
-		_gb: function(value) {
+		_gb: function (value) {
 			var firstChar = '[ABCDEFGHIJKLMNOPRSTUWYZ]', // Does not accept QVX
 				secondChar = '[ABCDEFGHKLMNOPQRSTUVWXY]', // Does not accept IJZ
 				thirdChar = '[ABCDEFGHJKPMNRSTUVWXY]',
@@ -6713,13 +7144,45 @@
 				fifthChar = '[ABDEFGHJLNPQRSTUWXYZ]',
 				regexps = [
 					// AN NAA, ANN NAA, AAN NAA, AANN NAA format
-					new RegExp('^(' + firstChar + '{1}' + secondChar + '?[0-9]{1,2})(\\s*)([0-9]{1}' + fifthChar + '{2})$', 'i'),
+					new RegExp(
+						'^(' +
+							firstChar +
+							'{1}' +
+							secondChar +
+							'?[0-9]{1,2})(\\s*)([0-9]{1}' +
+							fifthChar +
+							'{2})$',
+						'i'
+					),
 					// ANA NAA
-					new RegExp('^(' + firstChar + '{1}[0-9]{1}' + thirdChar + '{1})(\\s*)([0-9]{1}' + fifthChar + '{2})$', 'i'),
+					new RegExp(
+						'^(' +
+							firstChar +
+							'{1}[0-9]{1}' +
+							thirdChar +
+							'{1})(\\s*)([0-9]{1}' +
+							fifthChar +
+							'{2})$',
+						'i'
+					),
 					// AANA NAA
-					new RegExp('^(' + firstChar + '{1}' + secondChar + '{1}?[0-9]{1}' + fourthChar + '{1})(\\s*)([0-9]{1}' + fifthChar + '{2})$', 'i'),
+					new RegExp(
+						'^(' +
+							firstChar +
+							'{1}' +
+							secondChar +
+							'{1}?[0-9]{1}' +
+							fourthChar +
+							'{1})(\\s*)([0-9]{1}' +
+							fifthChar +
+							'{2})$',
+						'i'
+					),
 
-					new RegExp('^(BF1)(\\s*)([0-6]{1}[ABDEFGHJLNPQRST]{1}[ABDEFGHJLNPQRSTUWZYZ]{1})$', 'i'), // BFPO postcodes
+					new RegExp(
+						'^(BF1)(\\s*)([0-6]{1}[ABDEFGHJLNPQRST]{1}[ABDEFGHJLNPQRSTUWZYZ]{1})$',
+						'i'
+					), // BFPO postcodes
 					/^(GIR)(\s*)(0AA)$/i, // Special postcode GIR 0AA
 					/^(BFPO)(\s*)([0-9]{1,4})$/i, // Standard BFPO numbers
 					/^(BFPO)(\s*)(c\/o\s*[0-9]{1,3})$/i, // c/o BFPO numbers

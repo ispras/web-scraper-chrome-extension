@@ -3,7 +3,7 @@ function getSelectorParts(CSSSelector) {
 
 	let resultSelectors = [];
 	let currentSelector = '';
-	selectors.forEach(function(selector) {
+	selectors.forEach(function (selector) {
 		if (selector === ',') {
 			if (currentSelector.trim().length) {
 				resultSelectors.push(currentSelector.trim());
@@ -30,22 +30,22 @@ export default function ElementQuery(CSSSelector, parentElement) {
 
 	let selectedElements = [];
 
-	let addElement = function(element) {
+	let addElement = function (element) {
 		if (selectedElements.indexOf(element) === -1) {
 			selectedElements.push(element);
 		}
 	};
 
 	let selectorParts = getSelectorParts(CSSSelector);
-	selectorParts.forEach(function(selector) {
+	selectorParts.forEach(function (selector) {
 		// handle special case when parent is selected
 		if (selector === '_parent_') {
-			$(parentElement).each(function(i, element) {
+			$(parentElement).each(function (i, element) {
 				addElement(element);
 			});
 		} else {
 			let elements = $(selector, parentElement);
-			elements.each(function(i, element) {
+			elements.each(function (i, element) {
 				addElement(element);
 			});
 		}

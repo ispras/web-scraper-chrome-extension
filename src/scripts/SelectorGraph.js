@@ -4,7 +4,7 @@ export default class SelectorGraph {
 		this.nodes = [];
 		this.nodes.push({ id: '_root', parentSelectors: [] });
 		sitemap.selectors.forEach(
-			function(selector) {
+			function (selector) {
 				this.nodes.push(JSON.parse(JSON.stringify(selector)));
 			}.bind(this)
 		);
@@ -16,7 +16,7 @@ export default class SelectorGraph {
 
 	getLabelAnchors() {
 		var labelAnchors = [];
-		this.nodes.forEach(function(node) {
+		this.nodes.forEach(function (node) {
 			labelAnchors.push({ node: node });
 			labelAnchors.push({ node: node });
 		});
@@ -47,9 +47,9 @@ export default class SelectorGraph {
 	getLinks() {
 		var links = [];
 		this.nodes.forEach(
-			function(selector) {
+			function (selector) {
 				selector.parentSelectors.forEach(
-					function(parentSelectorId) {
+					function (parentSelectorId) {
 						var parentSelector = this.getNodeById(parentSelectorId);
 						links.push({
 							source: selector,
@@ -66,11 +66,7 @@ export default class SelectorGraph {
 	draw(element, w, h) {
 		var labelDistance = 0;
 
-		var vis = d3
-			.select(element)
-			.append('svg:svg')
-			.attr('width', w)
-			.attr('height', h);
+		var vis = d3.select(element).append('svg:svg').attr('width', w).attr('height', h);
 
 		var nodes = this.getNodes();
 		var labelAnchors = this.getLabelAnchors();
@@ -85,7 +81,7 @@ export default class SelectorGraph {
 			.gravity(1)
 			.linkDistance(50)
 			.charge(-3000)
-			.linkStrength(function(x) {
+			.linkStrength(function (x) {
 				return x.weight * 10;
 			});
 
@@ -131,46 +127,43 @@ export default class SelectorGraph {
 			.enter()
 			.append('svg:g')
 			.attr('class', 'anchorNode');
-		anchorNode
-			.append('svg:circle')
-			.attr('r', 0)
-			.style('fill', '#FFF');
+		anchorNode.append('svg:circle').attr('r', 0).style('fill', '#FFF');
 		anchorNode
 			.append('svg:text')
-			.text(function(d, i) {
+			.text(function (d, i) {
 				return i % 2 == 0 ? '' : d.node.id;
 			})
 			.style('fill', '#555')
 			.style('font-family', 'Arial')
 			.style('font-size', 12);
 
-		var updateLink = function() {
-			this.attr('x1', function(d) {
+		var updateLink = function () {
+			this.attr('x1', function (d) {
 				return d.source.x;
 			})
-				.attr('y1', function(d) {
+				.attr('y1', function (d) {
 					return d.source.y;
 				})
-				.attr('x2', function(d) {
+				.attr('x2', function (d) {
 					return d.target.x;
 				})
-				.attr('y2', function(d) {
+				.attr('y2', function (d) {
 					return d.target.y;
 				});
 		};
 
-		var updateNode = function() {
-			this.attr('transform', function(d) {
+		var updateNode = function () {
+			this.attr('transform', function (d) {
 				return 'translate(' + d.x + ',' + d.y + ')';
 			});
 		};
 
-		force.on('tick', function() {
+		force.on('tick', function () {
 			force2.start();
 
 			node.call(updateNode);
 
-			anchorNode.each(function(d, i) {
+			anchorNode.each(function (d, i) {
 				if (i % 2 == 0) {
 					d.x = d.node.x;
 					d.y = d.node.y;
@@ -185,7 +178,10 @@ export default class SelectorGraph {
 					var shiftX = (b.width * (diffX - dist)) / (dist * 2);
 					shiftX = Math.max(-b.width, Math.min(0, shiftX));
 					var shiftY = 5;
-					this.childNodes[1].setAttribute('transform', 'translate(' + shiftX + ',' + shiftY + ')');
+					this.childNodes[1].setAttribute(
+						'transform',
+						'translate(' + shiftX + ',' + shiftY + ')'
+					);
 				}
 			});
 

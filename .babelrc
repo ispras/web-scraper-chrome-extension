@@ -1,19 +1,19 @@
 {
-  "plugins": [
-    "@babel/plugin-proposal-optional-chaining",
-    "@babel/plugin-transform-runtime"
-  ],
-  "presets": [
-    ["@babel/preset-env", {
-      "useBuiltIns": "usage",
-      "corejs": 3,
-      "targets": {
-        "chrome": "44",
-        "opera": "44",
-        "edge": "44",
-        "firefox": "66",
-        "safari": "13"
-      }
-    }]
-  ]
+	"plugins": ["@babel/plugin-proposal-optional-chaining", "@babel/plugin-transform-runtime"],
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				"useBuiltIns": "usage",
+				"corejs": 3,
+				"targets": {
+					"chrome": "44",
+					"opera": "44",
+					"edge": "44",
+					"firefox": "66",
+					"safari": "13"
+				}
+			}
+		]
+	]
 }

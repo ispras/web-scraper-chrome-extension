@@ -1,22 +1,19 @@
-describe("jQuery When call sequentially", function () {
-
+describe('jQuery When call sequentially', function () {
 	var syncCall = function () {
-		return $.Deferred().resolve("sync").promise();
+		return $.Deferred().resolve('sync').promise();
 	};
 
 	var asyncCall = function () {
 		var d = $.Deferred();
 		setTimeout(function () {
-			d.resolve("async");
+			d.resolve('async');
 		}, 0);
 		return d.promise();
 	};
 
-	beforeEach(function () {
-	});
+	beforeEach(function () {});
 
-	it("should return immediately empty array when no calls passed", function () {
-
+	it('should return immediately empty array when no calls passed', function () {
 		var deferred = $.whenCallSequentially([]);
 		expect(deferred.state()).toBe('resolved');
 		var data;
@@ -26,8 +23,7 @@ describe("jQuery When call sequentially", function () {
 		expect(data).toEqual([]);
 	});
 
-	it("should return immediately with data when synchronous call passed", function () {
-
+	it('should return immediately with data when synchronous call passed', function () {
 		var deferred = $.whenCallSequentially([syncCall]);
 		expect(deferred.state()).toBe('resolved');
 		var data;
@@ -37,8 +33,7 @@ describe("jQuery When call sequentially", function () {
 		expect(data).toEqual(['sync']);
 	});
 
-	it("should return immediately with data when multiple synchronous call passed", function () {
-
+	it('should return immediately with data when multiple synchronous call passed', function () {
 		var deferred = $.whenCallSequentially([syncCall, syncCall, syncCall]);
 		expect(deferred.state()).toBe('resolved');
 		var data;
@@ -48,17 +43,19 @@ describe("jQuery When call sequentially", function () {
 		expect(data).toEqual(['sync', 'sync', 'sync']);
 	});
 
-	it("should execute one async job", function () {
-
+	it('should execute one async job', function () {
 		var deferred = $.whenCallSequentially([asyncCall]);
 		expect(deferred.state()).toEqual('pending');
 
-		waitsFor(function () {
-			return deferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return deferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
 			var data;
 			deferred.done(function (res) {
 				data = res;
@@ -67,17 +64,19 @@ describe("jQuery When call sequentially", function () {
 		});
 	});
 
-	it("should execute multiple async jobs", function () {
-
+	it('should execute multiple async jobs', function () {
 		var deferred = $.whenCallSequentially([asyncCall, asyncCall, asyncCall]);
 		expect(deferred.state()).toEqual('pending');
 
-		waitsFor(function () {
-			return deferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return deferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
 			var data;
 			deferred.done(function (res) {
 				data = res;
@@ -86,17 +85,26 @@ describe("jQuery When call sequentially", function () {
 		});
 	});
 
-	it("should execute multiple sync and async jobs", function () {
-
-		var deferred = $.whenCallSequentially([syncCall, syncCall, asyncCall, asyncCall, syncCall, asyncCall]);
+	it('should execute multiple sync and async jobs', function () {
+		var deferred = $.whenCallSequentially([
+			syncCall,
+			syncCall,
+			asyncCall,
+			asyncCall,
+			syncCall,
+			asyncCall,
+		]);
 		expect(deferred.state()).toEqual('pending');
 
-		waitsFor(function () {
-			return deferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return deferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
 			var data;
 			deferred.done(function (res) {
 				data = res;
@@ -105,14 +113,13 @@ describe("jQuery When call sequentially", function () {
 		});
 	});
 
-	it("should allow adding jobs to job array from an async job", function() {
-
+	it('should allow adding jobs to job array from an async job', function () {
 		var jobs = [];
-		var asyncMoreCall = function() {
+		var asyncMoreCall = function () {
 			var d = $.Deferred();
 			setTimeout(function () {
-				d.resolve("asyncmore");
-				jobs.push(asyncCall)
+				d.resolve('asyncmore');
+				jobs.push(asyncCall);
 			}, 0);
 			return d.promise();
 		};
@@ -121,28 +128,29 @@ describe("jQuery When call sequentially", function () {
 		var deferred = $.whenCallSequentially(jobs);
 		expect(deferred.state()).toEqual('pending');
 
-		waitsFor(function () {
-			return deferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return deferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-
 			var data;
 			deferred.done(function (res) {
 				data = res;
 			});
 			expect(data).toEqual(['asyncmore', 'async']);
 		});
-
 	});
 
-	it("should allow adding jobs to job array from a sync job", function() {
-
+	it('should allow adding jobs to job array from a sync job', function () {
 		var jobs = [];
-		var syncMoreCall = function() {
+		var syncMoreCall = function () {
 			var d = $.Deferred();
 			jobs.push(syncCall);
-			d.resolve("syncmore");
+			d.resolve('syncmore');
 			return d.promise();
 		};
 		jobs.push(syncMoreCall);
