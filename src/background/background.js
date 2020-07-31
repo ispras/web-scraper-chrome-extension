@@ -37,12 +37,12 @@ const sendToActiveTab = function (request, callback) {
 			active: true,
 			currentWindow: true,
 		})
-		.then(function (tabs) {
+		.then(tabs => {
 			if (tabs.length < 1) {
 				this.console.log("couldn't find active tab");
 			} else {
 				const tab = tabs[0];
-				browser.tabs.sendMessage(tab.id, request).then(callback);
+				browser.tabs.sendMessage(tab.id, request).then(callback).catch(callback);
 			}
 		});
 };
@@ -116,9 +116,7 @@ browser.runtime.onMessage.addListener(async request => {
 			const backgroundScript = getBackgroundScript('BackgroundScript');
 			// TODO change to promises
 			const deferredResponse = backgroundScript[request.fn](request.request);
-			deferredResponse.done(resolve).reject(err => {
-				reject(err);
-			});
+			deferredResponse.done(resolve).catch(reject);
 		});
 	}
 });

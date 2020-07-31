@@ -37,20 +37,20 @@ let BackgroundScript = {
 	 * @param request.request	request that will be passed to the function
 	 */
 	executeContentScript: function (request) {
-		var reqToContentScript = {
+		const reqToContentScript = {
 			contentScriptCall: true,
 			fn: request.fn,
 			request: request.request,
 		};
-		var deferredResponse = $.Deferred();
+		const deferredResponse = $.Deferred();
 		this.getActiveTabId()
-			.then(function (tabId) {
+			.then(tabId => {
 				browser.tabs
 					.sendMessage(tabId, reqToContentScript)
-					.then(deferredResponse.resolve(response))
-					.catch(deferredResponse.reject(err));
+					.then(deferredResponse.resolve)
+					.catch(deferredResponse.reject);
 			})
-			.catch(deferredResponse.reject(err));
+			.catch(deferredResponse.reject);
 
 		return deferredResponse;
 	},
@@ -64,27 +64,27 @@ export default function getBackgroundScript(location) {
 	// Handle calls from different places
 	if (location === 'BackgroundScript') {
 		return BackgroundScript;
-	} else if (location === 'DevTools' || location === 'ContentScript') {
+	}
+	if (location === 'DevTools' || location === 'ContentScript') {
 		// if called within background script proxy calls to content script
-		var backgroundScript = {};
+		const backgroundScript = {};
 
-		Object.keys(BackgroundScript).forEach(function (attr) {
+		Object.keys(BackgroundScript).forEach(attr => {
 			if (typeof BackgroundScript[attr] === 'function') {
-				backgroundScript[attr] = function (request) {
-					var reqToBackgroundScript = {
+				backgroundScript[attr] = request => {
+					const reqToBackgroundScript = {
 						backgroundScriptCall: true,
 						fn: attr,
-						request: request,
+						request,
 					};
 
-					var deferredResponse = $.Deferred();
+					const deferredResponse = $.Deferred();
 
 					browser.runtime
 						.sendMessage(reqToBackgroundScript)
-						.then(response => {
-							deferredResponse.resolve(response);
-						})
-						.catch(err => deferredResponse.reject(err));
+						.then(deferredResponse.resolve)
+						.catch(deferredResponse.reject);
+
 					return deferredResponse;
 				};
 			} else {
@@ -94,6 +94,6 @@ export default function getBackgroundScript(location) {
 
 		return backgroundScript;
 	} else {
-		throw 'Invalid BackgroundScript initialization - ' + location;
+		throw `Invalid BackgroundScript initialization - ${location}`;
 	}
 }

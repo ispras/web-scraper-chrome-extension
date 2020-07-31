@@ -1230,7 +1230,7 @@ export default class SitemapController {
 		try {
 			await this.contentScript.removeCurrentContentSelector().promise();
 		} catch (err) {
-			alert(err);
+			console.error(err);
 		} finally {
 			this.showSitemapSelectorList();
 		}
@@ -1817,7 +1817,7 @@ export default class SitemapController {
 			try {
 				await this.contentScript.removeCurrentContentSelector().promise();
 			} catch (err) {
-				alert(err);
+				console.error(err);
 			} finally {
 				$(button).removeClass('preview');
 			}
@@ -1845,7 +1845,7 @@ export default class SitemapController {
 			try {
 				await this.contentScript.removeCurrentContentSelector().promise();
 			} catch (err) {
-				alert(err);
+				console.error(err);
 			} finally {
 				$(button).removeClass('preview');
 			}
@@ -1875,7 +1875,7 @@ export default class SitemapController {
 			try {
 				await this.contentScript.removeCurrentContentSelector().promise();
 			} catch (err) {
-				alert(err);
+				console.error(err);
 			} finally {
 				$(button).removeClass('preview');
 			}
@@ -1902,7 +1902,7 @@ export default class SitemapController {
 			try {
 				await this.contentScript.removeCurrentContentSelector().promise();
 			} catch (err) {
-				alert(err);
+				console.error(err);
 			} finally {
 				$(button).removeClass('preview');
 			}
