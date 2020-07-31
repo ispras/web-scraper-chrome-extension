@@ -11,7 +11,7 @@ export default class ChromePopupBrowser {
 		if (this.window !== undefined) {
 			console.log(JSON.stringify(this.window));
 			// check if tab exists
-			browser.tabs.get(this.tab.id).then(function(tab) {
+			browser.tabs.get(this.tab.id).then(function (tab) {
 				if (!tab) {
 					throw 'Scraping window closed';
 				}
@@ -27,7 +27,7 @@ export default class ChromePopupBrowser {
 			url: 'browser://newtab',
 		};
 
-		browser.windows.create(createWindowOptions).then(function(window) {
+		browser.windows.create(createWindowOptions).then(function (window) {
 			popup_browser.window = window;
 			popup_browser.tab = window.tabs[0];
 			callback.call(scope);
@@ -37,7 +37,7 @@ export default class ChromePopupBrowser {
 	loadUrl(url, callback) {
 		var tab = this.tab;
 
-		var tabLoadListener = function(tabId, changeInfo, tab) {
+		var tabLoadListener = function (tabId, changeInfo, tab) {
 			if (tabId === this.tab.id) {
 				if (changeInfo.status === 'complete') {
 					// @TODO check url ? maybe it would be bad because some sites might use redirects
@@ -62,19 +62,19 @@ export default class ChromePopupBrowser {
 	fetchData(url, sitemap, parentSelectorId, callback, scope) {
 		var current_browser = this;
 
-		this._initPopupWindow(function() {
+		this._initPopupWindow(function () {
 			var tab = current_browser.tab;
 
 			current_browser.loadUrl(
 				url,
-				function() {
+				function () {
 					var message = {
 						extractData: true,
 						sitemap: JSON.parse(JSON.stringify(sitemap)),
 						parentSelectorId: parentSelectorId,
 					};
 
-					browser.tabs.sendMessage(tab.id, message).then(function(data, selectors) {
+					browser.tabs.sendMessage(tab.id, message).then(function (data, selectors) {
 						console.log('extracted data from web page', data);
 
 						if (selectors && scope) {

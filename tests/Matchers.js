@@ -1,5 +1,4 @@
 var getSelectorIds = function (selectors) {
-
 	var ids = [];
 	selectors.forEach(function (selector) {
 		ids.push(selector.id);
@@ -10,18 +9,15 @@ var getSelectorIds = function (selectors) {
 var selectorListSorter = function (a, b) {
 	if (a.id === b.id) {
 		return 0;
-	}
-	else if (a.id > b.id) {
+	} else if (a.id > b.id) {
 		return 1;
-	}
-	else {
+	} else {
 		return -1;
 	}
 };
 
 var selectorMatchers = {
 	matchSelectors: function (expectedIds) {
-
 		expectedIds = expectedIds.sort();
 		var actualIds = getSelectorIds(this.actual).sort();
 
@@ -29,8 +25,7 @@ var selectorMatchers = {
 		return true;
 	},
 	matchSelectorList: function (expectedSelectors) {
-
-		var actualSelectors = this.actual
+		var actualSelectors = this.actual;
 		if (expectedSelectors.length !== actualSelectors.length) {
 			return false;
 		}
@@ -57,45 +52,51 @@ var selectorMatchers = {
 		}
 		return true;
 	},
-	deferredToEqual: function(expectedData) {
-
+	deferredToEqual: function (expectedData) {
 		var deferredData = this.actual;
 		var data;
 
-		waitsFor(function() {
-			var state = deferredData.state();
-			if(state === "resolved") return true;
-			if(state === "rejected") {
-				expect(state).toEqual("resolved");
-				return true;
-			}
+		waitsFor(
+			function () {
+				var state = deferredData.state();
+				if (state === 'resolved') return true;
+				if (state === 'rejected') {
+					expect(state).toEqual('resolved');
+					return true;
+				}
 
-			return false;
-		}, "wait for data extraction", 5000);
+				return false;
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			deferredData.done(function(d) {
+			deferredData.done(function (d) {
 				data = d;
 			});
 			expect(data).toEqual(expectedData);
 		});
 		return true;
 	},
-	deferredToFail: function() {
-
+	deferredToFail: function () {
 		var deferredData = this.actual;
 
-		waitsFor(function() {
-			var state = deferredData.state();
-			if(state === "rejected") return true;
-			if(state === "resolved") {
-				expect(state).toEqual("rejected");
-				return true;
-			}
+		waitsFor(
+			function () {
+				var state = deferredData.state();
+				if (state === 'rejected') return true;
+				if (state === 'resolved') {
+					expect(state).toEqual('rejected');
+					return true;
+				}
 
-			return false;
-		}, "wait for data extraction", 5000);
+				return false;
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		return true;
-	}
+	},
 };

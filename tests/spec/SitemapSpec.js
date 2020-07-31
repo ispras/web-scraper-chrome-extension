@@ -1,38 +1,30 @@
-describe("Sitemap", function () {
-
+describe('Sitemap', function () {
 	beforeEach(function () {
 		this.addMatchers(selectorMatchers);
 	});
 
-	it("should be able to rename selector with a parent", function () {
-
+	it('should be able to rename selector with a parent', function () {
 		var selectors = [
 			{
-				id: "parent",
-				type: "SelectorElement",
-				parentSelectors: [
-					"_root"
-				]
+				id: 'parent',
+				type: 'SelectorElement',
+				parentSelectors: ['_root'],
 			},
 			{
-				id: "a",
-				type: "SelectorText",
-				parentSelectors: [
-					"parent"
-				]
-			}
+				id: 'a',
+				type: 'SelectorText',
+				parentSelectors: ['parent'],
+			},
 		];
 
 		var sitemap = Sitemap.sitemapFromObj({
-			selectors: selectors
+			selectors: selectors,
 		});
 
 		var expected = new Selector({
-			id: "b",
-			type: "SelectorText",
-			parentSelectors: [
-				"parent"
-			]
+			id: 'b',
+			type: 'SelectorText',
+			parentSelectors: ['parent'],
 		});
 
 		// no hard decidions here
@@ -40,43 +32,34 @@ describe("Sitemap", function () {
 		expect(sitemap.selectors[1]).toEqual(expected);
 	});
 
-	it("should be able to rename selector with child selectors", function () {
-
+	it('should be able to rename selector with child selectors', function () {
 		var selectors = [
 			{
-				id: "child",
-				type: "SelectorText",
-				parentSelectors: [
-					"a"
-				]
+				id: 'child',
+				type: 'SelectorText',
+				parentSelectors: ['a'],
 			},
 			{
-				id: "a",
-				type: "SelectorElement",
-				parentSelectors: [
-					"_root"
-				]
-			}
+				id: 'a',
+				type: 'SelectorElement',
+				parentSelectors: ['_root'],
+			},
 		];
 
 		var sitemap = Sitemap.sitemapFromObj({
-			selectors: selectors
+			selectors: selectors,
 		});
 
 		var expected = new Selector({
-			id: "b",
-			type: "SelectorElement",
-			parentSelectors: [
-				"_root"
-			]
+			id: 'b',
+			type: 'SelectorElement',
+			parentSelectors: ['_root'],
 		});
 
 		var expectedChild = new Selector({
-			id: "child",
-			type: "SelectorText",
-			parentSelectors: [
-				"b"
-			]
+			id: 'child',
+			type: 'SelectorText',
+			parentSelectors: ['b'],
 		});
 
 		// no hard decidions here
@@ -85,36 +68,29 @@ describe("Sitemap", function () {
 		expect(sitemap.selectors[0]).toEqual(expectedChild);
 	});
 
-	it("should be able to rename selector who is his own parent", function () {
-
+	it('should be able to rename selector who is his own parent', function () {
 		var selectors = [
 			{
-				id: "a",
-				type: "SelectorElement",
-				parentSelectors: [
-					"a"
-				]
-			}
+				id: 'a',
+				type: 'SelectorElement',
+				parentSelectors: ['a'],
+			},
 		];
 
 		var sitemap = Sitemap.sitemapFromObj({
-			selectors: selectors
+			selectors: selectors,
 		});
 
 		var update = new Selector({
-			id: "b",
-			type: "SelectorElement",
-			parentSelectors: [
-				"a"
-			]
+			id: 'b',
+			type: 'SelectorElement',
+			parentSelectors: ['a'],
 		});
 
 		var expected = new Selector({
-			id: "b",
-			type: "SelectorElement",
-			parentSelectors: [
-				"b"
-			]
+			id: 'b',
+			type: 'SelectorElement',
+			parentSelectors: ['b'],
 		});
 
 		// no hard decidions here
@@ -122,26 +98,21 @@ describe("Sitemap", function () {
 		expect(sitemap.selectors[0]).toEqual(expected);
 	});
 
-	it("should be able to change selector type", function () {
-
+	it('should be able to change selector type', function () {
 		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
-					id: "a",
-					type: "SelectorText",
-					parentSelectors: [
-						"a"
-					]
-				}
-			]
+					id: 'a',
+					type: 'SelectorText',
+					parentSelectors: ['a'],
+				},
+			],
 		});
 
 		var update = new Selector({
-			id: "a",
-			type: "SelectorLink",
-			parentSelectors: [
-				"a"
-			]
+			id: 'a',
+			type: 'SelectorLink',
+			parentSelectors: ['a'],
 		});
 
 		expect(sitemap.selectors[0].canCreateNewJobs()).toEqual(false);
@@ -149,111 +120,102 @@ describe("Sitemap", function () {
 		expect(sitemap.selectors[0].canCreateNewJobs()).toEqual(true);
 	});
 
-	it("should be able to export as JSON", function () {
-
+	it('should be able to export as JSON', function () {
 		var sitemap = Sitemap.sitemapFromObj({
 			_id: 'id',
 			_rev: 'rev',
 			selectors: [
 				{
-					id: "a",
-					type: "SelectorElement",
-					parentSelectors: [
-						"a"
-					]
-				}
-			]
+					id: 'a',
+					type: 'SelectorElement',
+					parentSelectors: ['a'],
+				},
+			],
 		});
 
 		var sitemapJSON = sitemap.exportSitemap();
-		var expectedJSON = '{"_id":"id","selectors":[{"id":"a","type":"SelectorElement","parentSelectors":["a"]}]}';
+		var expectedJSON =
+			'{"_id":"id","selectors":[{"id":"a","type":"SelectorElement","parentSelectors":["a"]}]}';
 		expect(sitemapJSON).toEqual(expectedJSON);
 	});
 
-	it("should be able to import from JSON", function () {
-
+	it('should be able to import from JSON', function () {
 		var expectedSitemap = Sitemap.sitemapFromObj({
 			_id: 'id',
 			selectors: [
 				{
-					id: "a",
-					type: "SelectorElement",
-					parentSelectors: [
-						"a"
-					]
-				}
-			]
+					id: 'a',
+					type: 'SelectorElement',
+					parentSelectors: ['a'],
+				},
+			],
 		});
 
-		var sitemapJSON = '{"_id":"id","selectors":[{"id":"a","type":"SelectorElement","parentSelectors":["a"]}]}';
+		var sitemapJSON =
+			'{"_id":"id","selectors":[{"id":"a","type":"SelectorElement","parentSelectors":["a"]}]}';
 		var sitemap = Sitemap.sitemapFromObj();
 		sitemap.importSitemap(sitemapJSON);
 		expect(sitemap).toEqual(expectedSitemap);
 	});
 
-	it("should be able to export data as CSV", function () {
-
+	it('should be able to export data as CSV', function () {
 		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
-					id: "a",
-					type: "SelectorText",
-					selector: "div"
+					id: 'a',
+					type: 'SelectorText',
+					selector: 'div',
 				},
 				{
-					id: "b",
-					type: "SelectorText",
-					selector: "b"
-				}
-			]
+					id: 'b',
+					type: 'SelectorText',
+					selector: 'b',
+				},
+			],
 		});
 
-		var data = [
-			{a: 'a', b: 'b', c: 'c'}
-		];
-        var blob = sitemap.getDataExportCsvBlob(data, {});
+		var data = [{ a: 'a', b: 'b', c: 'c' }];
+		var blob = sitemap.getDataExportCsvBlob(data, {});
 		// can't access the data so I'm just checking whether this runs
-		expect(blob.toString()).toEqual("[object Blob]");
+		expect(blob.toString()).toEqual('[object Blob]');
 	});
 
-	it("should know what data columns is it going to return", function () {
-
+	it('should know what data columns is it going to return', function () {
 		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
-					id: "a",
-					type: "SelectorText",
-					selector: "div"
+					id: 'a',
+					type: 'SelectorText',
+					selector: 'div',
 				},
 				{
-					id: "b",
-					type: "SelectorLink",
-					selector: "b"
-				}
-			]
+					id: 'b',
+					type: 'SelectorLink',
+					selector: 'b',
+				},
+			],
 		});
 
 		var columns = sitemap.getDataColumns();
 		expect(columns).toEqual(['a', 'b', 'b-href']);
-
 	});
 
-	it("should be able to delete a selector", function () {
+	it('should be able to delete a selector', function () {
 		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
-					id: "a",
-					type: "SelectorText",
-					selector: "div",
-					parentSelectors: ["_root"]
+					id: 'a',
+					type: 'SelectorText',
+					selector: 'div',
+					parentSelectors: ['_root'],
 				},
 				{
-					id: "b",
-					type: "SelectorLink",
-					selector: "b",
-					parentSelectors: ["_root"]
-				}
-			]
+					id: 'b',
+					type: 'SelectorLink',
+					selector: 'b',
+					parentSelectors: ['_root'],
+				},
+			],
 		});
 
 		sitemap.deleteSelector(sitemap.selectors[0]);
@@ -261,162 +223,165 @@ describe("Sitemap", function () {
 		expect(sitemap.selectors.length).toEqual(1);
 	});
 
-	it("should be able to delete a selector with child selectors", function () {
+	it('should be able to delete a selector with child selectors', function () {
 		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
-					id: "a",
-					type: "SelectorText",
-					selector: "div",
-					parentSelectors: ["_root"]
+					id: 'a',
+					type: 'SelectorText',
+					selector: 'div',
+					parentSelectors: ['_root'],
 				},
 				{
-					id: "b",
-					type: "SelectorLink",
-					selector: "b",
-					parentSelectors: ["a"]
-				}
-			]
+					id: 'b',
+					type: 'SelectorLink',
+					selector: 'b',
+					parentSelectors: ['a'],
+				},
+			],
 		});
 
 		sitemap.deleteSelector(sitemap.selectors[0]);
 		expect(sitemap.selectors.length).toEqual(0);
 	});
 
-	it("should not delete selectors if they have multiple parent selectors when deleting one of their parent", function () {
+	it('should not delete selectors if they have multiple parent selectors when deleting one of their parent', function () {
 		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
-					id: "a",
-					type: "SelectorText",
-					selector: "div",
-					parentSelectors: ["_root"]
+					id: 'a',
+					type: 'SelectorText',
+					selector: 'div',
+					parentSelectors: ['_root'],
 				},
 				{
-					id: "b",
-					type: "SelectorLink",
-					selector: "b",
-					parentSelectors: ["a"]
+					id: 'b',
+					type: 'SelectorLink',
+					selector: 'b',
+					parentSelectors: ['a'],
 				},
 				{
-					id: "c",
-					type: "SelectorLink",
-					selector: "c",
-					parentSelectors: ["b", "_root"]
-				}
-			]
+					id: 'c',
+					type: 'SelectorLink',
+					selector: 'c',
+					parentSelectors: ['b', '_root'],
+				},
+			],
 		});
 		var expectedSelector = new Selector({
-			id: "c",
-			type: "SelectorLink",
-			selector: "c",
-			parentSelectors: ["_root"]
+			id: 'c',
+			type: 'SelectorLink',
+			selector: 'c',
+			parentSelectors: ['_root'],
 		});
 
 		sitemap.deleteSelector(sitemap.selectors[0]);
 		expect(sitemap.selectors).toEqual(new SelectorList([expectedSelector]));
 	});
 
-	it("Should return one start url", function(){
+	it('Should return one start url', function () {
 		var sitemap = Sitemap.sitemapFromObj({
-			startUrls:"http://example.com/"
+			startUrls: 'http://example.com/',
 		});
-		var expectedURLS = ["http://example.com/"];
+		var expectedURLS = ['http://example.com/'];
 		expect(sitemap.getStartUrls()).toEqual(expectedURLS);
 	});
 
-	it("Should return multiple start urls", function () {
+	it('Should return multiple start urls', function () {
 		var sitemap = Sitemap.sitemapFromObj({
-			startUrls: "http://example.com/[1-3].html"
+			startUrls: 'http://example.com/[1-3].html',
 		});
 		var expectedURLS = [
-			"http://example.com/1.html",
-			"http://example.com/2.html",
-			"http://example.com/3.html"
+			'http://example.com/1.html',
+			'http://example.com/2.html',
+			'http://example.com/3.html',
 		];
 		expect(sitemap.getStartUrls()).toEqual(expectedURLS);
 	});
 
-	it("Should return multiple start urls with id at the end", function () {
+	it('Should return multiple start urls with id at the end', function () {
 		var sitemap = Sitemap.sitemapFromObj({
-			startUrls: "http://example.com/?id=[1-3]"
+			startUrls: 'http://example.com/?id=[1-3]',
 		});
 		var expectedURLS = [
-			"http://example.com/?id=1",
-			"http://example.com/?id=2",
-			"http://example.com/?id=3"
+			'http://example.com/?id=1',
+			'http://example.com/?id=2',
+			'http://example.com/?id=3',
 		];
 		expect(sitemap.getStartUrls()).toEqual(expectedURLS);
 	});
 
-	it("should return multiple start urls with specified incremental", function () {
+	it('should return multiple start urls with specified incremental', function () {
 		var sitemap = Sitemap.sitemapFromObj({
-			startUrls: "http://example.com/?id=[0-20:10]"
+			startUrls: 'http://example.com/?id=[0-20:10]',
 		});
 		var expectedURLS = [
-			"http://example.com/?id=0",
-			"http://example.com/?id=10",
-			"http://example.com/?id=20"
+			'http://example.com/?id=0',
+			'http://example.com/?id=10',
+			'http://example.com/?id=20',
 		];
 		expect(sitemap.getStartUrls()).toEqual(expectedURLS);
 	});
 
-	it("Should return multiple start urls with padding", function () {
+	it('Should return multiple start urls with padding', function () {
 		var sitemap = Sitemap.sitemapFromObj({
-			startUrls: "http://example.com/[001-003].html"
+			startUrls: 'http://example.com/[001-003].html',
 		});
 		var expectedURLS = [
-			"http://example.com/001.html",
-			"http://example.com/002.html",
-			"http://example.com/003.html"
+			'http://example.com/001.html',
+			'http://example.com/002.html',
+			'http://example.com/003.html',
 		];
 		expect(sitemap.getStartUrls()).toEqual(expectedURLS);
 	});
 
-	it("Should return multiple start urls when startUrl is an array", function(){
-
+	it('Should return multiple start urls when startUrl is an array', function () {
 		var sitemap = Sitemap.sitemapFromObj({
-			startUrls: ["http://example.com/1.html", "http://example.com/2.html", "http://example.com/3.html"]
+			startUrls: [
+				'http://example.com/1.html',
+				'http://example.com/2.html',
+				'http://example.com/3.html',
+			],
 		});
 		var expectedURLS = [
-			"http://example.com/1.html",
-			"http://example.com/2.html",
-			"http://example.com/3.html"
+			'http://example.com/1.html',
+			'http://example.com/2.html',
+			'http://example.com/3.html',
 		];
 		expect(sitemap.getStartUrls()).toEqual(expectedURLS);
 	});
 
-	it("Should return only selectors which can have child selectors", function () {
+	it('Should return only selectors which can have child selectors', function () {
 		var sitemap = Sitemap.sitemapFromObj({
 			selectors: [
 				{
-					id: "a",
-					type: "SelectorElement"
+					id: 'a',
+					type: 'SelectorElement',
 				},
 				{
-					id: "b",
-					type: "SelectorGroup"
+					id: 'b',
+					type: 'SelectorGroup',
 				},
 				{
-					id: "c",
-					type: "SelectorHTML"
+					id: 'c',
+					type: 'SelectorHTML',
 				},
 				{
-					id: "d",
-					type: "SelectorImage"
+					id: 'd',
+					type: 'SelectorImage',
 				},
 				{
-					id: "e",
-					type: "SelectorLink"
+					id: 'e',
+					type: 'SelectorLink',
 				},
 				{
-					id: "f",
-					type: "SelectorText"
-				}
-			]
+					id: 'f',
+					type: 'SelectorText',
+				},
+			],
 		});
 
-		var expectedIds = ["_root","a","e"];
+		var expectedIds = ['_root', 'a', 'e'];
 		expect(sitemap.getPossibleParentSelectorIds()).toEqual(expectedIds);
 	});
 });

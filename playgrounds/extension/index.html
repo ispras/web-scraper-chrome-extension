@@ -1,299 +1,361 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <link rel="stylesheet" href="../../extension/assets/bootstrap-3.0.0/css/bootstrap.css">
-    <link rel="stylesheet" href="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.css">
-    <link rel="stylesheet" href="../../extension/devtools/devtools_scraper_panel.css">
-    <link rel="stylesheet" href="../../extension/content_script/content_script.css">
-    <link rel="stylesheet" href="webpage.css">
-    <script src="../../extension/assets/jquery-2.0.3.js"></script>
-    <script src="../../extension/assets/papaparse.min.js"></script>
-    <script src="../../extension/assets/pouchdb-nightly.min.js"></script>
-    <script src="../../extension/assets/bootstrap-3.0.0/js/bootstrap.js"></script>
-    <script src="../../extension/assets/d3.v3.js"></script>
-    <script src="../../extension/assets/ICanHaz.js"></script>
-    <script src="../../extension/assets/sugar-1.4.1.js"></script>
-    <script src="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.js"></script>
-    <script src="../../extension/assets/jquery.whencallsequentially.js"></script>
-    <script src="../../extension/assets/base64.js"></script>
-    <script src="../../extension/scripts/ContentScript.js"></script>
-    <script src="../../extension/scripts/BackgroundScript.js"></script>
-    <script src="../../extension/scripts/Config.js"></script>
-    <script src="../../extension/scripts/Selector.js"></script>
-    <script src="../../extension/scripts/SelectorList.js"></script>
-    <script src="../../extension/scripts/ElementQuery.js"></script>
-    <script src="../../extension/scripts/UniqueElementList.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorLink.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorPopupLink.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorImage.js"></script>
-	<script src="../../extension/scripts/Selector/SelectorDocument.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorGroup.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElement.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorText.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorInputValue.js"></script>
-	<script src="../../extension/scripts/Selector/ConstantValue.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorHTML.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElementAttribute.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElementStyle.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorTable.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElementScroll.js"></script>
-    <script src="../../extension/scripts/Selector/SelectorElementClick.js"></script>
-    <script src="../../extension/scripts/DateUtils/SimpleDateFormatter.js"></script>
-    <script src="../../extension/scripts/DateUtils/DateRoller.js"></script>
-    <script src="../../extension/scripts/DateUtils/DatePatternSupport.js"></script>
-    <script src="../../extension/scripts/Sitemap.js"></script>
-    <script src="../../extension/scripts/SelectorGraph.js"></script>
-    <script src="../../extension/scripts/SelectorGraphv2.js"></script>
-    <script src="../../extension/scripts/StoreCouchDB.js"></script>
-    <script src="../../extension/scripts/StoreDevtools.js"></script>
-    <script src="../../extension/assets/css-selector/lib/CssSelector.js"></script>
-    <script src="../../extension/scripts/ContentSelector.js"></script>
-    <script src="../../extension/scripts/Queue.js"></script>
-    <script src="../../extension/scripts/Job.js"></script>
-    <script src="../../extension/scripts/DataExtractor.js"></script>
-    <script src="../../extension/scripts/ChromePopupBrowser.js"></script>
-    <script src="../../extension/scripts/Scraper.js"></script>
+	<head>
+		<link rel="stylesheet" href="../../extension/assets/bootstrap-3.0.0/css/bootstrap.css" />
+		<link
+			rel="stylesheet"
+			href="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.css"
+		/>
+		<link rel="stylesheet" href="../../extension/devtools/devtools_scraper_panel.css" />
+		<link rel="stylesheet" href="../../extension/content_script/content_script.css" />
+		<link rel="stylesheet" href="webpage.css" />
+		<script src="../../extension/assets/jquery-2.0.3.js"></script>
+		<script src="../../extension/assets/papaparse.min.js"></script>
+		<script src="../../extension/assets/pouchdb-nightly.min.js"></script>
+		<script src="../../extension/assets/bootstrap-3.0.0/js/bootstrap.js"></script>
+		<script src="../../extension/assets/d3.v3.js"></script>
+		<script src="../../extension/assets/ICanHaz.js"></script>
+		<script src="../../extension/assets/sugar-1.4.1.js"></script>
+		<script src="../../extension/assets/jquery.bootstrapvalidator/bootstrapValidator.js"></script>
+		<script src="../../extension/assets/jquery.whencallsequentially.js"></script>
+		<script src="../../extension/assets/base64.js"></script>
+		<script src="../../extension/scripts/ContentScript.js"></script>
+		<script src="../../extension/scripts/BackgroundScript.js"></script>
+		<script src="../../extension/scripts/Config.js"></script>
+		<script src="../../extension/scripts/Selector.js"></script>
+		<script src="../../extension/scripts/SelectorList.js"></script>
+		<script src="../../extension/scripts/ElementQuery.js"></script>
+		<script src="../../extension/scripts/UniqueElementList.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorLink.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorPopupLink.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorImage.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorDocument.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorGroup.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElement.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorText.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorInputValue.js"></script>
+		<script src="../../extension/scripts/Selector/ConstantValue.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorHTML.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElementAttribute.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElementStyle.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorTable.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElementScroll.js"></script>
+		<script src="../../extension/scripts/Selector/SelectorElementClick.js"></script>
+		<script src="../../extension/scripts/DateUtils/SimpleDateFormatter.js"></script>
+		<script src="../../extension/scripts/DateUtils/DateRoller.js"></script>
+		<script src="../../extension/scripts/DateUtils/DatePatternSupport.js"></script>
+		<script src="../../extension/scripts/Sitemap.js"></script>
+		<script src="../../extension/scripts/SelectorGraph.js"></script>
+		<script src="../../extension/scripts/SelectorGraphv2.js"></script>
+		<script src="../../extension/scripts/StoreCouchDB.js"></script>
+		<script src="../../extension/scripts/StoreDevtools.js"></script>
+		<script src="../../extension/assets/css-selector/lib/CssSelector.js"></script>
+		<script src="../../extension/scripts/ContentSelector.js"></script>
+		<script src="../../extension/scripts/Queue.js"></script>
+		<script src="../../extension/scripts/Job.js"></script>
+		<script src="../../extension/scripts/DataExtractor.js"></script>
+		<script src="../../extension/scripts/ChromePopupBrowser.js"></script>
+		<script src="../../extension/scripts/Scraper.js"></script>
 
-    <script src="../../extension/scripts/Controller.js"></script>
+		<script src="../../extension/scripts/Controller.js"></script>
 
-    <!-- Simulates chrome API -->
-    <script src="../../tests/ChromeAPI.js"></script>
-    <script>
-        new ChromeAPI();
-    </script>
+		<!-- Simulates chrome API -->
+		<script src="../../tests/ChromeAPI.js"></script>
+		<script>
+			new ChromeAPI();
+		</script>
 
-    <script src="../../extension/background_page/background_script.js"></script>
-    <script src="../../extension/content_script/content_script.js"></script>
+		<script src="../../extension/background_page/background_script.js"></script>
+		<script src="../../extension/content_script/content_script.js"></script>
 
-    <script>
-        $(function () {
-            // init bootstrap alerts
-            $(".alert").alert();
+		<script>
+			$(function () {
+				// init bootstrap alerts
+				$('.alert').alert();
 
-            var config = new Config();
-            config.loadConfiguration(function () {
-                var store = new StorePouchDB(config);
-                new SitemapController({
-                    store: store,
-                    templateDir: '../../extension/devtools/views/'
-                });
-            });
-        });
-    </script>
-</head>
-<body>
-<div id="webpage">
-	<div class="navbar navbar-inverse" role="navigation">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">Project name</a>
-			</div>
-			<div class="collapse navbar-collapse">
-				<ul class="nav navbar-nav">
-					<li class="active"><a href="#">Home</a></li>
-					<li><a href="#about">About</a></li>
-					<li><a href="#contact">Contact</a></li>
-				</ul>
-			</div>
-			<!-- /.nav-collapse -->
-		</div>
-		<!-- /.container -->
-	</div>
-	<!-- /.navbar -->
-
-	<div class="container">
-
-		<div class="row row-offcanvas row-offcanvas-right">
-			<div class="col-xs-12 col-sm-9">
-				<p class="pull-right visible-xs">
-					<button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
-				</p>
-				<div class="jumbotron">
-					<p>
-						<img src="../../docs/images/chrome-store-logo.png">
-					</p>
+				var config = new Config();
+				config.loadConfiguration(function () {
+					var store = new StorePouchDB(config);
+					new SitemapController({
+						store: store,
+						templateDir: '../../extension/devtools/views/',
+					});
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="webpage">
+			<div class="navbar navbar-inverse" role="navigation">
+				<div class="container">
+					<div class="navbar-header">
+						<button
+							type="button"
+							class="navbar-toggle"
+							data-toggle="collapse"
+							data-target=".navbar-collapse"
+						>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="#">Project name</a>
+					</div>
+					<div class="collapse navbar-collapse">
+						<ul class="nav navbar-nav">
+							<li class="active"><a href="#">Home</a></li>
+							<li><a href="#about">About</a></li>
+							<li><a href="#contact">Contact</a></li>
+						</ul>
+					</div>
+					<!-- /.nav-collapse -->
 				</div>
-				<div class="row">
-					<div class="col-6 col-sm-6 col-lg-4">
-						<h2>Heading</h2>
+				<!-- /.container -->
+			</div>
+			<!-- /.navbar -->
 
-                        <div class="productImage" id="productImage"></div>
+			<div class="container">
+				<div class="row row-offcanvas row-offcanvas-right">
+					<div class="col-xs-12 col-sm-9">
+						<p class="pull-right visible-xs">
+							<button
+								type="button"
+								class="btn btn-primary btn-xs"
+								data-toggle="offcanvas"
+							>
+								Toggle nav
+							</button>
+						</p>
+						<div class="jumbotron">
+							<p>
+								<img src="../../docs/images/chrome-store-logo.png" />
+							</p>
+						</div>
+						<div class="row">
+							<div class="col-6 col-sm-6 col-lg-4">
+								<h2>Heading</h2>
 
-						<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo,
-							tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem
-							malesuada magna mollis euismod. Donec sed odio dui. </p>
+								<div class="productImage" id="productImage"></div>
 
-						<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+								<p>
+									Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+									tellus ac cursus commodo, tortor mauris condimentum nibh, ut
+									fermentum massa justo sit amet risus. Etiam porta sem malesuada
+									magna mollis euismod. Donec sed odio dui.
+								</p>
+
+								<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+							</div>
+							<!--/span-->
+							<div class="col-6 col-sm-6 col-lg-4">
+								<h2>Heading</h2>
+
+								<p>
+									Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+									tellus ac cursus commodo, tortor mauris condimentum nibh, ut
+									fermentum massa justo sit amet risus. Etiam porta sem malesuada
+									magna mollis euismod. Donec sed odio dui.
+								</p>
+
+								<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+							</div>
+							<!--/span-->
+							<div class="col-6 col-sm-6 col-lg-4">
+								<h2>Heading</h2>
+
+								<p>
+									Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+									tellus ac cursus commodo, tortor mauris condimentum nibh, ut
+									fermentum massa justo sit amet risus. Etiam porta sem malesuada
+									magna mollis euismod. Donec sed odio dui.
+								</p>
+
+								<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+							</div>
+							<!--/span-->
+							<div class="col-6 col-sm-6 col-lg-4">
+								<h2>Heading</h2>
+
+								<p>
+									Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+									tellus ac cursus commodo, tortor mauris condimentum nibh, ut
+									fermentum massa justo sit amet risus. Etiam porta sem malesuada
+									magna mollis euismod. Donec sed odio dui.
+								</p>
+
+								<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+							</div>
+							<!--/span-->
+							<div class="col-6 col-sm-6 col-lg-4">
+								<h2>Heading</h2>
+
+								<p>
+									Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+									tellus ac cursus commodo, tortor mauris condimentum nibh, ut
+									fermentum massa justo sit amet risus. Etiam porta sem malesuada
+									magna mollis euismod. Donec sed odio dui.
+								</p>
+
+								<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+							</div>
+							<!--/span-->
+							<div class="col-6 col-sm-6 col-lg-4">
+								<h2>Heading</h2>
+
+								<p>
+									Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+									tellus ac cursus commodo, tortor mauris condimentum nibh, ut
+									fermentum massa justo sit amet risus. Etiam porta sem malesuada
+									magna mollis euismod. Donec sed odio dui.
+								</p>
+
+								<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+							</div>
+							<!--/span-->
+						</div>
+						<!--/row-->
 					</div>
 					<!--/span-->
-					<div class="col-6 col-sm-6 col-lg-4">
-						<h2>Heading</h2>
 
-						<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo,
-							tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem
-							malesuada magna mollis euismod. Donec sed odio dui. </p>
-
-						<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
-					</div>
-					<!--/span-->
-					<div class="col-6 col-sm-6 col-lg-4">
-						<h2>Heading</h2>
-
-						<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo,
-							tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem
-							malesuada magna mollis euismod. Donec sed odio dui. </p>
-
-						<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
-					</div>
-					<!--/span-->
-					<div class="col-6 col-sm-6 col-lg-4">
-						<h2>Heading</h2>
-
-						<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo,
-							tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem
-							malesuada magna mollis euismod. Donec sed odio dui. </p>
-
-						<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
-					</div>
-					<!--/span-->
-					<div class="col-6 col-sm-6 col-lg-4">
-						<h2>Heading</h2>
-
-						<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo,
-							tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem
-							malesuada magna mollis euismod. Donec sed odio dui. </p>
-
-						<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
-					</div>
-					<!--/span-->
-					<div class="col-6 col-sm-6 col-lg-4">
-						<h2>Heading</h2>
-
-						<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo,
-							tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem
-							malesuada magna mollis euismod. Donec sed odio dui. </p>
-
-						<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+					<div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+						<div class="well sidebar-nav">
+							<ul class="nav">
+								<li>Sidebar</li>
+								<li class="active"><a href="#">Link</a></li>
+								<li><a href="#">Link</a></li>
+								<li><a href="#">Link</a></li>
+								<li>Sidebar</li>
+								<li><a href="#">Link</a></li>
+								<li><a href="#">Link</a></li>
+								<li><a href="#">Link</a></li>
+								<li>Sidebar</li>
+								<li><a href="#">Link</a></li>
+								<li><a href="#">Link</a></li>
+							</ul>
+						</div>
+						<!--/.well -->
 					</div>
 					<!--/span-->
 				</div>
 				<!--/row-->
-			</div>
-			<!--/span-->
 
-			<div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
-				<div class="well sidebar-nav">
-					<ul class="nav">
-						<li>Sidebar</li>
-						<li class="active"><a href="#">Link</a></li>
-						<li><a href="#">Link</a></li>
-						<li><a href="#">Link</a></li>
-						<li>Sidebar</li>
-						<li><a href="#">Link</a></li>
-						<li><a href="#">Link</a></li>
-						<li><a href="#">Link</a></li>
-						<li>Sidebar</li>
-						<li><a href="#">Link</a></li>
-						<li><a href="#">Link</a></li>
-					</ul>
+				<div class="row row-offcanvas row-offcanvas-right">
+					<div class="col-xs-12 col-sm-9">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>First Name</th>
+									<th>Last Name</th>
+									<th>Username</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>1</td>
+									<td>Mark</td>
+									<td>Otto</td>
+									<td>@mdo</td>
+								</tr>
+								<tr>
+									<td>2</td>
+									<td>Jacob</td>
+									<td>Thornton</td>
+									<td>@fat</td>
+								</tr>
+								<tr>
+									<td>3</td>
+									<td>Larry</td>
+									<td>the Bird</td>
+									<td>@twitter</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<table class="table">
+							<tr>
+								<th>Names</th>
+								<td>Ben</td>
+								<td>Bruno</td>
+							</tr>
+							<tr>
+								<th>Fruits</th>
+								<td>Cherry</td>
+								<td>Clementine</td>
+							</tr>
+							<tr>
+								<th>Animals</th>
+								<td>Cat</td>
+								<td>Catfish</td>
+							</tr>
+						</table>
+
+						<table class="table">
+							<tr>
+								<th>Name</th>
+								<td>Ben</td>
+							</tr>
+							<tr>
+								<th>Fruit</th>
+								<td>Cherry</td>
+							</tr>
+							<tr>
+								<th>Animal</th>
+								<td>Cat</td>
+							</tr>
+						</table>
+					</div>
 				</div>
-				<!--/.well -->
+
+				<hr />
+				<div class="hint">
+					<span class="greyLabel">Announcement</span> Aug 22, 2005
+					<div class="singleline">
+						28 <span class="unitsSuffix">days</span> | 1.5<span class="unitsSuffix"
+							>KG</span
+						>
+						| blue
+					</div>
+				</div>
+
+				<div class="productShotThumbnails" id="productShotThumbnails">
+					<div
+						class="productShotThumbnail"
+						style="
+							width: 20px;
+							height: 20px;
+							background-image: url(http://lorempixel.com/output/technics-q-c-40-40-10.jpg);
+						"
+					>
+						1
+					</div>
+					<div
+						class="productShotThumbnail selected"
+						style="
+							width: 20px;
+							height: 20px;
+							background-image: url(http://lorempixel.com/output/technics-q-c-40-40-10.jpg);
+						"
+					>
+						2
+					</div>
+					<div
+						class="productShotThumbnail"
+						style="
+							width: 20px;
+							height: 20px;
+							background-image: url(http://lorempixel.com/output/technics-q-c-40-40-10.jpg);
+						"
+					>
+						3
+					</div>
+				</div>
+
+				<footer>
+					<p>&copy; Company 2013</p>
+				</footer>
 			</div>
-			<!--/span-->
+			<!--/.container-->
 		</div>
-		<!--/row-->
-
-		<div class="row row-offcanvas row-offcanvas-right">
-			<div class="col-xs-12 col-sm-9">
-				<table class="table">
-					<thead>
-					<tr>
-						<th>#</th>
-						<th>First Name</th>
-						<th>Last Name</th>
-						<th>Username</th>
-					</tr>
-					</thead>
-					<tbody>
-					<tr>
-						<td>1</td>
-						<td>Mark</td>
-						<td>Otto</td>
-						<td>@mdo</td>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td>Jacob</td>
-						<td>Thornton</td>
-						<td>@fat</td>
-					</tr>
-					<tr>
-						<td>3</td>
-						<td>Larry</td>
-						<td>the Bird</td>
-						<td>@twitter</td>
-					</tr>
-					</tbody>
-				</table>
-				
-				<table class="table">					
-					<tr>
-						<th>Names</th>
-						<td>Ben</td>
-						<td>Bruno</td>
-					</tr>
-					<tr>
-						<th>Fruits</th>
-						<td>Cherry</td>
-						<td>Clementine</td>
-					</tr>
-					<tr>
-						<th>Animals</th>
-						<td>Cat</td>
-						<td>Catfish</td>
-					</tr>
-				</table>
-				
-				<table class="table">					
-					<tr>
-						<th>Name</th>
-						<td>Ben</td>
-					</tr>
-					<tr>
-						<th>Fruit</th>
-						<td>Cherry</td>
-					</tr>
-					<tr>
-						<th>Animal</th>
-						<td>Cat</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-
-		<hr>
-        <div class="hint">
-            <span class="greyLabel">Announcement</span> Aug 22, 2005
-            <div class="singleline">28 <span class="unitsSuffix">days</span> | 1.5<span class="unitsSuffix">KG</span> | blue</div>
-        </div>
-
-        <div class="productShotThumbnails" id="productShotThumbnails">
-            <div class="productShotThumbnail" style="width: 20px; height: 20px; background-image: url(http://lorempixel.com/output/technics-q-c-40-40-10.jpg)">1</div>
-            <div class="productShotThumbnail selected" style="width: 20px; height: 20px; background-image: url(http://lorempixel.com/output/technics-q-c-40-40-10.jpg)">2</div>
-            <div class="productShotThumbnail" style="width: 20px; height: 20px; background-image: url(http://lorempixel.com/output/technics-q-c-40-40-10.jpg)">3</div>
-        </div>
-
-		<footer>
-			<p>&copy; Company 2013</p>
-		</footer>
-
-	</div>
-	<!--/.container-->
-</div>
-</body>
+	</body>
 </html>

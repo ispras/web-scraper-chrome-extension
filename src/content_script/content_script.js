@@ -10,7 +10,7 @@ browser.runtime.onMessage.addListener(request => {
 			console.log('received data extraction request', request);
 			let extractor = new DataExtractor(request);
 			let deferredData = extractor.getData();
-			deferredData.done(function(data) {
+			deferredData.done(function (data) {
 				console.log('dataextractor data', data);
 				let selectors = extractor.sitemap.selectors;
 				resolve(data, selectors);
@@ -19,8 +19,11 @@ browser.runtime.onMessage.addListener(request => {
 		} else if (request.previewSelectorData) {
 			console.log('received data-preview extraction request', request);
 			let extractor = new DataExtractor(request);
-			let deferredData = extractor.getSingleSelectorData(request.parentSelectorIds, request.selectorId);
-			deferredData.done(function(data) {
+			let deferredData = extractor.getSingleSelectorData(
+				request.parentSelectorIds,
+				request.selectorId
+			);
+			deferredData.done(function (data) {
 				console.log('dataextractor data', data);
 				let selectors = extractor.sitemap.selectors;
 				resolve(data, selectors);
@@ -34,7 +37,7 @@ browser.runtime.onMessage.addListener(request => {
 			console.log('received ContentScript request', request);
 
 			let deferredResponse = contentScript[request.fn](request.request);
-			deferredResponse.done(function(response) {
+			deferredResponse.done(function (response) {
 				resolve(response, null);
 			});
 

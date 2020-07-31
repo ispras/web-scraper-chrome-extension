@@ -17,12 +17,16 @@ export default class ElementSelectorList extends Array {
 			if (this.CssSelector.enableSmartTableSelector) {
 				if (selector.tag === 'tr') {
 					if (selector.element.children.length === 2) {
-						if (selector.element.children[0].tagName === 'TD' || selector.element.children[0].tagName === 'TH' || selector.element.children[0].tagName === 'TR') {
+						if (
+							selector.element.children[0].tagName === 'TD' ||
+							selector.element.children[0].tagName === 'TH' ||
+							selector.element.children[0].tagName === 'TR'
+						) {
 							let text = selector.element.children[0].textContent;
 							text = text.trim();
 
 							// escape quotes
-							text.replace(/(\\*)(')/g, function(x) {
+							text.replace(/(\\*)(')/g, function (x) {
 								let l = x.length;
 								return l % 2 ? x : x.substring(0, l - 1) + "\\'";
 							});

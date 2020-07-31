@@ -2,7 +2,9 @@ import * as browser from 'webextension-polyfill';
 
 export default class Translator {
 	static translatePage() {
-		['title', 'data-i18n', 'placeholder'].forEach(attribute => this.translateAttribute(attribute));
+		['title', 'data-i18n', 'placeholder'].forEach(attribute =>
+			this.translateAttribute(attribute)
+		);
 	}
 
 	static translateAttribute(attribute = 'data-i18n') {

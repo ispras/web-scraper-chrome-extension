@@ -23,23 +23,25 @@ export default class Config {
 	 */
 	loadConfiguration(callback) {
 		return new Promise(resolve => {
-			browser.storage.sync.get(['sitemapDb', 'dataDb', 'storageType', 'restUrl', 'locale']).then(
-				function(items) {
-					this.storageType = items.storageType || this.defaults.storageType;
-					this.locale = items.locale || this.defaults.locale;
-					this.sitemapDb = this.defaults.sitemapDb;
-					this.dataDb = this.defaults.dataDb;
-					this.restUrl = this.defaults.restUrl;
+			browser.storage.sync
+				.get(['sitemapDb', 'dataDb', 'storageType', 'restUrl', 'locale'])
+				.then(
+					function (items) {
+						this.storageType = items.storageType || this.defaults.storageType;
+						this.locale = items.locale || this.defaults.locale;
+						this.sitemapDb = this.defaults.sitemapDb;
+						this.dataDb = this.defaults.dataDb;
+						this.restUrl = this.defaults.restUrl;
 
-					if (this.storageType === 'couchdb') {
-						this.sitemapDb = items.sitemapDb || this.defaults.sitemapDb;
-						this.dataDb = items.dataDb || this.defaults.dataDb;
-					} else if (this.storageType === 'rest') {
-						this.restUrl = items.restUrl || this.defaults.restUrl;
-					}
-					resolve();
-				}.bind(this)
-			);
+						if (this.storageType === 'couchdb') {
+							this.sitemapDb = items.sitemapDb || this.defaults.sitemapDb;
+							this.dataDb = items.dataDb || this.defaults.dataDb;
+						} else if (this.storageType === 'rest') {
+							this.restUrl = items.restUrl || this.defaults.restUrl;
+						}
+						resolve();
+					}.bind(this)
+				);
 		});
 	}
 

@@ -1,6 +1,5 @@
 import Translator from './Translator';
 
-
 class Field {
 	constructor(entity, field, fieldName) {
 		this.entity = entity;
@@ -17,7 +16,7 @@ export default class Model extends Array {
 			this.push(new Field(fieldObj.entity, fieldObj.field, fieldObj.fieldName));
 		});
 	}
-  
+
 	static validateModel(model) {
 		if (model === undefined) {
 			return {

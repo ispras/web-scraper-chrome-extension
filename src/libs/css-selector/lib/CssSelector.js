@@ -12,7 +12,7 @@ export default class CssSelector {
 		this.enableResultStripping = true;
 		this.enableSmartTableSelector = false;
 		this.ignoredClasses = [];
-		this.query = function(selector) {
+		this.query = function (selector) {
 			return this.parent.querySelectorAll(selector);
 		};
 
@@ -23,7 +23,7 @@ export default class CssSelector {
 
 		// jquery parent selector fix
 		if (this.query === window.jQuery) {
-			this.query = function(selector) {
+			this.query = function (selector) {
 				return jQuery(me.parent).find(selector);
 			};
 		}
@@ -61,7 +61,7 @@ export default class CssSelector {
 		let cssSelector = selectors.getCssSelector();
 		let baseSelectedElements = this.query(cssSelector);
 
-		let compareElements = function(elements) {
+		let compareElements = function (elements) {
 			if (baseSelectedElements.length !== elements.length) {
 				return false;
 			}
@@ -181,7 +181,10 @@ export default class CssSelector {
 
 			let selector = new ElementSelector(element, this.ignoredClasses);
 			// document does not have a tagName
-			if (element.parentNode === this.parent || this.isIgnoredTag(element.parentNode.tagName)) {
+			if (
+				element.parentNode === this.parent ||
+				this.isIgnoredTag(element.parentNode.tagName)
+			) {
 				selector.isDirectChild = false;
 			}
 
@@ -208,10 +211,18 @@ export default class CssSelector {
 			}
 
 			// stop at body tag
-			if (element1 === undefined || element1.tagName === 'body' || element1.tagName === 'BODY') {
+			if (
+				element1 === undefined ||
+				element1.tagName === 'body' ||
+				element1.tagName === 'BODY'
+			) {
 				return false;
 			}
-			if (element2 === undefined || element2.tagName === 'body' || element2.tagName === 'BODY') {
+			if (
+				element2 === undefined ||
+				element2.tagName === 'body' ||
+				element2.tagName === 'BODY'
+			) {
 				return false;
 			}
 

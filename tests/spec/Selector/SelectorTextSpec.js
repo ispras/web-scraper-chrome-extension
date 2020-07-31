@@ -1,228 +1,246 @@
-describe("Text Selector", function () {
+describe('Text Selector', function () {
+	beforeEach(function () {});
 
-	beforeEach(function () {
-
-	});
-
-	it("should extract single text record", function () {
-
+	it('should extract single text record', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorText',
 			multiple: false,
-			selector: "div"
+			selector: 'div',
 		});
 
-		var dataDeferred = selector.getData($("#selector-text-single-text"));
+		var dataDeferred = selector.getData($('#selector-text-single-text'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: "a"
-					}
+						a: 'a',
+					},
 				]);
 			});
 		});
 	});
 
-	it("should extract multiple text records", function () {
-
+	it('should extract multiple text records', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorText',
 			multiple: true,
-			selector: "div"
+			selector: 'div',
 		});
 
-		var dataDeferred = selector.getData($("#selector-text-multiple-text"));
+		var dataDeferred = selector.getData($('#selector-text-multiple-text'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: "a"
+						a: 'a',
 					},
 					{
-						a: "b"
-					}
+						a: 'b',
+					},
 				]);
 			});
 		});
 	});
 
-	it("should extract null when there are no elements", function () {
-
+	it('should extract null when there are no elements', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorText',
 			multiple: false,
-			selector: "div"
+			selector: 'div',
 		});
 
-		var dataDeferred = selector.getData($("#selector-text-single-not-exist"));
+		var dataDeferred = selector.getData($('#selector-text-single-not-exist'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: null
-					}
+						a: null,
+					},
 				]);
 			});
 		});
 	});
 
-	it("should extract empty string when there is no regex match", function () {
-
+	it('should extract empty string when there is no regex match', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorText',
 			multiple: false,
-			selector: "div",
-            textmanipulation: { regex: "wontmatch" }
+			selector: 'div',
+			textmanipulation: { regex: 'wontmatch' },
 		});
 
-		var dataDeferred = selector.getData($("#selector-text-single-regex"));
+		var dataDeferred = selector.getData($('#selector-text-single-regex'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: ''
-					}
+						a: '',
+					},
 				]);
 			});
 		});
 	});
 
-	it("should extract text using regex", function () {
-
+	it('should extract text using regex', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorText',
 			multiple: false,
-            selector: "div",
-            textmanipulation: { regex: "\\d+" }
+			selector: 'div',
+			textmanipulation: { regex: '\\d+' },
 		});
 
-		var dataDeferred = selector.getData($("#selector-text-single-regex"));
+		var dataDeferred = selector.getData($('#selector-text-single-regex'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: '11113123'
-					}
+						a: '11113123',
+					},
 				]);
 			});
 		});
 	});
 
-	it("should return only one data column", function () {
+	it('should return only one data column', function () {
 		var selector = new Selector({
 			id: 'id',
 			type: 'SelectorText',
 			multiple: true,
-			selector: "div"
+			selector: 'div',
 		});
 
 		var columns = selector.getDataColumns();
 		expect(columns).toEqual(['id']);
 	});
 
-	it("should ignore script tag content", function(){
-
+	it('should ignore script tag content', function () {
 		var selector = new Selector({
 			id: 'a',
 			type: 'SelectorText',
 			multiple: false,
-            selector: "div",
-            textmanipulation: { trimText: true }
+			selector: 'div',
+			textmanipulation: { trimText: true },
 		});
 
-		var dataDeferred = selector.getData($("#selector-text-ignore-script"));
+		var dataDeferred = selector.getData($('#selector-text-ignore-script'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						a: "aaa"
-					}
+						a: 'aaa',
+					},
 				]);
 			});
 		});
 	});
 
-	it("should replace br tags with newlines", function(){
-
+	it('should replace br tags with newlines', function () {
 		var selector = new Selector({
 			id: 'p',
 			type: 'SelectorText',
 			multiple: false,
-			selector: "p"
+			selector: 'p',
 		});
 
-		var dataDeferred = selector.getData($("#selector-text-newlines"));
+		var dataDeferred = selector.getData($('#selector-text-newlines'));
 
-		waitsFor(function() {
-			return dataDeferred.state() === 'resolved';
-		}, "wait for data extraction", 5000);
+		waitsFor(
+			function () {
+				return dataDeferred.state() === 'resolved';
+			},
+			'wait for data extraction',
+			5000
+		);
 
 		runs(function () {
-			dataDeferred.done(function(data) {
+			dataDeferred.done(function (data) {
 				expect(data).toEqual([
 					{
-						p: "aaa\naaa\naaa\naaa\naaa"
-					}
+						p: 'aaa\naaa\naaa\naaa\naaa',
+					},
 				]);
 			});
 		});
 	});
 
-//    it("should extract records with url", function () {
-//
-//        var selector = new Selector({
-//            id: 'a',
-//            type: 'SelectorText',
-//            multiple: true,
-//            selector: "a"
-//        });
-//
-//        var data = selector.getData($("#selector-text-url-multiple-text"));
-//        expect(data).toEqual([
-//            {
-//                a: "a",
-//                'a-href': "http://aa/"
-//            },
-//            {
-//                a: "b",
-//                'a-href': "http://bb/"
-//            }
-//        ]);
-//    });
+	//    it("should extract records with url", function () {
+	//
+	//        var selector = new Selector({
+	//            id: 'a',
+	//            type: 'SelectorText',
+	//            multiple: true,
+	//            selector: "a"
+	//        });
+	//
+	//        var data = selector.getData($("#selector-text-url-multiple-text"));
+	//        expect(data).toEqual([
+	//            {
+	//                a: "a",
+	//                'a-href': "http://aa/"
+	//            },
+	//            {
+	//                a: "b",
+	//                'a-href': "http://bb/"
+	//            }
+	//        ]);
+	//    });
 });
