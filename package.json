@@ -4,7 +4,7 @@
 	"description": "Web data extraction tool implemented as chrome extension",
 	"scripts": {
 		"lint": "eslint --ext .js src",
-		"prettier": "prettier . ",
+		"prettier": "prettier --check . ",
 		"prettier:write": "npm run prettier -- --write .",
 		"build": "cross-env NODE_ENV=production webpack --hide-modules",
 		"build:dev": "cross-env NODE_ENV=development webpack --hide-modules",
