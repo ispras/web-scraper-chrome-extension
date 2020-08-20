@@ -19,9 +19,12 @@
 	"delete_sitemap": { "message": "Delete" },
 	"sitemap_export_download_button": { "message": "Download sitemap as JSON file" },
 	"sitemap_import_submit_button": { "message": "Submit import" },
-	"sitemap_import_renam_field": { "message": "Rename Sitemap (optional)" },
+	"sitemap_import_rename_field": { "message": "Rename Sitemap (optional)" },
 	"sitemap_import_input_button": { "message": "Import sitemap JSON from file" },
 	"sitemap_import_JSON_field": { "message": "Sitemap JSON" },
+	"sitemap_import_hints": {
+		"message": "<p><strong style=\"color:red;\">ATTENTION</strong>: import of sitemaps from webscraper.io is not supported.\n\t\t\t<br />\n\t\t\t Example of imported sitemap format: { \"_id\": \"<sitemap id>\", \"startUrls\": [\"<start URL>\"], \"selectors\": [ ... ], \"model\": [ ... ] } \n\t\t\t</p>"
+	},
 	"data_export_format": { "message": "File format" },
 	"data_export_delimiter_field": { "message": "Field delimiter" },
 	"data_export_newline_checker": { "message": "Add new lines at end" },
