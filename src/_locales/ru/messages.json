@@ -19,9 +19,12 @@
 	"delete_sitemap": { "message": "Удалить" },
 	"sitemap_export_download_button": { "message": "Скачать карту обхода в виде JSON файла" },
 	"sitemap_import_submit_button": { "message": "Загрузить карту обхода" },
-	"sitemap_import_renam_field": { "message": "Переименовать карту обхода (опционально)" },
+	"sitemap_import_rename_field": { "message": "Переименовать карту обхода (опционально)" },
 	"sitemap_import_input_button": { "message": "Импортировать карту обхода из файла" },
 	"sitemap_import_JSON_field": { "message": "JSON представление карты обхода" },
+	"sitemap_import_hints": {
+		"message": "<p><strong style=\"color:red;\">ВНИМАНИЕ</strong>: импорт карт из webscraper.io не поддерживается.\n\t\t\t<br />\n\t\t\t Пример формата импортируемой карты обхода: { \"_id\": \"<идентификатор карты>\", \"startUrls\": [\"<стартовый URL>\"], \"selectors\": [ ... ], \"model\": [ ... ] }\n\t\t\t</p>"
+	},
 	"data_export_format": { "message": "Формат" },
 	"data_export_delimiter_field": { "message": "Разделитель полей" },
 	"data_export_newline_checker": { "message": "Добавить перевод строки в конце" },
