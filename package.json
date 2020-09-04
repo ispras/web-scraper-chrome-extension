@@ -27,7 +27,7 @@
 		"jquery-searcher": "^0.3.0",
 		"jquery-highlight": "^3.5.0",
 		"nanoid": "^2.1.11",
-		"papaparse": "^4.1.0",
+		"papaparse": "^5.2.0",
 		"pouchdb": "^7.1.1",
 		"renderjson": "^1.4.0",
 		"sugar": "^1.4.1",
