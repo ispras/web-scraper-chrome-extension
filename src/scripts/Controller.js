@@ -511,6 +511,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapjson_invalid_message'),
 							callback(value, validator) {
 								try {
+									validator.updateStatus('_id', 'NOT_VALIDATED', 'callback');
 									const sitemap = JSON.parse(value);
 
 									const renameId = $('#viewport form [name="_id"]').val();
