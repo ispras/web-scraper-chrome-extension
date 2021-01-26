@@ -13,9 +13,7 @@ export default class StoreDevtools {
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
 		};
 
-		const newSitemap = await browser.runtime.sendMessage(request);
-		sitemap._rev = newSitemap._rev;
-		return sitemap;
+		return Sitemap.sitemapFromObj(await browser.runtime.sendMessage(request));
 	}
 
 	async saveSitemap(sitemap) {

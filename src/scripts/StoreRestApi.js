@@ -15,8 +15,8 @@ export default class StoreRestApi {
 	createSitemap(sitemap) {
 		return this.axiosInstance
 			.post('/sitemaps/', Sitemap.sitemapFromObj(sitemap).exportSitemap())
-			.then(() => {
-				return sitemap;
+			.then(response => {
+				return Sitemap.sitemapFromObj(response.data.body);
 			})
 			.catch(() => {
 				alert('StoreApi: Error creating sitemap.');
