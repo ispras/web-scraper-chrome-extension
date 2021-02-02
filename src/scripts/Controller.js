@@ -1154,6 +1154,7 @@ export default class SitemapController {
 		const downloadFile = $('#edit-selector [name=downloadFile]').is(':checked');
 		const clickPopup = $('#edit-selector [name=clickPopup]').is(':checked');
 		const delay = $('#edit-selector [name=delay]').val();
+		const outerHTML = $('#edit-selector [id=outerHTML]').is(':checked');
 		const extractAttribute = $('#edit-selector [name=extractAttribute]').val();
 		const extractStyle = $('#edit-selector [name=extractStyle]').val();
 		const value = $('#edit-selector [name=value]').val();
@@ -1212,6 +1213,7 @@ export default class SitemapController {
 			delay,
 			textmanipulation,
 			stringReplacement,
+			outerHTML,
 		});
 	}
 
