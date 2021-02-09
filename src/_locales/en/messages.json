@@ -96,6 +96,9 @@
 	"selector_edit_include_into_result": { "message": "Include into result" },
 	"selector_edit_save_selector": { "message": "Save selector" },
 	"selector_edit_cancel": { "message": "Cancel" },
+	"selector_edit_type_of_html": { "message": "Type of HTML" },
+	"selector_edit_type_of_html_outer": { "message": "Outer HTML" },
+	"selector_edit_type_of_html_inner": { "message": "Inner HTML" },
 	"sitemap_scrape_config_request_interval_label": { "message": "Request interval (ms)" },
 	"sitemap_scrape_config_request_interval_randomness_label": {
 		"message": "Request interval randomness (ms)"

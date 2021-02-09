@@ -414,7 +414,7 @@
 				</label>
 				<span
 					class="help-block"
-					style="margin-top: -5px;"
+					style="margin-top: -5px"
 					data-i18n="selector_edit_trim_applying"
 				></span>
 			</div>
@@ -430,7 +430,7 @@
 				{{/selector.textmanipulation.trimText}} />
 				<label for="trimText" data-i18n="selector_edit_trim_text"></label>
 			</div>
-			<div class="form-inline" style="padding-top: 7px;">
+			<div class="form-inline" style="padding-top: 7px">
 				<label for="replaceText">
 					<span data-i18n="selector_edit_replace_text"></span>
 					<input
@@ -476,6 +476,32 @@
 						placeholder="selector_edit_textSuffix"
 						value="{{selector.textmanipulation.textSuffix}}"
 					/>
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<!--  Block for inner/outer HTML checkbox-->
+	<div class="form-group feature feature-outerHTML">
+		<label
+			for="outerHTML"
+			class="col-sm-2 control-label"
+			data-i18n="selector_edit_type_of_html"
+		></label>
+
+		<div class="col-sm-8">
+			<div class="radio">
+				<label>
+					<input type="radio" id="innerHTML" name="outerHTML" value="false"
+					{{^selector.outerHTML}} checked="checked" {{/selector.outerHTML}}/>
+					<span data-i18n="selector_edit_type_of_html_inner"></span>
+				</label>
+			</div>
+			<div class="radio">
+				<label>
+					<input type="radio" id="outerHTML" name="outerHTML" value="true"
+					{{#selector.outerHTML}}checked="checked" {{/selector.outerHTML}}/>
+					<span data-i18n="selector_edit_type_of_html_outer"></span>
 				</label>
 			</div>
 		</div>
