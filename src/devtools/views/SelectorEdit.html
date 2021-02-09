@@ -492,14 +492,16 @@
 		<div class="col-sm-8">
 			<div class="radio">
 				<label>
-					<input type="radio" id="innerHTML" name="typeOfHTML" value="false"
-					{{^selector.outerHTML}} checked="checked" {{/selector.outerHTML}}/> innerHTML
+					<input type="radio" id="innerHTML" name="outerHTML" value="false"
+					{{^selector.outerHTML}} checked="checked" {{/selector.outerHTML}}/>
+					<span data-i18n="selector_edit_type_of_html_inner"></span>
 				</label>
 			</div>
 			<div class="radio">
 				<label>
-					<input type="radio" id="outerHTML" name="typeOfHTML" value="true"
-					{{#selector.outerHTML}} checked="checked" {{/selector.outerHTML}}/> outerHTML
+					<input type="radio" id="outerHTML" name="outerHTML" value="true"
+					{{#selector.outerHTML}}checked="checked" {{/selector.outerHTML}}/>
+					<span data-i18n="selector_edit_type_of_html_outer"></span>
 				</label>
 			</div>
 		</div>

@@ -30,7 +30,7 @@ export default class SelectorHTML extends Selector {
 	async _getData(parentElement) {
 		const elements = this.getDataElements(parentElement);
 		let htmls;
-		if (this.hasOwnProperty('outerHTML') && this.outerHTML) {
+		if (this.outerHTML) {
 			htmls = elements.map(element => $('<div>').append($(element).clone()).html());
 		} else {
 			htmls = elements.map(element => $(element).html());
