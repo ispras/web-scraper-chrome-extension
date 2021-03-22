@@ -92,7 +92,7 @@
 					></button>
 					<button
 						class="btn btn-default"
-						action="preview-click-element-selector"
+						action="preview-click-or-scroll-element-selector"
 						type="button"
 						data-toggle="button"
 						data-i18n="selector_edit_element_preview_button"
@@ -104,6 +104,41 @@
 					id="clickElementSelector"
 					name="clickElementSelector"
 					value="{{selector.clickElementSelector}}"
+				/>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group feature feature-scrollElementSelector">
+		<label
+			for="scrollElementSelector"
+			class="col-sm-2 control-label"
+			data-i18n="selector_edit_scroll_selector"
+		></label>
+
+		<div class="col-sm-8">
+			<div class="input-group">
+				<span class="input-group-btn">
+					<button
+						class="btn btn-default"
+						action="select-selector"
+						type="button"
+						data-i18n="selector_edit_select_button"
+					></button>
+					<button
+						class="btn btn-default"
+						action="preview-click-or-scroll-element-selector"
+						type="button"
+						data-toggle="button"
+						data-i18n="selector_edit_element_preview_button"
+					></button>
+				</span>
+				<input
+					type="text"
+					class="form-control selector-value"
+					id="scrollElementSelector"
+					name="scrollElementSelector"
+					value="{{selector.scrollElementSelector}}"
 				/>
 			</div>
 		</div>
