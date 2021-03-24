@@ -1,5 +1,6 @@
 import Selector from '../Selector';
 import ElementQuery from '../ElementQuery';
+import UniqueElementList from '../UniqueElementList';
 
 export default class SelectorElementScroll extends Selector {
 	constructor(options) {
@@ -42,7 +43,9 @@ export default class SelectorElementScroll extends Selector {
 		const delay = parseInt(this.delay) || 0;
 		const paginationLimit = parseInt(this.paginationLimit);
 		let paginationCount = 1;
-		let foundElements = [];
+
+		const foundDataElements = new UniqueElementList('uniqueHTMLText');
+		this.getDataElements(parentElement).forEach(element => foundDataElements.push(element));
 
 		// initially scroll down and wait
 		this.scroll(parentElement);
@@ -57,18 +60,19 @@ export default class SelectorElementScroll extends Selector {
 					return;
 				}
 
-				const elements = this.getDataElements(parentElement);
+				// add newly found elements to foundDataElements array
+				const addedAnElement = this.getDataElements(parentElement).reduce(
+					(added, element) => foundDataElements.push(element) || added,
+					false
+				);
+
 				// no new elements found or pagination limit
-				if (
-					elements.length === foundElements.length ||
-					paginationCount >= paginationLimit
-				) {
+				if (!addedAnElement || paginationCount >= paginationLimit) {
 					clearInterval(interval);
-					resolve(elements);
+					resolve(foundDataElements);
 				} else {
 					paginationCount++;
 					// continue scrolling and add delay
-					foundElements = elements;
 					this.scroll(parentElement);
 					nextElementSelection = now + delay;
 				}
