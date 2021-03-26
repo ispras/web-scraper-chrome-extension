@@ -50,6 +50,10 @@
 	"selector_edit_type_placeholder": { "message": "Тип" },
 	"selector_edit_selector_css_field": { "message": "CSS селектор" },
 	"selector_edit_data_preview_button": { "message": "Данные" },
+	"selector_edit_scroll_selector": { "message": "Прокрутка на селектор" },
+	"selector_edit_scroll_selector_placeholder": {
+		"message": "пусто = прокручивать до конца вниз"
+	},
 	"selector_edit_click_selector": { "message": "Селектор клика" },
 	"selector_edit_select_button": { "message": "Выбрать" },
 	"selector_edit_element_preview_button": { "message": "Элементы" },

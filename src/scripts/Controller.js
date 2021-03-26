@@ -294,8 +294,8 @@ export default class SitemapController {
 			'#edit-selector button[action=preview-selector]': {
 				click: this.previewSelector,
 			},
-			'#edit-selector button[action=preview-click-element-selector]': {
-				click: this.previewClickElementSelector,
+			'#edit-selector button[action=preview-click-or-scroll-element-selector]': {
+				click: this.previewClickOrScrollElementSelector,
 			},
 			'#edit-selector button[action=preview-table-row-selector]': {
 				click: this.previewTableRowSelector,
@@ -1140,6 +1140,7 @@ export default class SitemapController {
 			':checked'
 		);
 		const verticalTable = $('#edit-selector [name=verticalTable]').is(':checked');
+		const scrollElementSelector = $('#edit-selector [name=scrollElementSelector]').val();
 		const clickElementSelector = $('#edit-selector [name=clickElementSelector]').val();
 		const type = $('#edit-selector [name=type]').val();
 		const clickElementUniquenessType = $(
@@ -1196,6 +1197,7 @@ export default class SitemapController {
 			tableAddMissingColumns,
 			verticalTable,
 			tableDataRowSelector,
+			scrollElementSelector,
 			clickElementSelector,
 			clickElementUniquenessType,
 			clickType,
@@ -1827,7 +1829,7 @@ export default class SitemapController {
 		}
 	}
 
-	async previewClickElementSelector(button) {
+	async previewClickOrScrollElementSelector(button) {
 		if (!$(button).hasClass('preview')) {
 			const sitemap = this.state.currentSitemap;
 			const selector = this.getCurrentlyEditedSelector();
@@ -1835,10 +1837,11 @@ export default class SitemapController {
 			const parentCSSSelector = sitemap.selectors.getParentCSSSelectorWithinOnePage(
 				currentStateParentSelectorIds
 			);
+			const inputName = $(button).closest('.input-group').find('input').attr('name');
 
 			const deferredSelectorPreview = this.contentScript.previewSelector({
 				parentCSSSelector,
-				elementCSSSelector: selector.clickElementSelector,
+				elementCSSSelector: selector[inputName],
 			});
 
 			deferredSelectorPreview.done(function () {

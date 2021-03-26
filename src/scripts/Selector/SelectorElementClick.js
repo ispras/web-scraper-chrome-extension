@@ -70,17 +70,15 @@ export default class SelectorElementClick extends Selector {
 
 		// initial click and wait
 		let [currentClickElement] = clickElements;
+		if (this.clickType === 'clickOnce') {
+			doneClickingElements.push(currentClickElement);
+		}
 		this.triggerButtonClick(currentClickElement);
 		let nextElementSelection = Date.now() + delay;
 
 		return new Promise(resolve => {
 			// repeatedly click and find new items
 			const interval = setInterval(() => {
-				// find those click elements that are not in the black list
-				clickElements = this.getClickElements(parentElement).filter(
-					element => !doneClickingElements.isAdded(element)
-				);
-
 				const now = Date.now();
 				// sleep and wait when to extract next elements
 				if (now < nextElementSelection) {
@@ -97,6 +95,11 @@ export default class SelectorElementClick extends Selector {
 				if (!addedAnElement) {
 					doneClickingElements.push(currentClickElement);
 				}
+
+				// find those click elements that are not in the black list
+				clickElements = this.getClickElements(parentElement).filter(
+					element => !doneClickingElements.isAdded(element)
+				);
 
 				// continue clicking and add delay, but if there is nothing
 				// more to click then finish

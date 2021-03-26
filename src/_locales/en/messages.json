@@ -48,6 +48,8 @@
 	"selector_edit_type_placeholder": { "message": "Type" },
 	"selector_edit_selector_css_field": { "message": "Selector" },
 	"selector_edit_data_preview_button": { "message": "Data preview" },
+	"selector_edit_scroll_selector": { "message": "Scroll to selector" },
+	"selector_edit_scroll_selector_placeholder": { "message": "empty = scroll to bottom" },
 	"selector_edit_click_selector": { "message": "Click selector" },
 	"selector_edit_select_button": { "message": "Select" },
 	"selector_edit_element_preview_button": { "message": "Element preview" },
