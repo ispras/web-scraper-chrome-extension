@@ -221,7 +221,11 @@ export default class DataExtractor {
 								resultData.push(rec);
 							});
 						});
-						deferredResponse.resolve(resultData);
+						deferredResponse.resolve(
+							selector.hasOwnProperty('mergeIntoList') && selector.mergeIntoList
+								? [{ [selector.id]: resultData }]
+								: resultData
+						);
 					}.bind(this)
 				);
 			}.bind(this)
