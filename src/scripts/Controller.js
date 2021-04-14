@@ -1156,6 +1156,7 @@ export default class SitemapController {
 		const clickPopup = $('#edit-selector [name=clickPopup]').is(':checked');
 		const delay = $('#edit-selector [name=delay]').val();
 		const outerHTML = $('#edit-selector [id=outerHTML]').is(':checked');
+		const mergeIntoList = $('#edit-selector [name=mergeIntoList]').is(':checked');
 		const extractAttribute = $('#edit-selector [name=extractAttribute]').val();
 		const extractStyle = $('#edit-selector [name=extractStyle]').val();
 		const value = $('#edit-selector [name=value]').val();
@@ -1215,6 +1216,7 @@ export default class SitemapController {
 			delay,
 			textmanipulation,
 			stringReplacement,
+			mergeIntoList,
 			outerHTML,
 		});
 	}

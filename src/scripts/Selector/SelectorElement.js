@@ -35,6 +35,6 @@ export default class SelectorElement extends Selector {
 	}
 
 	getFeatures() {
-		return ['selector', 'multiple', 'delay'];
+		return ['selector', 'multiple', 'delay', 'mergeIntoList'];
 	}
 }
