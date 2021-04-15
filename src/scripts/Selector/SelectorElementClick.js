@@ -143,6 +143,7 @@ export default class SelectorElementClick extends Selector {
 			'discardInitialElements',
 			'clickElementUniquenessType',
 			'paginationLimit',
+			'mergeIntoList',
 		];
 	}
 }
