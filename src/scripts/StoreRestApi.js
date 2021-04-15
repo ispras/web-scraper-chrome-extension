@@ -7,7 +7,6 @@ export default class StoreRestApi {
 		this.localDataStore = new StorePouchDB(config);
 		this.axiosInstance = axios.create({
 			baseURL: config.restUrl,
-			withCredentials: true
 		});
 		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
 		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
