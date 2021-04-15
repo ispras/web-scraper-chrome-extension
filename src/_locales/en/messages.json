@@ -101,6 +101,7 @@
 	"selector_edit_type_of_html": { "message": "Type of HTML" },
 	"selector_edit_type_of_html_outer": { "message": "Outer HTML" },
 	"selector_edit_type_of_html_inner": { "message": "Inner HTML" },
+	"selector_edit_merge_into_list": { "message": "Merge collected items into list" },
 	"sitemap_scrape_config_request_interval_label": { "message": "Request interval (ms)" },
 	"sitemap_scrape_config_request_interval_randomness_label": {
 		"message": "Request interval randomness (ms)"

@@ -94,6 +94,13 @@ export default class SelectorElementScroll extends Selector {
 	}
 
 	getFeatures() {
-		return ['selector', 'scrollElementSelector', 'multiple', 'delay', 'paginationLimit'];
+		return [
+			'selector',
+			'scrollElementSelector',
+			'multiple',
+			'delay',
+			'paginationLimit',
+			'mergeIntoList',
+		];
 	}
 }

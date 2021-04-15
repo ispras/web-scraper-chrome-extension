@@ -106,6 +106,7 @@
 	"selector_edit_type_of_html": { "message": "Тип HTML" },
 	"selector_edit_type_of_html_outer": { "message": "Внешний HTML" },
 	"selector_edit_type_of_html_inner": { "message": "Внутренний HTML" },
+	"selector_edit_merge_into_list": { "message": "Объединить собранные элементы в список" },
 	"sitemap_scrape_config_requestInterval": { "message": "Интервал между запросами" },
 	"sitemap_scrape_config_requestIntervalRandomness": { "message": "Случайность между запросами" },
 	"sitemap_scrape_config_pageLoadDelay": { "message": "Задержка при загрузке страницы" },
