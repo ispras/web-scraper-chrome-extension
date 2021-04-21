@@ -10,18 +10,20 @@ export default class StoreRestApi {
 		});
 		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
 		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
+		this.axiosInstance.interceptors.response.use(response => {
+			const contentType = response.headers['content-type']
+			if (contentType !== 'application/json') {
+				const error = new Error(`Expected JSON response from API, but got ${contentType}`);
+				return Promise.reject(error);
+			}
+			return response;
+		});
 	}
 
 	createSitemap(sitemap) {
 		return this.axiosInstance
 			.post('/sitemaps/', Sitemap.sitemapFromObj(sitemap).exportSitemap())
-			.then(response => {
-				if (response.hasOwnProperty('data') && response.data.hasOwnProperty('body')) {
-					return Sitemap.sitemapFromObj(response.data.body);
-				} else {
-					return sitemap;
-				}
-			})
+			.then(response => Sitemap.sitemapFromObj(response.data))
 			.catch(() => {
 				alert('StoreApi: Error creating sitemap.');
 			});
@@ -35,8 +37,8 @@ export default class StoreRestApi {
 				.then(() => {
 					return sitemap;
 				})
-				.catch(response => {
-					if (response.statusCode() === 304) {
+				.catch(error => {
+					if (error.response && error.response.status === 304) {
 						return sitemap;
 					}
 					alert('StoreApi: Error updating sitemap.');
