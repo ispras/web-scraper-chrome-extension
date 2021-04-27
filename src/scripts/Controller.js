@@ -971,7 +971,7 @@ export default class SitemapController {
 					validators: {
 						callback: {
 							message: Translator.getTranslationByKey(
-								'some_child_can_create_new_jobs'
+								'some_child_can_create_new_jobs_error_message'
 							),
 							callback: (value, validator) => {
 								if (value !== 'on') {
@@ -1042,7 +1042,7 @@ export default class SitemapController {
 										return {
 											valid: false,
 											message: Translator.getTranslationByKey(
-												'some_parent_element_has_merge_into_list_enabled'
+												'some_parent_has_merge_into_list_error_message'
 											),
 										};
 									}

@@ -260,6 +260,12 @@
 	"handle_recursive_error_message": {
 		"message": "Невозможно обработать рекурсивные селекторы элементов."
 	},
+	"some_parent_has_merge_into_list_error_message": {
+		"message": "Нельзя добавить селектор ссылок, если у родителя-элемента включено объединение записей в список"
+	},
+	"some_child_can_create_new_jobs_error_message": {
+		"message": "Нельзя использовать объединение записей в список, если есть потомки-ссылки"
+	},
 	"request_interval_empty_message": {
 		"message": "Задержка между запросами обязательна и не может быть пустой."
 	},
