@@ -228,6 +228,12 @@
 	"pagination_limit_small_message": { "message": "Pagination limit must be 1 at least" },
 	"parent_selector_empty_message": { "message": "You must choose at least one parent selector" },
 	"handle_recursive_error_message": { "message": "Cannot handle recursive element selectors" },
+	"some_parent_has_merge_into_list_error_message": {
+		"message": "Can't add link-like selector if some parent element has merge into list enabled"
+	},
+	"some_child_can_create_new_jobs_error_message": {
+		"message": "Can't merge elements into list if selector has link-like descendants"
+	},
 	"request_interval_empty_message": {
 		"message": "The request interval is required and cannot be empty"
 	},

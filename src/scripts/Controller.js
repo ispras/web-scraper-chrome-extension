@@ -967,6 +967,25 @@ export default class SitemapController {
 						},
 					},
 				},
+				mergeIntoList: {
+					validators: {
+						callback: {
+							message: Translator.getTranslationByKey(
+								'some_child_can_create_new_jobs_error_message'
+							),
+							callback: (value, validator) => {
+								if (value !== 'on') {
+									return true;
+								}
+								const sitemap = this.getCurrentlyEditedSelectorSitemap();
+								const selector = this.getCurrentlyEditedSelector();
+								return !sitemap.getAllSelectors(selector.id).some(
+									child => child.canCreateNewJobs()
+								);
+							},
+						}
+					}
+				},
 				parentSelectors: {
 					validators: {
 						notEmpty: {
@@ -975,7 +994,7 @@ export default class SitemapController {
 							),
 						},
 						callback: {
-							message: 'perent_selector_callback_error',
+							message: 'parent_selector_callback_error',
 							callback: function (value, validator) {
 								const sitemap = this.getCurrentlyEditedSelectorSitemap();
 								const newSelector = this.getCurrentlyEditedSelector();
@@ -999,6 +1018,36 @@ export default class SitemapController {
 										),
 									};
 								}
+								if (newSelector.canCreateNewJobs()) {
+									function someParentElementHasMergeIntoListEnabled(parentSelectorIds) {
+										// this assumes there are no recursive element selectors
+										for (const selectorId of parentSelectorIds) {
+											if (selectorId === '_root') {
+												continue;
+											}
+											const selector = sitemap.getSelectorById(selectorId);
+											if (selector.willReturnElements()) {
+												if (selector.mergeIntoList) {
+													return true;
+												}
+												if (someParentElementHasMergeIntoListEnabled(selector.parentSelectors)) {
+													return true;
+												}
+											}
+										}
+										return false;
+									}
+
+									if (someParentElementHasMergeIntoListEnabled(newSelector.parentSelectors)) {
+										return {
+											valid: false,
+											message: Translator.getTranslationByKey(
+												'some_parent_has_merge_into_list_error_message'
+											),
+										};
+									}
+								}
+
 								return true;
 							}.bind(this),
 						},
