@@ -177,7 +177,7 @@ export default class Selector {
 	 * @returns {boolean}
 	 */
 	willReturnMultipleRecords() {
-		return this.canReturnMultipleRecords() && this.multiple;
+		return this.canReturnMultipleRecords() && this.multiple && !this.mergeIntoList;
 	}
 
 	/**
