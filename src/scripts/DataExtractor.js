@@ -235,11 +235,7 @@ export default class DataExtractor {
 								resultData.push(rec);
 							});
 						});
-						deferredResponse.resolve(
-							selector.hasOwnProperty('mergeIntoList') && selector.mergeIntoList
-								? [{ [selector.id]: resultData }]
-								: resultData
-						);
+						deferredResponse.resolve(resultData);
 					}.bind(this)
 				);
 			}.bind(this)
