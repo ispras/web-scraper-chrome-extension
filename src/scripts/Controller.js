@@ -974,12 +974,9 @@ export default class SitemapController {
 								'some_child_can_create_new_jobs_error_message'
 							),
 							callback: (value, validator) => {
-								if (value !== 'on') {
-									return true;
-								}
 								const sitemap = this.getCurrentlyEditedSelectorSitemap();
 								const selector = this.getCurrentlyEditedSelector();
-								return !sitemap.getAllSelectors(selector.id).some(
+								return !selector.mergeIntoList || !sitemap.getAllSelectors(selector.id).some(
 									child => child.canCreateNewJobs()
 								);
 							},

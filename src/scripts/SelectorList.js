@@ -230,7 +230,10 @@ export default class SelectorList extends Array {
 	willReturnMultipleRecords(selectorId) {
 		// handle reuqested selector
 		let selector = this.getSelector(selectorId);
-		if (selector.willReturnMultipleRecords() === true) {
+		if (selector.mergeIntoList) {
+			return false;
+		}
+		if (selector.willReturnMultipleRecords()) {
 			return true;
 		}
 
@@ -238,7 +241,7 @@ export default class SelectorList extends Array {
 		let childSelectors = this.getAllSelectors(selectorId);
 		for (let i = 0; i < childSelectors.length; i++) {
 			let selector = childSelectors[i];
-			if (selector.willReturnMultipleRecords() === true) {
+			if (selector.willReturnMultipleRecords()) {
 				return true;
 			}
 		}

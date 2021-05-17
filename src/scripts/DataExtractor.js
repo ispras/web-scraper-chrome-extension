@@ -1,7 +1,7 @@
-import Sitemap from './Sitemap';
-import SelectorList from './SelectorList';
-import '../libs/jquery.whencallsequentially';
-import 'sugar';
+import Sitemap from "./Sitemap";
+import SelectorList from "./SelectorList";
+import "../libs/jquery.whencallsequentially";
+import "sugar";
 
 export default class DataExtractor {
 	constructor(options) {
@@ -147,15 +147,27 @@ export default class DataExtractor {
 		deferredData.then(
 			function (data) {
 				if (selector.willReturnElements()) {
-					let newParentElement = data[0];
-					let deferredChildCommonData = this.getSelectorTreeCommonData(
-						selectors,
-						selector.id,
-						newParentElement
-					);
-					deferredChildCommonData.done(function (data) {
-						d.resolve(data);
-					});
+					if (selector.multiple && selector.mergeIntoList) {
+						$.whenCallSequentially(
+							data.map(function(element) {
+								return this.getSelectorTreeData.bind(
+									this, selectors, selector.id, element, {}
+								);
+							}.bind(this))
+						).done(function(results) {
+							d.resolve({ [selector.id]: results.flat() });
+						});
+					} else {
+						let newParentElement = data[0];
+						let deferredChildCommonData = this.getSelectorTreeCommonData(
+							selectors,
+							selector.id,
+							newParentElement
+						);
+						deferredChildCommonData.done(function (data) {
+							d.resolve(data);
+						});
+					}
 				} else {
 					d.resolve(data[0]);
 				}
@@ -189,6 +201,8 @@ export default class DataExtractor {
 					deferredResponse.resolve(resultData);
 				}.bind(this)
 			);
+
+			return deferredResponse;
 		}
 
 		// handle situation when this selector is an elementSelector
@@ -221,11 +235,7 @@ export default class DataExtractor {
 								resultData.push(rec);
 							});
 						});
-						deferredResponse.resolve(
-							selector.hasOwnProperty('mergeIntoList') && selector.mergeIntoList
-								? [{ [selector.id]: resultData }]
-								: resultData
-						);
+						deferredResponse.resolve(resultData);
 					}.bind(this)
 				);
 			}.bind(this)
