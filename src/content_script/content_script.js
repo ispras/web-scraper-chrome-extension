@@ -1,5 +1,6 @@
 import getContentScript from '../scripts/ContentScript';
 import DataExtractor from '../scripts/DataExtractor';
+import initVersionEventAPI from "../scripts/VersionEventAPI";
 import * as browser from 'webextension-polyfill';
 import './content_script.css';
 
@@ -45,3 +46,5 @@ browser.runtime.onMessage.addListener(request => {
 		}
 	});
 });
+
+initVersionEventAPI();
