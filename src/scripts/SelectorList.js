@@ -15,10 +15,13 @@ import SelectorElementScroll from './Selector/SelectorElementScroll';
 import SelectorElementAttribute from './Selector/SelectorElementAttribute';
 import SelectorTable from './Selector/SelectorTable';
 import SelectorPageURL from './Selector/SelectorPageURL';
+import SelectorElementExists from './Selector/SelectorElementExists';
 
 export default class SelectorList extends Array {
 	static createSelector(options) {
 		switch (options.type) {
+			case 'SelectorElementExists':
+				return new SelectorElementExists(options);
 			case 'ConstantValue':
 				return new ConstantValue(options);
 			case 'SelectorPageURL':

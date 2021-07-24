@@ -1,6 +1,7 @@
 import SparkMD5 from 'spark-md5';
 import ElementQuery from './ElementQuery';
 import Base64 from './Base64';
+import * as chrono from 'chrono-node';
 
 export default class Selector {
 	constructor(selector) {}
@@ -55,19 +56,38 @@ export default class Selector {
 			return data;
 		}
 
-		let regex = function (content, regex, regexgroup) {
+		let regex = function (content, regex_pattern, regexgroup) {
 			try {
-				content = $.trim(content);
-				let matches = content.match(new RegExp(regex, 'm')),
-					groupDefined = regexgroup !== '';
+				const regex = new RegExp(regex_pattern);
+				const match = regex.exec(content);
 
-				regexgroup = groupDefined ? regexgroup : 0;
-
-				if (matches !== null && regexgroup in matches) {
-					return matches[regexgroup];
-				} else {
-					return '';
+				if (match == null) {
+					return;
 				}
+
+				if (!regexgroup) {
+					return match.groups ? match.groups : match[0];
+				}
+				const res = {};
+
+				const selectedGroups = regexgroup.split(',');
+
+				if (selectedGroups.length == 1) {
+					if (isNaN(group) && match.groups) {
+						return match.groups[group];
+					} else {
+						return match[group];
+					}
+				}
+
+				for (const group of selectedGroups) {
+					if (isNaN(group) && match.groups) {
+						res[group] = match.groups[group];
+					} else {
+						res[group] = match[group];
+					}
+				}
+				return res;
 			} catch (e) {
 				console.log(
 					'%c Skipping regular expression: ' + e.message,
@@ -104,6 +124,18 @@ export default class Selector {
 			return (content += suffix);
 		};
 
+		let removeSuffix = function (content, suffix) {
+			if (content.endsWith(suffix)) {
+				return content.slice(0, content.length - suffix.length);
+			}
+		};
+
+		let removePrefix = function (content, prefix) {
+			if (content.startsWith(prefix)) {
+				return content.slice(prefix.length);
+			}
+		};
+
 		let applyTextManipulation = function (content) {
 			let isString = typeof content === 'string' || content instanceof String,
 				isUnderlyingString = !isString && $(content).text() !== '';
@@ -113,6 +145,8 @@ export default class Selector {
 			}
 
 			content = isString ? content : $(content).text();
+
+			const toDo = [];
 
 			// use key in object since unit tests might not define each property
 			let keys = [];
@@ -130,42 +164,97 @@ export default class Selector {
 			if (propertyIsAvailable('regex')) {
 				let group = this.textmanipulation.regexgroup;
 				let value = this.textmanipulation.regex;
+
 				group = typeof group != 'undefined' ? group : '';
+
 				if (value !== '') {
-					content = regex(content, value, group);
+					toDo.push([
+						this.textmanipulation.regexPriority,
+						content => regex(content, value, group),
+					]);
 				}
 			}
 
 			if (propertyIsAvailable('removeHtml')) {
 				if (this.textmanipulation.removeHtml) {
-					content = removeHtml(content);
+					toDo.push([
+						this.textmanipulation.removeHtmlPriority,
+						content => removeHtml(content),
+					]);
 				}
 			}
 
 			if (propertyIsAvailable('trimText')) {
 				if (this.textmanipulation.trimText) {
-					content = trimText(content);
+					toDo.push([
+						this.textmanipulation.trimTextPriority,
+						content => trimText(content),
+					]);
 				}
 			}
 
 			if (propertyIsAvailable('replaceText')) {
-				let replacement = this.textmanipulation.replacementText;
-				replacement = typeof replacement != 'undefined' ? replacement : '';
-				content = replaceText(content, this.textmanipulation.replaceText, replacement);
+				if (this.textmanipulation.replaceText !== '') {
+					let replacement = this.textmanipulation.replacementText;
+					replacement = typeof replacement != 'undefined' ? replacement : '';
+
+					toDo.push([
+						this.textmanipulation.replacePriority,
+						content =>
+							replaceText(content, this.textmanipulation.replaceText, replacement),
+					]);
+				}
 			}
 
 			if (propertyIsAvailable('textPrefix')) {
 				if (this.textmanipulation.textPrefix !== '') {
-					content = textPrefix(content, this.textmanipulation.textPrefix);
+					toDo.push([
+						this.textmanipulation.textSuffixPriority,
+						content => textPrefix(content, this.textmanipulation.textPrefix),
+					]);
 				}
 			}
 
 			if (propertyIsAvailable('textSuffix')) {
 				if (this.textmanipulation.textSuffix !== '') {
-					content = textSuffix(content, this.textmanipulation.textSuffix);
+					toDo.push([
+						this.textmanipulation.textSuffixPriority,
+						content => textSuffix(content, this.textmanipulation.textSuffix),
+					]);
 				}
 			}
 
+			if (propertyIsAvailable('removeTextPrefix')) {
+				if (this.textmanipulation.removeTextPrefix !== '') {
+					toDo.push([
+						this.textmanipulation.removeTextPrefixPriority,
+						content => removePrefix(content, this.textmanipulation.removeTextPrefix),
+					]);
+				}
+			}
+
+			if (propertyIsAvailable('removeTextSuffix')) {
+				if (this.textmanipulation.removeTextSuffix !== '') {
+					toDo.push([
+						this.textmanipulation.removeTextPrefixPriority,
+						content => removeSuffix(content, this.textmanipulation.removeTextSuffix),
+					]);
+				}
+			}
+
+			toDo.sort((a, b) => b[0] - a[0]);
+			content = toDo.reduce((prev, [_, func]) => func(prev), content);
+
+			if (propertyIsAvailable('transform')) {
+				switch (this.textmanipulation.transform) {
+					case 'float':
+						return parseFloat(content);
+					case 'integer':
+						return parseInt(content);
+					case 'date':
+						return chrono.parseDate(content);
+				}
+			}
 			return content;
 		}.bind(this);
 

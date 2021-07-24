@@ -21,6 +21,7 @@
 		"@babel/runtime": "^7.10.5",
 		"axios": "^0.21.1",
 		"bootstrap": "3.4.1",
+		"chrono-node": "^2.3.1",
 		"d3": "^3.3.8",
 		"icanhaz": "0.10.3",
 		"jquery": "^3.5.0",

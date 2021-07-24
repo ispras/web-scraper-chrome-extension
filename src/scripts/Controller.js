@@ -23,6 +23,7 @@ export default class SitemapController {
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');
 		this.selectorTypes = [
+			{ type: 'SelectorElementExists' },
 			{
 				type: 'SelectorText',
 			},
@@ -519,17 +520,19 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_empty_message'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_empty_message'
+													),
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_short_message'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_short_message'
+													),
 											};
 										}
 										if (
@@ -537,9 +540,10 @@ export default class SitemapController {
 										) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_invalid_char'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_invalid_char'
+													),
 											};
 										}
 									}
@@ -575,9 +579,8 @@ export default class SitemapController {
 									};
 								}
 								return {
-									message: Translator.getTranslationByKey(
-										'sitemap_valid_message'
-									),
+									message:
+										Translator.getTranslationByKey('sitemap_valid_message'),
 									valid: true,
 								};
 							},
@@ -907,10 +910,7 @@ export default class SitemapController {
 								'regex_group_numeric_error_message'
 							),
 							callback(value, validator) {
-								if (value === '') {
-									return true;
-								}
-								return !isNaN(value);
+								return true;
 							},
 						},
 					},
@@ -976,12 +976,15 @@ export default class SitemapController {
 							callback: (value, validator) => {
 								const sitemap = this.getCurrentlyEditedSelectorSitemap();
 								const selector = this.getCurrentlyEditedSelector();
-								return !selector.mergeIntoList || !sitemap.getAllSelectors(selector.id).some(
-									child => child.canCreateNewJobs()
+								return (
+									!selector.mergeIntoList ||
+									!sitemap
+										.getAllSelectors(selector.id)
+										.some(child => child.canCreateNewJobs())
 								);
 							},
-						}
-					}
+						},
+					},
 				},
 				parentSelectors: {
 					validators: {
@@ -1016,7 +1019,9 @@ export default class SitemapController {
 									};
 								}
 								if (newSelector.canCreateNewJobs()) {
-									function someParentElementHasMergeIntoListEnabled(parentSelectorIds) {
+									function someParentElementHasMergeIntoListEnabled(
+										parentSelectorIds
+									) {
 										// this assumes there are no recursive element selectors
 										for (const selectorId of parentSelectorIds) {
 											if (selectorId === '_root') {
@@ -1027,7 +1032,11 @@ export default class SitemapController {
 												if (selector.mergeIntoList) {
 													return true;
 												}
-												if (someParentElementHasMergeIntoListEnabled(selector.parentSelectors)) {
+												if (
+													someParentElementHasMergeIntoListEnabled(
+														selector.parentSelectors
+													)
+												) {
 													return true;
 												}
 											}
@@ -1035,7 +1044,11 @@ export default class SitemapController {
 										return false;
 									}
 
-									if (someParentElementHasMergeIntoListEnabled(newSelector.parentSelectors)) {
+									if (
+										someParentElementHasMergeIntoListEnabled(
+											newSelector.parentSelectors
+										)
+									) {
 										return {
 											valid: false,
 											message: Translator.getTranslationByKey(
@@ -1217,13 +1230,28 @@ export default class SitemapController {
 		};
 		const textmanipulation = {
 			removeHtml: $('#edit-selector [name=removeHtml]').is(':checked'),
+			removeHtmlPriority: $('#edit-selector #removeHtml_priority').val(),
+
 			trimText: $('#edit-selector [name=trimText]').is(':checked'),
+			trimTextPriority: $('#edit-selector #trimText_priority').val(),
+
 			replaceText: $('#edit-selector [name=replaceText]').val(),
 			replacementText: $('#edit-selector [name=replacementText]').val(),
+			replacePriority: $('#edit-selector #replacementText_priority').val(),
+
 			textPrefix: $('#edit-selector [name=textPrefix]').val(),
 			textSuffix: $('#edit-selector [name=textSuffix]').val(),
+			textSuffixPriority: $('#exit-selector #textSuffix_priority').val(),
+
 			regex: $('#edit-selector [name=regex]').val(),
 			regexgroup: $('#edit-selector [name=regexgroup]').val(),
+			regexPriority: $('edit-selector #regex_priority').val(),
+
+			removeTextPrefix: $('#edit-selector [name=removeTextPrefix]').val(),
+			removeTextSuffix: $('#edit-selector [name=removeTextSuffix]').val(),
+			removeTextPrefixPriority: $('#edit-selector #removeTextPrefix_priority').val(),
+
+			transform: $('#edit-selector input[name=transform]:checked').attr('id'),
 		};
 
 		$columnHeaders.each(function (i) {
