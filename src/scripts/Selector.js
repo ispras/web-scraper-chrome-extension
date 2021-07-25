@@ -241,17 +241,18 @@ export default class Selector {
 					]);
 				}
 			}
+			if (toDo.length) {
+				toDo.sort((a, b) => b[0] - a[0]);
+				content = toDo.reduce((prev, [_, func]) => func(prev), content);
+			}
 
-			toDo.sort((a, b) => b[0] - a[0]);
-			content = toDo.reduce((prev, [_, func]) => func(prev), content);
-
-			if (propertyIsAvailable('to_date')) {
+			if (propertyIsAvailable('to_date') && this.textmanipulation.to_date) {
 				return chrono.parseDate(content);
 			}
-			if (propertyIsAvailable('to_int')) {
+			if (propertyIsAvailable('to_int') && this.textmanipulation.to_int) {
 				return parseInt(content);
 			}
-			if (propertyIsAvailable('to_float')) {
+			if (propertyIsAvailable('to_float') && this.textmanipulation.to_float) {
 				return parseInt(content);
 			}
 
