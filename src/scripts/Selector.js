@@ -209,7 +209,7 @@ export default class Selector {
 			if (propertyIsAvailable('textPrefix')) {
 				if (this.textmanipulation.textPrefix !== '') {
 					toDo.push([
-						this.textmanipulation.textSuffixPriority,
+						this.textmanipulation.textSuffixPrefixPriority,
 						content => textPrefix(content, this.textmanipulation.textPrefix),
 					]);
 				}
@@ -218,7 +218,7 @@ export default class Selector {
 			if (propertyIsAvailable('textSuffix')) {
 				if (this.textmanipulation.textSuffix !== '') {
 					toDo.push([
-						this.textmanipulation.textSuffixPriority,
+						this.textmanipulation.textSuffixPrefixPriority,
 						content => textSuffix(content, this.textmanipulation.textSuffix),
 					]);
 				}
@@ -227,7 +227,7 @@ export default class Selector {
 			if (propertyIsAvailable('removeTextPrefix')) {
 				if (this.textmanipulation.removeTextPrefix !== '') {
 					toDo.push([
-						this.textmanipulation.removeTextPrefixPriority,
+						this.textmanipulation.textSuffixPrefixRemovePriority,
 						content => removePrefix(content, this.textmanipulation.removeTextPrefix),
 					]);
 				}
@@ -236,7 +236,7 @@ export default class Selector {
 			if (propertyIsAvailable('removeTextSuffix')) {
 				if (this.textmanipulation.removeTextSuffix !== '') {
 					toDo.push([
-						this.textmanipulation.removeTextPrefixPriority,
+						this.textmanipulation.textSuffixPrefixRemovePriority,
 						content => removeSuffix(content, this.textmanipulation.removeTextSuffix),
 					]);
 				}
@@ -245,16 +245,16 @@ export default class Selector {
 			toDo.sort((a, b) => b[0] - a[0]);
 			content = toDo.reduce((prev, [_, func]) => func(prev), content);
 
-			if (propertyIsAvailable('transform')) {
-				switch (this.textmanipulation.transform) {
-					case 'float':
-						return parseFloat(content);
-					case 'integer':
-						return parseInt(content);
-					case 'date':
-						return chrono.parseDate(content);
-				}
+			if (propertyIsAvailable('to_date')) {
+				return chrono.parseDate(content);
 			}
+			if (propertyIsAvailable('to_int')) {
+				return parseInt(content);
+			}
+			if (propertyIsAvailable('to_float')) {
+				return parseInt(content);
+			}
+
 			return content;
 		}.bind(this);
 

@@ -1230,28 +1230,33 @@ export default class SitemapController {
 		};
 		const textmanipulation = {
 			removeHtml: $('#edit-selector [name=removeHtml]').is(':checked'),
-			removeHtmlPriority: $('#edit-selector #removeHtml_priority').val(),
+			removeHtmlPriority: $('#edit-selector [name=removeHtmlPriority]').val(),
 
 			trimText: $('#edit-selector [name=trimText]').is(':checked'),
-			trimTextPriority: $('#edit-selector #trimText_priority').val(),
+			trimTextPriority: $('#edit-selector [name=trimTextPriority]').val(),
 
 			replaceText: $('#edit-selector [name=replaceText]').val(),
 			replacementText: $('#edit-selector [name=replacementText]').val(),
-			replacePriority: $('#edit-selector #replacementText_priority').val(),
+			replacePriority: $('#edit-selector [name=replacePriority]').val(),
 
 			textPrefix: $('#edit-selector [name=textPrefix]').val(),
 			textSuffix: $('#edit-selector [name=textSuffix]').val(),
-			textSuffixPriority: $('#exit-selector #textSuffix_priority').val(),
+			textSuffixPrefixPriority: $('#edit-selector [name=textSuffixPrefixPriority]').val(),
 
 			regex: $('#edit-selector [name=regex]').val(),
 			regexgroup: $('#edit-selector [name=regexgroup]').val(),
-			regexPriority: $('edit-selector #regex_priority').val(),
+			regexPriority: $('#edit-selector [name=regexPriority]').val(),
 
 			removeTextPrefix: $('#edit-selector [name=removeTextPrefix]').val(),
 			removeTextSuffix: $('#edit-selector [name=removeTextSuffix]').val(),
-			removeTextPrefixPriority: $('#edit-selector #removeTextPrefix_priority').val(),
+			textSuffixPrefixRemovePriority: $(
+				'#edit-selector [name=textSuffixPrefixRemovePriority]'
+			).val(),
 
-			transform: $('#edit-selector input[name=transform]:checked').attr('id'),
+			to_str: $('#edit-selector input#str').is(':checked'),
+			to_float: $('#edit-selector input#float').is(':checked'),
+			to_int: $('#edit-selector input#int').is(':checked'),
+			to_date: $('#edit-selector input#date').is(':checked'),
 		};
 
 		$columnHeaders.each(function (i) {
