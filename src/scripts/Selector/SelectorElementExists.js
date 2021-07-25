@@ -27,7 +27,7 @@ export default class SelectorElementExists extends Selector {
 	}
 
 	async _getData(parentElement) {
-		return [{ [this.id]: Boolean(parentElement) }];
+		return [{ [this.id]: Boolean(this.getDataElements(parentElement).length) }];
 	}
 
 	getDataColumns() {
