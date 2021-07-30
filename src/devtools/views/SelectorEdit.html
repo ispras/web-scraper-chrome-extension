@@ -567,6 +567,7 @@
 					/>
 				</label>
 			</div>
+
 			<div class="row">
 				<label for="regex" class="col-sm-3">
 					<span data-i18n="selector_edit_regex_match"></span>
@@ -600,34 +601,41 @@
 						value="{{selector.textmanipulation.regexPriority}}{{^selector.textmanipulation.regexPriority}}0{{/selector.textmanipulation.regexPriority}}"
 					/>
 				</label>
+
+				<label for="regexFlags" class="col-sm-1">
+					<span data-i18n="selector_edit_regex_flags"></span>
+					<input type="input" name="regexFlags" id="regexFlags" class="form-control"
+					value={{selector.textmanipulation.regexFlags}}{{^selector.textmanipulation.regexFlags}}gm{{/selector.textmanipulation.regexFlags}}
+					/>
+				</label>
 			</div>
 
 			<div class="row">
 				<span class="col-sm-1">
 					<input type="radio" name="transform" id="str"
-					{{#selector.textmanipulation.to_str}} checked="checked"
-					{{/selector.textmanipulation.to_str}} />
+					{{#selector.textmanipulation.toStr}} checked="checked"
+					{{/selector.textmanipulation.toStr}} />
 					<label for="str">Default</label>
 				</span>
 
 				<span class="col-sm-1">
 					<input type="radio" name="transform" id="int"
-					{{#selector.textmanipulation.to_int}} checked="checked"
-					{{/selector.textmanipulation.to_int}} />
+					{{#selector.textmanipulation.toInt}} checked="checked"
+					{{/selector.textmanipulation.toInt}} />
 					<label for="int">Integer</label>
 				</span>
 
 				<span class="col-sm-1">
 					<input type="radio" name="transform" id="float"
-					{{#selector.textmanipulation.to_float}} checked="checked"
-					{{/selector.textmanipulation.to_float}} />
+					{{#selector.textmanipulation.toFloat}} checked="checked"
+					{{/selector.textmanipulation.toFloat}} />
 					<label for="float">Float</label>
 				</span>
 
 				<span class="col-sm-1">
 					<input type="radio" name="transform" id="date"
-					{{#selector.textmanipulation.to_date}} checked="checked"
-					{{/selector.textmanipulation.to_date}} />
+					{{#selector.textmanipulation.toDate}} checked="checked"
+					{{/selector.textmanipulation.toDate}} />
 					<label for="date">Date</label>
 				</span>
 			</div>

@@ -15,7 +15,7 @@ export default class SelectorElementExists extends Selector {
 	}
 
 	canHaveLocalChildSelectors() {
-		return true;
+		return false;
 	}
 
 	canCreateNewJobs() {

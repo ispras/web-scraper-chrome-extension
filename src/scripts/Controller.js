@@ -23,7 +23,6 @@ export default class SitemapController {
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');
 		this.selectorTypes = [
-			{ type: 'SelectorElementExists' },
 			{
 				type: 'SelectorText',
 			},
@@ -54,6 +53,8 @@ export default class SitemapController {
 			{
 				type: 'SelectorElementStyle',
 			},
+			{ type: 'SelectorElementExists' },
+
 			{
 				type: 'SelectorPageURL',
 			},
@@ -550,6 +551,11 @@ export default class SitemapController {
 
 									// check for start urls
 									if (!sitemap.hasOwnProperty('startUrls')) {
+										// This is only diffrence between webscraper sitemaps
+										// if (sitemap.startUrl) {
+										// 	sitemap.startUrls = [sitemap.startUrl]
+										// 	return true
+										// }
 										return {
 											valid: false,
 											message: Translator.getTranslationByKey(
@@ -881,6 +887,19 @@ export default class SitemapController {
 						},
 					},
 				},
+				regexFlags: {
+					validators: {
+						callback: {
+							message: Translator.getTranslationByKey(
+								'selector_edit_regex_flags_error'
+							),
+							callback(value, _) {
+								const flags = new Set('gimus');
+								return [...value].every(char => flags.has(char));
+							},
+						},
+					},
+				},
 				regex: {
 					validators: {
 						callback: {
@@ -899,18 +918,6 @@ export default class SitemapController {
 								} catch (e) {
 									return false;
 								}
-							},
-						},
-					},
-				},
-				regexgroup: {
-					validators: {
-						callback: {
-							message: Translator.getTranslationByKey(
-								'regex_group_numeric_error_message'
-							),
-							callback(value, validator) {
-								return true;
 							},
 						},
 					},
@@ -1246,6 +1253,7 @@ export default class SitemapController {
 			regex: $('#edit-selector [name=regex]').val(),
 			regexgroup: $('#edit-selector [name=regexgroup]').val(),
 			regexPriority: $('#edit-selector [name=regexPriority]').val(),
+			regexFlags: $('#edit-selector [name=regexFlags]').val(),
 
 			removeTextPrefix: $('#edit-selector [name=removeTextPrefix]').val(),
 			removeTextSuffix: $('#edit-selector [name=removeTextSuffix]').val(),
@@ -1253,10 +1261,10 @@ export default class SitemapController {
 				'#edit-selector [name=textSuffixPrefixRemovePriority]'
 			).val(),
 
-			to_str: $('#edit-selector input#str').is(':checked'),
-			to_float: $('#edit-selector input#float').is(':checked'),
-			to_int: $('#edit-selector input#int').is(':checked'),
-			to_date: $('#edit-selector input#date').is(':checked'),
+			toStr: $('#edit-selector input#str').is(':checked'),
+			toFloat: $('#edit-selector input#float').is(':checked'),
+			toInt: $('#edit-selector input#int').is(':checked'),
+			toDate: $('#edit-selector input#date').is(':checked'),
 		};
 
 		$columnHeaders.each(function (i) {

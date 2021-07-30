@@ -56,9 +56,9 @@ export default class Selector {
 			return data;
 		}
 
-		let regex = function (content, regex_pattern, regexgroup) {
+		let regex = function (content, regexPattern, regexgroup, flags) {
 			try {
-				const regex = new RegExp(regex_pattern);
+				const regex = new RegExp(regexPattern, flags);
 				const match = regex.exec(content);
 
 				if (match == null) {
@@ -68,12 +68,13 @@ export default class Selector {
 				if (!regexgroup) {
 					return match.groups ? match.groups : match[0];
 				}
+
 				const res = {};
 
 				const selectedGroups = regexgroup.split(',');
 
 				if (selectedGroups.length == 1) {
-					if (isNaN(group) && match.groups) {
+					if (isNaN(selectedGroups[0]) && match.groups) {
 						return match.groups[group];
 					} else {
 						return match[group];
@@ -128,12 +129,14 @@ export default class Selector {
 			if (content.endsWith(suffix)) {
 				return content.slice(0, content.length - suffix.length);
 			}
+			return content;
 		};
 
 		let removePrefix = function (content, prefix) {
 			if (content.startsWith(prefix)) {
 				return content.slice(prefix.length);
 			}
+			return content;
 		};
 
 		let applyTextManipulation = function (content) {
@@ -170,7 +173,7 @@ export default class Selector {
 				if (value !== '') {
 					toDo.push([
 						this.textmanipulation.regexPriority,
-						content => regex(content, value, group),
+						content => regex(content, value, group, this.textmanipulation.regexFlags),
 					]);
 				}
 			}
@@ -241,19 +244,20 @@ export default class Selector {
 					]);
 				}
 			}
+
 			if (toDo.length) {
 				toDo.sort((a, b) => b[0] - a[0]);
 				content = toDo.reduce((prev, [_, func]) => func(prev), content);
 			}
 
-			if (propertyIsAvailable('to_date') && this.textmanipulation.to_date) {
+			if (propertyIsAvailable('toDate') && this.textmanipulation.toDate) {
 				return chrono.parseDate(content);
 			}
-			if (propertyIsAvailable('to_int') && this.textmanipulation.to_int) {
+			if (propertyIsAvailable('toInt') && this.textmanipulation.toInt) {
 				return parseInt(content);
 			}
-			if (propertyIsAvailable('to_float') && this.textmanipulation.to_float) {
-				return parseInt(content);
+			if (propertyIsAvailable('toFloat') && this.textmanipulation.toFloat) {
+				return parseFloat(content);
 			}
 
 			return content;
