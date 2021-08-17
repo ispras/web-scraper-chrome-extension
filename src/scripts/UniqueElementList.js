@@ -2,6 +2,8 @@
  * Only Elements unique will be added to this array
  * @constructor
  */
+import CssSelector from '../libs/css-selector/lib/CssSelector';
+
 export default class UniqueElementList extends Array {
 	constructor(clickElementUniquenessType) {
 		super();
