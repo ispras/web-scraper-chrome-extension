@@ -99,20 +99,18 @@ export default class SelectorList extends Array {
 			return this;
 		}
 
-		let getAllChildSelectors = function (parentSelectorId, resultSelectors) {
-			this.forEach(
-				function (selector) {
-					if (selector.hasParentSelector(parentSelectorId)) {
-						if (resultSelectors.indexOf(selector) === -1) {
-							resultSelectors.push(selector);
-							getAllChildSelectors(selector.id, resultSelectors);
-						}
+		const getAllChildSelectors = function (parentSelectorId, resultSelectors) {
+			this.forEach(function (selector) {
+				if (selector.hasParentSelector(parentSelectorId)) {
+					if (resultSelectors.indexOf(selector) === -1) {
+						resultSelectors.push(selector);
+						getAllChildSelectors(selector.id, resultSelectors);
 					}
-				}.bind(this)
-			);
+				}
+			});
 		}.bind(this);
 
-		let resultSelectors = [];
+		const resultSelectors = [];
 		getAllChildSelectors(parentSelectorId, resultSelectors);
 		return resultSelectors;
 	}
@@ -123,7 +121,7 @@ export default class SelectorList extends Array {
 	 * @returns {Array}
 	 */
 	getDirectChildSelectors(parentSelectorId) {
-		let resultSelectors = new SelectorList();
+		const resultSelectors = new SelectorList();
 		this.forEach(function (selector) {
 			if (selector.hasParentSelector(parentSelectorId)) {
 				resultSelectors.push(selector);
@@ -133,7 +131,7 @@ export default class SelectorList extends Array {
 	}
 
 	clone() {
-		let resultList = new SelectorList();
+		const resultList = new SelectorList();
 		this.forEach(function (selector) {
 			resultList.push(selector);
 		});
@@ -141,7 +139,7 @@ export default class SelectorList extends Array {
 	}
 
 	fullClone() {
-		let resultList = new SelectorList();
+		const resultList = new SelectorList();
 		this.forEach(function (selector) {
 			resultList.push(JSON.parse(JSON.stringify(selector)));
 		});
@@ -149,20 +147,18 @@ export default class SelectorList extends Array {
 	}
 
 	concat() {
-		let resultList = this.clone();
-		for (let i in arguments) {
-			arguments[i].forEach(
-				function (selector) {
-					resultList.push(selector);
-				}.bind(this)
-			);
+		const resultList = this.clone();
+		for (const i in arguments) {
+			arguments[i].forEach(function (selector) {
+				resultList.push(selector);
+			});
 		}
 		return resultList;
 	}
 
 	getSelector(selectorId) {
 		for (let i = 0; i < this.length; i++) {
-			let selector = this[i];
+			const selector = this[i];
 			if (selector.id === selectorId) {
 				return selector;
 			}
@@ -177,15 +173,15 @@ export default class SelectorList extends Array {
 	 */
 	getOnePageSelectors(selectorId) {
 		let resultList = new SelectorList();
-		let selector = this.getSelector(selectorId);
+		const selector = this.getSelector(selectorId);
 		resultList.push(this.getSelector(selectorId));
 
 		// recursively find all parent selectors that could lead to the page where selectorId is used.
-		let findParentSelectors = function (selector) {
+		const findParentSelectors = function (selector) {
 			selector.parentSelectors.forEach(
 				function (parentSelectorId) {
 					if (parentSelectorId === '_root') return;
-					let parentSelector = this.getSelector(parentSelectorId);
+					const parentSelector = this.getSelector(parentSelectorId);
 					if (resultList.indexOf(parentSelector) !== -1) return;
 					if (parentSelector.willReturnElements()) {
 						resultList.push(parentSelector);
@@ -207,29 +203,27 @@ export default class SelectorList extends Array {
 	 * @param parentSelectorId
 	 */
 	getSinglePageAllChildSelectors(parentSelectorId) {
-		let resultList = new SelectorList();
-		let addChildSelectors = function (parentSelector) {
+		const resultList = new SelectorList();
+		const addChildSelectors = function (parentSelector) {
 			if (parentSelector.willReturnElements()) {
-				let childSelectors = this.getDirectChildSelectors(parentSelector.id);
-				childSelectors.forEach(
-					function (childSelector) {
-						if (resultList.indexOf(childSelector) === -1) {
-							resultList.push(childSelector);
-							addChildSelectors(childSelector);
-						}
-					}.bind(this)
-				);
+				const childSelectors = this.getDirectChildSelectors(parentSelector.id);
+				childSelectors.forEach(function (childSelector) {
+					if (resultList.indexOf(childSelector) === -1) {
+						resultList.push(childSelector);
+						addChildSelectors(childSelector);
+					}
+				});
 			}
 		}.bind(this);
 
-		let parentSelector = this.getSelector(parentSelectorId);
+		const parentSelector = this.getSelector(parentSelectorId);
 		addChildSelectors(parentSelector);
 		return resultList;
 	}
 
 	willReturnMultipleRecords(selectorId) {
 		// handle reuqested selector
-		let selector = this.getSelector(selectorId);
+		const selector = this.getSelector(selectorId);
 		if (selector.mergeIntoList) {
 			return false;
 		}
@@ -238,9 +232,9 @@ export default class SelectorList extends Array {
 		}
 
 		// handle all its child selectors
-		let childSelectors = this.getAllSelectors(selectorId);
+		const childSelectors = this.getAllSelectors(selectorId);
 		for (let i = 0; i < childSelectors.length; i++) {
-			let selector = childSelectors[i];
+			const selector = childSelectors[i];
 			if (selector.willReturnMultipleRecords()) {
 				return true;
 			}
@@ -254,7 +248,7 @@ export default class SelectorList extends Array {
 	 * @returns {Array}
 	 */
 	toJSON() {
-		let result = [];
+		const result = [];
 		this.forEach(function (selector) {
 			result.push(selector);
 		});
@@ -263,7 +257,7 @@ export default class SelectorList extends Array {
 
 	getSelectorById(selectorId) {
 		for (let i = 0; i < this.length; i++) {
-			let selector = this[i];
+			const selector = this[i];
 			if (selector.id === selectorId) {
 				return selector;
 			}
@@ -278,7 +272,7 @@ export default class SelectorList extends Array {
 	 */
 	getCSSSelectorWithinOnePage(selectorId, parentSelectorIds) {
 		let CSSSelector = this.getSelector(selectorId).selector;
-		let parentCSSSelector = this.getParentCSSSelectorWithinOnePage(parentSelectorIds);
+		const parentCSSSelector = this.getParentCSSSelectorWithinOnePage(parentSelectorIds);
 		CSSSelector = parentCSSSelector + CSSSelector;
 
 		return CSSSelector;
@@ -293,10 +287,10 @@ export default class SelectorList extends Array {
 		let CSSSelector = '';
 
 		for (let i = parentSelectorIds.length - 1; i > 0; i--) {
-			let parentSelectorId = parentSelectorIds[i];
-			let parentSelector = this.getSelector(parentSelectorId);
+			const parentSelectorId = parentSelectorIds[i];
+			const parentSelector = this.getSelector(parentSelectorId);
 			if (parentSelector.willReturnElements()) {
-				CSSSelector = parentSelector.selector + ' ' + CSSSelector;
+				CSSSelector = `${parentSelector.selector} ${CSSSelector}`;
 			} else {
 				break;
 			}
@@ -310,9 +304,9 @@ export default class SelectorList extends Array {
 
 		this.forEach(
 			function (topSelector) {
-				let visitedSelectors = [];
+				const visitedSelectors = [];
 
-				let checkRecursion = function (parentSelector) {
+				const checkRecursion = function (parentSelector) {
 					// already visited
 					if (visitedSelectors.indexOf(parentSelector) !== -1) {
 						RecursionFound = true;
@@ -321,7 +315,7 @@ export default class SelectorList extends Array {
 
 					if (parentSelector.willReturnElements()) {
 						visitedSelectors.push(parentSelector);
-						let childSelectors = this.getDirectChildSelectors(parentSelector.id);
+						const childSelectors = this.getDirectChildSelectors(parentSelector.id);
 						childSelectors.forEach(checkRecursion);
 						visitedSelectors.pop();
 					}

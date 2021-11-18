@@ -211,6 +211,9 @@
 	"selecting_file_error": { "message": "Please select a file!" },
 	"sitemap_valid_message": { "message": "Valid sitemap" },
 	"selectorid_underscore": { "message": "Selector id cannot start with an underscore _" },
+	"selectorid_is_already_exist": {
+		"message": "Current selector ID is already exist"
+	},
 	"selector_empty_message": { "message": "Selector is required and cannot be empty" },
 	"regex_regular_expressions_error_message": {
 		"message": "JavaScript does not support regular expressions that can match 0 characters."

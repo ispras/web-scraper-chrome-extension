@@ -26,11 +26,11 @@ export default class ElementSelector {
 
 		if (element.parentNode !== undefined) {
 			// nth-child
-			//this.index = [].indexOf.call(element.parentNode.children, element)+1;
+			// this.index = [].indexOf.call(element.parentNode.children, element)+1;
 
 			// nth-of-type
 			for (let i = 0; i < element.parentNode.children.length; i++) {
-				let child = element.parentNode.children[i];
+				const child = element.parentNode.children[i];
 				if (child === element) {
 					break;
 				}
@@ -63,21 +63,21 @@ export default class ElementSelector {
 
 		let selector = this.tag;
 		if (this.id !== null) {
-			selector += '#' + this.id;
+			selector += `#${this.id}`;
 		}
 		if (this.classes.length) {
 			for (let i = 0; i < this.classes.length; i++) {
-				selector += '.' + this.classes[i];
+				selector += `.${this.classes[i]}`;
 			}
 		}
 		if (this.index !== null) {
-			selector += ':nth-of-type(' + this.index + ')';
+			selector += `:nth-of-type(${this.index})`;
 		}
 		if (this.indexn !== null && this.indexn !== -1) {
-			selector += ':nth-of-type(n+' + this.indexn + ')';
+			selector += `:nth-of-type(n+${this.indexn})`;
 		}
 		if (this.isDirectChild && isFirstSelector === false) {
-			selector = '> ' + selector;
+			selector = `> ${selector}`;
 		}
 
 		return selector;
@@ -93,7 +93,7 @@ export default class ElementSelector {
 			if (this.index !== mergeSelector.index) {
 				// use indexn only for two elements
 				if (this.indexn === null) {
-					let indexn = Math.min(mergeSelector.index, this.index);
+					const indexn = Math.min(mergeSelector.index, this.index);
 					if (indexn > 1) {
 						this.indexn = Math.min(mergeSelector.index, this.index);
 					}
@@ -116,10 +116,10 @@ export default class ElementSelector {
 		}
 
 		if (this.classes.length !== 0) {
-			let classes = [];
+			const classes = [];
 
-			for (let i in this.classes) {
-				let cclass = this.classes[i];
+			for (const i in this.classes) {
+				const cclass = this.classes[i];
 				if (mergeSelector.classes.indexOf(cclass) !== -1) {
 					classes.push(cclass);
 				}

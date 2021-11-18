@@ -96,7 +96,7 @@ export default class SitemapController {
 
 	control(controls) {
 		const controller = this;
-
+		// eslint-disable-next-line guard-for-in
 		for (const selector in controls) {
 			for (const event in controls[selector]) {
 				$(document).on(
@@ -854,6 +854,7 @@ export default class SitemapController {
 	}
 
 	initSelectorValidation() {
+		const selectorsList = this.state.currentSitemap.selectors;
 		return $('#viewport form').bootstrapValidator({
 			fields: {
 				id: {
@@ -868,6 +869,24 @@ export default class SitemapController {
 						regexp: {
 							regexp: /^[^_].*$/,
 							message: Translator.getTranslationByKey('selectorid_underscore'),
+						},
+						callback: {
+							message: Translator.getTranslationByKey('selectorid_is_already_exist'),
+							// eslint-disable-next-line consistent-return
+							callback: (value, validator) => {
+								// allow no regex
+								// eslint-disable-next-line no-plusplus
+								const selector = this.getCurrentlyEditedSelector();
+								const newSelector = this.state.currentSelector;
+								if (selectorsList.length !== 0 && selector.id !== newSelector.id) {
+									for (let i = 0; i < selectorsList.length; i++) {
+										if (selectorsList[i].id === value) {
+											return false;
+										}
+									}
+								}
+								return true;
+							},
 						},
 					},
 				},
@@ -976,12 +995,15 @@ export default class SitemapController {
 							callback: (value, validator) => {
 								const sitemap = this.getCurrentlyEditedSelectorSitemap();
 								const selector = this.getCurrentlyEditedSelector();
-								return !selector.mergeIntoList || !sitemap.getAllSelectors(selector.id).some(
-									child => child.canCreateNewJobs()
+								return (
+									!selector.mergeIntoList ||
+									!sitemap
+										.getAllSelectors(selector.id)
+										.some(child => child.canCreateNewJobs())
 								);
 							},
-						}
-					}
+						},
+					},
 				},
 				parentSelectors: {
 					validators: {
@@ -1016,7 +1038,9 @@ export default class SitemapController {
 									};
 								}
 								if (newSelector.canCreateNewJobs()) {
-									function someParentElementHasMergeIntoListEnabled(parentSelectorIds) {
+									function someParentElementHasMergeIntoListEnabled(
+										parentSelectorIds
+									) {
 										// this assumes there are no recursive element selectors
 										for (const selectorId of parentSelectorIds) {
 											if (selectorId === '_root') {
@@ -1027,7 +1051,11 @@ export default class SitemapController {
 												if (selector.mergeIntoList) {
 													return true;
 												}
-												if (someParentElementHasMergeIntoListEnabled(selector.parentSelectors)) {
+												if (
+													someParentElementHasMergeIntoListEnabled(
+														selector.parentSelectors
+													)
+												) {
 													return true;
 												}
 											}
@@ -1035,7 +1063,11 @@ export default class SitemapController {
 										return false;
 									}
 
-									if (someParentElementHasMergeIntoListEnabled(newSelector.parentSelectors)) {
+									if (
+										someParentElementHasMergeIntoListEnabled(
+											newSelector.parentSelectors
+										)
+									) {
 										return {
 											valid: false,
 											message: Translator.getTranslationByKey(
@@ -1309,7 +1341,7 @@ export default class SitemapController {
 	}
 
 	async copySitemap(button) {
-		let sitemap = $(button).closest('tr').data('sitemap');
+		const sitemap = $(button).closest('tr').data('sitemap');
 		this.initConfirmActionPanel({ action: 'copy_sitemap' });
 		this.initCopySitemapValidation();
 		$('#modal-message').show();

@@ -7,7 +7,7 @@ export default class ChromePopupBrowser {
 	}
 
 	_initPopupWindow(callback, scope) {
-		let popup_browser = this;
+		const popup_browser = this;
 		if (this.window !== undefined) {
 			console.log(JSON.stringify(this.window));
 			// check if tab exists
@@ -20,7 +20,7 @@ export default class ChromePopupBrowser {
 			callback.call(scope);
 			return;
 		}
-		let createWindowOptions = {
+		const createWindowOptions = {
 			type: 'popup',
 			width: 1042,
 			height: 768,
@@ -35,7 +35,7 @@ export default class ChromePopupBrowser {
 	}
 
 	loadUrl(url, callback) {
-		var tab = this.tab;
+		const { tab } = this;
 
 		var tabLoadListener = function (tabId, changeInfo, tab) {
 			if (tabId === this.tab.id) {
@@ -52,7 +52,7 @@ export default class ChromePopupBrowser {
 		}.bind(this);
 		browser.tabs.onUpdated.addListener(tabLoadListener);
 
-		browser.tabs.update(tab.id, { url: url });
+		browser.tabs.update(tab.id, { url });
 	}
 
 	close() {
@@ -60,38 +60,35 @@ export default class ChromePopupBrowser {
 	}
 
 	fetchData(url, sitemap, parentSelectorId, callback, scope) {
-		var current_browser = this;
+		const current_browser = this;
 
 		this._initPopupWindow(function () {
-			var tab = current_browser.tab;
+			const { tab } = current_browser;
 
-			current_browser.loadUrl(
-				url,
-				function () {
-					var message = {
-						extractData: true,
-						sitemap: JSON.parse(JSON.stringify(sitemap)),
-						parentSelectorId: parentSelectorId,
-					};
+			current_browser.loadUrl(url, function () {
+				const message = {
+					extractData: true,
+					sitemap: JSON.parse(JSON.stringify(sitemap)),
+					parentSelectorId,
+				};
 
-					browser.tabs.sendMessage(tab.id, message).then(function (data, selectors) {
-						console.log('extracted data from web page', data);
+				browser.tabs.sendMessage(tab.id, message).then(function (data, selectors) {
+					console.log('extracted data from web page', data);
 
-						if (selectors && scope) {
-							// table selector can dynamically add columns (addMissingColumns Feature)
-							scope.scraper.sitemap.selectors = selectors;
-						}
+					if (selectors && scope) {
+						// table selector can dynamically add columns (addMissingColumns Feature)
+						scope.scraper.sitemap.selectors = selectors;
+					}
 
-						callback.call(scope, data);
-					});
-				}.bind(this)
-			);
+					callback.call(scope, data);
+				});
+			});
 		}, this);
 	}
 
 	downloadFile(url, savePath) {
 		return browser.downloads.download({
-			url: url,
+			url,
 			filename: savePath,
 		});
 	}

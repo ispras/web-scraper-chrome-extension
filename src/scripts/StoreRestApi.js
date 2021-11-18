@@ -11,7 +11,7 @@ export default class StoreRestApi {
 		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
 		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
 		this.axiosInstance.interceptors.response.use(response => {
-			const contentType = response.headers['content-type']
+			const contentType = response.headers['content-type'];
 			if (contentType !== 'application/json') {
 				const error = new Error(`Expected JSON response from API, but got ${contentType}`);
 				return Promise.reject(error);

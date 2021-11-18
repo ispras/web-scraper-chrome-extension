@@ -3,7 +3,7 @@ import ElementSelectorList from './ElementSelectorList';
 
 export default class CssSelector {
 	constructor(options) {
-		var me = this;
+		const me = this;
 
 		// defaults
 		this.ignoredTags = ['font', 'b', 'i', 's'];
@@ -17,7 +17,7 @@ export default class CssSelector {
 		};
 
 		// overrides defaults with options
-		for (let i in options) {
+		for (const i in options) {
 			this[i] = options[i];
 		}
 
@@ -37,9 +37,9 @@ export default class CssSelector {
 		}
 
 		// check selector total count
-		let elementCountInSelector = newSelectors[0].length;
+		const elementCountInSelector = newSelectors[0].length;
 		for (let i = 0; i < newSelectors.length; i++) {
-			let selector = newSelectors[i];
+			const selector = newSelectors[i];
 			if (selector.length !== elementCountInSelector) {
 				throw 'Invalid element count in selector';
 			}
@@ -48,7 +48,7 @@ export default class CssSelector {
 		// merge selectors
 		const resultingElements = newSelectors[0];
 		for (let i = 1; i < newSelectors.length; i++) {
-			let mergeElements = newSelectors[i];
+			const mergeElements = newSelectors[i];
 
 			for (let j = 0; j < elementCountInSelector; j++) {
 				resultingElements[j].merge(mergeElements[j]);
@@ -58,10 +58,10 @@ export default class CssSelector {
 	}
 
 	stripSelector(selectors) {
-		let cssSelector = selectors.getCssSelector();
-		let baseSelectedElements = this.query(cssSelector);
+		const cssSelector = selectors.getCssSelector();
+		const baseSelectedElements = this.query(cssSelector);
 
-		let compareElements = function (elements) {
+		const compareElements = function (elements) {
 			if (baseSelectedElements.length !== elements.length) {
 				return false;
 			}
@@ -75,12 +75,12 @@ export default class CssSelector {
 		};
 		// strip indexes
 		for (let i = 0; i < selectors.length; i++) {
-			let selector = selectors[i];
+			const selector = selectors[i];
 			if (selector.index !== null) {
-				let index = selector.index;
+				const { index } = selector;
 				selector.index = null;
-				let cssSelector1 = selectors.getCssSelector();
-				let newSelectedElements = this.query(cssSelector1);
+				const cssSelector1 = selectors.getCssSelector();
+				const newSelectedElements = this.query(cssSelector1);
 				// if results doesn't match then undo changes
 				if (!compareElements(newSelectedElements)) {
 					selector.index = index;
@@ -90,11 +90,11 @@ export default class CssSelector {
 
 		// strip isDirectChild
 		for (let i = 0; i < selectors.length; i++) {
-			let selector = selectors[i];
+			const selector = selectors[i];
 			if (selector.isDirectChild === true) {
 				selector.isDirectChild = false;
-				let cssSeletor2 = selectors.getCssSelector();
-				let newSelectedElements = this.query(cssSeletor2);
+				const cssSeletor2 = selectors.getCssSelector();
+				const newSelectedElements = this.query(cssSeletor2);
 				// if results doesn't match then undo changes
 				if (!compareElements(newSelectedElements)) {
 					selector.isDirectChild = true;
@@ -104,12 +104,12 @@ export default class CssSelector {
 
 		// strip ids
 		for (let i = 0; i < selectors.length; i++) {
-			let selector = selectors[i];
+			const selector = selectors[i];
 			if (selector.id !== null) {
-				let id = selector.id;
+				const { id } = selector;
 				selector.id = null;
-				let cssSeletor3 = selectors.getCssSelector();
-				let newSelectedElements = this.query(cssSeletor3);
+				const cssSeletor3 = selectors.getCssSelector();
+				const newSelectedElements = this.query(cssSeletor3);
 				// if results doesn't match then undo changes
 				if (!compareElements(newSelectedElements)) {
 					selector.id = id;
@@ -119,13 +119,13 @@ export default class CssSelector {
 
 		// strip classes
 		for (let i = 0; i < selectors.length; i++) {
-			let selector = selectors[i];
+			const selector = selectors[i];
 			if (selector.classes.length !== 0) {
 				for (let j = selector.classes.length - 1; j > 0; j--) {
-					let cclass = selector.classes[j];
+					const cclass = selector.classes[j];
 					selector.classes.splice(j, 1);
-					let cssSeletor4 = selectors.getCssSelector();
-					let newSelectedElements = this.query(cssSeletor4);
+					const cssSeletor4 = selectors.getCssSelector();
+					const newSelectedElements = this.query(cssSeletor4);
 					// if results doesn't match then undo changes
 					if (!compareElements(newSelectedElements)) {
 						selector.classes.splice(j, 0, cclass);
@@ -136,10 +136,10 @@ export default class CssSelector {
 
 		// strip tags
 		for (let i = selectors.length - 1; i > 0; i--) {
-			let selector = selectors[i];
+			const selector = selectors[i];
 			selectors.splice(i, 1);
-			let cssSeletor5 = selectors.getCssSelector();
-			let newSelectedElements = this.query(cssSeletor5);
+			const cssSeletor5 = selectors.getCssSelector();
+			const newSelectedElements = this.query(cssSeletor5);
 			// if results doesn't match then undo changes
 			if (!compareElements(newSelectedElements)) {
 				selectors.splice(i, 0, selector);
@@ -150,11 +150,11 @@ export default class CssSelector {
 	}
 
 	getElementSelectors(elements, top) {
-		let elementSelectors = [];
+		const elementSelectors = [];
 
 		for (let i = 0; i < elements.length; i++) {
-			let element = elements[i];
-			let elementSelector = this.getElementSelector(element, top);
+			const element = elements[i];
+			const elementSelector = this.getElementSelector(element, top);
 			elementSelectors.push(elementSelector);
 		}
 
@@ -162,7 +162,7 @@ export default class CssSelector {
 	}
 
 	getElementSelector(element, top) {
-		let elementSelectorList = new ElementSelectorList(this);
+		const elementSelectorList = new ElementSelectorList(this);
 		while (true) {
 			if (element === this.parent) {
 				break;
@@ -179,7 +179,7 @@ export default class CssSelector {
 				continue;
 			}
 
-			let selector = new ElementSelector(element, this.ignoredClasses);
+			const selector = new ElementSelector(element, this.ignoredClasses);
 			// document does not have a tagName
 			if (
 				element.parentNode === this.parent ||
@@ -238,14 +238,14 @@ export default class CssSelector {
 	getElementGroups(elements) {
 		// first elment is in the first group
 		// @TODO maybe i dont need this?
-		let groups = [[elements[0]]];
+		const groups = [[elements[0]]];
 
 		for (let i = 1; i < elements.length; i++) {
-			let elementNew = elements[i];
+			const elementNew = elements[i];
 			let addedToGroup = false;
 			for (let j = 0; j < groups.length; j++) {
-				let group = groups[j];
-				let elementGroup = group[0];
+				const group = groups[j];
+				const elementGroup = group[0];
 				if (this.checkSimilarElements(elementNew, elementGroup)) {
 					group.push(elementNew);
 					addedToGroup = true;
@@ -265,23 +265,23 @@ export default class CssSelector {
 	getCssSelector(elements, top) {
 		top = top || 0;
 
-		let enableSmartTableSelector = this.enableSmartTableSelector;
+		const { enableSmartTableSelector } = this;
 		if (elements.length > 1) {
 			this.enableSmartTableSelector = false;
 		}
 
 		// group elements into similarity groups
-		let elementGroups = this.getElementGroups(elements);
+		const elementGroups = this.getElementGroups(elements);
 
 		let resultCSSSelector;
 
 		if (this.allowMultipleSelectors) {
-			let groupSelectors = [];
+			const groupSelectors = [];
 
 			for (let i = 0; i < elementGroups.length; i++) {
-				let groupElements = elementGroups[i];
+				const groupElements = elementGroups[i];
 
-				let elementSelectors = this.getElementSelectors(groupElements, top);
+				const elementSelectors = this.getElementSelectors(groupElements, top);
 				let resultSelector = this.mergeElementSelectors(elementSelectors);
 				if (this.enableResultStripping) {
 					resultSelector = this.stripSelector(resultSelector);
@@ -296,7 +296,7 @@ export default class CssSelector {
 				throw 'found multiple element groups, but allowMultipleSelectors disabled';
 			}
 
-			let elementSelectors = this.getElementSelectors(elements, top);
+			const elementSelectors = this.getElementSelectors(elements, top);
 			let resultSelector = this.mergeElementSelectors(elementSelectors);
 			if (this.enableResultStripping) {
 				resultSelector = this.stripSelector(resultSelector);
