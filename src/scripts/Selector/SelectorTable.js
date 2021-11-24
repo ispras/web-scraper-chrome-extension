@@ -49,7 +49,7 @@ export default class SelectorTable extends Selector {
 	getVerticalDataCells(table) {
 		const columnIndices = this.getTableHeaderColumns($(table));
 		const dataSelector = this.getTableDataRowSelector();
-		const dataColumns = this.getDataColumns();
+		const dataColumns = this.getDataColumns(); // Столбцы имеющие флаг extract == True
 		const dataCells = $(table).find(dataSelector);
 		const isRow = dataCells[0].nodeName === 'TR';
 		let result = [];
@@ -65,22 +65,20 @@ export default class SelectorTable extends Selector {
 		result = Array.from({
 			length: dataCells.length / Object.keys(columnIndices).length,
 		}).map(_ => Object());
+		const offset = dataCells[0].cellIndex; // cellIndex = порядковому номеру элемента среди его одноуровневых элементов
+		const revColInd = Object.entries(columnIndices).map(([k, v]) => [v, k]); // Приводим к entries, а затем инвертируем объект columnIndices
+		const ind2names = Object.fromEntries(revColInd); // Получаем из инвертированного revColInd итерируемый список
 		dataCells.each((rowNum, dataCell) => {
-			if (dataCell.cellIndex === 0) {
-				console.log(
-					"%c Vertical rows can't have first column as data cell ",
-					'background: red; color: white;'
-				);
-			} else {
-				const headerName = SelectorTable.trimHeader(
-					$(dataCell).closest('tr').find('th, td')[0].innerText
-				);
+			const indRow = $(dataCell).closest('tr')[0].rowIndex; // Получаем индекс строки клетки
 
-				const column = dataColumns.find(column => column.header === headerName);
-				if (column) {
-					result[dataCell.cellIndex - 1][column.name] = dataCell.innerText;
-				}
+			const headerName = ind2names[indRow]; // Из списка ind2names по индексу строки клетки получаем заголовок этой строки
+
+			const column = dataColumns.find(column => column.header === headerName); // Получаем первый столбец, чей header == headerName
+
+			if (column) {
+				result[dataCell.cellIndex - offset][column.name] = dataCell.innerText;
 			}
+			//		}
 		});
 
 		return result.filter(column => !$.isEmptyObject(column));
@@ -126,6 +124,9 @@ export default class SelectorTable extends Selector {
 		return result;
 	}
 
+	// Вызывается изначально при нажатии Data preview, определяет в зависимости
+	// от типа таблицы - как её парсить
+
 	async _getData(parentElement) {
 		const tables = this.getDataElements(parentElement);
 		const getDataCells = this.verticalTable
@@ -134,6 +135,7 @@ export default class SelectorTable extends Selector {
 		return tables.flatMap(getDataCells.bind(this));
 	}
 
+	// Возвращает список столбцов имеющих флаг extract == True
 	getDataColumns() {
 		return this.columns.filter(column => column.extract);
 	}
@@ -281,7 +283,7 @@ export default class SelectorTable extends Selector {
 			columns = {};
 			$headerRowColumns.each((i, headerElement) => {
 				const header = SelectorTable.trimHeader($(headerElement).text());
-				columns[header] = i + 1;
+				columns[header] = $(headerElement).closest('tr')[0].rowIndex;
 			});
 		}
 		return columns;
