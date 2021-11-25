@@ -76,7 +76,7 @@ export default class SelectorTable extends Selector {
 			const column = dataColumns.find(column => column.header === headerName); // Получаем первый столбец, чей header == headerName
 
 			if (column) {
-				result[dataCell.cellIndex - offset][column.name] = dataCell.innerText;
+				result[dataCell.cellIndex - offset][column.name] = dataCell.innerHTML;
 			}
 			//		}
 		});
@@ -110,7 +110,7 @@ export default class SelectorTable extends Selector {
 				.forEach(column => {
 					const headerIndex = getColumnIndex(column);
 					const cell = $(row)[0].children[headerIndex - rowOffsets[headerIndex]];
-					const cellText = cell.innerText.trim();
+					const cellText = cell.innerHTML.trim();
 					result[rowNum][column.name] = cellText;
 
 					// if we have rowSpan in cell push to further rows
