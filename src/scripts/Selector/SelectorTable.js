@@ -49,7 +49,7 @@ export default class SelectorTable extends Selector {
 	getVerticalDataCells(table) {
 		const columnIndices = this.getTableHeaderColumns($(table));
 		const dataSelector = this.getTableDataRowSelector();
-		const dataColumns = this.getDataColumns(); // Столбцы имеющие флаг extract == True
+		const dataColumns = this.getDataColumns();
 		const dataCells = $(table).find(dataSelector);
 		const isRow = dataCells[0].nodeName === 'TR';
 		let result = [];
@@ -65,23 +65,28 @@ export default class SelectorTable extends Selector {
 		result = Array.from({
 			length: dataCells.length / Object.keys(columnIndices).length,
 		}).map(_ => Object());
-		const offset = dataCells[0].cellIndex; // cellIndex = порядковому номеру элемента среди его одноуровневых элементов
-		const revColInd = Object.entries(columnIndices).map(([k, v]) => [v, k]); // Приводим к entries, а затем инвертируем объект columnIndices
-		const ind2names = Object.fromEntries(revColInd); // Получаем из инвертированного revColInd итерируемый список
+
+		const firstDataColumnOffset = dataCells[0].cellIndex;
+		const revColInd = Object.entries(columnIndices).map(([k, v]) => [v, k]); // Bring columnIndices to entries type and invert it
+		const ind2names = Object.fromEntries(revColInd); // Bring revColInd back to iterable list
 		dataCells.each((rowNum, dataCell) => {
-			const indRow = $(dataCell).closest('tr')[0].rowIndex; // Получаем индекс строки клетки
+			const indRow = this.getCellRowIndex(dataCell);
 
-			const headerName = ind2names[indRow]; // Из списка ind2names по индексу строки клетки получаем заголовок этой строки
+			const headerName = ind2names[indRow];
 
-			const column = dataColumns.find(column => column.header === headerName); // Получаем первый столбец, чей header == headerName
+			const column = dataColumns.find(column => column.header === headerName);
 
 			if (column) {
-				result[dataCell.cellIndex - offset][column.name] = dataCell.innerHTML;
+				result[dataCell.cellIndex - firstDataColumnOffset][column.name] =
+					dataCell.innerHTML;
 			}
-			//		}
 		});
 
 		return result.filter(column => !$.isEmptyObject(column));
+	}
+
+	getCellRowIndex(tableCell) {
+		return $(tableCell).closest('tr')[0].rowIndex;
 	}
 
 	getHorizontalDataCells(table) {
@@ -135,7 +140,7 @@ export default class SelectorTable extends Selector {
 		return tables.flatMap(getDataCells.bind(this));
 	}
 
-	// Возвращает список столбцов имеющих флаг extract == True
+	// Return columns that have flag extract set to True
 	getDataColumns() {
 		return this.columns.filter(column => column.extract);
 	}
@@ -283,7 +288,7 @@ export default class SelectorTable extends Selector {
 			columns = {};
 			$headerRowColumns.each((i, headerElement) => {
 				const header = SelectorTable.trimHeader($(headerElement).text());
-				columns[header] = $(headerElement).closest('tr')[0].rowIndex;
+				columns[header] = this.getCellRowIndex(headerElement);
 			});
 		}
 		return columns;

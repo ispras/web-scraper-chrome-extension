@@ -39,6 +39,7 @@ module.exports = {
 		],
 		// disallow default export over named export
 		'import/prefer-default-export': 'off',
+		'class-methods-use-this': 'off',
 		// allow debugger during development
 		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
 	},
