@@ -3,8 +3,8 @@ import * as browser from 'webextension-polyfill';
 /**
  * ContentScript that can be called from anywhere within the extension
  */
-let BackgroundScript = {
-	dummy: function () {
+const BackgroundScript = {
+	dummy() {
 		return $.Deferred().resolve('dummy').promise();
 	},
 
@@ -12,7 +12,7 @@ let BackgroundScript = {
 	 * Returns the id of the tab that is visible to user
 	 * @returns $.Deferred() integer
 	 */
-	getActiveTabId: function () {
+	getActiveTabId() {
 		return new Promise((resolve, reject) => {
 			browser.tabs
 				.query({
@@ -24,7 +24,7 @@ let BackgroundScript = {
 						// @TODO must be running within popup. maybe find another active window?
 						reject("couldn't find the active tab");
 					} else {
-						let tabId = tabs[0].id;
+						const tabId = tabs[0].id;
 						resolve(tabId);
 					}
 				});
@@ -36,7 +36,7 @@ let BackgroundScript = {
 	 * @param request.fn	function to call
 	 * @param request.request	request that will be passed to the function
 	 */
-	executeContentScript: function (request) {
+	executeContentScript(request) {
 		const reqToContentScript = {
 			contentScriptCall: true,
 			fn: request.fn,
@@ -93,7 +93,6 @@ export default function getBackgroundScript(location) {
 		});
 
 		return backgroundScript;
-	} else {
-		throw `Invalid BackgroundScript initialization - ${location}`;
 	}
+	throw `Invalid BackgroundScript initialization - ${location}`;
 }

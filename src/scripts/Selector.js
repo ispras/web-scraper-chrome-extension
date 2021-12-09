@@ -15,14 +15,14 @@ export default class Selector {
 		allowedKeys = allowedKeys.concat(features);
 
 		// update data
-		for (let key in data) {
+		for (const key in data) {
 			if (allowedKeys.indexOf(key) !== -1 || typeof data[key] === 'function') {
 				this[key] = data[key];
 			}
 		}
 
 		// remove values that are not needed for this type of selector
-		for (let key in this) {
+		for (const key in this) {
 			if (allowedKeys.indexOf(key) === -1 && typeof this[key] !== 'function') {
 				delete this[key];
 			}
@@ -40,8 +40,8 @@ export default class Selector {
 	 * @param data
 	 */
 	manipulateData(data) {
-		let isTextManipulationDefined =
-			typeof this.textmanipulation != 'undefined' && this.textmanipulation !== '';
+		const isTextManipulationDefined =
+			typeof this.textmanipulation !== 'undefined' && this.textmanipulation !== '';
 		if (!isTextManipulationDefined) {
 			return data;
 		}
@@ -55,39 +55,38 @@ export default class Selector {
 			return data;
 		}
 
-		let regex = function (content, regex, regexgroup) {
+		const regex = function (content, regex, regexgroup) {
 			try {
 				content = $.trim(content);
-				let matches = content.match(new RegExp(regex, 'm')),
-					groupDefined = regexgroup !== '';
+				const matches = content.match(new RegExp(regex, 'm'));
+				const groupDefined = regexgroup !== '';
 
 				regexgroup = groupDefined ? regexgroup : 0;
 
 				if (matches !== null && regexgroup in matches) {
 					return matches[regexgroup];
-				} else {
-					return '';
 				}
+				return '';
 			} catch (e) {
 				console.log(
-					'%c Skipping regular expression: ' + e.message,
+					`%c Skipping regular expression: ${e.message}`,
 					'background: red; color: white;'
 				);
 			}
 		};
 
-		let removeHtml = function (content) {
+		const removeHtml = function (content) {
 			return $('<div/>').html(content).text();
 		};
 
-		let trimText = function (content) {
+		const trimText = function (content) {
 			return content.trim();
 		};
 
-		let replaceText = function (content, replaceText, replacementText) {
+		const replaceText = function (content, replaceText, replacementText) {
 			let replace;
 			try {
-				let regex = new RegExp(replaceText, 'gm');
+				const regex = new RegExp(replaceText, 'gm');
 				replace = regex.test(content) ? regex : replaceText;
 			} catch (e) {
 				replace = replaceText;
@@ -96,17 +95,17 @@ export default class Selector {
 			return content.replace(replace, replacementText);
 		};
 
-		let textPrefix = function (content, prefix) {
+		const textPrefix = function (content, prefix) {
 			return (content = prefix + content);
 		};
 
-		let textSuffix = function (content, suffix) {
+		const textSuffix = function (content, suffix) {
 			return (content += suffix);
 		};
 
-		let applyTextManipulation = function (content) {
-			let isString = typeof content === 'string' || content instanceof String,
-				isUnderlyingString = !isString && $(content).text() !== '';
+		const applyTextManipulation = function (content) {
+			const isString = typeof content === 'string' || content instanceof String;
+			const isUnderlyingString = !isString && $(content).text() !== '';
 
 			if (!isString && !isUnderlyingString) {
 				return content;
@@ -115,8 +114,8 @@ export default class Selector {
 			content = isString ? content : $(content).text();
 
 			// use key in object since unit tests might not define each property
-			let keys = [];
-			for (let key in this.textmanipulation) {
+			const keys = [];
+			for (const key in this.textmanipulation) {
 				if (!this.textmanipulation.hasOwnProperty(key)) {
 					continue;
 				}
@@ -129,8 +128,8 @@ export default class Selector {
 
 			if (propertyIsAvailable('regex')) {
 				let group = this.textmanipulation.regexgroup;
-				let value = this.textmanipulation.regex;
-				group = typeof group != 'undefined' ? group : '';
+				const value = this.textmanipulation.regex;
+				group = typeof group !== 'undefined' ? group : '';
 				if (value !== '') {
 					content = regex(content, value, group);
 				}
@@ -150,7 +149,7 @@ export default class Selector {
 
 			if (propertyIsAvailable('replaceText')) {
 				let replacement = this.textmanipulation.replacementText;
-				replacement = typeof replacement != 'undefined' ? replacement : '';
+				replacement = typeof replacement !== 'undefined' ? replacement : '';
 				content = replaceText(content, this.textmanipulation.replaceText, replacement);
 			}
 
@@ -198,7 +197,7 @@ export default class Selector {
 	}
 
 	removeParentSelector(selectorId) {
-		let index = this.parentSelectors.indexOf(selectorId);
+		const index = this.parentSelectors.indexOf(selectorId);
 		if (index !== -1) {
 			this.parentSelectors.splice(index, 1);
 		}
@@ -206,37 +205,36 @@ export default class Selector {
 
 	renameParentSelector(originalId, replacementId) {
 		if (this.hasParentSelector(originalId)) {
-			let pos = this.parentSelectors.indexOf(originalId);
+			const pos = this.parentSelectors.indexOf(originalId);
 			this.parentSelectors.splice(pos, 1, replacementId);
 		}
 	}
 
 	getDataElements(parentElement) {
-		let elements = ElementQuery(this.selector, parentElement);
+		const elements = ElementQuery(this.selector, parentElement);
 		if (this.multiple) {
 			return elements;
-		} else if (elements.length > 0) {
-			return [elements[0]];
-		} else {
-			return [];
 		}
+		if (elements.length > 0) {
+			return [elements[0]];
+		}
+		return [];
 	}
 
 	stringReplace(url, stringReplacement) {
 		if (stringReplacement && stringReplacement.replaceString) {
 			let replace;
-			let replacement = stringReplacement.replacementString || '';
+			const replacement = stringReplacement.replacementString || '';
 			try {
-				let regex = new RegExp(stringReplacement.replaceString, 'gm');
+				const regex = new RegExp(stringReplacement.replaceString, 'gm');
 				replace = regex.test(url) ? regex : stringReplacement.replaceString;
 			} catch (e) {
 				replace = stringReplacement.replaceString;
 			}
 
 			return url.replace(replace, replacement);
-		} else {
-			return url;
 		}
+		return url;
 	}
 
 	getElementCSSSelector(element) {

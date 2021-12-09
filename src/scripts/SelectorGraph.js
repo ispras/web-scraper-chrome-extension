@@ -15,17 +15,17 @@ export default class SelectorGraph {
 	}
 
 	getLabelAnchors() {
-		var labelAnchors = [];
+		const labelAnchors = [];
 		this.nodes.forEach(function (node) {
-			labelAnchors.push({ node: node });
-			labelAnchors.push({ node: node });
+			labelAnchors.push({ node });
+			labelAnchors.push({ node });
 		});
 		return labelAnchors;
 	}
 
 	getLabelAnchorLinks() {
-		var labelAnchorLinks = [];
-		for (var i = 0; i < this.nodes.length; i++) {
+		const labelAnchorLinks = [];
+		for (let i = 0; i < this.nodes.length; i++) {
 			labelAnchorLinks.push({
 				source: i * 2,
 				target: i * 2 + 1,
@@ -36,8 +36,8 @@ export default class SelectorGraph {
 	}
 
 	getNodeById(nodeId) {
-		for (var i in this.nodes) {
-			var node = this.nodes[i];
+		for (const i in this.nodes) {
+			const node = this.nodes[i];
 			if (node.id === nodeId) {
 				return node;
 			}
@@ -45,12 +45,12 @@ export default class SelectorGraph {
 	}
 
 	getLinks() {
-		var links = [];
+		const links = [];
 		this.nodes.forEach(
 			function (selector) {
 				selector.parentSelectors.forEach(
 					function (parentSelectorId) {
-						var parentSelector = this.getNodeById(parentSelectorId);
+						const parentSelector = this.getNodeById(parentSelectorId);
 						links.push({
 							source: selector,
 							target: parentSelector,
@@ -64,16 +64,16 @@ export default class SelectorGraph {
 	}
 
 	draw(element, w, h) {
-		var labelDistance = 0;
+		const labelDistance = 0;
 
-		var vis = d3.select(element).append('svg:svg').attr('width', w).attr('height', h);
+		const vis = d3.select(element).append('svg:svg').attr('width', w).attr('height', h);
 
-		var nodes = this.getNodes();
-		var labelAnchors = this.getLabelAnchors();
-		var labelAnchorLinks = this.getLabelAnchorLinks();
-		var links = this.getLinks();
+		const nodes = this.getNodes();
+		const labelAnchors = this.getLabelAnchors();
+		const labelAnchorLinks = this.getLabelAnchorLinks();
+		const links = this.getLinks();
 
-		var force = d3.layout
+		const force = d3.layout
 			.force()
 			.size([w, h])
 			.nodes(nodes)
@@ -87,7 +87,7 @@ export default class SelectorGraph {
 
 		force.start();
 
-		var force2 = d3.layout
+		const force2 = d3.layout
 			.force()
 			.nodes(labelAnchors)
 			.links(labelAnchorLinks)
@@ -98,7 +98,7 @@ export default class SelectorGraph {
 			.size([w, h]);
 		force2.start();
 
-		var link = vis
+		const link = vis
 			.selectAll('line.link')
 			.data(links)
 			.enter()
@@ -106,7 +106,7 @@ export default class SelectorGraph {
 			.attr('class', 'link')
 			.style('stroke', '#CCC');
 
-		var node = vis
+		const node = vis
 			.selectAll('g.node')
 			.data(force.nodes())
 			.enter()
@@ -119,9 +119,9 @@ export default class SelectorGraph {
 			.style('stroke-width', 3);
 		node.call(force.drag);
 
-		var anchorLink = vis.selectAll('line.anchorLink').data(labelAnchorLinks); //.enter().append("svg:line").attr("class", "anchorLink").style("stroke", "#999");
+		const anchorLink = vis.selectAll('line.anchorLink').data(labelAnchorLinks); // .enter().append("svg:line").attr("class", "anchorLink").style("stroke", "#999");
 
-		var anchorNode = vis
+		const anchorNode = vis
 			.selectAll('g.anchorNode')
 			.data(force2.nodes())
 			.enter()
@@ -137,7 +137,7 @@ export default class SelectorGraph {
 			.style('font-family', 'Arial')
 			.style('font-size', 12);
 
-		var updateLink = function () {
+		const updateLink = function () {
 			this.attr('x1', function (d) {
 				return d.source.x;
 			})
@@ -152,9 +152,9 @@ export default class SelectorGraph {
 				});
 		};
 
-		var updateNode = function () {
+		const updateNode = function () {
 			this.attr('transform', function (d) {
-				return 'translate(' + d.x + ',' + d.y + ')';
+				return `translate(${d.x},${d.y})`;
 			});
 		};
 
@@ -168,20 +168,17 @@ export default class SelectorGraph {
 					d.x = d.node.x;
 					d.y = d.node.y;
 				} else {
-					var b = this.childNodes[1].getBBox();
+					const b = this.childNodes[1].getBBox();
 
-					var diffX = d.x - d.node.x;
-					var diffY = d.y - d.node.y;
+					const diffX = d.x - d.node.x;
+					const diffY = d.y - d.node.y;
 
-					var dist = Math.sqrt(diffX * diffX + diffY * diffY);
+					const dist = Math.sqrt(diffX * diffX + diffY * diffY);
 
-					var shiftX = (b.width * (diffX - dist)) / (dist * 2);
+					let shiftX = (b.width * (diffX - dist)) / (dist * 2);
 					shiftX = Math.max(-b.width, Math.min(0, shiftX));
-					var shiftY = 5;
-					this.childNodes[1].setAttribute(
-						'transform',
-						'translate(' + shiftX + ',' + shiftY + ')'
-					);
+					const shiftY = 5;
+					this.childNodes[1].setAttribute('transform', `translate(${shiftX},${shiftY})`);
 				}
 			});
 

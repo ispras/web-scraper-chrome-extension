@@ -1,7 +1,7 @@
 function getSelectorParts(CSSSelector) {
-	let selectors = CSSSelector.split(/(,|".*?"|'.*?'|\(.*?\))/);
+	const selectors = CSSSelector.split(/(,|".*?"|'.*?'|\(.*?\))/);
 
-	let resultSelectors = [];
+	const resultSelectors = [];
 	let currentSelector = '';
 	selectors.forEach(function (selector) {
 		if (selector === ',') {
@@ -28,15 +28,15 @@ function getSelectorParts(CSSSelector) {
 export default function ElementQuery(CSSSelector, parentElement) {
 	CSSSelector = CSSSelector || '';
 
-	let selectedElements = [];
+	const selectedElements = [];
 
-	let addElement = function (element) {
+	const addElement = function (element) {
 		if (selectedElements.indexOf(element) === -1) {
 			selectedElements.push(element);
 		}
 	};
 
-	let selectorParts = getSelectorParts(CSSSelector);
+	const selectorParts = getSelectorParts(CSSSelector);
 	selectorParts.forEach(function (selector) {
 		// handle special case when parent is selected
 		if (selector === '_parent_') {
@@ -44,7 +44,7 @@ export default function ElementQuery(CSSSelector, parentElement) {
 				addElement(element);
 			});
 		} else {
-			let elements = $(selector, parentElement);
+			const elements = $(selector, parentElement);
 			elements.each(function (i, element) {
 				addElement(element);
 			});

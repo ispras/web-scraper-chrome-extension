@@ -4,15 +4,15 @@ import ContentSelector from './ContentSelector';
 /**
  * ContentScript that can be called from anywhere within the extension
  */
-let ContentScript = {
+const ContentScript = {
 	/**
 	 * Fetch
 	 * @param request.CSSSelector	css selector as string
 	 * @returns $.Deferred()
 	 */
-	getHTML: function (request) {
-		let deferredHTML = $.Deferred();
-		let html = $(request.CSSSelector).clone().wrap('<p>').parent().html();
+	getHTML(request) {
+		const deferredHTML = $.Deferred();
+		const html = $(request.CSSSelector).clone().wrap('<p>').parent().html();
 		deferredHTML.resolve(html);
 		return deferredHTML.promise();
 	},
@@ -21,9 +21,9 @@ let ContentScript = {
 	 * Removes current content selector if is in use within the page
 	 * @returns $.Deferred()
 	 */
-	removeCurrentContentSelector: function () {
-		let deferredResponse = $.Deferred();
-		let contentSelector = window.cs;
+	removeCurrentContentSelector() {
+		const deferredResponse = $.Deferred();
+		const contentSelector = window.cs;
 		if (contentSelector === undefined) {
 			deferredResponse.resolve();
 		} else {
@@ -40,12 +40,12 @@ let ContentScript = {
 	 * @param request.parentCSSSelector
 	 * @param request.allowedElements
 	 */
-	selectSelector: function (request) {
+	selectSelector(request) {
 		const deferredResponse = $.Deferred();
 
 		this.removeCurrentContentSelector().done(
 			function () {
-				let contentSelector = new ContentSelector({
+				const contentSelector = new ContentSelector({
 					parentCSSSelector: request.parentCSSSelector,
 					allowedElements: request.allowedElements,
 				});
@@ -55,20 +55,16 @@ let ContentScript = {
 				deferredCSSSelector
 					.done(
 						function (response) {
-							this.removeCurrentContentSelector().done(
-								function () {
-									deferredResponse.resolve(response);
-									window.cs = undefined;
-								}.bind(this)
-							);
+							this.removeCurrentContentSelector().done(function () {
+								deferredResponse.resolve(response);
+								window.cs = undefined;
+							});
 						}.bind(this)
 					)
-					.fail(
-						function (message) {
-							deferredResponse.reject(message);
-							window.cs = undefined;
-						}.bind(this)
-					);
+					.fail(function (message) {
+						deferredResponse.reject(message);
+						window.cs = undefined;
+					});
 			}.bind(this)
 		);
 
@@ -80,15 +76,15 @@ let ContentScript = {
 	 * @param request.parentCSSSelector
 	 * @param request.elementCSSSelector
 	 */
-	previewSelector: function (request) {
-		let deferredResponse = $.Deferred();
+	previewSelector(request) {
+		const deferredResponse = $.Deferred();
 		this.removeCurrentContentSelector().done(function () {
-			let contentSelector = new ContentSelector({
+			const contentSelector = new ContentSelector({
 				parentCSSSelector: request.parentCSSSelector,
 			});
 			window.cs = contentSelector;
 
-			let deferredSelectorPreview = contentSelector.previewSelector(
+			const deferredSelectorPreview = contentSelector.previewSelector(
 				request.elementCSSSelector
 			);
 			deferredSelectorPreview
@@ -118,18 +114,19 @@ export default function getContentScript(location) {
 		contentScript = ContentScript;
 		contentScript.backgroundScript = getBackgroundScript('ContentScript');
 		return contentScript;
-	} else if (location === 'BackgroundScript' || location === 'DevTools') {
-		let backgroundScript = getBackgroundScript(location);
+	}
+	if (location === 'BackgroundScript' || location === 'DevTools') {
+		const backgroundScript = getBackgroundScript(location);
 
 		// if called within background script proxy calls to content script
 		contentScript = {};
 		Object.keys(ContentScript).forEach(function (attr) {
 			if (typeof ContentScript[attr] === 'function') {
 				contentScript[attr] = function (request) {
-					let reqToContentScript = {
+					const reqToContentScript = {
 						contentScriptCall: true,
 						fn: attr,
-						request: request,
+						request,
 					};
 
 					return backgroundScript.executeContentScript(reqToContentScript);
@@ -140,7 +137,6 @@ export default function getContentScript(location) {
 		});
 		contentScript.backgroundScript = backgroundScript;
 		return contentScript;
-	} else {
-		throw 'Invalid ContentScript initialization - ' + location;
 	}
+	throw `Invalid ContentScript initialization - ${location}`;
 }

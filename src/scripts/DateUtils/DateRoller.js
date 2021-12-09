@@ -20,13 +20,13 @@ export default class DateRoller {
 		 * @returns {Number}
 		 */
 		function compareDays(first, second) {
-			let day = 24 * 60 * 60 * 1000;
+			const day = 24 * 60 * 60 * 1000;
 			return Math.floor(first / day) - Math.floor(second / day);
 		}
 
-		let res = [];
-		let curDate = new Date(from);
-		let step = from <= to ? 1 : -1;
+		const res = [];
+		const curDate = new Date(from);
+		const step = from <= to ? 1 : -1;
 
 		do {
 			res.push(new Date(curDate));

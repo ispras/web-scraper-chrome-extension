@@ -7,15 +7,15 @@
  * @returns $.Deferred().promise()
  */
 $.whenCallSequentially = function (functionCalls) {
-	var deferredResonse = $.Deferred();
-	var resultData = new Array();
+	const deferredResonse = $.Deferred();
+	const resultData = new Array();
 
 	// nothing to do
 	if (functionCalls.length === 0) {
 		return deferredResonse.resolve(resultData).promise();
 	}
 
-	var currentDeferred = functionCalls.shift()();
+	let currentDeferred = functionCalls.shift()();
 	// execute synchronous calls synchronously
 	while (currentDeferred.state() === 'resolved') {
 		currentDeferred.done(function (data) {

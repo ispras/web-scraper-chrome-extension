@@ -46,8 +46,7 @@ export default class Queue {
 		// @TODO test this
 		if (this.getQueueSize() > 0) {
 			return this.jobs.pop();
-		} else {
-			return false;
 		}
+		return false;
 	}
 }

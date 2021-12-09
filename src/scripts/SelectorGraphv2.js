@@ -29,9 +29,8 @@ export default class SelectorGraphv2 {
 
 		if (parentSelector.childSelectors.length === 0) {
 			return null;
-		} else {
-			return parentSelector.childSelectors;
 		}
+		return parentSelector.childSelectors;
 	}
 
 	getSelectorVisibleChildren(parentSelector) {
@@ -48,18 +47,18 @@ export default class SelectorGraphv2 {
 	}
 
 	selectorHasChildren(parentSelector) {
-		var children = this.sitemap.selectors.getDirectChildSelectors(parentSelector.id);
-		var selectorHasChildren = children.length > 0;
+		const children = this.sitemap.selectors.getDirectChildSelectors(parentSelector.id);
+		const selectorHasChildren = children.length > 0;
 		return selectorHasChildren;
 	}
 
 	draw(element, w, h) {
-		var m = [20, 120, 20, 120],
-			w = w - m[1] - m[3],
-			h = h - m[0] - m[2],
-			i = 0,
-			root,
-			selectorList;
+		const m = [20, 120, 20, 120];
+		var w = w - m[1] - m[3];
+		var h = h - m[0] - m[2];
+		const i = 0;
+		let root;
+		let selectorList;
 
 		this.initTree(w, h);
 
@@ -70,7 +69,7 @@ export default class SelectorGraphv2 {
 			.attr('width', w + m[1] + m[3])
 			.attr('height', h + m[0] + m[2])
 			.append('svg:g')
-			.attr('transform', 'translate(' + m[3] + ',' + m[0] + ')');
+			.attr('transform', `translate(${m[3]},${m[0]})`);
 
 		this.root = {
 			id: '_root',
@@ -89,38 +88,37 @@ export default class SelectorGraphv2 {
 	getNodeColor(selector) {
 		if (this.selectorHasChildren(selector) && !selector.visibleChildren) {
 			return 'lightsteelblue';
-		} else {
-			return '#fff';
 		}
+		return '#fff';
 	}
 
 	update(source) {
-		var duration = 500;
+		const duration = 500;
 
 		// Compute the new tree layout.
-		var nodes = this.tree.nodes(this.root).reverse();
+		const nodes = this.tree.nodes(this.root).reverse();
 
 		// Normalize for fixed-depth.
 		nodes.forEach(function (d) {
 			d.y = d.depth * 100;
 		});
-		var i = 0;
+		const i = 0;
 		// Update the nodes…
-		var node = this.svg.selectAll('g.node').data(nodes, function (d) {
+		const node = this.svg.selectAll('g.node').data(nodes, function (d) {
 			if (d.i === undefined) {
 				d.i = d.id;
-				d.i = source.i + '/' + d.i;
+				d.i = `${source.i}/${d.i}`;
 			}
 			return d.i;
 		});
 
 		// Enter any new nodes at the parent's previous position.
-		var nodeEnter = node
+		const nodeEnter = node
 			.enter()
 			.append('svg:g')
 			.attr('class', 'node')
 			.attr('transform', function (d) {
-				return 'translate(' + source.y0 + ',' + source.x0 + ')';
+				return `translate(${source.y0},${source.x0})`;
 			})
 			.on(
 				'click',
@@ -153,11 +151,11 @@ export default class SelectorGraphv2 {
 			.style('fill-opacity', 1e-6);
 
 		// Transition nodes to their new position.
-		var nodeUpdate = node
+		const nodeUpdate = node
 			.transition()
 			.duration(duration)
 			.attr('transform', function (d) {
-				return 'translate(' + d.y + ',' + d.x + ')';
+				return `translate(${d.y},${d.x})`;
 			});
 
 		nodeUpdate.select('circle').attr('r', 6).style('fill', this.getNodeColor.bind(this));
@@ -165,12 +163,12 @@ export default class SelectorGraphv2 {
 		nodeUpdate.select('text').style('fill-opacity', 1);
 
 		// Transition exiting nodes to the parent's new position.
-		var nodeExit = node
+		const nodeExit = node
 			.exit()
 			.transition()
 			.duration(duration)
 			.attr('transform', function (d) {
-				return 'translate(' + source.y + ',' + source.x + ')';
+				return `translate(${source.y},${source.x})`;
 			})
 			.remove();
 
@@ -179,7 +177,7 @@ export default class SelectorGraphv2 {
 		nodeExit.select('text').style('fill-opacity', 1e-6);
 
 		// Update the links…
-		var link = this.svg.selectAll('path.link').data(this.tree.links(nodes), function (d) {
+		const link = this.svg.selectAll('path.link').data(this.tree.links(nodes), function (d) {
 			return d.target.i;
 		});
 
@@ -190,8 +188,8 @@ export default class SelectorGraphv2 {
 			.attr(
 				'd',
 				function (d) {
-					var o = { x: source.x0, y: source.y0 };
-					var res = this.diagonal({ source: o, target: o });
+					const o = { x: source.x0, y: source.y0 };
+					const res = this.diagonal({ source: o, target: o });
 					return res;
 				}.bind(this)
 			)
@@ -209,7 +207,7 @@ export default class SelectorGraphv2 {
 			.attr(
 				'd',
 				function (d) {
-					var o = { x: source.x, y: source.y };
+					const o = { x: source.x, y: source.y };
 					return this.diagonal({ source: o, target: o });
 				}.bind(this)
 			)

@@ -51,7 +51,7 @@ function initPopups() {
 function initConfigSwitch() {
 	// switch between configuration types
 	$('select[name=storageType]').change(function () {
-		let type = $(this).val();
+		const type = $(this).val();
 		if (type === 'couchdb') {
 			$('.form-group.couchdb').show();
 			$('.form-group.rest').hide();

@@ -12,13 +12,13 @@ export default class Job {
 	}
 
 	combineUrls(parentUrl, childUrl) {
-		let urlMatcher = new RegExp(
+		const urlMatcher = new RegExp(
 			'(https?://)?([a-z0-9\\-\\.]+\\.[a-z0-9\\-]+(:\\d+)?|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(:\\d+)?)?(\\/[^\\?]*\\/|\\/)?([^\\?]*)?(\\?.*)?',
 			'i'
 		);
 
-		let parentMatches = parentUrl.match(urlMatcher);
-		let childMatches = childUrl.match(urlMatcher);
+		const parentMatches = parentUrl.match(urlMatcher);
+		const childMatches = childUrl.match(urlMatcher);
 
 		// special case for urls like this: ?a=1  or like-this/
 		if (
@@ -27,7 +27,7 @@ export default class Job {
 			childMatches[5] === undefined &&
 			childMatches[6] === undefined
 		) {
-			let url =
+			const url =
 				parentMatches[1] +
 				parentMatches[2] +
 				parentMatches[5] +
@@ -63,17 +63,17 @@ export default class Job {
 	}
 
 	execute(popupBrowser, callback, scope) {
-		let sitemap = this.scraper.sitemap;
-		let job = this;
+		const { sitemap } = this.scraper;
+		const job = this;
 		popupBrowser.fetchData(
 			this.url,
 			sitemap,
 			this.parentSelector,
 			function (results) {
 				// merge data with data from initialization
-				for (let i in results) {
-					let result = results[i];
-					for (let key in this.baseData) {
+				for (const i in results) {
+					const result = results[i];
+					for (const key in this.baseData) {
 						if (!(key in result)) {
 							result[key] = this.baseData[key];
 						}

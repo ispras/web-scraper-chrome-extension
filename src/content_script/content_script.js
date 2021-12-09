@@ -1,7 +1,7 @@
+import * as browser from 'webextension-polyfill';
 import getContentScript from '../scripts/ContentScript';
 import DataExtractor from '../scripts/DataExtractor';
-import initVersionEventAPI from "../scripts/VersionEventAPI";
-import * as browser from 'webextension-polyfill';
+import initVersionEventAPI from '../scripts/VersionEventAPI';
 import './content_script.css';
 
 browser.runtime.onMessage.addListener(request => {
@@ -9,35 +9,36 @@ browser.runtime.onMessage.addListener(request => {
 	return new Promise(resolve => {
 		if (request.extractData) {
 			console.log('received data extraction request', request);
-			let extractor = new DataExtractor(request);
-			let deferredData = extractor.getData();
+			const extractor = new DataExtractor(request);
+			const deferredData = extractor.getData();
 			deferredData.done(function (data) {
 				console.log('dataextractor data', data);
-				let selectors = extractor.sitemap.selectors;
+				const { selectors } = extractor.sitemap;
 				resolve(data, selectors);
 			});
 			return true;
-		} else if (request.previewSelectorData) {
+		}
+		if (request.previewSelectorData) {
 			console.log('received data-preview extraction request', request);
-			let extractor = new DataExtractor(request);
-			let deferredData = extractor.getSingleSelectorData(
+			const extractor = new DataExtractor(request);
+			const deferredData = extractor.getSingleSelectorData(
 				request.parentSelectorIds,
 				request.selectorId
 			);
 			deferredData.done(function (data) {
 				console.log('dataextractor data', data);
-				let selectors = extractor.sitemap.selectors;
+				const { selectors } = extractor.sitemap;
 				resolve(data, selectors);
 			});
 			return true;
 		}
 		// Universal ContentScript communication handler
-		else if (request.contentScriptCall) {
-			let contentScript = getContentScript('ContentScript');
+		if (request.contentScriptCall) {
+			const contentScript = getContentScript('ContentScript');
 
 			console.log('received ContentScript request', request);
 
-			let deferredResponse = contentScript[request.fn](request.request);
+			const deferredResponse = contentScript[request.fn](request.request);
 			deferredResponse.done(function (response) {
 				resolve(response, null);
 			});
