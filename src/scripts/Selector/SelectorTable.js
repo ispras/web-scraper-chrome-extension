@@ -47,7 +47,7 @@ export default class SelectorTable extends Selector {
 	}
 
 	getVerticalDataCells(table) {
-		const columnIndices = this.getTableHeaderColumns($(table));
+		const columnNamesToIndices = this.getTableHeaderColumns($(table));
 		const dataSelector = this.getTableDataRowSelector();
 		const dataColumns = this.getDataColumns();
 		const dataCells = $(table).find(dataSelector);
@@ -63,16 +63,17 @@ export default class SelectorTable extends Selector {
 		}
 
 		result = Array.from({
-			length: dataCells.length / Object.keys(columnIndices).length,
+			length: dataCells.length / Object.keys(columnNamesToIndices).length,
 		}).map(_ => Object());
 
 		const firstDataColumnOffset = dataCells[0].cellIndex;
-		const revColInd = Object.entries(columnIndices).map(([k, v]) => [v, k]); // Bring columnIndices to entries type and invert it
-		const ind2names = Object.fromEntries(revColInd); // Bring revColInd back to iterable list
-		dataCells.each((rowNum, dataCell) => {
-			const indRow = this.getCellRowIndex(dataCell);
+		const columnIndicesToNames = Object.fromEntries(
+			Object.entries(columnNamesToIndices).map(([k, v]) => [v, k])
+		);
+		dataCells.each((_, dataCell) => {
+			const rowIndex = this.getCellRowIndex(dataCell);
 
-			const headerName = ind2names[indRow];
+			const headerName = columnIndicesToNames[rowIndex];
 
 			const column = dataColumns.find(column => column.header === headerName);
 
@@ -129,9 +130,6 @@ export default class SelectorTable extends Selector {
 		return result;
 	}
 
-	// Вызывается изначально при нажатии Data preview, определяет в зависимости
-	// от типа таблицы - как её парсить
-
 	async _getData(parentElement) {
 		const tables = this.getDataElements(parentElement);
 		const getDataCells = this.verticalTable
@@ -140,7 +138,6 @@ export default class SelectorTable extends Selector {
 		return tables.flatMap(getDataCells.bind(this));
 	}
 
-	// Return columns that have flag extract set to True
 	getDataColumns() {
 		return this.columns.filter(column => column.extract);
 	}
