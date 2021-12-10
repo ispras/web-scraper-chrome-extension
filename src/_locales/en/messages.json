@@ -54,6 +54,7 @@
 	"selector_edit_select_button": { "message": "Select" },
 	"selector_edit_element_preview_button": { "message": "Element preview" },
 	"selector_edit_refresh_button": { "message": "Refresh" },
+	"selector_edit_header_css": { "message": "Header row selector" },
 	"selector_edit_data_rows_selector": { "message": "Data rows selector" },
 	"selector_edit_select": { "message": "Select" },
 	"selector_edit_element_preview": { "message": "Element preview" },

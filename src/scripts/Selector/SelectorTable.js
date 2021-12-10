@@ -47,7 +47,7 @@ export default class SelectorTable extends Selector {
 	}
 
 	getVerticalDataCells(table) {
-		const columnIndices = this.getTableHeaderColumns($(table));
+		const columnNamesToIndices = this.getTableHeaderColumns($(table));
 		const dataSelector = this.getTableDataRowSelector();
 		const dataColumns = this.getDataColumns();
 		const dataCells = $(table).find(dataSelector);
@@ -63,27 +63,31 @@ export default class SelectorTable extends Selector {
 		}
 
 		result = Array.from({
-			length: dataCells.length / Object.keys(columnIndices).length,
+			length: dataCells.length / Object.keys(columnNamesToIndices).length,
 		}).map(_ => Object());
-		dataCells.each((rowNum, dataCell) => {
-			if (dataCell.cellIndex === 0) {
-				console.log(
-					"%c Vertical rows can't have first column as data cell ",
-					'background: red; color: white;'
-				);
-			} else {
-				const headerName = SelectorTable.trimHeader(
-					$(dataCell).closest('tr').find('th, td')[0].innerText
-				);
 
-				const column = dataColumns.find(column => column.header === headerName);
-				if (column) {
-					result[dataCell.cellIndex - 1][column.name] = dataCell.innerText;
-				}
+		const firstDataColumnOffset = dataCells[0].cellIndex;
+		const columnIndicesToNames = Object.fromEntries(
+			Object.entries(columnNamesToIndices).map(([k, v]) => [v, k])
+		);
+		dataCells.each((_, dataCell) => {
+			const rowIndex = this.getCellRowIndex(dataCell);
+
+			const headerName = columnIndicesToNames[rowIndex];
+
+			const column = dataColumns.find(column => column.header === headerName);
+
+			if (column) {
+				result[dataCell.cellIndex - firstDataColumnOffset][column.name] =
+					dataCell.innerHTML;
 			}
 		});
 
 		return result.filter(column => !$.isEmptyObject(column));
+	}
+
+	getCellRowIndex(tableCell) {
+		return $(tableCell).closest('tr')[0].rowIndex;
 	}
 
 	getHorizontalDataCells(table) {
@@ -112,7 +116,7 @@ export default class SelectorTable extends Selector {
 				.forEach(column => {
 					const headerIndex = getColumnIndex(column);
 					const cell = $(row)[0].children[headerIndex - rowOffsets[headerIndex]];
-					const cellText = cell.innerText.trim();
+					const cellText = cell.innerHTML.trim();
 					result[rowNum][column.name] = cellText;
 
 					// if we have rowSpan in cell push to further rows
@@ -281,7 +285,7 @@ export default class SelectorTable extends Selector {
 			columns = {};
 			$headerRowColumns.each((i, headerElement) => {
 				const header = SelectorTable.trimHeader($(headerElement).text());
-				columns[header] = i + 1;
+				columns[header] = this.getCellRowIndex(headerElement);
 			});
 		}
 		return columns;

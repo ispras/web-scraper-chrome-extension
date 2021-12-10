@@ -519,17 +519,19 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_empty_message'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_empty_message'
+													),
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_short_message'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_short_message'
+													),
 											};
 										}
 										if (
@@ -537,9 +539,10 @@ export default class SitemapController {
 										) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_invalid_char'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_invalid_char'
+													),
 											};
 										}
 									}
@@ -575,9 +578,8 @@ export default class SitemapController {
 									};
 								}
 								return {
-									message: Translator.getTranslationByKey(
-										'sitemap_valid_message'
-									),
+									message:
+										Translator.getTranslationByKey('sitemap_valid_message'),
 									valid: true,
 								};
 							},
