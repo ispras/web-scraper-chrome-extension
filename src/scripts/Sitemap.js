@@ -1,18 +1,18 @@
+import * as Papa from 'papaparse';
 import DatePatternSupport from './DateUtils/DatePatternSupport';
 import SelectorList from './SelectorList';
 import Model from './Model';
-import * as Papa from 'papaparse';
 
 export default class Sitemap {
 	constructor(id, startUrls, model, selectors) {
 		this._id = id;
 		this.startUrls = startUrls;
 		this.model = new Model(model);
-		this.selectors = new SelectorList(selectors ? selectors : []);
+		this.selectors = new SelectorList(selectors || []);
 	}
 
 	static sitemapFromObj(sitemapObj) {
-		let sitemap = new Sitemap(
+		const sitemap = new Sitemap(
 			sitemapObj._id,
 			sitemapObj.startUrls,
 			sitemapObj.model,
@@ -66,7 +66,7 @@ export default class Sitemap {
 	 * @returns {Array}
 	 */
 	getSelectorIds() {
-		let ids = ['_root'];
+		const ids = ['_root'];
 		this.selectors.forEach(function (selector) {
 			ids.push(selector.id);
 		});
@@ -78,41 +78,39 @@ export default class Sitemap {
 	 * @returns {Array}
 	 */
 	getPossibleParentSelectorIds() {
-		let ids = ['_root'];
-		this.selectors.forEach(
-			function (selector) {
-				if (selector.canHaveChildSelectors()) {
-					ids.push(selector.id);
-				}
-			}.bind(this)
-		);
+		const ids = ['_root'];
+		this.selectors.forEach(function (selector) {
+			if (selector.canHaveChildSelectors()) {
+				ids.push(selector.id);
+			}
+		});
 		return ids;
 	}
 
 	getStartUrls() {
-		let startUrls = this.startUrls;
+		let { startUrls } = this;
 		startUrls = DatePatternSupport.expandUrl(startUrls);
 
-		let nextUrls = function (url) {
-			let urls = [];
-			let lpad = function (str, length) {
-				while (str.length < length) str = '0' + str;
+		const nextUrls = function (url) {
+			const urls = [];
+			const lpad = function (str, length) {
+				while (str.length < length) str = `0${str}`;
 				return str;
 			};
 
-			let re = /^(.*?)\[(\d+)\-(\d+)(:(\d+))?\](.*)$/;
-			let matches = url.match(re);
+			const re = /^(.*?)\[(\d+)\-(\d+)(:(\d+))?\](.*)$/;
+			const matches = url.match(re);
 			if (matches) {
-				let startStr = matches[2];
-				let endStr = matches[3];
-				let start = parseInt(startStr);
-				let end = parseInt(endStr);
+				const startStr = matches[2];
+				const endStr = matches[3];
+				const start = parseInt(startStr);
+				const end = parseInt(endStr);
 				let incremental = 1;
 				console.log(matches[5]);
 				if (matches[5] !== undefined) {
 					incremental = parseInt(matches[5]);
 				}
-				let nextSet = nextUrls(matches[6]);
+				const nextSet = nextUrls(matches[6]);
 				for (let i = start; i <= end; i += incremental) {
 					let current;
 
@@ -156,7 +154,7 @@ export default class Sitemap {
 			});
 
 			// update cyclic selector
-			let pos = selectorData.parentSelectors.indexOf(selector.id);
+			const pos = selectorData.parentSelectors.indexOf(selector.id);
 			if (pos !== -1) {
 				selectorData.parentSelectors.splice(pos, 1, selectorData.id);
 			}
@@ -164,14 +162,15 @@ export default class Sitemap {
 
 		selector.updateData(selectorData, selectorData.getFeatures());
 
-		let index = this.getSelectorIds().indexOf(selector.id);
+		const index = this.getSelectorIds().indexOf(selector.id);
 		if (index === -1) {
 			this.selectors.push(selector);
 		} else {
-			//XXX Hot fix for replacing old selector with another type.
+			// XXX Hot fix for replacing old selector with another type.
 			this.selectors.splice(index - 1, 1, selector);
 		}
 	}
+
 	deleteSelector(selectorToDelete) {
 		this.selectors.forEach(
 			function (selector) {
@@ -184,16 +183,18 @@ export default class Sitemap {
 			}.bind(this)
 		);
 
-		for (let i in this.selectors) {
+		for (const i in this.selectors) {
 			if (this.selectors[i].id === selectorToDelete.id) {
 				this.selectors.splice(i, 1);
 				break;
 			}
 		}
 	}
+
 	getDataTableId() {
 		return this._id.replace(/\./g, '_');
 	}
+
 	exportSitemap() {
 		function removeEmpty(obj) {
 			Object.keys(obj).forEach(function (key) {
@@ -207,7 +208,7 @@ export default class Sitemap {
 				}
 			});
 		}
-		let sitemapObj = JSON.parse(JSON.stringify(this));
+		const sitemapObj = JSON.parse(JSON.stringify(this));
 		delete sitemapObj._rev;
 		removeEmpty(sitemapObj);
 		return JSON.stringify(sitemapObj);
@@ -220,7 +221,7 @@ export default class Sitemap {
 			columns = columns.concat(selector.getDataColumns());
 		});
 
-		let uniqueColumns = [];
+		const uniqueColumns = [];
 		$.each(columns, function (i, e) {
 			if ($.inArray(e, uniqueColumns) == -1) uniqueColumns.push(e);
 		});
@@ -231,12 +232,13 @@ export default class Sitemap {
 	getSelectorById(selectorId) {
 		return this.selectors.getSelectorById(selectorId);
 	}
+
 	/**
 	 * Create full clone of sitemap
 	 * @returns {Sitemap}
 	 */
 	clone() {
-		let clonedObj = JSON.parse(JSON.stringify(this));
+		const clonedObj = JSON.parse(JSON.stringify(this));
 		return new Sitemap(
 			clonedObj._id,
 			clonedObj.startUrls,

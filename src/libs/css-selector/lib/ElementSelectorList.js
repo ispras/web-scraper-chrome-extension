@@ -5,13 +5,13 @@ export default class ElementSelectorList extends Array {
 	}
 
 	getCssSelector() {
-		let resultSelectors = [];
+		const resultSelectors = [];
 
 		// TDD
 		for (let i = 0; i < this.length; i++) {
-			let selector = this[i];
+			const selector = this[i];
 
-			let isFirstSelector = i === this.length - 1;
+			const isFirstSelector = i === this.length - 1;
 			let resultSelector = selector.getCssSelector(isFirstSelector);
 
 			if (this.CssSelector.enableSmartTableSelector) {
@@ -27,10 +27,10 @@ export default class ElementSelectorList extends Array {
 
 							// escape quotes
 							text.replace(/(\\*)(')/g, function (x) {
-								let l = x.length;
-								return l % 2 ? x : x.substring(0, l - 1) + "\\'";
+								const l = x.length;
+								return l % 2 ? x : `${x.substring(0, l - 1)}\\'`;
 							});
-							resultSelector += ":contains('" + text + "')";
+							resultSelector += `:contains('${text}')`;
 						}
 					}
 				}

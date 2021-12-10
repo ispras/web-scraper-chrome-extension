@@ -8,9 +8,9 @@ export default class Translator {
 	}
 
 	static translateAttribute(attribute = 'data-i18n') {
-		let selector = '[' + attribute + ']';
+		const selector = `[${attribute}]`;
 		$(selector).each((_, elem) => {
-			let messageKey = $(elem).attr(attribute);
+			const messageKey = $(elem).attr(attribute);
 			try {
 				if (selector === '[data-i18n]') {
 					$(elem).html(this.getTranslationByKey(messageKey));

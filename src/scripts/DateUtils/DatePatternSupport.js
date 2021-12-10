@@ -38,16 +38,16 @@ export default class DatePatternSupport {
 		}
 
 		let df;
-		let urls = [];
+		const urls = [];
 		startUrls.forEach(function (startUrl) {
-			let re = /^(.*?)\[date<(.*)><(.*)><(.*)>\](.*)$/;
-			let matches = startUrl.match(re);
+			const re = /^(.*?)\[date<(.*)><(.*)><(.*)>\](.*)$/;
+			const matches = startUrl.match(re);
 			if (matches) {
 				df = new SimpleDateFormatter(matches[2]);
-				let startDate = df.parse(nowSupport(matches[3]));
-				let endDate = df.parse(nowSupport(matches[4]));
+				const startDate = df.parse(nowSupport(matches[3]));
+				const endDate = df.parse(nowSupport(matches[4]));
 
-				let roller = DateRoller.days(startDate, endDate);
+				const roller = DateRoller.days(startDate, endDate);
 				roller.forEach(function (date) {
 					urls.push(matches[1] + df.format(date) + matches[5]);
 				});
