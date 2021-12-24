@@ -174,7 +174,7 @@ export default class SelectorTable extends Selector {
 		const $table = $(html);
 		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length >= 1) {
 			// rows in thead
-			this.tableHeaderRowSelector = 'thead tr';
+			this.tableHeaderRowSelector = '>thead tr';
 			this.verticalTable = false;
 		} else {
 			const firstRow = $table.find('tr:first-of-type');
@@ -182,14 +182,14 @@ export default class SelectorTable extends Selector {
 				if (firstRow.find('th:not(:empty)').length > 1) {
 					// if we have more than one th in first row
 					// TODO find first row without th here and in data selector
-					this.tableHeaderRowSelector = 'tr:nth-of-type(1)';
+					this.tableHeaderRowSelector = '>tr:nth-of-type(1)';
 					this.verticalTable = false;
 				} else if (
 					firstRow.find('th:first-of-type:not(:empty)').length === 1 &&
 					firstRow.children().length > 1
 				) {
 					// this is the case of vertical table with th on first cell
-					this.tableHeaderRowSelector = 'tr>th';
+					this.tableHeaderRowSelector = '>tr>th';
 					this.verticalTable = true;
 				} else if ($table.find('tr td:not(:empty), tr th:not(:empty)').length) {
 					const $rows = $table.find('tr');
@@ -197,18 +197,18 @@ export default class SelectorTable extends Selector {
 					const rowIndex = $rows.index(
 						$rows.filter(':has(td:not(:empty)), :has(th:not(:empty))')[0]
 					);
-					this.tableHeaderRowSelector = `tr:nth-of-type(${rowIndex + 1})`;
+					this.tableHeaderRowSelector = `>tr:nth-of-type(${rowIndex + 1})`;
 					this.verticalTable = false;
 				} else {
-					this.tableHeaderRowSelector = '';
+					this.tableHeaderRowSelector = '>';
 				}
 			} else if (firstRow.find('th').length) {
 				// vertical table with th on first cell
-				this.tableHeaderRowSelector = 'tr>th';
+				this.tableHeaderRowSelector = '>tr>th';
 				this.verticalTable = true;
 			} else {
 				// vertical table with only td
-				this.tableHeaderRowSelector = 'tr>td:nth-of-type(1)';
+				this.tableHeaderRowSelector = '>tr>td:nth-of-type(1)';
 				this.verticalTable = true;
 			}
 		}
@@ -218,7 +218,7 @@ export default class SelectorTable extends Selector {
 		const $table = $(html);
 		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length) {
 			// rows in tbody
-			this.tableDataRowSelector = 'tbody tr';
+			this.tableDataRowSelector = '>tbody tr';
 		} else if (!this.verticalTable) {
 			if ($table.find('tr td:not(:empty), tr th:not(:empty)').length) {
 				const $rows = $table.find('tr');
@@ -226,14 +226,14 @@ export default class SelectorTable extends Selector {
 				const rowIndex = $rows.index(
 					$rows.filter(':has(td:not(:empty)),:has(th:not(:empty))')[0]
 				);
-				this.tableDataRowSelector = `tr:nth-of-type(n+${rowIndex + 2})`;
+				this.tableDataRowSelector = `>tr:nth-of-type(n+${rowIndex + 2})`;
 			}
 		} else if ($table.find('th').length) {
 			// vertical table with th on first cell
-			this.tableDataRowSelector = 'tr>td';
+			this.tableDataRowSelector = '>tr>td';
 		} else {
 			// vertical table with only td
-			this.tableDataRowSelector = 'tr>td:nth-of-type(n+2)';
+			this.tableDataRowSelector = '>tr>td:nth-of-type(n+2)';
 		}
 	}
 
@@ -277,7 +277,7 @@ export default class SelectorTable extends Selector {
 
 	getHeaderColumnsIndices(tableHtml) {
 		const $table = $(tableHtml);
-		const $headerRowColumns = $table.find(this.tableHeaderRowSelector);
+		const $headerRowColumns = $table.find(this.tableHeaderRowSelector.substr(1));
 		let columns;
 		if (!this.verticalTable) {
 			columns = this.horizontalColumnsMaker($headerRowColumns);
