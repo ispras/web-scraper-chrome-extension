@@ -105,17 +105,25 @@ export default class SelectorTable extends Selector {
 			const rowOffsets = dataColumns.map(column => {
 				return dataColumns.filter(key => {
 					return (
-						getColumnIndex(key) < getColumnIndex(column) && key.header in result[rowNum]
+						getColumnIndex(key) < getColumnIndex(column) && key.name in result[rowNum]
 					);
 				}).length;
 			});
 
 			// extract data from row
 			dataColumns
-				.filter(column => !(column.header in result[rowNum]))
+				.filter(column => !(column.name in result[rowNum]))
 				.forEach(column => {
 					const headerIndex = getColumnIndex(column);
-					const cell = $(row)[0].children[headerIndex - rowOffsets[headerIndex]];
+					const cells = $(row)[0].children;
+					if (!cells.length) {
+						result[rowNum] = undefined;
+						return;
+					}
+					const cell = cells[headerIndex - rowOffsets[headerIndex]];
+					if (!cell) {
+						return;
+					}
 					const cellText = cell.innerHTML.trim();
 					result[rowNum][column.name] = cellText;
 
@@ -127,7 +135,7 @@ export default class SelectorTable extends Selector {
 					}
 				});
 		});
-		return result;
+		return result.filter(record => !$.isEmptyObject(record));
 	}
 
 	async _getData(parentElement) {
