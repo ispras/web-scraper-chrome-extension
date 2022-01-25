@@ -105,17 +105,25 @@ export default class SelectorTable extends Selector {
 			const rowOffsets = dataColumns.map(column => {
 				return dataColumns.filter(key => {
 					return (
-						getColumnIndex(key) < getColumnIndex(column) && key.header in result[rowNum]
+						getColumnIndex(key) < getColumnIndex(column) && key.name in result[rowNum]
 					);
 				}).length;
 			});
 
 			// extract data from row
 			dataColumns
-				.filter(column => !(column.header in result[rowNum]))
+				.filter(column => !(column.name in result[rowNum]))
 				.forEach(column => {
 					const headerIndex = getColumnIndex(column);
-					const cell = $(row)[0].children[headerIndex - rowOffsets[headerIndex]];
+					const cells = $(row)[0].children;
+					if (!cells.length) {
+						result[rowNum] = undefined;
+						return;
+					}
+					const cell = cells[headerIndex - rowOffsets[headerIndex]];
+					if (!cell) {
+						return;
+					}
 					const cellText = cell.innerHTML.trim();
 					result[rowNum][column.name] = cellText;
 
@@ -127,7 +135,7 @@ export default class SelectorTable extends Selector {
 					}
 				});
 		});
-		return result;
+		return result.filter(record => !$.isEmptyObject(record));
 	}
 
 	async _getData(parentElement) {
@@ -161,48 +169,48 @@ export default class SelectorTable extends Selector {
 
 	getTableHeaderRowSelector() {
 		// handle legacy selectors
-		return this.tableHeaderRowSelector || 'thead tr';
+		return this.tableHeaderRowSelector || '>thead>tr';
 	}
 
 	getTableDataRowSelector() {
 		// handle legacy selectors
-		return this.tableDataRowSelector || 'tbody tr';
+		return this.tableDataRowSelector || '>tbody>tr';
 	}
 
 	// TODO split this method into two: one determines table orientation, second finds header row.
 	getTableHeaderRowSelectorFromTableHTML(html) {
 		const $table = $(html);
-		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length >= 1) {
+		if ($table.find('>thead>tr:has(>td:not(:empty)), >thead>tr:has(>th:not(:empty))').length) {
 			// rows in thead
-			this.tableHeaderRowSelector = '>thead tr';
+			this.tableHeaderRowSelector = '>thead>tr';
 			this.verticalTable = false;
 		} else {
-			const firstRow = $table.find('tr:first-of-type');
+			const firstRow = $table.find('>tbody>tr:first-of-type, >tr:first-of-type');
 			if (!this.verticalTable) {
-				if (firstRow.find('th:not(:empty)').length > 1) {
+				if (firstRow.find('>th:not(:empty)').length > 1) {
 					// if we have more than one th in first row
 					// TODO find first row without th here and in data selector
 					this.tableHeaderRowSelector = '>tr:nth-of-type(1)';
 					this.verticalTable = false;
 				} else if (
-					firstRow.find('th:first-of-type:not(:empty)').length === 1 &&
+					firstRow.find('>th:first-of-type:not(:empty)').length === 1 &&
 					firstRow.children().length > 1
 				) {
 					// this is the case of vertical table with th on first cell
 					this.tableHeaderRowSelector = '>tr>th';
 					this.verticalTable = true;
-				} else if ($table.find('tr td:not(:empty), tr th:not(:empty)').length) {
-					const $rows = $table.find('tr');
+				} else {
+					const $rows = $table.find('>tbody>tr, >tr');
 					// first row with th or td
 					const rowIndex = $rows.index(
-						$rows.filter(':has(td:not(:empty)), :has(th:not(:empty))')[0]
+						$rows.filter(':has(>td:not(:empty)), :has(>th:not(:empty))').first()
 					);
-					this.tableHeaderRowSelector = `>tr:nth-of-type(${rowIndex + 1})`;
-					this.verticalTable = false;
-				} else {
-					this.tableHeaderRowSelector = '>';
+					if (rowIndex >= 0) {
+						this.tableHeaderRowSelector = `>tr:nth-of-type(${rowIndex + 1})`;
+						this.verticalTable = false;
+					}
 				}
-			} else if (firstRow.find('th').length) {
+			} else if (firstRow.find('>th').length) {
 				// vertical table with th on first cell
 				this.tableHeaderRowSelector = '>tr>th';
 				this.verticalTable = true;
@@ -211,29 +219,39 @@ export default class SelectorTable extends Selector {
 				this.tableHeaderRowSelector = '>tr>td:nth-of-type(1)';
 				this.verticalTable = true;
 			}
+
+			if (this.tableHeaderRowSelector && html.includes('<tbody')) {
+				this.tableHeaderRowSelector = `>tbody${this.tableHeaderRowSelector}`;
+			}
 		}
 	}
 
 	getTableDataRowSelectorFromTableHTML(html) {
 		const $table = $(html);
-		if ($table.find('thead tr:has(td:not(:empty)), thead tr:has(th:not(:empty))').length) {
+		if ($table.find('>thead>tr:has(>td:not(:empty)), >thead>tr:has(>th:not(:empty))').length) {
 			// rows in tbody
-			this.tableDataRowSelector = '>tbody tr';
-		} else if (!this.verticalTable) {
-			if ($table.find('tr td:not(:empty), tr th:not(:empty)').length) {
-				const $rows = $table.find('tr');
+			this.tableDataRowSelector = '>tbody>tr';
+		} else {
+			if (!this.verticalTable) {
+				const $rows = $table.find('>tbody>tr, >tr');
 				// first row with data
 				const rowIndex = $rows.index(
-					$rows.filter(':has(td:not(:empty)),:has(th:not(:empty))')[0]
+					$rows.filter(':has(>td:not(:empty)), :has(>th:not(:empty))').first()
 				);
-				this.tableDataRowSelector = `>tr:nth-of-type(n+${rowIndex + 2})`;
+				if (rowIndex >= 0) {
+					this.tableDataRowSelector = `>tr:nth-of-type(n+${rowIndex + 2})`;
+				}
+			} else if ($table.find('>tbody>tr>th, >tr>th').length) {
+				// vertical table with th on first cell
+				this.tableDataRowSelector = '>tr>td';
+			} else {
+				// vertical table with only td
+				this.tableDataRowSelector = '>tr>td:nth-of-type(n+2)';
 			}
-		} else if ($table.find('th').length) {
-			// vertical table with th on first cell
-			this.tableDataRowSelector = '>tr>td';
-		} else {
-			// vertical table with only td
-			this.tableDataRowSelector = '>tr>td:nth-of-type(n+2)';
+
+			if (this.tableDataRowSelector && html.includes('<tbody')) {
+				this.tableDataRowSelector = `>tbody${this.tableDataRowSelector}`;
+			}
 		}
 	}
 
@@ -244,6 +262,7 @@ export default class SelectorTable extends Selector {
 	horizontalColumnsMaker($headerRow) {
 		const columns = {};
 		const tableRowOffsets = {};
+
 		/**
 		 * @param tableRowNum - number of layer of our header
 		 * @param nameAcc - accumulator for the name of our column
@@ -277,7 +296,8 @@ export default class SelectorTable extends Selector {
 
 	getHeaderColumnsIndices(tableHtml) {
 		const $table = $(tableHtml);
-		const $headerRowColumns = $table.find(this.tableHeaderRowSelector.substr(1));
+		const headerRowSelector = this.getTableHeaderRowSelector();
+		const $headerRowColumns = $table.find(`${headerRowSelector}, >tbody ${headerRowSelector}`);
 		let columns;
 		if (!this.verticalTable) {
 			columns = this.horizontalColumnsMaker($headerRowColumns);
