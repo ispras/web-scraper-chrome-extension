@@ -68,7 +68,7 @@ export default class Sitemap {
 	getSelectorIds() {
 		const ids = ['_root'];
 		this.selectors.forEach(function (selector) {
-			ids.push(selector.id);
+			ids.push(selector.uuid);
 		});
 		return ids;
 	}
@@ -78,10 +78,10 @@ export default class Sitemap {
 	 * @returns {Array}
 	 */
 	getPossibleParentSelectorIds() {
-		const ids = ['_root'];
+		const ids = ['0'];
 		this.selectors.forEach(function (selector) {
 			if (selector.canHaveChildSelectors()) {
-				ids.push(selector.id);
+				ids.push(selector.uuid);
 			}
 		});
 		return ids;
@@ -148,21 +148,21 @@ export default class Sitemap {
 		}
 
 		// update child selectors
-		if (selector.id !== undefined && selector.id !== selectorData.id) {
+		if (selector.uuid !== undefined && selector.uuid !== selectorData.uuid) {
 			this.selectors.forEach(function (currentSelector) {
-				currentSelector.renameParentSelector(selector.id, selectorData.id);
+				currentSelector.renameParentSelector(selector.uuid, selectorData.uuid);
 			});
 
 			// update cyclic selector
-			const pos = selectorData.parentSelectors.indexOf(selector.id);
+			const pos = selectorData.parentSelectors.indexOf(selector.uuid);
 			if (pos !== -1) {
-				selectorData.parentSelectors.splice(pos, 1, selectorData.id);
+				selectorData.parentSelectors.splice(pos, 1, selectorData.uuid);
 			}
 		}
 
 		selector.updateData(selectorData, selectorData.getFeatures());
 
-		const index = this.getSelectorIds().indexOf(selector.id);
+		const index = this.getSelectorIds().indexOf(selector.uuid);
 		if (index === -1) {
 			this.selectors.push(selector);
 		} else {
@@ -174,8 +174,8 @@ export default class Sitemap {
 	deleteSelector(selectorToDelete) {
 		this.selectors.forEach(
 			function (selector) {
-				if (selector.hasParentSelector(selectorToDelete.id)) {
-					selector.removeParentSelector(selectorToDelete.id);
+				if (selector.hasParentSelector(selectorToDelete.uuid)) {
+					selector.removeParentSelector(selectorToDelete.uuid);
 					if (selector.parentSelectors.length === 0) {
 						this.deleteSelector(selector);
 					}
@@ -184,7 +184,7 @@ export default class Sitemap {
 		);
 
 		for (const i in this.selectors) {
-			if (this.selectors[i].id === selectorToDelete.id) {
+			if (this.selectors[i].uuid === selectorToDelete.uuid) {
 				this.selectors.splice(i, 1);
 				break;
 			}
