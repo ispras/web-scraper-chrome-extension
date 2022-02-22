@@ -104,7 +104,7 @@ export default class SelectorList extends Array {
 				if (selector.hasParentSelector(parentSelectorId)) {
 					if (resultSelectors.indexOf(selector) === -1) {
 						resultSelectors.push(selector);
-						getAllChildSelectors(selector.id, resultSelectors);
+						getAllChildSelectors(selector.uuid, resultSelectors);
 					}
 				}
 			});
@@ -159,7 +159,7 @@ export default class SelectorList extends Array {
 	getSelector(selectorId) {
 		for (let i = 0; i < this.length; i++) {
 			const selector = this[i];
-			if (selector.id === selectorId) {
+			if (selector.uuid === selectorId) {
 				return selector;
 			}
 		}
@@ -262,7 +262,6 @@ export default class SelectorList extends Array {
 				return selector;
 			}
 		}
-		return undefined;
 	}
 
 	/**

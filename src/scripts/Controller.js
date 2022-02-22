@@ -726,7 +726,7 @@ export default class SitemapController {
 				sitemapObj.selectors
 			);
 			sitemap = await this.store.createSitemap(sitemap);
-			this._editSitemap(sitemap, ['_root']);
+			this._editSitemap(sitemap);
 		}
 	}
 
@@ -805,7 +805,7 @@ export default class SitemapController {
 		this.setActiveNavigationButton('sitemap-selector-list');
 
 		const sitemap = this.state.currentSitemap;
-		const parentSelectors = this.state.editSitemapBreadcumbsSelectors.map(sel => sel.id);
+		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
 		const parentSelectorId = this.state.currentParentSelectorId;
 
 		const $selectorListPanel = ich.SelectorList({
@@ -844,7 +844,7 @@ export default class SitemapController {
 	}
 
 	treeNavigationShowSitemapSelectorList(button) {
-		const parentSelectors = this.state.editSitemapBreadcumbsSelectors.map(sel => sel.uuid);
+		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
 		const controller = this;
 		$('#selector-tree .breadcrumb li a').each(function (i, parentSelectorButton) {
 			if (parentSelectorButton === button) {
@@ -880,9 +880,12 @@ export default class SitemapController {
 								// eslint-disable-next-line no-plusplus
 								const selector = this.getCurrentlyEditedSelector();
 								const newSelector = this.state.currentSelector;
-								if (selectorsList.length !== 0 && selector.id !== newSelector.id) {
+								if (
+									selectorsList.length !== 0 &&
+									selector.uuid !== newSelector.uuid
+								) {
 									for (let i = 0; i < selectorsList.length; i++) {
-										if (selectorsList[i].id === value) {
+										if (selectorsList[i].uuid === value) {
 											return false;
 										}
 									}
@@ -1000,7 +1003,7 @@ export default class SitemapController {
 								return (
 									!selector.mergeIntoList ||
 									!sitemap
-										.getAllSelectors(selector.id)
+										.getAllSelectors(selector.uuid)
 										.some(child => child.canCreateNewJobs())
 								);
 							},
@@ -1022,7 +1025,7 @@ export default class SitemapController {
 
 								if (
 									newSelector.parentSelectors.length === 1 &&
-									newSelector.parentSelectors[0] === newSelector.id
+									newSelector.parentSelectors[0] === newSelector.uuid
 								) {
 									return {
 										valid: false,
@@ -1095,7 +1098,7 @@ export default class SitemapController {
 
 	updateSelectorParentListOnIdChange() {
 		const selector = this.getCurrentlyEditedSelector();
-		$('.currently-edited').val(selector.id).text(selector.id);
+		$('.currently-edited').val(selector.uuid).text(selector.uuid);
 	}
 
 	_editSelector(selector) {
@@ -1114,7 +1117,7 @@ export default class SitemapController {
 			init: this.initSelectorValidation(),
 			textProperty: '{fieldName}',
 			valueProperty: 'fieldName',
-			data: [...sitemap.model, { entity: '', field: '', fieldName: selector.id }],
+			data: [...sitemap.model, { entity: '', field: '', fieldName: selector.uuid }],
 			searchIn: ['entity', 'field'],
 			visibleProperties: ['entity', 'field'],
 			groupBy: 'entity',
@@ -1374,16 +1377,16 @@ export default class SitemapController {
 		}
 		sitemap = new Sitemap(id, sitemap.startUrls, sitemap.model, sitemap.selectors);
 		sitemap = await this.store.createSitemap(sitemap);
-		this._editSitemap(sitemap, ['_root']);
+		this._editSitemap(sitemap);
 		$('#confirm-action-modal').modal('hide');
 	}
 
 	async deleteSelector(button) {
 		const selector = $(button).closest('tr').data('selector');
 		const sitemap = this.state.currentSitemap;
-		const childCount = sitemap.getDirectChildSelectors(selector.id).length;
+		const childCount = sitemap.getDirectChildSelectors(selector.uuid).length;
 		this.initConfirmActionPanel({ action: 'delete_selector' });
-		$('#modal-selector-id').text(selector.id);
+		$('#modal-selector-id').text(selector.uuid);
 		if (childCount) {
 			$('#modal-child-count').text(childCount);
 			$('#modal-message').show();
@@ -1667,7 +1670,7 @@ export default class SitemapController {
 				if (url && attachments.has(url)) {
 					const attachment = { [selector.getUrlColumn()]: url };
 					Object.entries(attachments.get(url)).forEach(([key, value]) => {
-						attachment[`${selector.id}-${key}`] = value;
+						attachment[`${selector.uuid}-${key}`] = value;
 					});
 					return attachment;
 				}
@@ -1843,7 +1846,7 @@ export default class SitemapController {
 		const selector = this.getCurrentlyEditedSelector();
 		const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
 		const parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
-			selector.id,
+			selector.uuid,
 			currentStateParentSelectorIds
 		);
 
@@ -1882,7 +1885,7 @@ export default class SitemapController {
 		const selector = this.getCurrentlyEditedSelector();
 		const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
 		const CSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
-			selector.id,
+			selector.uuid,
 			currentStateParentSelectorIds
 		);
 		return this.contentScript.getHTML({ CSSSelector }).promise();
@@ -1950,7 +1953,7 @@ export default class SitemapController {
 			const selector = this.getCurrentlyEditedSelector();
 			const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
 			const parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
-				selector.id,
+				selector.uuid,
 				currentStateParentSelectorIds
 			);
 			const rowSelector = $(button).closest('.form-group').find('input').val();
@@ -2020,18 +2023,17 @@ export default class SitemapController {
 	 * @returns {Array}
 	 */
 	getStateParentSelectorIds() {
-		const parentSelectorIds = [];
-		this.state.editSitemapBreadcumbsSelectors
-			.map(sel => sel.uuid)
-			.forEach(function (selector) {
-				parentSelectorIds.push(selector.uuid);
-			});
-		return parentSelectorIds;
+		const parentSelectors = [];
+		this.state.editSitemapBreadcumbsSelectors.forEach(function (selector) {
+			parentSelectors.push(selector);
+		});
+		return parentSelectors;
 	}
 
 	previewSelectorData(sitemap, selectorId) {
 		// data preview will be base on how the selector tree is opened
-		const parentSelectorIds = this.getStateParentSelectorIds();
+		const parentSelectorIds = this.getStateParentSelectorIds().map(sel => sel.uuid);
+		//const parentSelectorIds = parentSelectors.map(sel => sel.uuid)
 
 		const request = {
 			previewSelectorData: true,
@@ -2056,7 +2058,7 @@ export default class SitemapController {
 			const $accordion = $('#data-preview', $dataPreviewPanel);
 			for (let rowNum = 0; rowNum < response.length; rowNum++) {
 				const $card = ich.ItemCard({
-					uuid: rowNum,
+					id: rowNum,
 					url: response[rowNum]._url || `Item${rowNum}`,
 				});
 				$accordion.append($card);

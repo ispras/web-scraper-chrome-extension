@@ -66,7 +66,7 @@ export default class Sitemap {
 	 * @returns {Array}
 	 */
 	getSelectorIds() {
-		const ids = ['_root'];
+		const ids = ['0'];
 		this.selectors.forEach(function (selector) {
 			ids.push(selector.uuid);
 		});

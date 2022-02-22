@@ -26,7 +26,7 @@ export default class Scraper {
 
 		urls.forEach(
 			function (url) {
-				const firstJob = new Job(url, '_root', this);
+				const firstJob = new Job(url, '0', this);
 				this.queue.add(firstJob);
 			}.bind(this)
 		);
