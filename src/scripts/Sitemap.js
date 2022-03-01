@@ -78,10 +78,10 @@ export default class Sitemap {
 	 * @returns {Array}
 	 */
 	getPossibleParentSelectorIds() {
-		const ids = ['0'];
+		const ids = [{ id: '_root', uuid: '0' }];
 		this.selectors.forEach(function (selector) {
 			if (selector.canHaveChildSelectors()) {
-				ids.push(selector.uuid);
+				ids.push({ id: selector.id, uuid: selector.uuid });
 			}
 		});
 		return ids;

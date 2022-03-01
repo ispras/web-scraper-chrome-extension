@@ -30,7 +30,7 @@ export default class SelectorLink extends Selector {
 	async _getData(parentElement) {
 		const elements = this.getDataElements(parentElement);
 		if (!this.multiple && !elements.length) {
-			return [{ [this.id]: null }];
+			return [{ [this.uuid]: null }];
 		}
 		return elements.map(element => {
 			const $element = $(element);
@@ -38,16 +38,16 @@ export default class SelectorLink extends Selector {
 			let url = this.extractAttribute ? $element.attr(this.extractAttribute) : text;
 			url = this.stringReplace(url, this.stringReplacement);
 			return {
-				[this.id]: text,
+				[this.uuid]: text,
 				[`${this.id}-href`]: url,
-				_followSelectorId: this.id,
+				_followSelectorId: this.uuid,
 				_follow: url,
 			};
 		});
 	}
 
 	getDataColumns() {
-		return [this.id, `${this.id}-href`];
+		return [this.uuid, `${this.uuid}-href`];
 	}
 
 	getFeatures() {

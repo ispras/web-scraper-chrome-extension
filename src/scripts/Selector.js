@@ -50,8 +50,8 @@ export default class Selector {
 		if (Array.isArray(data)) {
 			return data.map(e => this.manipulateData(e));
 		}
-		if (Object.isObject(data) && this.id in data) {
-			data[this.id] = this.manipulateData(data[this.id]);
+		if (Object.isObject(data) && this.uuid in data) {
+			data[this.uuid] = this.manipulateData(data[this.uuid]);
 			return data;
 		}
 

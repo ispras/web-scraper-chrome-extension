@@ -68,7 +68,7 @@ export default class SelectorList extends Array {
 	}
 
 	push(selector) {
-		if (!this.hasSelector(selector.id)) {
+		if (!this.hasSelector(selector.uuid)) {
 			if (!(selector instanceof Selector)) {
 				selector = SelectorList.createSelector(selector);
 			}

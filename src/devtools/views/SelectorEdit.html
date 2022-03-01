@@ -32,19 +32,15 @@
 			</select>
 		</div>
 	</div>
-
 	<div class="form-group">
-		<div class="col-sm-8">
-			<input
-				type="hidden"
-				class="form-control"
-				name="uuid"
-				id="uuid"
-				placeholder="selector_edit_id"
-				value="{{selector.uuid}}"
-				disabled
-			/>
-		</div>
+		<input
+			type="hidden"
+			class="form-control"
+			name="uuid"
+			id="uuid"
+			value="{{selector.uuid}}"
+			disabled
+		/>
 	</div>
 
 	<div class="form-group feature feature-selector">
@@ -633,7 +629,7 @@
 		<div class="input-group col-sm-8">
 			<select multiple class="form-control" id="parentSelectors" name="parentSelectors">
 				{{#selectorIds}}
-				<option value="{{.}}">{{.}}</option>
+				<option value="{{uuid}}">{{id}}</option>
 				{{/selectorIds}}
 			</select>
 		</div>
