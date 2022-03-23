@@ -44,7 +44,7 @@ export default class SelectorText extends Selector {
 	}
 
 	getDataColumns() {
-		return [this.uuid];
+		return [this.id];
 	}
 
 	getFeatures() {

@@ -328,8 +328,9 @@ export default class SitemapController {
 
 	setStateEditSitemap(sitemap) {
 		this.state.currentSitemap = sitemap;
-		this.state.editSitemapBreadcumbsSelectors = [{ id: '_root', uuid: '0' }];
-		this.state.currentParentSelectorId = { id: '_root', uuid: '0' };
+		let base_root_id = sitemap.new_version ? [{ id: '_root', uuid: '0' }] : [{ id: '_root' }];
+		this.state.editSitemapBreadcumbsSelectors = base_root_id;
+		this.state.currentParentSelectorId = base_root_id[0];
 	}
 
 	setActiveNavigationButton(navigationId) {
@@ -694,7 +695,7 @@ export default class SitemapController {
 		} else {
 			let sitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, []);
 			sitemap = await this.store.createSitemap(sitemap);
-			this._editSitemap(sitemap, ['00000']);
+			this._editSitemap(sitemap);
 		}
 	}
 
@@ -806,7 +807,9 @@ export default class SitemapController {
 
 		const sitemap = this.state.currentSitemap;
 		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
-		const parentSelectorId = this.state.currentParentSelectorId.uuid;
+		const parentSelectorId = sitemap.new_version
+			? this.state.currentParentSelectorId.uuid
+			: this.state.currentParentSelectorId.id;
 
 		const $selectorListPanel = ich.SelectorList({
 			parentSelectors,
@@ -872,63 +875,6 @@ export default class SitemapController {
 							regexp: /^[^_].*$/,
 							message: Translator.getTranslationByKey('selectorid_underscore'),
 						},
-						// callback: {
-						// 	message: Translator.getTranslationByKey('selectorid_is_already_exist'),
-						// 	// eslint-disable-next-line consistent-return
-						// 	callback: (value, validator) => {
-						// 		// allow no regex
-						// 		// eslint-disable-next-line no-plusplus
-						// 		const selector = this.getCurrentlyEditedSelector();
-						// 		const newSelector = this.state.currentSelector;
-						// 		if (
-						// 			selectorsList.length !== 0 &&
-						// 			selector.id !== newSelector.id
-						// 		) {
-						// 			for (let i = 0; i < selectorsList.length; i++) {
-						// 				if (selectorsList[i].id === value) {
-						// 					return false;
-						// 				}
-						// 			}
-						// 		}
-						// 		return true;
-						// 	},
-						// },
-					},
-				},
-				uuid: {
-					validators: {
-						notEmpty: {
-							message: Translator.getTranslationByKey('sitemapid_empty_message'),
-						},
-						stringLength: {
-							min: 3,
-							message: Translator.getTranslationByKey('sitemapid_short_message'),
-						},
-						regexp: {
-							regexp: /^[^_].*$/,
-							message: Translator.getTranslationByKey('selectorid_underscore'),
-						},
-						// callback: {
-						// 	message: Translator.getTranslationByKey('selectorid_is_already_exist'),
-						// 	// eslint-disable-next-line consistent-return
-						// 	callback: (value, validator) => {
-						// 		// allow no regex
-						// 		// eslint-disable-next-line no-plusplus
-						// 		const selector = this.getCurrentlyEditedSelector();
-						// 		const newSelector = this.state.currentSelector;
-						// 		if (
-						// 			selectorsList.length !== 0 &&
-						// 			selector.id !== newSelector.id
-						// 		) {
-						// 			for (let i = 0; i < selectorsList.length; i++) {
-						// 				if (selectorsList[i].id === value) {
-						// 					return false;
-						// 				}
-						// 			}
-						// 		}
-						// 		return true;
-						// 	},
-						// },
 					},
 				},
 				selector: {
@@ -1133,8 +1079,11 @@ export default class SitemapController {
 	}
 
 	updateSelectorParentListOnIdChange() {
+		//	let selector = this.getCurrentlyEditedSelector();
+		//	$('.currently-edited')
+		//		.val(selector.id)
+		//		.text(selector.id);
 		const selector = this.getCurrentlyEditedSelector();
-		//	var curId = if (selector.id === )
 		$('.currently-edited').val(selector.uuid).text(selector.id);
 	}
 
@@ -1144,7 +1093,7 @@ export default class SitemapController {
 
 		const $editSelectorForm = ich.SelectorEdit({
 			selector,
-			selectorIds: selectorIds,
+			selectorIds,
 			uuid: selector.uuid,
 			selectorTypes: this.selectorTypes,
 		});
@@ -1316,7 +1265,7 @@ export default class SitemapController {
 			});
 		});
 
-		return SelectorList.createSelector({
+		let options = {
 			id,
 			selector: selectorsSelector,
 			tableHeaderRowSelector,
@@ -1343,8 +1292,9 @@ export default class SitemapController {
 			stringReplacement,
 			mergeIntoList,
 			outerHTML,
-			uuid,
-		});
+		};
+
+		return SelectorList.createSelector();
 	}
 
 	/**
@@ -1370,8 +1320,10 @@ export default class SitemapController {
 	}
 
 	addSelector() {
-		const parentSelectorId = this.state.currentParentSelectorId.uuid;
 		const sitemap = this.state.currentSitemap;
+		const parentSelectorId = sitemap.new_version
+			? this.state.currentParentSelectorId.uuid
+			: this.state.currentParentSelectorId.id;
 
 		const selector = SelectorList.createSelector({
 			parentSelectors: [parentSelectorId],
@@ -1821,7 +1773,7 @@ export default class SitemapController {
 			.promise();
 
 		selector = this.getCurrentlyEditedSelector();
-		await selector.afterSelect(result.CSSSelector, this, input.attr('uuid'));
+		await selector.afterSelect(result.CSSSelector, this, input.attr('id'));
 
 		// update validation for selector field
 		const validator = this.getFormValidator();
@@ -2062,18 +2014,11 @@ export default class SitemapController {
 	 * Returns a list of selector ids that the user has opened
 	 * @returns {Array}
 	 */
-	getStateParentSelectorIds() {
-		const parentSelectors = [];
-		this.state.editSitemapBreadcumbsSelectors.forEach(function (selector) {
-			parentSelectors.push(selector);
-		});
-		return parentSelectors;
-	}
 
 	previewSelectorData(sitemap, selectorId) {
 		// data preview will be base on how the selector tree is opened
-		const parentSelectorIds = this.getStateParentSelectorIds().map(sel => sel.uuid);
-		//const parentSelectorIds = parentSelectors.map(sel => sel.uuid)
+
+		const parentSelectorIds = this.state.editSitemapBreadcumbsSelectors.map(sel => sel.uuid);
 
 		const request = {
 			previewSelectorData: true,

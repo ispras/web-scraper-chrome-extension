@@ -160,7 +160,7 @@ export default class DataExtractor {
 								}.bind(this)
 							)
 						).done(function (results) {
-							d.resolve({ [selector.uuid]: results.flat() });
+							d.resolve({ [selector.id]: results.flat() });
 						});
 					} else {
 						const newParentElement = data[0];

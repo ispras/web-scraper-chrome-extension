@@ -27,11 +27,11 @@ export default class SelectorPageURL extends Selector {
 	}
 
 	async _getData() {
-		return [{ [this.uuid]: document.location.href }];
+		return [{ [this.id]: document.location.href }];
 	}
 
 	getDataColumns() {
-		return [this.uuid];
+		return [this.id];
 	}
 
 	getFeatures() {
