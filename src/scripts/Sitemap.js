@@ -5,6 +5,7 @@ import Model from './Model';
 
 export default class Sitemap {
 	constructor(id, startUrls, model, selectors) {
+		this.rootSelector = { id: '_root', uuid: '0' };
 		this.new_version = selectors.length > 0 && selectors[0].uuid !== undefined;
 		this._id = id;
 		this.startUrls = startUrls;
@@ -67,9 +68,9 @@ export default class Sitemap {
 	 * @returns {Array}
 	 */
 	getSelectorUUIDs() {
-		const ids = this.new_version ? ['0'] : ['_root'];
+		const ids = ['0'];
 		this.selectors.forEach(function (selector) {
-			ids.push(this.new_version ? selector.uuid : selector.id);
+			ids.push(selector.uuid);
 		});
 		return ids;
 	}
@@ -79,7 +80,7 @@ export default class Sitemap {
 	 * @returns {Array}
 	 */
 	getPossibleParentSelectorIds() {
-		const ids = this.new_version ? [{ id: '_root', uuid: '0' }] : [{ id: '_root' }];
+		const ids = [Object.assign({}, this.rootSelector)];
 		this.selectors.forEach(function (selector) {
 			if (selector.canHaveChildSelectors()) {
 				ids.push({ id: selector.id, uuid: selector.uuid });

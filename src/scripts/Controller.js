@@ -328,9 +328,8 @@ export default class SitemapController {
 
 	setStateEditSitemap(sitemap) {
 		this.state.currentSitemap = sitemap;
-		let base_root_id = sitemap.new_version ? [{ id: '_root', uuid: '0' }] : [{ id: '_root' }];
-		this.state.editSitemapBreadcumbsSelectors = base_root_id;
-		this.state.currentParentSelectorId = base_root_id[0];
+		this.state.editSitemapBreadcumbsSelectors = [sitemap.rootSelector];
+		this.state.currentParentSelectorId = sitemap.rootSelector;
 	}
 
 	setActiveNavigationButton(navigationId) {
@@ -728,31 +727,36 @@ export default class SitemapController {
 			);
 
 			if (!sitemap.new_version) {
-				let parentsDict = { _root: '0' };
-				sitemap.selectors.forEach(function (selector, index, listSelectors) {
-					if (selector.canHaveChildSelectors()) {
-						parentsDict[selector.id] = uuidv4().toString();
-					}
-				});
-				sitemap.selectors.forEach(function (selector, index, listSelectors) {
-					selector.uuid =
-						parentsDict[selector.id] !== undefined
-							? parentsDict[selector.id]
-							: uuidv4().toString();
-
-					let parents = Object.keys(parentsDict);
-
-					selector.parentSelectors.forEach(function (parentSelector, pSelectorIndex) {
-						if (parents.indexOf(parentSelector) !== -1) {
-							selector.parentSelectors[pSelectorIndex] = parentsDict[parentSelector];
-						}
-					});
-				});
+				this.transformOldToNew(sitemap);
 			}
 			sitemap.new_version = true;
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
 		}
+	}
+
+	// transform old type sitemaps(without uuid) to new type sitemaps(with uuid)
+	transformOldToNew(sitemap) {
+		let parentsDict = { [sitemap.rootSelector.id]: sitemap.rootSelector.uuid };
+		sitemap.selectors.forEach(function (selector, index, listSelectors) {
+			if (selector.canHaveChildSelectors()) {
+				parentsDict[selector.id] = uuidv4().toString();
+			}
+		});
+		sitemap.selectors.forEach(function (selector, index, listSelectors) {
+			selector.uuid =
+				parentsDict[selector.id] !== undefined
+					? parentsDict[selector.id]
+					: uuidv4().toString();
+
+			let parents = Object.keys(parentsDict);
+
+			selector.parentSelectors.forEach(function (parentSelector, pSelectorIndex) {
+				if (parents.indexOf(parentSelector) !== -1) {
+					selector.parentSelectors[pSelectorIndex] = parentsDict[parentSelector];
+				}
+			});
+		});
 	}
 
 	editSitemapMetadata() {
@@ -1403,7 +1407,7 @@ export default class SitemapController {
 		const sitemap = this.state.currentSitemap;
 		const childCount = sitemap.getDirectChildSelectors(selector.uuid).length;
 		this.initConfirmActionPanel({ action: 'delete_selector' });
-		$('#modal-selector-id').text(selector.uuid);
+		$('#modal-selector-id').text(selector.id);
 		if (childCount) {
 			$('#modal-child-count').text(childCount);
 			$('#modal-message').show();

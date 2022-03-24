@@ -180,7 +180,7 @@ export default class SelectorList extends Array {
 		const findParentSelectors = function (selector) {
 			selector.parentSelectors.forEach(
 				function (parentSelectorId) {
-					if (parentSelectorId === '0' || parentSelectorId === '_root') return;
+					if (parentSelectorId === '0') return;
 					const parentSelector = this.getSelector(parentSelectorId);
 					if (resultList.indexOf(parentSelector) !== -1) return;
 					if (parentSelector.willReturnElements()) {

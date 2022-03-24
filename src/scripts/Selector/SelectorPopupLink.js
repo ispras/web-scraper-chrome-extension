@@ -30,16 +30,16 @@ export default class SelectorPopupLink extends Selector {
 	async _getData(parentElement) {
 		const elements = this.getDataElements(parentElement);
 		if (!this.multiple && !elements.length) {
-			return [{ [this.uuid]: null }];
+			return [{ [this.id]: null }];
 		}
 		const links = [];
 		for (const element of elements) {
 			const text = $(element).text();
 			const url = await this.getPopupURL(element);
 			links.push({
-				[this.uuid]: text,
-				[`${this.uuid}-href`]: url,
-				_followSelectorId: this.uuid,
+				[this.id]: text,
+				[`${this.id}-href`]: url,
+				_followSelectorId: this.id,
 				_follow: url,
 			});
 		}
@@ -92,7 +92,7 @@ export default class SelectorPopupLink extends Selector {
 	}
 
 	getDataColumns() {
-		return [this.uuid, `${this.uuid}-href`];
+		return [this.id, `${this.id}-href`];
 	}
 
 	getFeatures() {
