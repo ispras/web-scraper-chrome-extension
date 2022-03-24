@@ -726,6 +726,30 @@ export default class SitemapController {
 				sitemapObj.model,
 				sitemapObj.selectors
 			);
+
+			if (!sitemap.new_version) {
+				let parentsDict = { _root: '0' };
+				sitemap.selectors.forEach(function (selector, index, listSelectors) {
+					if (selector.canHaveChildSelectors()) {
+						parentsDict[selector.id] = uuidv4().toString();
+					}
+				});
+				sitemap.selectors.forEach(function (selector, index, listSelectors) {
+					selector.uuid =
+						parentsDict[selector.id] !== undefined
+							? parentsDict[selector.id]
+							: uuidv4().toString();
+
+					let parents = Object.keys(parentsDict);
+
+					selector.parentSelectors.forEach(function (parentSelector, pSelectorIndex) {
+						if (parents.indexOf(parentSelector) !== -1) {
+							selector.parentSelectors[pSelectorIndex] = parentsDict[parentSelector];
+						}
+					});
+				});
+			}
+			sitemap.new_version = true;
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
 		}
@@ -1292,9 +1316,10 @@ export default class SitemapController {
 			stringReplacement,
 			mergeIntoList,
 			outerHTML,
+			uuid,
 		};
 
-		return SelectorList.createSelector();
+		return SelectorList.createSelector(options);
 	}
 
 	/**
