@@ -181,9 +181,29 @@
 	"options_local_storage": { "message": "Локальное хранилище" },
 	"options_couchdb_storage": { "message": "CouchDB" },
 	"options_rest_api_storage": { "message": "Серверное хранилище" },
+
+	"options_talisman_api_storage": { "message": "Хранилище Талисман" },
+	"options_talisman_url": { "message": "Адрес сервера Талисман" },
+	"options_talisman_login": { "message": "Адрес сервера Талисман" },
+	"options_talisman_password": { "message": "Пароль" },
+	"options_talisman_url_placeholder": { "message": "Адрес сервера Талисман1" },
+	"options_talisman_login_placeholder": { "message": "Логин1" },
+	"options_talisman_password_placeholder": { "message": "Пароль1" },
+	"options_talisman_url_popup_title": { "message": "URL адрес хранилища Talisman." },
+	"options_talisman_url_popup_content": {
+		"message": "С этим URL будут синхронизироваться ваши карты обхода."
+	},
+
 	"options_submit": { "message": "Сохранить настройки" },
+	"options_talisman_check_auth_button": { "message": "Проверка авторизации:" },
+	"options_talisman_check_auth_field": { "message": "Статус авторизации" },
+	"options_talisman_log_out_button": { "message": "Выйти из системы" },
+
 	"options_successfully_updated": { "message": "Опции успешно сохранены" },
+	"options_auth_successful": { "message": "Авторизация прошла успешно" },
+	"options_logout_successful": { "message": "Выход из системы прошёл успешно" },
 	"options_error_updating": { "message": "Ошибка при сохранении опций " },
+	"options_auth_error_updating": { "message": "Ошибка при авторизации: " },
 	"options_couchdb_db_url_placeholder": { "message": "Url адрес базы CouchDB" },
 	"options_couchdb_db_url": { "message": "БД карт обхода" },
 	"options_couchdb_datadb": { "message": "БД данных" },

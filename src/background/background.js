@@ -2,6 +2,7 @@ import * as browser from 'webextension-polyfill';
 import Config from '../scripts/Config';
 import StorePouchDB from '../scripts/StorePouchDB';
 import StoreRestApi from '../scripts/StoreRestApi';
+import StoreTalismanApi from '../scripts/StoreTalismanApi';
 import Sitemap from '../scripts/Sitemap';
 import Queue from '../scripts/Queue';
 import ChromePopupBrowser from '../scripts/ChromePopupBrowser';
@@ -15,18 +16,54 @@ config.loadConfiguration().then(() => {
 	console.log('initial configuration', config);
 	if (config.storageType === 'rest') {
 		store = new StoreRestApi(config);
+	} else if (config.storageType === 'talisman') {
+		//TODO: Add research initialization
+		store = new StoreTalismanApi(config);
 	} else {
 		store = new StorePouchDB(config);
 	}
 });
 
 browser.storage.onChanged.addListener(function () {
-	config.loadConfiguration().then(() => {
+	config.loadConfiguration().then(async () => {
 		console.log('configuration changed', config);
 		if (config.storageType === 'rest') {
 			store = new StoreRestApi(config);
+		} else if (config.storageType === 'talisman') {
+			store = new StoreTalismanApi(config);
+			//TODO: Add auth check
+			let loginStatus = await store.initTalismanLogin(config.credential).catch(er => {
+				return er;
+			});
+			if (loginStatus.isAxiosError) {
+				console.log('browser.runtime.onMessage', loginStatus.message);
+				browser.runtime
+					.sendMessage({
+						talismanAuth: {
+							status: loginStatus.status,
+							message: loginStatus.message,
+						},
+					})
+					.then(_handleResponse, _handleError);
+			} else {
+				store.postInit();
+				browser.runtime
+					.sendMessage({ talismanAuth: { status: loginStatus.status } })
+					.then(_handleResponse, _handleError);
+				let tToken = loginStatus.data.access_token;
+				store.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
+			}
+			//TODO: Add error catch
 		} else {
 			store = new StorePouchDB(config);
+		}
+
+		function _handleResponse(message) {
+			alert(`Message from the background script:  ${message.response}`);
+		}
+
+		function _handleError(error) {
+			alert(`Error: ${error}`);
 		}
 	});
 });
@@ -49,7 +86,10 @@ const sendToActiveTab = function (request, callback) {
 
 browser.runtime.onMessage.addListener(async request => {
 	console.log('browser.runtime.onMessage', request);
-
+	if (request.logOut) {
+		delete store.axiosInstance.defaults.headers.Authorization;
+		await store.axiosInstance.get('/oauth/logout');
+	}
 	if (request.createSitemap) {
 		return store.createSitemap(request.sitemap);
 	}
