@@ -8,6 +8,7 @@ import Queue from '../scripts/Queue';
 import ChromePopupBrowser from '../scripts/ChromePopupBrowser';
 import Scraper from '../scripts/Scraper';
 import getBackgroundScript from '../scripts/BackgroundScript';
+import axios from 'axios';
 
 const config = new Config();
 let store;
@@ -17,7 +18,6 @@ config.loadConfiguration().then(() => {
 	if (config.storageType === 'rest') {
 		store = new StoreRestApi(config);
 	} else if (config.storageType === 'talisman') {
-		//TODO: Add research initialization
 		store = new StoreTalismanApi(config);
 	} else {
 		store = new StorePouchDB(config);
@@ -31,15 +31,15 @@ browser.storage.onChanged.addListener(function () {
 			store = new StoreRestApi(config);
 		} else if (config.storageType === 'talisman') {
 			store = new StoreTalismanApi(config);
-			//TODO: Add auth check
 			let loginStatus = await store.initTalismanLogin(config.credential).catch(er => {
 				return er;
 			});
-			if (loginStatus.isAxiosError) {
+			if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
 				console.log('browser.runtime.onMessage', loginStatus.message);
 				browser.runtime
 					.sendMessage({
 						talismanAuth: {
+							success: false,
 							status: loginStatus.status,
 							message: loginStatus.message,
 						},
@@ -48,12 +48,15 @@ browser.storage.onChanged.addListener(function () {
 			} else {
 				store.postInit();
 				browser.runtime
-					.sendMessage({ talismanAuth: { status: loginStatus.status } })
+					.sendMessage({
+						talismanAuth: {
+							success: true,
+						},
+					})
 					.then(_handleResponse, _handleError);
 				let tToken = loginStatus.data.access_token;
 				store.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
 			}
-			//TODO: Add error catch
 		} else {
 			store = new StorePouchDB(config);
 		}
@@ -87,8 +90,15 @@ const sendToActiveTab = function (request, callback) {
 browser.runtime.onMessage.addListener(async request => {
 	console.log('browser.runtime.onMessage', request);
 	if (request.logOut) {
-		delete store.axiosInstance.defaults.headers.Authorization;
-		await store.axiosInstance.get('/oauth/logout');
+		if (request.logOut.url === store.axiosInstance.defaults.baseURL) {
+			delete store.axiosInstance.defaults.headers.Authorization;
+			await store.axiosInstance.get('/oauth/logout');
+		} else {
+			await axios({
+				method: 'get',
+				url: `${request.logOut.url}/oauth/logout`,
+			});
+		}
 	}
 	if (request.createSitemap) {
 		return store.createSitemap(request.sitemap);

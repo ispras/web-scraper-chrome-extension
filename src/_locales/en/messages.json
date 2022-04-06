@@ -179,6 +179,7 @@
 	"options_talisman_url": { "message": "Talisman server URL" },
 	"options_talisman_login": { "message": "Login" },
 	"options_talisman_password": { "message": "Password" },
+	"options_talisman_password_show_checkbox": { "message": "Show password" },
 	"options_talisman_url_placeholder": { "message": "Talisman server URL1" },
 	"options_talisman_login_placeholder": { "message": "Login1" },
 	"options_talisman_password_placeholder": { "message": "Password1" },

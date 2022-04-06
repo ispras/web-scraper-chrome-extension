@@ -186,6 +186,7 @@
 	"options_talisman_url": { "message": "Адрес сервера Талисман" },
 	"options_talisman_login": { "message": "Адрес сервера Талисман" },
 	"options_talisman_password": { "message": "Пароль" },
+	"options_talisman_password_show_checkbox": { "message": "Показать пароль" },
 	"options_talisman_url_placeholder": { "message": "Адрес сервера Талисман1" },
 	"options_talisman_login_placeholder": { "message": "Логин1" },
 	"options_talisman_password_placeholder": { "message": "Пароль1" },

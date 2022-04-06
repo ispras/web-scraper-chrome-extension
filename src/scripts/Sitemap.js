@@ -18,7 +18,7 @@ export default class Sitemap {
 			sitemapObj._id,
 			sitemapObj.startUrls,
 			sitemapObj.model,
-			sitemapObj.selectors
+			sitemapObj.selectors || [] //if loaded sitemap not contained field "selectors", it can't be parsed by web-scrapper
 		);
 		if (sitemapObj._rev) {
 			sitemap._rev = sitemapObj._rev;

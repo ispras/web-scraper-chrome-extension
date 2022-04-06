@@ -12,13 +12,13 @@ const config = new Config();
 browser.runtime.onMessage.addListener(async request => {
 	if (request.talismanAuth) {
 		console.log('browser.runtime.onMessage', request);
-		if (request.talismanAuth.status === 200) {
+		if (request.talismanAuth.success) {
 			$('.alert')
 				.attr('id', 'success')
 				.text(Translator.getTranslationByKey('options_auth_successful'))
 				.show();
 			Translator.translatePage();
-		} else if (request.talismanAuth.status !== 200) {
+		} else if (!request.talismanAuth.success) {
 			$('.alert')
 				.attr('id', 'error')
 				.text(
@@ -34,6 +34,14 @@ browser.runtime.onMessage.addListener(async request => {
 
 function initPopups() {
 	// popups for Storage setting input fields
+	$('body').on('click', '.password-checkbox', function () {
+		if ($(this).is(':checked')) {
+			$('#talismanUserPassword').attr('type', 'text');
+		} else {
+			$('#talismanUserPassword').attr('type', 'password');
+		}
+	});
+
 	$('#sitemapDb')
 		.popover({
 			title: Translator.getTranslationByKey('options_couchdb_db_popup_title'),
@@ -113,20 +121,39 @@ function initConfigSwitch() {
 
 function initConfig() {
 	// load previously synced data
-	config.loadConfiguration().then(() => {
+	config.loadConfiguration().then(async () => {
 		$('#storageType').val(config.storageType);
 		$('#sitemapDb').val(config.sitemapDb);
 		$('#dataDb').val(config.dataDb);
 		$('#restUrl').val(config.restUrl);
 		$('#talismanApiURL').val(config.talismanApiUrl);
+		$('#talismanUserLogin').val(config.credential.username);
+		$('#talismanUserPassword').val(config.credential.password);
+		$('#options_talisman_check_auth').val(
+			await function () {
+				axios({
+					method: 'get',
+					url: `${config.talismanApiUrl}/oauth/token`,
+				}).then(response => {
+					if (response.data.preferred_username) {
+						$('#options_talisman_check_auth').val(
+							`Authorized by: ${response.data.preferred_username}`
+						);
+					} else {
+						$('#options_talisman_check_auth').val('Not authorized');
+					}
+				});
+			}
+		);
 		$('select[name=storageType]').change();
 		if (browser.i18n.getUILanguage() === 'ru' && config.storageType !== 'couchdb') {
 			$('#storageType [value=couchdb]').hide();
 		}
 	});
+	return false;
 }
 
-function initFormSubmit(callback) {
+function initFormSubmit() {
 	// Sync storage settings
 	$('#options_talisman_check_auth_button').click(() => {
 		checkTLogin();
@@ -154,14 +181,7 @@ function initFormSubmit(callback) {
 			const tPassword = $('#talismanUserPassword').val();
 			newConfig.credential = { username: tLogin, password: tPassword };
 		}
-		config
-			.updateConfiguration(newConfig)
-			.then(r => console.log(r))
-			.then(_ => {
-				if (callback.isFunction) {
-					callback();
-				}
-			});
+		config.updateConfiguration(newConfig).then(r => console.log(r));
 		return false;
 	});
 }
@@ -190,7 +210,7 @@ function checkTLogin() {
 					}
 				})
 				.catch(er => {
-					$('.alert').attr('id', 'success').text(er).show();
+					$('.alert').attr('id', 'error').text(er).show();
 				});
 		} else {
 			return 'Something wrong';
@@ -215,7 +235,7 @@ function logOut() {
 		});
 		if (response.data.preferred_username) {
 			browser.runtime
-				.sendMessage({ logOut: 'Log Out' })
+				.sendMessage({ logOut: { url: tUrl } })
 				.then(handleResponse, handleError)
 				.finally(() => {
 					checkTLogin();
@@ -242,7 +262,7 @@ $(() => {
 	initPopups();
 	initConfigSwitch();
 	initConfig();
-	initFormSubmit(checkTLogin());
+	initFormSubmit();
 	logOut();
 	Translator.translatePage();
 });
