@@ -40,6 +40,10 @@ export default class StoreDevtools {
 			getAllSitemaps: true,
 		};
 		const response = await browser.runtime.sendMessage(request);
+
+		if (response.error_msg) {
+			return response;
+		}
 		return Array.from(response, sitemapObj => {
 			return Sitemap.sitemapFromObj(sitemapObj);
 		});

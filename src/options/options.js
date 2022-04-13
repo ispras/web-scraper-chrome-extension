@@ -9,25 +9,27 @@ import axios from 'axios';
 // Extension configuration
 const config = new Config();
 
-browser.runtime.onMessage.addListener(async request => {
-	if (request.talismanAuth) {
-		console.log('browser.runtime.onMessage', request);
-		if (request.talismanAuth.success) {
-			$('.alert')
-				.attr('id', 'success')
-				.text(Translator.getTranslationByKey('options_auth_successful'))
-				.show();
-			Translator.translatePage();
-		} else if (!request.talismanAuth.success) {
-			$('.alert')
-				.attr('id', 'error')
-				.text(
-					Translator.getTranslationByKey('options_auth_error_updating') +
-						request.talismanAuth.message
-				)
-				.show();
-			Translator.translatePage();
-		}
+browser.runtime.onConnect.addListener(async request => {
+	if (request.name === 'options') {
+		request.onMessage.addListener(msg => {
+			console.log('browser.runtime.onMessage', msg);
+			if (msg.talismanAuth.success) {
+				$('.alert')
+					.attr('id', 'success')
+					.text(Translator.getTranslationByKey('options_auth_successful'))
+					.show();
+				Translator.translatePage();
+			} else if (!msg.talismanAuth.success) {
+				$('.alert')
+					.attr('id', 'error')
+					.text(
+						Translator.getTranslationByKey('options_auth_error_updating') +
+							msg.talismanAuth.message
+					)
+					.show();
+				Translator.translatePage();
+			}
+		});
 	}
 	checkTLogin();
 });
@@ -181,7 +183,14 @@ function initFormSubmit() {
 			const tPassword = $('#talismanUserPassword').val();
 			newConfig.credential = { username: tLogin, password: tPassword };
 		}
-		config.updateConfiguration(newConfig).then(r => console.log(r));
+		config.updateConfiguration(newConfig).then(() => {
+			if (storageType !== 'talisman') {
+				$('.alert')
+					.attr('id', 'success')
+					.text(Translator.getTranslationByKey('options_successfully_updated'))
+					.show();
+			}
+		});
 		return false;
 	});
 }

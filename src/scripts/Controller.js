@@ -143,6 +143,7 @@ export default class SitemapController {
 			'DataPreview',
 			'ItemCard',
 			'ActionConfirm',
+			'ErrorDevToolsPage',
 		];
 
 		return Promise.all(
@@ -521,17 +522,19 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_empty_message'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_empty_message'
+													),
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_short_message'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_short_message'
+													),
 											};
 										}
 										if (
@@ -539,9 +542,10 @@ export default class SitemapController {
 										) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_invalid_char'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_invalid_char'
+													),
 											};
 										}
 									}
@@ -577,9 +581,8 @@ export default class SitemapController {
 									};
 								}
 								return {
-									message: Translator.getTranslationByKey(
-										'sitemap_valid_message'
-									),
+									message:
+										Translator.getTranslationByKey('sitemap_valid_message'),
 									valid: true,
 								};
 							},
@@ -653,13 +656,21 @@ export default class SitemapController {
 		const sitemaps = await this.store.getAllSitemaps();
 		const $sitemapListPanel = ich.SitemapList();
 
-		sitemaps.forEach(sitemap => {
-			const $sitemap = ich.SitemapListItem(sitemap);
-			$sitemap.data('sitemap', sitemap);
-			$sitemapListPanel.find('tbody').append($sitemap);
-		});
-		$('#viewport').html($sitemapListPanel);
-		Translator.translatePage();
+		if (sitemaps.error_msg) {
+			$('#sitemaps').hide();
+			$('#viewport').html(
+				'<div>Error! Please, check your login/pass, or connection availability!</div>'
+			);
+			Translator.translatePage();
+		} else {
+			sitemaps.forEach(sitemap => {
+				const $sitemap = ich.SitemapListItem(sitemap);
+				$sitemap.data('sitemap', sitemap);
+				$sitemapListPanel.find('tbody').append($sitemap);
+			});
+			$('#viewport').html($sitemapListPanel);
+			Translator.translatePage();
+		}
 	}
 
 	getSitemapFromMetadataForm() {

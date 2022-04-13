@@ -1,8 +1,6 @@
-import ios from 'axios';
+import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
-import axios from 'axios';
-import * as $ from 'jquery';
 
 export default class StoreTalismanApi {
 	constructor(config) {
@@ -84,6 +82,9 @@ export default class StoreTalismanApi {
 		return this.axiosInstance
 			.get('/api/sitemaps/')
 			.then(response => {
+				if (response.headers['content-type'] !== 'application/json') {
+					return { error_msg: 'error' };
+				}
 				return Array.from(response.data, sitemapObj => {
 					return Sitemap.sitemapFromObj(sitemapObj);
 				});

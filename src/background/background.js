@@ -36,24 +36,20 @@ browser.storage.onChanged.addListener(function () {
 			});
 			if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
 				console.log('browser.runtime.onMessage', loginStatus.message);
-				browser.runtime
-					.sendMessage({
-						talismanAuth: {
-							success: false,
-							status: loginStatus.status,
-							message: loginStatus.message,
-						},
-					})
-					.then(_handleResponse, _handleError);
+				browser.runtime.connect({ name: 'options' }).postMessage({
+					talismanAuth: {
+						success: false,
+						status: loginStatus.status,
+						message: loginStatus.message,
+					},
+				});
 			} else {
 				store.postInit();
-				browser.runtime
-					.sendMessage({
-						talismanAuth: {
-							success: true,
-						},
-					})
-					.then(_handleResponse, _handleError);
+				browser.runtime.connect({ name: 'options' }).postMessage({
+					talismanAuth: {
+						success: true,
+					},
+				});
 				let tToken = loginStatus.data.access_token;
 				store.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
 			}
@@ -90,10 +86,14 @@ const sendToActiveTab = function (request, callback) {
 browser.runtime.onMessage.addListener(async request => {
 	console.log('browser.runtime.onMessage', request);
 	if (request.logOut) {
-		if (request.logOut.url === store.axiosInstance.defaults.baseURL) {
+		if (
+			store.constructor.name === 'StoreTalismanApi' &&
+			request.logOut.url === store.axiosInstance.defaults.baseURL
+		) {
 			delete store.axiosInstance.defaults.headers.Authorization;
 			await store.axiosInstance.get('/oauth/logout');
 		} else {
+			console.log('IN ELSE LO');
 			await axios({
 				method: 'get',
 				url: `${request.logOut.url}/oauth/logout`,
