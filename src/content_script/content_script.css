@@ -733,7 +733,7 @@
 #-selector-toolbar div.selector-container {
 	width: 350px !important;
 	overflow: hidden !important;
-	margin-bottom: -100px !important;
+	margin-bottom: -10px !important;
 }
 
 #-selector-toolbar div.selector {
