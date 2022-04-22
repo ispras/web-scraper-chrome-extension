@@ -382,7 +382,7 @@ export default class DataExtractor {
 		const parentSelectors = [];
 		for (let i = parentSelectorIds.length - 1; i >= 0; i--) {
 			const id = parentSelectorIds[i];
-			if (id === '0') break;
+			if (id === this.sitemap.rootSelector.uuid) break;
 			const parentSelector = this.sitemap.selectors.getSelector(id);
 			parentSelectors.push(parentSelector);
 		}
@@ -396,7 +396,7 @@ export default class DataExtractor {
 		// find the parent that leaded to the page where required selector is being used
 		for (let i = parentSelectorIds.length - 1; i >= 0; i--) {
 			const id = parentSelectorIds[i];
-			if (id === '0') {
+			if (id === this.sitemap.rootSelector.uuid) {
 				parentSelectorId = id;
 				break;
 			}

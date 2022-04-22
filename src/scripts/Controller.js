@@ -729,7 +729,6 @@ export default class SitemapController {
 			if (!sitemap.new_version) {
 				this.transformOldToNew(sitemap);
 			}
-			sitemap.new_version = true;
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
 		}
@@ -738,20 +737,23 @@ export default class SitemapController {
 	// transform old type sitemaps(without uuid) to new type sitemaps(with uuid)
 	transformOldToNew(sitemap) {
 		let parentsDict = { [sitemap.rootSelector.id]: sitemap.rootSelector.uuid };
-		sitemap.selectors.forEach(function (selector, index, listSelectors) {
+		let lastSelectorsUUID = 0;
+		sitemap.selectors.forEach(selector => {
 			if (selector.canHaveChildSelectors()) {
-				parentsDict[selector.id] = uuidv4().toString();
+				lastSelectorsUUID += 1;
+				parentsDict[selector.id] = lastSelectorsUUID.toString();
 			}
 		});
-		sitemap.selectors.forEach(function (selector, index, listSelectors) {
+		sitemap.selectors.forEach(selector => {
+			lastSelectorsUUID += 1;
 			selector.uuid =
 				parentsDict[selector.id] !== undefined
 					? parentsDict[selector.id]
-					: uuidv4().toString();
+					: lastSelectorsUUID.toString();
 
-			let parents = Object.keys(parentsDict);
+			const parents = Object.keys(parentsDict);
 
-			selector.parentSelectors.forEach(function (parentSelector, pSelectorIndex) {
+			selector.parentSelectors.forEach((parentSelector, pSelectorIndex) => {
 				if (parents.indexOf(parentSelector) !== -1) {
 					selector.parentSelectors[pSelectorIndex] = parentsDict[parentSelector];
 				}
@@ -1058,7 +1060,7 @@ export default class SitemapController {
 									) {
 										// this assumes there are no recursive element selectors
 										for (const selectorId of parentSelectorIds) {
-											if (selectorId === '0') {
+											if (selectorId === sitemap.rootSelector.uuid) {
 												continue;
 											}
 											const selector = sitemap.getSelectorById(selectorId);
@@ -1358,7 +1360,7 @@ export default class SitemapController {
 			parentSelectors: [parentSelectorId],
 			type: 'SelectorText',
 			multiple: false,
-			uuid: uuidv4().toString(),
+			uuid: String(this.state.currentSitemap.selectors.length + 1),
 		});
 		this._editSelector(selector);
 	}
@@ -1691,7 +1693,7 @@ export default class SitemapController {
 				if (url && attachments.has(url)) {
 					const attachment = { [selector.getUrlColumn()]: url };
 					Object.entries(attachments.get(url)).forEach(([key, value]) => {
-						attachment[`${selector.uuid}-${key}`] = value;
+						attachment[`${selector.id}-${key}`] = value;
 					});
 					return attachment;
 				}
