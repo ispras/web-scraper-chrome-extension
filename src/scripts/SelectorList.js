@@ -5,6 +5,7 @@ import SelectorDocument from './Selector/SelectorDocument';
 import SelectorPopupLink from './Selector/SelectorPopupLink';
 import SelectorInputValue from './Selector/SelectorInputValue';
 import SelectorElement from './Selector/SelectorElement';
+import SelectorConcept from './Selector/SelectorConcept';
 import SelectorLink from './Selector/SelectorLink';
 import SelectorImage from './Selector/SelectorImage';
 import SelectorHTML from './Selector/SelectorHTML';
@@ -25,6 +26,8 @@ export default class SelectorList extends Array {
 				return new SelectorPageURL(options);
 			case 'SelectorDocument':
 				return new SelectorDocument(options);
+			case 'SelectorConcept':
+				return new SelectorConcept(options);
 			case 'SelectorElement':
 				return new SelectorElement(options);
 			case 'SelectorElementAttribute':

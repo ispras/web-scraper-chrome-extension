@@ -63,6 +63,9 @@ export default class SitemapController {
 				type: 'SelectorElement',
 			},
 			{
+				type: 'SelectorConcept',
+			},
+			{
 				type: 'SelectorElementScroll',
 			},
 			{
