@@ -7,7 +7,7 @@ export default class SelectorElement extends Selector {
 	}
 
 	canReturnMultipleRecords() {
-		return false;
+		return true;
 	}
 
 	canHaveChildSelectors() {
@@ -23,6 +23,10 @@ export default class SelectorElement extends Selector {
 	}
 
 	willReturnElements() {
+		return true;
+	}
+
+	canUseLikeContainer() {
 		return true;
 	}
 

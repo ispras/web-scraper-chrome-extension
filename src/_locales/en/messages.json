@@ -142,6 +142,7 @@
 	"SelectorElementStyle": { "message": "Element style" },
 	"SelectorHTML": { "message": "HTML" },
 	"SelectorElement": { "message": "Element" },
+	"SelectorConcept": { "message": "Concept" },
 	"SelectorElementScroll": { "message": "Element scroll down" },
 	"SelectorElementClick": { "message": "Element click" },
 	"SelectorGroup": { "message": "Grouped" },

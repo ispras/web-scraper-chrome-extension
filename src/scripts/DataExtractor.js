@@ -170,7 +170,14 @@ export default class DataExtractor {
 							newParentElement
 						);
 						deferredChildCommonData.done(function (data) {
-							d.resolve(data);
+							if (
+								'canUseLikeContainer' in selector &&
+								selector.canUseLikeContainer()
+							) {
+								d.resolve({ [selector.id]: data });
+							} else {
+								d.resolve(data);
+							}
 						});
 					}
 				} else {

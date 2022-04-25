@@ -147,6 +147,7 @@
 	"SelectorElementStyle": { "message": "Стиль" },
 	"SelectorHTML": { "message": "HTML" },
 	"SelectorElement": { "message": "Элемент" },
+	"SelectorConcept": { "message": "Концепт" },
 	"SelectorElementScroll": { "message": "Прокрутка" },
 	"SelectorElementClick": { "message": "Клик на элемент" },
 	"SelectorGroup": { "message": "Группа" },
