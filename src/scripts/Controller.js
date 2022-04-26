@@ -1108,7 +1108,16 @@ export default class SitemapController {
 		const $editSelectorForm = ich.SelectorEdit({
 			selector,
 			selectorIds,
-			selectorTypes: this.selectorTypes,
+			selectorTypes:
+				this.state.currentParentSelectorId === '_root' ||
+				sitemap.getSelectorById(this.state.currentParentSelectorId).type !==
+					'SelectorConcept'
+					? this.selectorTypes
+					: [
+							...this.selectorTypes.filter(function (el) {
+								return el.type !== 'SelectorConcept';
+							}),
+					  ],
 		});
 		$('#viewport').html($editSelectorForm);
 

@@ -1,6 +1,6 @@
 import Selector from '../Selector';
 
-export default class SelectorElement extends Selector {
+export default class SelectorConcept extends Selector {
 	constructor(options) {
 		super(options);
 		this.updateData(options, this.getFeatures());
