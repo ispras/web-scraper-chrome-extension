@@ -521,17 +521,19 @@ export default class SitemapController {
 										if (!sitemap.hasOwnProperty('_id')) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_empty_message'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_empty_message'
+													),
 											};
 										}
 										if (sitemap._id.length < 3) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_short_message'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_short_message'
+													),
 											};
 										}
 										if (
@@ -539,9 +541,10 @@ export default class SitemapController {
 										) {
 											return {
 												valid: false,
-												message: Translator.getTranslationByKey(
-													'sitemapid_invalid_char'
-												),
+												message:
+													Translator.getTranslationByKey(
+														'sitemapid_invalid_char'
+													),
 											};
 										}
 									}
@@ -577,9 +580,8 @@ export default class SitemapController {
 									};
 								}
 								return {
-									message: Translator.getTranslationByKey(
-										'sitemap_valid_message'
-									),
+									message:
+										Translator.getTranslationByKey('sitemap_valid_message'),
 									valid: true,
 								};
 							},
@@ -651,6 +653,13 @@ export default class SitemapController {
 		this.setActiveNavigationButton('sitemaps');
 
 		const sitemaps = await this.store.getAllSitemaps();
+		sitemaps.forEach(sitemap => {
+			if (!sitemap.extensionVersion || sitemap.extensionVersion < 1) {
+				this.transformOldToNew(sitemap);
+				this.store.saveSitemap(sitemap);
+			}
+		});
+
 		const $sitemapListPanel = ich.SitemapList();
 
 		sitemaps.forEach(sitemap => {
@@ -726,7 +735,7 @@ export default class SitemapController {
 				sitemapObj.selectors
 			);
 
-			if (!sitemap.new_version) {
+			if (sitemap.extensionVersion < 1) {
 				this.transformOldToNew(sitemap);
 			}
 			sitemap = await this.store.createSitemap(sitemap);
@@ -738,6 +747,7 @@ export default class SitemapController {
 	transformOldToNew(sitemap) {
 		let parentsDict = { [sitemap.rootSelector.id]: sitemap.rootSelector.uuid };
 		let lastSelectorsUUID = 0;
+
 		sitemap.selectors.forEach(selector => {
 			if (selector.canHaveChildSelectors()) {
 				lastSelectorsUUID += 1;
@@ -759,6 +769,7 @@ export default class SitemapController {
 				}
 			});
 		});
+		sitemap.extensionVersion = 1;
 	}
 
 	editSitemapMetadata() {
@@ -837,9 +848,10 @@ export default class SitemapController {
 
 		const sitemap = this.state.currentSitemap;
 		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
-		const parentSelectorId = sitemap.new_version
-			? this.state.currentParentSelectorId.uuid
-			: this.state.currentParentSelectorId.id;
+		const parentSelectorId =
+			sitemap.extensionVersion > 0
+				? this.state.currentParentSelectorId.uuid
+				: this.state.currentParentSelectorId.id;
 
 		const $selectorListPanel = ich.SelectorList({
 			parentSelectors,
@@ -1352,15 +1364,24 @@ export default class SitemapController {
 
 	addSelector() {
 		const sitemap = this.state.currentSitemap;
-		const parentSelectorId = sitemap.new_version
-			? this.state.currentParentSelectorId.uuid
-			: this.state.currentParentSelectorId.id;
+		const parentSelectorId =
+			sitemap.extensionVersion > 0
+				? this.state.currentParentSelectorId.uuid
+				: this.state.currentParentSelectorId.id;
 
 		const selector = SelectorList.createSelector({
 			parentSelectors: [parentSelectorId],
 			type: 'SelectorText',
 			multiple: false,
-			uuid: String(this.state.currentSitemap.selectors.length + 1),
+			uuid: String(
+				Number(
+					this.state.currentSitemap.selectors
+						.map(function (el) {
+							return el.uuid;
+						})
+						.max()
+				) + 1
+			),
 		});
 		this._editSelector(selector);
 	}

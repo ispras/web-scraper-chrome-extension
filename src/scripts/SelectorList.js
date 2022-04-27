@@ -179,9 +179,9 @@ export default class SelectorList extends Array {
 		// recursively find all parent selectors that could lead to the page where selectorId is used.
 		const findParentSelectors = function (selector) {
 			selector.parentSelectors.forEach(
-				function (parentSelectorId, parentSelectorUUID) {
-					if (parentSelectorId === '_root') return;
-					const parentSelector = this.getSelector(parentSelectorUUID);
+				function (parentSelectorId, parentSelectorIndex) {
+					if (parentSelectorId === '0') return;
+					const parentSelector = this.getSelector(parentSelectorIndex);
 					if (resultList.indexOf(parentSelector) !== -1) return;
 					if (parentSelector.willReturnElements()) {
 						resultList.push(parentSelector);

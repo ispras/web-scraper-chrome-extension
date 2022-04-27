@@ -38,6 +38,7 @@
 	"selectorListItem_edit": { "message": "Edit" },
 	"selectorListItem_delete": { "message": "Delete" },
 	"selectorList_id": { "message": "ID" },
+	"selectorList_uuid": { "message": "UUID" },
 	"selectorList_selector": { "message": "Selector" },
 	"selectorList_type": { "message": "Type" },
 	"selectorList_multiple": { "message": "Multiple values" },
