@@ -17,8 +17,6 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 
-import { v4 as uuidv4 } from 'uuid';
-
 export default class SitemapController {
 	constructor(store, templateDir) {
 		this.store = store;
@@ -74,7 +72,7 @@ export default class SitemapController {
 				type: 'SelectorGroup',
 			},
 		];
-
+		this.lastSitemapSpecVersion = 1;
 		this.selectorTypes = this.selectorTypes.map(typeObj => {
 			return { ...typeObj, title: Translator.getTranslationByKey(typeObj.type) };
 		});
@@ -654,8 +652,11 @@ export default class SitemapController {
 
 		const sitemaps = await this.store.getAllSitemaps();
 		sitemaps.forEach(sitemap => {
-			if (!sitemap.extensionVersion || sitemap.extensionVersion < 1) {
-				this.transformOldToNew(sitemap);
+			if (
+				!sitemap.sitemapSpecificationVersion ||
+				sitemap.sitemapSpecificationVersion < this.lastSitemapSpecVersion
+			) {
+				this.transformZeroToFirstVersion(sitemap);
 				this.store.saveSitemap(sitemap);
 			}
 		});
@@ -701,7 +702,13 @@ export default class SitemapController {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
-			let sitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, []);
+			let sitemap = new Sitemap(
+				sitemapData.id,
+				sitemapData.startUrls,
+				sitemapData.model,
+				[],
+				1
+			);
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
 		}
@@ -735,8 +742,8 @@ export default class SitemapController {
 				sitemapObj.selectors
 			);
 
-			if (sitemap.extensionVersion < 1) {
-				this.transformOldToNew(sitemap);
+			if (sitemap.sitemapSpecificationVersion < this.lastSitemapSpecVersion) {
+				this.transformZeroToFirstVersion(sitemap);
 			}
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
@@ -744,32 +751,30 @@ export default class SitemapController {
 	}
 
 	// transform old type sitemaps(without uuid) to new type sitemaps(with uuid)
-	transformOldToNew(sitemap) {
+	// Now this function transform only sitemaps with specification version = 0 to sitemaps with specification version = 1
+	// When will new versions be available, this function must be updated
+	transformZeroToFirstVersion(sitemap) {
 		let parentsDict = { [sitemap.rootSelector.id]: sitemap.rootSelector.uuid };
 		let lastSelectorsUUID = 0;
 
 		sitemap.selectors.forEach(selector => {
-			if (selector.canHaveChildSelectors()) {
-				lastSelectorsUUID += 1;
-				parentsDict[selector.id] = lastSelectorsUUID.toString();
-			}
+			selector['uuid'] = String(lastSelectorsUUID + 1);
+			lastSelectorsUUID += 1;
 		});
 		sitemap.selectors.forEach(selector => {
-			lastSelectorsUUID += 1;
-			selector.uuid =
-				parentsDict[selector.id] !== undefined
-					? parentsDict[selector.id]
-					: lastSelectorsUUID.toString();
-
-			const parents = Object.keys(parentsDict);
-
-			selector.parentSelectors.forEach((parentSelector, pSelectorIndex) => {
-				if (parents.indexOf(parentSelector) !== -1) {
-					selector.parentSelectors[pSelectorIndex] = parentsDict[parentSelector];
+			let newParentSelectorsList = [];
+			selector.parentSelectors.forEach(parentSelector => {
+				if (parentSelector === '_root') {
+					newParentSelectorsList.push(sitemap.rootSelector.uuid);
+				} else {
+					newParentSelectorsList.push(
+						sitemap.selectors.getSelectorById(parentSelector).uuid
+					);
 				}
 			});
+			selector.parentSelectors = newParentSelectorsList;
 		});
-		sitemap.extensionVersion = 1;
+		sitemap.sitemapSpecificationVersion = 1;
 	}
 
 	editSitemapMetadata() {
@@ -848,10 +853,7 @@ export default class SitemapController {
 
 		const sitemap = this.state.currentSitemap;
 		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
-		const parentSelectorId =
-			sitemap.extensionVersion > 0
-				? this.state.currentParentSelectorId.uuid
-				: this.state.currentParentSelectorId.id;
+		const parentSelectorId = this.state.currentParentSelectorId.uuid;
 
 		const $selectorListPanel = ich.SelectorList({
 			parentSelectors,
@@ -1075,7 +1077,7 @@ export default class SitemapController {
 											if (selectorId === sitemap.rootSelector.uuid) {
 												continue;
 											}
-											const selector = sitemap.getSelectorById(selectorId);
+											const selector = sitemap.getSelectorByUid(selectorId);
 											if (selector.willReturnElements()) {
 												if (selector.mergeIntoList) {
 													return true;
@@ -1345,7 +1347,7 @@ export default class SitemapController {
 	 */
 	getCurrentlyEditedSelectorSitemap() {
 		const sitemap = this.state.currentSitemap.clone();
-		const selector = sitemap.getSelectorById(this.state.currentSelector.uuid);
+		const selector = sitemap.getSelectorByUid(this.state.currentSelector.uuid);
 		const newSelector = this.getCurrentlyEditedSelector();
 		sitemap.updateSelector(selector, newSelector);
 		return sitemap;
@@ -1363,24 +1365,14 @@ export default class SitemapController {
 	}
 
 	addSelector() {
-		const sitemap = this.state.currentSitemap;
-		const parentSelectorId =
-			sitemap.extensionVersion > 0
-				? this.state.currentParentSelectorId.uuid
-				: this.state.currentParentSelectorId.id;
+		const parentSelectorId = this.state.currentParentSelectorId.uuid;
 
 		const selector = SelectorList.createSelector({
 			parentSelectors: [parentSelectorId],
 			type: 'SelectorText',
 			multiple: false,
 			uuid: String(
-				Number(
-					this.state.currentSitemap.selectors
-						.map(function (el) {
-							return el.uuid;
-						})
-						.max()
-				) + 1
+				Math.max(0, ...this.state.currentSitemap.selectors.map(({ uuid }) => uuid)) + 1
 			),
 		});
 		this._editSelector(selector);
@@ -2056,7 +2048,7 @@ export default class SitemapController {
 
 	previewSelectorDataFromSelectorEditing() {
 		const sitemap = this.state.currentSitemap.clone();
-		const selector = sitemap.getSelectorById(this.state.currentSelector.uuid);
+		const selector = sitemap.getSelectorByUid(this.state.currentSelector.uuid);
 		const newSelector = this.getCurrentlyEditedSelector();
 		sitemap.updateSelector(selector, newSelector);
 		this.previewSelectorData(sitemap, newSelector.uuid);

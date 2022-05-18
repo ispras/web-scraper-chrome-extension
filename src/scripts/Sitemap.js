@@ -4,15 +4,10 @@ import SelectorList from './SelectorList';
 import Model from './Model';
 
 export default class Sitemap {
-	constructor(id, startUrls, model, selectors, extensionVersion = null) {
+	constructor(id, startUrls, model, selectors, sitemapSpecificationVersion = null) {
 		this.rootSelector = { id: '_root', uuid: '0' };
-		this.extensionVersion =
-			extensionVersion !== null
-				? extensionVersion
-				: (selectors.length > 0 && selectors[0].uuid !== undefined) ||
-				  selectors.length === 0
-				? 1
-				: 0;
+		this.sitemapSpecificationVersion =
+			sitemapSpecificationVersion !== null ? sitemapSpecificationVersion : 0;
 		this._id = id;
 		this.startUrls = startUrls;
 		this.model = new Model(model);
@@ -25,7 +20,7 @@ export default class Sitemap {
 			sitemapObj.startUrls,
 			sitemapObj.model,
 			sitemapObj.selectors,
-			sitemapObj.extensionVersion ? sitemapObj.extensionVersion : null
+			sitemapObj.sitemapSpecificationVersion ? sitemapObj.sitemapSpecificationVersion : null
 		);
 		if (sitemapObj._rev) {
 			sitemap._rev = sitemapObj._rev;
@@ -238,8 +233,8 @@ export default class Sitemap {
 		return uniqueColumns;
 	}
 
-	getSelectorById(selectorId) {
-		return this.selectors.getSelectorById(selectorId);
+	getSelectorByUid(selectorId) {
+		return this.selectors.getSelectorByUid(selectorId);
 	}
 
 	/**
