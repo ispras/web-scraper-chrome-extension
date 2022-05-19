@@ -1,7 +1,8 @@
-import * as Papa from 'papaparse';
 import DatePatternSupport from './DateUtils/DatePatternSupport';
 import SelectorList from './SelectorList';
 import Model from './Model';
+import SitemapSpecMigration from './SitemapSpecMigration';
+import * as browser from 'webextension-polyfill';
 
 export default class Sitemap {
 	constructor(id, startUrls, model, selectors, sitemapSpecificationVersion = null) {
@@ -15,12 +16,14 @@ export default class Sitemap {
 	}
 
 	static sitemapFromObj(sitemapObj) {
+		sitemapObj = SitemapSpecMigration.versionMigrationManager(sitemapObj);
+
 		const sitemap = new Sitemap(
 			sitemapObj._id,
 			sitemapObj.startUrls,
 			sitemapObj.model,
 			sitemapObj.selectors,
-			sitemapObj.sitemapSpecificationVersion ? sitemapObj.sitemapSpecificationVersion : null
+			sitemapObj.sitemapSpecificationVersion
 		);
 		if (sitemapObj._rev) {
 			sitemap._rev = sitemapObj._rev;

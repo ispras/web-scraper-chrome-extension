@@ -9,6 +9,8 @@ import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
 
+import { currentSitemapSpecVersion } from './Config';
+
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
@@ -72,7 +74,6 @@ export default class SitemapController {
 				type: 'SelectorGroup',
 			},
 		];
-		this.lastSitemapSpecVersion = 1;
 		this.selectorTypes = this.selectorTypes.map(typeObj => {
 			return { ...typeObj, title: Translator.getTranslationByKey(typeObj.type) };
 		});
@@ -156,7 +157,6 @@ export default class SitemapController {
 
 	async init() {
 		await this.loadTemplates();
-		// function() {
 		// currently viewed objects
 		this.clearState();
 
@@ -362,7 +362,6 @@ export default class SitemapController {
 	 */
 	isValidForm(selector = '#viewport form') {
 		const validator = this.getFormValidator(selector);
-		// validator.validate();
 		// validate method calls submit which is not needed in this case.
 		for (const field in validator.options.fields) {
 			validator.validateField(field);
@@ -374,6 +373,7 @@ export default class SitemapController {
 	/**
 	 * Add validation to sitemap creation or editing form
 	 */
+
 	initSitemapValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
@@ -651,16 +651,6 @@ export default class SitemapController {
 		this.setActiveNavigationButton('sitemaps');
 
 		const sitemaps = await this.store.getAllSitemaps();
-		sitemaps.forEach(sitemap => {
-			if (
-				!sitemap.sitemapSpecificationVersion ||
-				sitemap.sitemapSpecificationVersion < this.lastSitemapSpecVersion
-			) {
-				this.transformZeroToFirstVersion(sitemap);
-				this.store.saveSitemap(sitemap);
-			}
-		});
-
 		const $sitemapListPanel = ich.SitemapList();
 
 		sitemaps.forEach(sitemap => {
@@ -741,40 +731,9 @@ export default class SitemapController {
 				sitemapObj.model,
 				sitemapObj.selectors
 			);
-
-			if (sitemap.sitemapSpecificationVersion < this.lastSitemapSpecVersion) {
-				this.transformZeroToFirstVersion(sitemap);
-			}
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
 		}
-	}
-
-	// transform old type sitemaps(without uuid) to new type sitemaps(with uuid)
-	// Now this function transform only sitemaps with specification version = 0 to sitemaps with specification version = 1
-	// When will new versions be available, this function must be updated
-	transformZeroToFirstVersion(sitemap) {
-		let parentsDict = { [sitemap.rootSelector.id]: sitemap.rootSelector.uuid };
-		let lastSelectorsUUID = 0;
-
-		sitemap.selectors.forEach(selector => {
-			selector['uuid'] = String(lastSelectorsUUID + 1);
-			lastSelectorsUUID += 1;
-		});
-		sitemap.selectors.forEach(selector => {
-			let newParentSelectorsList = [];
-			selector.parentSelectors.forEach(parentSelector => {
-				if (parentSelector === '_root') {
-					newParentSelectorsList.push(sitemap.rootSelector.uuid);
-				} else {
-					newParentSelectorsList.push(
-						sitemap.selectors.getSelectorById(parentSelector).uuid
-					);
-				}
-			});
-			selector.parentSelectors = newParentSelectorsList;
-		});
-		sitemap.sitemapSpecificationVersion = 1;
 	}
 
 	editSitemapMetadata() {
@@ -1123,10 +1082,6 @@ export default class SitemapController {
 	}
 
 	updateSelectorParentListOnIdChange() {
-		//	let selector = this.getCurrentlyEditedSelector();
-		//	$('.currently-edited')
-		//		.val(selector.id)
-		//		.text(selector.id);
 		const selector = this.getCurrentlyEditedSelector();
 		$('.currently-edited').val(selector.uuid).text(selector.id);
 	}
