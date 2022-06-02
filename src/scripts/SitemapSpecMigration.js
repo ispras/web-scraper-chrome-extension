@@ -4,7 +4,13 @@ export default class SitemapSpecMigration {
 	static versionMigrationManager(sitemapObj) {
 		let smObj = sitemapObj;
 		if (sitemapObj.sitemapSpecificationVersion !== currentSitemapSpecVersion) {
+			if (sitemapObj.sitemapSpecificationVersion == null) {
+				sitemapObj.sitemapSpecificationVersion = 0;
+			}
 			let migrations = [this.transformZeroToFirstVersion.bind(this)]; // Transformations must be only in sequential order
+			if (migrations.length < currentSitemapSpecVersion) {
+				return { migrationError: sitemapObj._id };
+			}
 			for (let i = sitemapObj.sitemapSpecificationVersion; i < migrations.length; i++) {
 				smObj = migrations[i](smObj);
 			}
@@ -15,24 +21,13 @@ export default class SitemapSpecMigration {
 	// Transform old type sitemaps(without uuid and specification version = 0)
 	// to new type sitemaps(with uuid and specification version = 1)
 	static transformZeroToFirstVersion(sitemapObj) {
-		let lastSelectorsUUID = 0;
-
-		sitemapObj.selectors.forEach(selector => {
-			selector['uuid'] = String(lastSelectorsUUID + 1);
-			lastSelectorsUUID += 1;
+		const id2uuid = { _root: '0' };
+		sitemapObj.selectors.forEach((selector, index) => {
+			selector.uuid = String(index + 1);
+			id2uuid[selector.id] = selector.uuid;
 		});
 		sitemapObj.selectors.forEach(selector => {
-			let newParentSelectorsList = [];
-			selector.parentSelectors.forEach(parentSelector => {
-				if (parentSelector === '_root') {
-					newParentSelectorsList.push(sitemapObj.rootSelector.uuid);
-				} else {
-					newParentSelectorsList.push(
-						this.findSelectorInSitemapObjById(parentSelector, sitemapObj).uuid
-					);
-				}
-			});
-			selector.parentSelectors = newParentSelectorsList;
+			selector.parentSelectors = selector.parentSelectors.map(id => id2uuid[id]);
 		});
 		sitemapObj.sitemapSpecificationVersion = 1;
 		return sitemapObj;

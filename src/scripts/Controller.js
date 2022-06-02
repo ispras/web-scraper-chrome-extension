@@ -697,7 +697,7 @@ export default class SitemapController {
 				sitemapData.startUrls,
 				sitemapData.model,
 				[],
-				1
+				currentSitemapSpecVersion
 			);
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
@@ -729,7 +729,8 @@ export default class SitemapController {
 				id,
 				sitemapObj.startUrls,
 				sitemapObj.model,
-				sitemapObj.selectors
+				sitemapObj.selectors,
+				sitemapObj.sitemapSpecificationVersion
 			);
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
@@ -781,7 +782,8 @@ export default class SitemapController {
 				sitemapData.id,
 				sitemapData.startUrls,
 				sitemapData.model,
-				sitemap.selectors
+				sitemap.selectors,
+				sitemap.sitemapSpecificationVersion
 			);
 			if (newSitemap._rev) {
 				delete newSitemap._rev;
@@ -1366,7 +1368,13 @@ export default class SitemapController {
 			);
 			return false;
 		}
-		sitemap = new Sitemap(id, sitemap.startUrls, sitemap.model, sitemap.selectors);
+		sitemap = new Sitemap(
+			id,
+			sitemap.startUrls,
+			sitemap.model,
+			sitemap.selectors,
+			sitemap.sitemapSpecificationVersion
+		);
 		sitemap = await this.store.createSitemap(sitemap);
 		this._editSitemap(sitemap);
 		$('#confirm-action-modal').modal('hide');

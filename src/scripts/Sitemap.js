@@ -2,13 +2,13 @@ import DatePatternSupport from './DateUtils/DatePatternSupport';
 import SelectorList from './SelectorList';
 import Model from './Model';
 import SitemapSpecMigration from './SitemapSpecMigration';
+import { currentSitemapSpecVersion } from './Config';
 import * as browser from 'webextension-polyfill';
 
 export default class Sitemap {
 	constructor(id, startUrls, model, selectors, sitemapSpecificationVersion = null) {
 		this.rootSelector = { id: '_root', uuid: '0' };
-		this.sitemapSpecificationVersion =
-			sitemapSpecificationVersion !== null ? sitemapSpecificationVersion : 0;
+		this.sitemapSpecificationVersion = sitemapSpecificationVersion;
 		this._id = id;
 		this.startUrls = startUrls;
 		this.model = new Model(model);
@@ -17,6 +17,14 @@ export default class Sitemap {
 
 	static sitemapFromObj(sitemapObj) {
 		sitemapObj = SitemapSpecMigration.versionMigrationManager(sitemapObj);
+
+		if (sitemapObj.migrationError) {
+			return sitemapObj;
+		}
+
+		if (sitemapObj.migrationError) {
+			return sitemapObj;
+		}
 
 		const sitemap = new Sitemap(
 			sitemapObj._id,
@@ -250,7 +258,8 @@ export default class Sitemap {
 			clonedObj._id,
 			clonedObj.startUrls,
 			clonedObj.model,
-			clonedObj.selectors
+			clonedObj.selectors,
+			clonedObj.sitemapSpecificationVersion
 		);
 	}
 }

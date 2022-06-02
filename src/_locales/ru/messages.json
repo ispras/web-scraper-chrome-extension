@@ -40,7 +40,7 @@
 	"selectorListItem_edit": { "message": "Изменить" },
 	"selectorListItem_delete": { "message": "Удалить" },
 	"selectorList_id": { "message": "Название" },
-	"selectorList_uuid": { "message": "Идентификатор" },
+	"selectorList_uuid": { "message": "Идентификатор №" },
 	"selectorList_selector": { "message": "CSS селектор" },
 	"selectorList_type": { "message": "Тип" },
 	"selectorList_multiple": { "message": "Выбрать много" },

@@ -377,13 +377,13 @@ export default class DataExtractor {
 		// to fetch only single selectors data we will create a sitemap that only contains this selector, his
 		// parents and all child selectors
 		const { sitemap } = this;
-		const selector = this.sitemap.selectors.getSelector(selectorId);
+		const selector = this.sitemap.selectors.getSelectorByUid(selectorId);
 		const childSelectors = sitemap.selectors.getAllSelectors(selectorId);
 		const parentSelectors = [];
 		for (let i = parentSelectorIds.length - 1; i >= 0; i--) {
 			const id = parentSelectorIds[i];
 			if (id === this.sitemap.rootSelector.uuid) break;
-			const parentSelector = this.sitemap.selectors.getSelector(id);
+			const parentSelector = this.sitemap.selectors.getSelectorByUid(id);
 			parentSelectors.push(parentSelector);
 		}
 
@@ -400,7 +400,7 @@ export default class DataExtractor {
 				parentSelectorId = id;
 				break;
 			}
-			const parentSelector = this.sitemap.selectors.getSelector(parentSelectorIds[i]);
+			const parentSelector = this.sitemap.selectors.getSelectorByUid(parentSelectorIds[i]);
 			if (!parentSelector.willReturnElements()) {
 				parentSelectorId = id;
 				break;

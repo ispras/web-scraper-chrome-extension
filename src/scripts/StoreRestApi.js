@@ -62,9 +62,22 @@ export default class StoreRestApi {
 		return this.axiosInstance
 			.get('/sitemaps/')
 			.then(response => {
-				return Array.from(response.data, sitemapObj => {
-					return Sitemap.sitemapFromObj(sitemapObj);
+				let migrationErrorsArray = [];
+				let sitemapsArray = Array.from(response.data, sitemapObj => {
+					let sitemap = Sitemap.sitemapFromObj(sitemapObj);
+					if (sitemap.migrationError) {
+						migrationErrorsArray.push(sitemap);
+						return;
+					}
+					return sitemap;
 				});
+				if (migrationErrorsArray.length > 0) {
+					alert(
+						'Unsupported sitemap version in sitemaps:' +
+							migrationErrorsArray.map(el => el.migrationError)
+					);
+				}
+				return sitemapsArray;
 			})
 			.catch(() => {
 				alert('StoreApi: Could not get all sitemaps.');
