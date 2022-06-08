@@ -3,16 +3,15 @@ import SelectorList from './SelectorList';
 import Model from './Model';
 import SitemapSpecMigration from './SitemapSpecMigration';
 import { currentSitemapSpecVersion } from './Config';
-import * as browser from 'webextension-polyfill';
 
 export default class Sitemap {
-	constructor(id, startUrls, model, selectors, sitemapSpecificationVersion = null) {
+	constructor(id, startUrls, model, selectors) {
 		this.rootSelector = { id: '_root', uuid: '0' };
-		this.sitemapSpecificationVersion = sitemapSpecificationVersion;
 		this._id = id;
 		this.startUrls = startUrls;
 		this.model = new Model(model);
 		this.selectors = new SelectorList(selectors || []);
+		this.sitemapSpecificationVersion = currentSitemapSpecVersion;
 	}
 
 	static sitemapFromObj(sitemapObj) {
@@ -30,8 +29,7 @@ export default class Sitemap {
 			sitemapObj._id,
 			sitemapObj.startUrls,
 			sitemapObj.model,
-			sitemapObj.selectors,
-			sitemapObj.sitemapSpecificationVersion
+			sitemapObj.selectors
 		);
 		if (sitemapObj._rev) {
 			sitemap._rev = sitemapObj._rev;
@@ -258,8 +256,7 @@ export default class Sitemap {
 			clonedObj._id,
 			clonedObj.startUrls,
 			clonedObj.model,
-			clonedObj.selectors,
-			clonedObj.sitemapSpecificationVersion
+			clonedObj.selectors
 		);
 	}
 }

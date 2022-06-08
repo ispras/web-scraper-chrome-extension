@@ -8,9 +8,6 @@ import 'jquery-highlight/jquery.highlight';
 import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
-
-import { currentSitemapSpecVersion } from './Config';
-
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
@@ -692,13 +689,7 @@ export default class SitemapController {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
-			let sitemap = new Sitemap(
-				sitemapData.id,
-				sitemapData.startUrls,
-				sitemapData.model,
-				[],
-				currentSitemapSpecVersion
-			);
+			let sitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, []);
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
 		}
@@ -714,10 +705,7 @@ export default class SitemapController {
 		const sitemapJSON = $('[name=sitemapJSON]').val();
 		const sitemapObj = JSON.parse(sitemapJSON);
 
-		let id = $('input[name=_id]').val();
-		if (!id) {
-			id = sitemapObj._id;
-		}
+		const id = $('input[name=_id]').val() || sitemapObj._id;
 
 		// check whether sitemap with this id already exist
 		const sitemapExists = await this.store.sitemapExists(id);
@@ -725,13 +713,8 @@ export default class SitemapController {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
-			let sitemap = new Sitemap(
-				id,
-				sitemapObj.startUrls,
-				sitemapObj.model,
-				sitemapObj.selectors,
-				sitemapObj.sitemapSpecificationVersion
-			);
+			let sitemap = Sitemap.sitemapFromObj(sitemapObj);
+			sitemap._id = id;
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
 		}
@@ -782,8 +765,7 @@ export default class SitemapController {
 				sitemapData.id,
 				sitemapData.startUrls,
 				sitemapData.model,
-				sitemap.selectors,
-				sitemap.sitemapSpecificationVersion
+				sitemap.selectors
 			);
 			if (newSitemap._rev) {
 				delete newSitemap._rev;
@@ -1376,13 +1358,7 @@ export default class SitemapController {
 			);
 			return false;
 		}
-		sitemap = new Sitemap(
-			id,
-			sitemap.startUrls,
-			sitemap.model,
-			sitemap.selectors,
-			sitemap.sitemapSpecificationVersion
-		);
+		sitemap = new Sitemap(id, sitemap.startUrls, sitemap.model, sitemap.selectors);
 		sitemap = await this.store.createSitemap(sitemap);
 		this._editSitemap(sitemap);
 		$('#confirm-action-modal').modal('hide');
