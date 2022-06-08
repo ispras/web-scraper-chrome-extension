@@ -822,7 +822,15 @@ export default class SitemapController {
 		const selectors = sitemap.getDirectChildSelectors(parentSelectorId);
 		selectors.forEach(selector => {
 			const selectorType = this.selectorTypes.find(selType => selType.type === selector.type);
-			const $selector = ich.SelectorListItem({ ...selector, title: selectorType.title });
+			const parentUuids = new Set(selector.parentSelectors);
+			const parentIds = [sitemap.rootSelector, ...sitemap.selectors]
+				.filter(({ uuid }) => parentUuids.has(uuid))
+				.map(({ id }) => id);
+			const $selector = ich.SelectorListItem({
+				...selector,
+				parentSelectors: parentIds,
+				title: selectorType.title,
+			});
 			$selector.data('selector', selector);
 			$selectorListPanel.find('tbody').append($selector);
 		});
