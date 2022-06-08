@@ -265,7 +265,7 @@ export default class SitemapController {
 				click: this.cancelSelectorEditing,
 			},
 			'#edit-selector #selectorId': {
-				keyup: this.updateSelectorParentListOnIdChange,
+				'change:flexdatalist': this.updateCurrentlyEditedSelectorInParentsList,
 			},
 			'#selector-tree button[action=add-selector]': {
 				click: this.addSelector,
@@ -1083,9 +1083,12 @@ export default class SitemapController {
 		this._editSelector(selector);
 	}
 
-	updateSelectorParentListOnIdChange() {
+	updateCurrentlyEditedSelectorInParentsList() {
 		const selector = this.getCurrentlyEditedSelector();
-		$('.currently-edited').val(selector.uuid).text(selector.id);
+		const selectorId =
+			selector.id ||
+			Translator.getTranslationByKey('selector_edit_current_selector_placeholder');
+		$('.currently-edited').val(selector.uuid).text(`${selectorId} - ${selector.uuid}`);
 	}
 
 	_editSelector(selector) {
@@ -1163,11 +1166,8 @@ export default class SitemapController {
 		if (selector.canHaveChildSelectors()) {
 			if ($('#edit-selector #parentSelectors .currently-edited').length === 0) {
 				const $option = $('<option class="currently-edited"></option>');
-				if (selector.id === '') {
-					selector.id = '_currentSelector';
-				}
-				$option.text(selector.id).val(selector.uuid);
 				$('#edit-selector #parentSelectors').append($option);
+				this.updateCurrentlyEditedSelectorInParentsList();
 			}
 		}
 		// remove if type doesn't allow to have child selectors
