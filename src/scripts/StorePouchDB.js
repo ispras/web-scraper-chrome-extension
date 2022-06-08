@@ -87,6 +87,7 @@ export default class StorePouchDB {
 	async getAllSitemaps() {
 		const result = await this.sitemapDb.allDocs({ include_docs: true });
 		if (browser.extension) {
+			// TODO investigate why this is necessary
 			return Array.from(result.rows, row => row.doc);
 		}
 		return Array.from(result.rows, row => {

@@ -40,7 +40,14 @@ export default class StoreDevtools {
 			getAllSitemaps: true,
 		};
 		const response = await browser.runtime.sendMessage(request);
-		return Array.from(response, Sitemap.sitemapFromObj);
+		return Array.from(response, sitemapObj => {
+			try {
+				return Sitemap.sitemapFromObj(sitemapObj);
+			} catch (error) {
+				console.error('Failed to read sitemap', sitemapObj, error);
+				return null;
+			}
+		}).filter(Boolean);
 	}
 
 	getSitemapData(sitemap) {
