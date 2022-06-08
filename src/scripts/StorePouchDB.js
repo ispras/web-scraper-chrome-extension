@@ -86,31 +86,18 @@ export default class StorePouchDB {
 
 	async getAllSitemaps() {
 		const result = await this.sitemapDb.allDocs({ include_docs: true });
-		let migrationErrorsArray = [];
-		let sitemapsArray = Array.from(result.rows, row => {
-			const sitemapObj = row.doc;
-			if (browser.extension) {
-				return sitemapObj;
-			}
-			const sitemap = Sitemap.sitemapFromObj(sitemapObj);
-			if (sitemap.migrationError) {
-				migrationErrorsArray.push(sitemap);
-				return;
-			}
-			if (sitemapObj._rev) {
-				sitemap._rev = sitemapObj._rev;
-			}
-			return sitemap;
-		});
-		if (migrationErrorsArray.length > 0) {
-			alert(
-				'Unsupported sitemap version in sitemaps:' +
-					migrationErrorsArray.map(el => el.migrationError)
-			);
+		if (browser.extension) {
+			return Array.from(result.rows, row => row.doc);
 		}
-		return sitemapsArray.filter(function (el) {
-			return el != null;
-		});
+		return Array.from(result.rows, row => {
+			const sitemapObj = row.doc;
+			try {
+				return Sitemap.sitemapFromObj(sitemapObj);
+			} catch (error) {
+				console.error('Failed to read sitemap', sitemapObj, error);
+				return null;
+			}
+		}).filter(Boolean);
 	}
 
 	async getSitemapData(sitemap) {

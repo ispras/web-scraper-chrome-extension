@@ -1,8 +1,7 @@
 import DatePatternSupport from './DateUtils/DatePatternSupport';
 import SelectorList from './SelectorList';
 import Model from './Model';
-import SitemapSpecMigration from './SitemapSpecMigration';
-import { currentSitemapSpecVersion } from './Config';
+import SitemapSpecMigrationManager from './SitemapSpecMigration/Manager';
 
 export default class Sitemap {
 	constructor(id, startUrls, model, selectors) {
@@ -11,20 +10,11 @@ export default class Sitemap {
 		this.startUrls = startUrls;
 		this.model = new Model(model);
 		this.selectors = new SelectorList(selectors || []);
-		this.sitemapSpecificationVersion = currentSitemapSpecVersion;
+		this.sitemapSpecificationVersion = SitemapSpecMigrationManager.currentVersion();
 	}
 
 	static sitemapFromObj(sitemapObj) {
-		sitemapObj = SitemapSpecMigration.versionMigrationManager(sitemapObj);
-
-		if (sitemapObj.migrationError) {
-			return sitemapObj;
-		}
-
-		if (sitemapObj.migrationError) {
-			return sitemapObj;
-		}
-
+		sitemapObj = SitemapSpecMigrationManager.applyMigrations(sitemapObj);
 		const sitemap = new Sitemap(
 			sitemapObj._id,
 			sitemapObj.startUrls,

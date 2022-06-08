@@ -40,24 +40,7 @@ export default class StoreDevtools {
 			getAllSitemaps: true,
 		};
 		const response = await browser.runtime.sendMessage(request);
-		let migrationErrorsArray = [];
-		let sitemapsArray = Array.from(response, sitemapObj => {
-			const sitemap = Sitemap.sitemapFromObj(sitemapObj);
-			if (sitemap.migrationError) {
-				migrationErrorsArray.push(sitemap);
-				return;
-			}
-			return sitemap;
-		});
-		if (migrationErrorsArray.length > 0) {
-			alert(
-				'Unsupported sitemap version in sitemaps:' +
-					migrationErrorsArray.map(el => el.migrationError)
-			);
-		}
-		return sitemapsArray.filter(function (el) {
-			return el != null;
-		});
+		return Array.from(response, Sitemap.sitemapFromObj);
 	}
 
 	getSitemapData(sitemap) {

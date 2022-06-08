@@ -1,7 +1,5 @@
 import * as browser from 'webextension-polyfill';
 
-export const currentSitemapSpecVersion = 1;
-
 export default class Config {
 	constructor() {
 		this.sitemapDb = '<use loadConfiguration()>';
