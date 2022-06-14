@@ -145,44 +145,41 @@
 								placeholder="options_talisman_password_placeholder"
 							/>
 						</div>
-						<label
-							class="col-lg-2 control-label"
-							data-i18n="options_talisman_password_show_checkbox"
-							for="password-checkbox"
-						></label>
-						<input type="checkbox" class="password-checkbox" id="password-checkbox" />
+						<div class="col-lg-offset-2 col-lg-10">
+							<input
+								type="checkbox"
+								class="password-checkbox"
+								id="password-checkbox"
+							/>
+							<label data-i18n="options_talisman_password_show_checkbox"></label>
+						</div>
 					</div>
 
 					<div class="form-group talisman">
-						<table>
-							<tbody>
-								<tr>
-									<td>
-										<div class="col-lg-offset-2 col-lg-10">
-											<button
-												id="options_talisman_check_auth_button"
-												type="button"
-												class="btn btn-default"
-												data-i18n="options_talisman_check_auth_button"
-											></button>
-										</div>
-									</td>
-									<td>
-										<div class="col-lg-offset-2 col-lg-10">
-											<output
-												id="options_talisman_check_auth"
-												type="text"
-												class="form-control"
-												data-i18n="options_talisman_check_auth"
-											></output>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+						<label
+							for="options_talisman_auth_status"
+							class="col-lg-2 control-label"
+							data-i18n="options_talisman_auth_status"
+						></label>
+						<div class="col-lg-10">
+							<output
+								id="options_talisman_auth_status"
+								name="options_talisman_auth_status"
+								type="text"
+								class="form-control"
+								data-i18n="options_talisman_auth_status"
+								disabled
+							></output>
+						</div>
 					</div>
 					<div class="form-group talisman">
 						<div class="col-lg-offset-2 col-lg-10">
+							<button
+								id="options_talisman_check_auth_button"
+								type="button"
+								class="btn btn-default"
+								data-i18n="options_talisman_check_auth_button"
+							></button>
 							<button
 								id="options_talisman_log_out_button"
 								type="button"

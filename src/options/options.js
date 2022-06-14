@@ -131,18 +131,18 @@ function initConfig() {
 		$('#talismanApiURL').val(config.talismanApiUrl);
 		$('#talismanUserLogin').val(config.credential.username);
 		$('#talismanUserPassword').val(config.credential.password);
-		$('#options_talisman_check_auth').val(
+		$('#options_talisman_auth_status').val(
 			await function () {
 				axios({
 					method: 'get',
 					url: `${config.talismanApiUrl}/oauth/token`,
 				}).then(response => {
 					if (response.data.preferred_username) {
-						$('#options_talisman_check_auth').val(
+						$('#options_talisman_auth_status').val(
 							`Authorized by: ${response.data.preferred_username}`
 						);
 					} else {
-						$('#options_talisman_check_auth').val('Not authorized');
+						$('#options_talisman_auth_status').val('Not authorized');
 					}
 				});
 			}
@@ -211,11 +211,11 @@ function checkTLogin() {
 			})
 				.then(response => {
 					if (response.data.preferred_username) {
-						$('#options_talisman_check_auth').text(
+						$('#options_talisman_auth_status').text(
 							`Authorized by: ${response.data.preferred_username}`
 						);
 					} else {
-						$('#options_talisman_check_auth').text('Not authorized');
+						$('#options_talisman_auth_status').text('Not authorized');
 					}
 				})
 				.catch(er => {
