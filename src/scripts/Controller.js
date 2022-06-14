@@ -8,7 +8,6 @@ import 'jquery-highlight/jquery.highlight';
 import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
-
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
@@ -74,7 +73,6 @@ export default class SitemapController {
 				type: 'SelectorGroup',
 			},
 		];
-
 		this.selectorTypes = this.selectorTypes.map(typeObj => {
 			return { ...typeObj, title: Translator.getTranslationByKey(typeObj.type) };
 		});
@@ -159,7 +157,6 @@ export default class SitemapController {
 
 	async init() {
 		await this.loadTemplates();
-		// function() {
 		// currently viewed objects
 		this.clearState();
 
@@ -268,7 +265,7 @@ export default class SitemapController {
 				click: this.cancelSelectorEditing,
 			},
 			'#edit-selector #selectorId': {
-				keyup: this.updateSelectorParentListOnIdChange,
+				'change:flexdatalist': this.updateCurrentlyEditedSelectorInParentsList,
 			},
 			'#selector-tree button[action=add-selector]': {
 				click: this.addSelector,
@@ -365,7 +362,6 @@ export default class SitemapController {
 	 */
 	isValidForm(selector = '#viewport form') {
 		const validator = this.getFormValidator(selector);
-		// validator.validate();
 		// validate method calls submit which is not needed in this case.
 		for (const field in validator.options.fields) {
 			validator.validateField(field);
@@ -377,6 +373,7 @@ export default class SitemapController {
 	/**
 	 * Add validation to sitemap creation or editing form
 	 */
+
 	initSitemapValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
@@ -719,10 +716,7 @@ export default class SitemapController {
 		const sitemapJSON = $('[name=sitemapJSON]').val();
 		const sitemapObj = JSON.parse(sitemapJSON);
 
-		let id = $('input[name=_id]').val();
-		if (!id) {
-			id = sitemapObj._id;
-		}
+		const id = $('input[name=_id]').val() || sitemapObj._id;
 
 		// check whether sitemap with this id already exist
 		const sitemapExists = await this.store.sitemapExists(id);
@@ -730,12 +724,8 @@ export default class SitemapController {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
-			let sitemap = new Sitemap(
-				id,
-				sitemapObj.startUrls,
-				sitemapObj.model,
-				sitemapObj.selectors
-			);
+			let sitemap = Sitemap.sitemapFromObj(sitemapObj);
+			sitemap._id = id;
 
 			if (!sitemap.new_version) {
 				this.transformOldToNew(sitemap);
@@ -846,9 +836,7 @@ export default class SitemapController {
 
 		const sitemap = this.state.currentSitemap;
 		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
-		const parentSelectorId = sitemap.new_version
-			? this.state.currentParentSelectorId.uuid
-			: this.state.currentParentSelectorId.id;
+		const parentSelectorId = this.state.currentParentSelectorId.uuid;
 
 		const $selectorListPanel = ich.SelectorList({
 			parentSelectors,
@@ -856,7 +844,15 @@ export default class SitemapController {
 		const selectors = sitemap.getDirectChildSelectors(parentSelectorId);
 		selectors.forEach(selector => {
 			const selectorType = this.selectorTypes.find(selType => selType.type === selector.type);
-			const $selector = ich.SelectorListItem({ ...selector, title: selectorType.title });
+			const parentUuids = new Set(selector.parentSelectors);
+			const parentIds = [sitemap.rootSelector, ...sitemap.selectors]
+				.filter(({ uuid }) => parentUuids.has(uuid))
+				.map(({ id }) => id);
+			const $selector = ich.SelectorListItem({
+				...selector,
+				parentSelectors: parentIds,
+				title: selectorType.title,
+			});
 			$selector.data('selector', selector);
 			$selectorListPanel.find('tbody').append($selector);
 		});
@@ -1069,10 +1065,10 @@ export default class SitemapController {
 									) {
 										// this assumes there are no recursive element selectors
 										for (const selectorId of parentSelectorIds) {
-											if (selectorId === '0') {
+											if (selectorId === sitemap.rootSelector.uuid) {
 												continue;
 											}
-											const selector = sitemap.getSelectorById(selectorId);
+											const selector = sitemap.getSelectorByUid(selectorId);
 											if (selector.willReturnElements()) {
 												if (selector.mergeIntoList) {
 													return true;
@@ -1117,13 +1113,16 @@ export default class SitemapController {
 		this._editSelector(selector);
 	}
 
-	updateSelectorParentListOnIdChange() {
+	updateCurrentlyEditedSelectorInParentsList() {
 		//	let selector = this.getCurrentlyEditedSelector();
 		//	$('.currently-edited')
 		//		.val(selector.id)
 		//		.text(selector.id);
 		const selector = this.getCurrentlyEditedSelector();
-		$('.currently-edited').val(selector.uuid).text(selector.id);
+		const selectorId =
+			selector.id ||
+			Translator.getTranslationByKey('selector_edit_current_selector_placeholder');
+		$('.currently-edited').val(selector.uuid).text(`${selectorId} - ${selector.uuid}`);
 	}
 
 	_editSelector(selector) {
@@ -1201,11 +1200,8 @@ export default class SitemapController {
 		if (selector.canHaveChildSelectors()) {
 			if ($('#edit-selector #parentSelectors .currently-edited').length === 0) {
 				const $option = $('<option class="currently-edited"></option>');
-				if (selector.id === '') {
-					selector.id = '_currentSelector';
-				}
-				$option.text(selector.id).val(selector.uuid);
 				$('#edit-selector #parentSelectors').append($option);
+				this.updateCurrentlyEditedSelectorInParentsList();
 			}
 		}
 		// remove if type doesn't allow to have child selectors
@@ -1342,7 +1338,7 @@ export default class SitemapController {
 	 */
 	getCurrentlyEditedSelectorSitemap() {
 		const sitemap = this.state.currentSitemap.clone();
-		const selector = sitemap.getSelectorById(this.state.currentSelector.uuid);
+		const selector = sitemap.getSelectorByUid(this.state.currentSelector.uuid);
 		const newSelector = this.getCurrentlyEditedSelector();
 		sitemap.updateSelector(selector, newSelector);
 		return sitemap;
@@ -1360,16 +1356,15 @@ export default class SitemapController {
 	}
 
 	addSelector() {
-		const sitemap = this.state.currentSitemap;
-		const parentSelectorId = sitemap.new_version
-			? this.state.currentParentSelectorId.uuid
-			: this.state.currentParentSelectorId.id;
+		const parentSelectorId = this.state.currentParentSelectorId.uuid;
 
 		const selector = SelectorList.createSelector({
 			parentSelectors: [parentSelectorId],
 			type: 'SelectorText',
 			multiple: false,
-			uuid: uuidv4().toString(),
+			uuid: String(
+				Math.max(0, ...this.state.currentSitemap.selectors.map(({ uuid }) => uuid)) + 1
+			),
 		});
 		this._editSelector(selector);
 	}
@@ -2044,7 +2039,7 @@ export default class SitemapController {
 
 	previewSelectorDataFromSelectorEditing() {
 		const sitemap = this.state.currentSitemap.clone();
-		const selector = sitemap.getSelectorById(this.state.currentSelector.uuid);
+		const selector = sitemap.getSelectorByUid(this.state.currentSelector.uuid);
 		const newSelector = this.getCurrentlyEditedSelector();
 		sitemap.updateSelector(selector, newSelector);
 		this.previewSelectorData(sitemap, newSelector.uuid);

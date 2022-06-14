@@ -1,19 +1,20 @@
-import * as Papa from 'papaparse';
 import DatePatternSupport from './DateUtils/DatePatternSupport';
 import SelectorList from './SelectorList';
 import Model from './Model';
+import SitemapSpecMigrationManager from './SitemapSpecMigration/Manager';
 
 export default class Sitemap {
 	constructor(id, startUrls, model, selectors) {
 		this.rootSelector = { id: '_root', uuid: '0' };
-		this.new_version = selectors.length > 0 && selectors[0].uuid !== undefined;
 		this._id = id;
 		this.startUrls = startUrls;
 		this.model = new Model(model);
 		this.selectors = new SelectorList(selectors || []);
+		this.sitemapSpecificationVersion = SitemapSpecMigrationManager.currentVersion();
 	}
 
 	static sitemapFromObj(sitemapObj) {
+		sitemapObj = SitemapSpecMigrationManager.applyMigrations(sitemapObj);
 		const sitemap = new Sitemap(
 			sitemapObj._id,
 			sitemapObj.startUrls,
@@ -68,11 +69,11 @@ export default class Sitemap {
 	 * @returns {Array}
 	 */
 	getSelectorUUIDs() {
-		const ids = ['0'];
+		const uuids = [this.rootSelector.uuid];
 		this.selectors.forEach(function (selector) {
-			ids.push(selector.uuid);
+			uuids.push(selector.uuid);
 		});
-		return ids;
+		return uuids;
 	}
 
 	/**
@@ -80,7 +81,7 @@ export default class Sitemap {
 	 * @returns {Array}
 	 */
 	getPossibleParentSelectorIds() {
-		const ids = [Object.assign({}, this.rootSelector)];
+		const ids = [{ ...this.rootSelector }];
 		this.selectors.forEach(function (selector) {
 			if (selector.canHaveChildSelectors()) {
 				ids.push({ id: selector.id, uuid: selector.uuid });
@@ -213,7 +214,7 @@ export default class Sitemap {
 		const sitemapObj = JSON.parse(JSON.stringify(this));
 		delete sitemapObj._rev;
 		removeEmpty(sitemapObj);
-		return JSON.stringify(sitemapObj);
+		return JSON.stringify(sitemapObj, null, 2);
 	}
 
 	// return a list of columns than can be exported
@@ -231,8 +232,8 @@ export default class Sitemap {
 		return uniqueColumns;
 	}
 
-	getSelectorById(selectorId) {
-		return this.selectors.getSelectorById(selectorId);
+	getSelectorByUid(selectorId) {
+		return this.selectors.getSelectorByUid(selectorId);
 	}
 
 	/**

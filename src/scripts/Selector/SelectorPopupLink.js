@@ -39,7 +39,7 @@ export default class SelectorPopupLink extends Selector {
 			links.push({
 				[this.id]: text,
 				[`${this.id}-href`]: url,
-				_followSelectorId: this.id,
+				_followSelectorId: this.uuid,
 				_follow: url,
 			});
 		}

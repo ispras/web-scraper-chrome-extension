@@ -45,8 +45,13 @@ export default class StoreDevtools {
 			return response;
 		}
 		return Array.from(response, sitemapObj => {
-			return Sitemap.sitemapFromObj(sitemapObj);
-		});
+			try {
+				return Sitemap.sitemapFromObj(sitemapObj);
+			} catch (error) {
+				console.error('Failed to read sitemap', sitemapObj, error);
+				return null;
+			}
+		}).filter(Boolean);
 	}
 
 	getSitemapData(sitemap) {

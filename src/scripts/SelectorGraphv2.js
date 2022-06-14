@@ -23,7 +23,7 @@ export default class SelectorGraphv2 {
 	getSelectorChildren(parentSelector) {
 		if (parentSelector.childSelectors === undefined) {
 			parentSelector.childSelectors = this.sitemap.selectors
-				.getDirectChildSelectors(parentSelector.id)
+				.getDirectChildSelectors(parentSelector.uuid)
 				.fullClone();
 		}
 
@@ -47,7 +47,7 @@ export default class SelectorGraphv2 {
 	}
 
 	selectorHasChildren(parentSelector) {
-		const children = this.sitemap.selectors.getDirectChildSelectors(parentSelector.id);
+		const children = this.sitemap.selectors.getDirectChildSelectors(parentSelector.uuid);
 		const selectorHasChildren = children.length > 0;
 		return selectorHasChildren;
 	}
@@ -73,6 +73,7 @@ export default class SelectorGraphv2 {
 
 		this.root = {
 			id: '_root',
+			uuid: '0',
 			x0: h / 2,
 			y0: 0,
 			i: '_root',
@@ -106,7 +107,7 @@ export default class SelectorGraphv2 {
 		// Update the nodes…
 		const node = this.svg.selectAll('g.node').data(nodes, function (d) {
 			if (d.i === undefined) {
-				d.i = d.id;
+				d.i = d.uuid;
 				d.i = `${source.i}/${d.i}`;
 			}
 			return d.i;
@@ -146,7 +147,7 @@ export default class SelectorGraphv2 {
 				}.bind(this)
 			)
 			.text(function (d) {
-				return d.id;
+				return `${d.id} - ${d.uuid}`;
 			})
 			.style('fill-opacity', 1e-6);
 
