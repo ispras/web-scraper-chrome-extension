@@ -214,7 +214,7 @@ export default class Sitemap {
 		const sitemapObj = JSON.parse(JSON.stringify(this));
 		delete sitemapObj._rev;
 		removeEmpty(sitemapObj);
-		return JSON.stringify(sitemapObj);
+		return JSON.stringify(sitemapObj, null, 2);
 	}
 
 	// return a list of columns than can be exported
