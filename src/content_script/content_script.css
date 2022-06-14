@@ -706,8 +706,6 @@
 	border: 1px solid #285e8e !important;
 	border-right: none !important;
 	display: table-cell !important;
-	text-align: right !important;
-	height: 26px !important;
 	width: 20px !important;
 	line-height: 26px !important;
 	text-align: center !important;
@@ -733,17 +731,17 @@
 #-selector-toolbar div.selector-container {
 	width: 350px !important;
 	overflow: hidden !important;
-	margin-bottom: -100px !important;
 }
 
 #-selector-toolbar div.selector {
-	width: 10000px !important;
-	float: right !important;
 	color: #333333 !important;
 	text-align: right !important;
 	font: 100%/1em Verdana, Helvetica, sans-serif !important;
 	line-height: 26px !important;
 	font-size: 14px !important;
+	overflow: hidden !important;
+	white-space: nowrap !important;
+	direction: rtl !important;
 }
 
 #-selector-toolbar div.key-button {
@@ -766,12 +764,9 @@
 
 #-selector-toolbar div.key-events div {
 	cursor: pointer !important;
-	width: 83px !important;
-	float: right !important;
 	font: 100%/1em Verdana, Helvetica, sans-serif !important;
 	line-height: 26px !important;
-	font-size: 9px !important;
-	margin-bottom: -100px !important;
+	font-size: 10px !important;
 }
 
 #-selector-toolbar div.hide {
