@@ -32,6 +32,9 @@
 			</select>
 		</div>
 	</div>
+	<div class="form-group">
+		<input type="hidden" name="uuid" value="{{selector.uuid}}" disabled />
+	</div>
 
 	<div class="form-group feature feature-selector">
 		<label
@@ -619,7 +622,7 @@
 		<div class="input-group col-sm-8">
 			<select multiple class="form-control" id="parentSelectors" name="parentSelectors">
 				{{#selectorIds}}
-				<option value="{{.}}">{{.}}</option>
+				<option value="{{uuid}}">{{id}} - {{uuid}}</option>
 				{{/selectorIds}}
 			</select>
 		</div>

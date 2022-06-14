@@ -40,13 +40,13 @@ export default class DataExtractor {
 		// to all selectors
 		if (
 			selector.canCreateNewJobs() &&
-			this.sitemap.getDirectChildSelectors(selector.id).length > 0
+			this.sitemap.getDirectChildSelectors(selector.uuid).length > 0
 		) {
 			return false;
 		}
 
 		// also all child selectors must have the same features
-		const childSelectors = this.sitemap.getAllSelectors(selector.id);
+		const childSelectors = this.sitemap.getAllSelectors(selector.uuid);
 		for (const i in childSelectors) {
 			const childSelector = childSelectors[i];
 			if (!this.selectorIsCommonToAllTrees(childSelector)) {
@@ -66,7 +66,7 @@ export default class DataExtractor {
 					commonSelectors.push(childSelector);
 					// also add all child selectors which. Child selectors were also checked
 
-					const selectorChildSelectors = this.sitemap.getAllSelectors(childSelector.id);
+					const selectorChildSelectors = this.sitemap.getAllSelectors(childSelector.uuid);
 					selectorChildSelectors.forEach(function (selector) {
 						if (commonSelectors.indexOf(selector) === -1) {
 							commonSelectors.push(selector);
@@ -99,7 +99,7 @@ export default class DataExtractor {
 						// find selector tree within this selector
 						const commonSelectorsFromParent = commonSelectors.concat([selector]);
 						const childSelectorTrees = this._findSelectorTrees(
-							selector.id,
+							selector.uuid,
 							commonSelectorsFromParent
 						);
 						selectorTrees = selectorTrees.concat(childSelectorTrees);
@@ -120,7 +120,7 @@ export default class DataExtractor {
 		const deferredDataCalls = [];
 		childSelectors.forEach(
 			function (selector) {
-				if (!selectors.willReturnMultipleRecords(selector.id)) {
+				if (!selectors.willReturnMultipleRecords(selector.uuid)) {
 					deferredDataCalls.push(
 						this.getSelectorCommonData.bind(this, selectors, selector, parentElement)
 					);
@@ -153,7 +153,7 @@ export default class DataExtractor {
 									return this.getSelectorTreeData.bind(
 										this,
 										selectors,
-										selector.id,
+										selector.uuid,
 										element,
 										{}
 									);
@@ -166,7 +166,7 @@ export default class DataExtractor {
 						const newParentElement = data[0];
 						const deferredChildCommonData = this.getSelectorTreeCommonData(
 							selectors,
-							selector.id,
+							selector.uuid,
 							newParentElement
 						);
 						deferredChildCommonData.done(function (data) {
@@ -218,7 +218,7 @@ export default class DataExtractor {
 						const childRecordDeferredCall = this.getSelectorTreeData.bind(
 							this,
 							selectors,
-							selector.id,
+							selector.uuid,
 							element,
 							newCommonData
 						);
@@ -260,7 +260,7 @@ export default class DataExtractor {
 
 				childSelectors.forEach(
 					function (selector) {
-						if (selectors.willReturnMultipleRecords(selector.id)) {
+						if (selectors.willReturnMultipleRecords(selector.uuid)) {
 							const newCommonData = Object.clone(commonData, true);
 							const dataDeferredCall = this.getMultiSelectorData.bind(
 								this,
@@ -377,13 +377,13 @@ export default class DataExtractor {
 		// to fetch only single selectors data we will create a sitemap that only contains this selector, his
 		// parents and all child selectors
 		const { sitemap } = this;
-		const selector = this.sitemap.selectors.getSelector(selectorId);
+		const selector = this.sitemap.selectors.getSelectorByUid(selectorId);
 		const childSelectors = sitemap.selectors.getAllSelectors(selectorId);
 		const parentSelectors = [];
 		for (let i = parentSelectorIds.length - 1; i >= 0; i--) {
 			const id = parentSelectorIds[i];
-			if (id === '_root') break;
-			const parentSelector = this.sitemap.selectors.getSelector(id);
+			if (id === this.sitemap.rootSelector.uuid) break;
+			const parentSelector = this.sitemap.selectors.getSelectorByUid(id);
 			parentSelectors.push(parentSelector);
 		}
 
@@ -396,11 +396,11 @@ export default class DataExtractor {
 		// find the parent that leaded to the page where required selector is being used
 		for (let i = parentSelectorIds.length - 1; i >= 0; i--) {
 			const id = parentSelectorIds[i];
-			if (id === '_root') {
+			if (id === this.sitemap.rootSelector.uuid) {
 				parentSelectorId = id;
 				break;
 			}
-			const parentSelector = this.sitemap.selectors.getSelector(parentSelectorIds[i]);
+			const parentSelector = this.sitemap.selectors.getSelectorByUid(parentSelectorIds[i]);
 			if (!parentSelector.willReturnElements()) {
 				parentSelectorId = id;
 				break;

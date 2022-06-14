@@ -8,7 +8,6 @@ import 'jquery-highlight/jquery.highlight';
 import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
-
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
@@ -72,7 +71,6 @@ export default class SitemapController {
 				type: 'SelectorGroup',
 			},
 		];
-
 		this.selectorTypes = this.selectorTypes.map(typeObj => {
 			return { ...typeObj, title: Translator.getTranslationByKey(typeObj.type) };
 		});
@@ -156,7 +154,6 @@ export default class SitemapController {
 
 	async init() {
 		await this.loadTemplates();
-		// function() {
 		// currently viewed objects
 		this.clearState();
 
@@ -265,7 +262,7 @@ export default class SitemapController {
 				click: this.cancelSelectorEditing,
 			},
 			'#edit-selector #selectorId': {
-				keyup: this.updateSelectorParentListOnIdChange,
+				'change:flexdatalist': this.updateCurrentlyEditedSelectorInParentsList,
 			},
 			'#selector-tree button[action=add-selector]': {
 				click: this.addSelector,
@@ -326,8 +323,8 @@ export default class SitemapController {
 
 	setStateEditSitemap(sitemap) {
 		this.state.currentSitemap = sitemap;
-		this.state.editSitemapBreadcumbsSelectors = [{ id: '_root' }];
-		this.state.currentParentSelectorId = '_root';
+		this.state.editSitemapBreadcumbsSelectors = [sitemap.rootSelector];
+		this.state.currentParentSelectorId = sitemap.rootSelector;
 	}
 
 	setActiveNavigationButton(navigationId) {
@@ -362,7 +359,6 @@ export default class SitemapController {
 	 */
 	isValidForm(selector = '#viewport form') {
 		const validator = this.getFormValidator(selector);
-		// validator.validate();
 		// validate method calls submit which is not needed in this case.
 		for (const field in validator.options.fields) {
 			validator.validateField(field);
@@ -374,6 +370,7 @@ export default class SitemapController {
 	/**
 	 * Add validation to sitemap creation or editing form
 	 */
+
 	initSitemapValidation() {
 		$('#viewport form').bootstrapValidator({
 			fields: {
@@ -694,7 +691,7 @@ export default class SitemapController {
 		} else {
 			let sitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, []);
 			sitemap = await this.store.createSitemap(sitemap);
-			this._editSitemap(sitemap, ['_root']);
+			this._editSitemap(sitemap);
 		}
 	}
 
@@ -708,10 +705,7 @@ export default class SitemapController {
 		const sitemapJSON = $('[name=sitemapJSON]').val();
 		const sitemapObj = JSON.parse(sitemapJSON);
 
-		let id = $('input[name=_id]').val();
-		if (!id) {
-			id = sitemapObj._id;
-		}
+		const id = $('input[name=_id]').val() || sitemapObj._id;
 
 		// check whether sitemap with this id already exist
 		const sitemapExists = await this.store.sitemapExists(id);
@@ -719,14 +713,10 @@ export default class SitemapController {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
-			let sitemap = new Sitemap(
-				id,
-				sitemapObj.startUrls,
-				sitemapObj.model,
-				sitemapObj.selectors
-			);
+			let sitemap = Sitemap.sitemapFromObj(sitemapObj);
+			sitemap._id = id;
 			sitemap = await this.store.createSitemap(sitemap);
-			this._editSitemap(sitemap, ['_root']);
+			this._editSitemap(sitemap);
 		}
 	}
 
@@ -806,7 +796,7 @@ export default class SitemapController {
 
 		const sitemap = this.state.currentSitemap;
 		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
-		const parentSelectorId = this.state.currentParentSelectorId;
+		const parentSelectorId = this.state.currentParentSelectorId.uuid;
 
 		const $selectorListPanel = ich.SelectorList({
 			parentSelectors,
@@ -814,7 +804,15 @@ export default class SitemapController {
 		const selectors = sitemap.getDirectChildSelectors(parentSelectorId);
 		selectors.forEach(selector => {
 			const selectorType = this.selectorTypes.find(selType => selType.type === selector.type);
-			const $selector = ich.SelectorListItem({ ...selector, title: selectorType.title });
+			const parentUuids = new Set(selector.parentSelectors);
+			const parentIds = [sitemap.rootSelector, ...sitemap.selectors]
+				.filter(({ uuid }) => parentUuids.has(uuid))
+				.map(({ id }) => id);
+			const $selector = ich.SelectorListItem({
+				...selector,
+				parentSelectors: parentIds,
+				title: selectorType.title,
+			});
 			$selector.data('selector', selector);
 			$selectorListPanel.find('tbody').append($selector);
 		});
@@ -837,7 +835,7 @@ export default class SitemapController {
 	showChildSelectors(tr) {
 		const selector = $(tr).data('selector');
 		const parentSelectors = this.state.editSitemapBreadcumbsSelectors;
-		this.state.currentParentSelectorId = selector.id;
+		this.state.currentParentSelectorId = { uuid: selector.uuid, id: selector.id };
 		parentSelectors.push(selector);
 
 		this.showSitemapSelectorList();
@@ -849,7 +847,7 @@ export default class SitemapController {
 		$('#selector-tree .breadcrumb li a').each(function (i, parentSelectorButton) {
 			if (parentSelectorButton === button) {
 				parentSelectors.splice(i + 1);
-				controller.state.currentParentSelectorId = parentSelectors[i].id;
+				controller.state.currentParentSelectorId = parentSelectors[i];
 			}
 		});
 		this.showSitemapSelectorList();
@@ -871,24 +869,6 @@ export default class SitemapController {
 						regexp: {
 							regexp: /^[^_].*$/,
 							message: Translator.getTranslationByKey('selectorid_underscore'),
-						},
-						callback: {
-							message: Translator.getTranslationByKey('selectorid_is_already_exist'),
-							// eslint-disable-next-line consistent-return
-							callback: (value, validator) => {
-								// allow no regex
-								// eslint-disable-next-line no-plusplus
-								const selector = this.getCurrentlyEditedSelector();
-								const newSelector = this.state.currentSelector;
-								if (selectorsList.length !== 0 && selector.id !== newSelector.id) {
-									for (let i = 0; i < selectorsList.length; i++) {
-										if (selectorsList[i].id === value) {
-											return false;
-										}
-									}
-								}
-								return true;
-							},
 						},
 					},
 				},
@@ -1000,7 +980,7 @@ export default class SitemapController {
 								return (
 									!selector.mergeIntoList ||
 									!sitemap
-										.getAllSelectors(selector.id)
+										.getAllSelectors(selector.uuid)
 										.some(child => child.canCreateNewJobs())
 								);
 							},
@@ -1022,7 +1002,7 @@ export default class SitemapController {
 
 								if (
 									newSelector.parentSelectors.length === 1 &&
-									newSelector.parentSelectors[0] === newSelector.id
+									newSelector.parentSelectors[0] === newSelector.uuid
 								) {
 									return {
 										valid: false,
@@ -1045,10 +1025,10 @@ export default class SitemapController {
 									) {
 										// this assumes there are no recursive element selectors
 										for (const selectorId of parentSelectorIds) {
-											if (selectorId === '_root') {
+											if (selectorId === sitemap.rootSelector.uuid) {
 												continue;
 											}
-											const selector = sitemap.getSelectorById(selectorId);
+											const selector = sitemap.getSelectorByUid(selectorId);
 											if (selector.willReturnElements()) {
 												if (selector.mergeIntoList) {
 													return true;
@@ -1093,9 +1073,12 @@ export default class SitemapController {
 		this._editSelector(selector);
 	}
 
-	updateSelectorParentListOnIdChange() {
+	updateCurrentlyEditedSelectorInParentsList() {
 		const selector = this.getCurrentlyEditedSelector();
-		$('.currently-edited').val(selector.id).text(selector.id);
+		const selectorId =
+			selector.id ||
+			Translator.getTranslationByKey('selector_edit_current_selector_placeholder');
+		$('.currently-edited').val(selector.uuid).text(`${selectorId} - ${selector.uuid}`);
 	}
 
 	_editSelector(selector) {
@@ -1105,6 +1088,7 @@ export default class SitemapController {
 		const $editSelectorForm = ich.SelectorEdit({
 			selector,
 			selectorIds,
+			uuid: selector.uuid,
 			selectorTypes: this.selectorTypes,
 		});
 		$('#viewport').html($editSelectorForm);
@@ -1124,7 +1108,7 @@ export default class SitemapController {
 
 		// mark initially opened selector as currently edited
 		$('#edit-selector #parentSelectors option').each((_, element) => {
-			if ($(element).val() === selector.id) {
+			if ($(element).val() === selector.uuid) {
 				$(element).addClass('currently-edited');
 			}
 		});
@@ -1172,8 +1156,8 @@ export default class SitemapController {
 		if (selector.canHaveChildSelectors()) {
 			if ($('#edit-selector #parentSelectors .currently-edited').length === 0) {
 				const $option = $('<option class="currently-edited"></option>');
-				$option.text(selector.id).val(selector.id);
 				$('#edit-selector #parentSelectors').append($option);
+				this.updateCurrentlyEditedSelectorInParentsList();
 			}
 		}
 		// remove if type doesn't allow to have child selectors
@@ -1259,6 +1243,7 @@ export default class SitemapController {
 			regex: $('#edit-selector [name=regex]').val(),
 			regexgroup: $('#edit-selector [name=regexgroup]').val(),
 		};
+		const uuid = $('#edit-selector [name=uuid]').val();
 
 		$columnHeaders.each(function (i) {
 			const header = $($columnHeaders[i]).val();
@@ -1271,7 +1256,7 @@ export default class SitemapController {
 			});
 		});
 
-		return SelectorList.createSelector({
+		let options = {
 			id,
 			selector: selectorsSelector,
 			tableHeaderRowSelector,
@@ -1298,7 +1283,10 @@ export default class SitemapController {
 			stringReplacement,
 			mergeIntoList,
 			outerHTML,
-		});
+			uuid,
+		};
+
+		return SelectorList.createSelector(options);
 	}
 
 	/**
@@ -1306,7 +1294,7 @@ export default class SitemapController {
 	 */
 	getCurrentlyEditedSelectorSitemap() {
 		const sitemap = this.state.currentSitemap.clone();
-		const selector = sitemap.getSelectorById(this.state.currentSelector.id);
+		const selector = sitemap.getSelectorByUid(this.state.currentSelector.uuid);
 		const newSelector = this.getCurrentlyEditedSelector();
 		sitemap.updateSelector(selector, newSelector);
 		return sitemap;
@@ -1324,15 +1312,17 @@ export default class SitemapController {
 	}
 
 	addSelector() {
-		const parentSelectorId = this.state.currentParentSelectorId;
-		const sitemap = this.state.currentSitemap;
+		const parentSelectorId = this.state.currentParentSelectorId.uuid;
 
 		const selector = SelectorList.createSelector({
 			parentSelectors: [parentSelectorId],
 			type: 'SelectorText',
 			multiple: false,
+			uuid: String(
+				Math.max(0, ...this.state.currentSitemap.selectors.map(({ uuid }) => uuid)) + 1
+			),
 		});
-		this._editSelector(selector, sitemap);
+		this._editSelector(selector);
 	}
 
 	initConfirmActionPanel(action) {
@@ -1370,14 +1360,14 @@ export default class SitemapController {
 		}
 		sitemap = new Sitemap(id, sitemap.startUrls, sitemap.model, sitemap.selectors);
 		sitemap = await this.store.createSitemap(sitemap);
-		this._editSitemap(sitemap, ['_root']);
+		this._editSitemap(sitemap);
 		$('#confirm-action-modal').modal('hide');
 	}
 
 	async deleteSelector(button) {
 		const selector = $(button).closest('tr').data('selector');
 		const sitemap = this.state.currentSitemap;
-		const childCount = sitemap.getDirectChildSelectors(selector.id).length;
+		const childCount = sitemap.getDirectChildSelectors(selector.uuid).length;
 		this.initConfirmActionPanel({ action: 'delete_selector' });
 		$('#modal-selector-id').text(selector.id);
 		if (childCount) {
@@ -1782,7 +1772,7 @@ export default class SitemapController {
 	}
 
 	getCurrentStateParentSelectorIds() {
-		return this.state.editSitemapBreadcumbsSelectors.map(selector => selector.id);
+		return this.state.editSitemapBreadcumbsSelectors.map(selector => selector.uuid);
 	}
 
 	async refreshTableColumns() {
@@ -1809,7 +1799,7 @@ export default class SitemapController {
 
 		const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
 		const parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
-			selector.id,
+			selector.uuid,
 			currentStateParentSelectorIds
 		);
 
@@ -1839,7 +1829,7 @@ export default class SitemapController {
 		const selector = this.getCurrentlyEditedSelector();
 		const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
 		const parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
-			selector.id,
+			selector.uuid,
 			currentStateParentSelectorIds
 		);
 
@@ -1878,7 +1868,7 @@ export default class SitemapController {
 		const selector = this.getCurrentlyEditedSelector();
 		const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
 		const CSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
-			selector.id,
+			selector.uuid,
 			currentStateParentSelectorIds
 		);
 		return this.contentScript.getHTML({ CSSSelector }).promise();
@@ -1946,7 +1936,7 @@ export default class SitemapController {
 			const selector = this.getCurrentlyEditedSelector();
 			const currentStateParentSelectorIds = this.getCurrentStateParentSelectorIds();
 			const parentCSSSelector = sitemap.selectors.getCSSSelectorWithinOnePage(
-				selector.id,
+				selector.uuid,
 				currentStateParentSelectorIds
 			);
 			const rowSelector = $(button).closest('.form-group').find('input').val();
@@ -2000,32 +1990,26 @@ export default class SitemapController {
 	previewSelectorDataFromSelectorTree(button) {
 		const sitemap = this.state.currentSitemap;
 		const selector = $(button).closest('tr').data('selector');
-		this.previewSelectorData(sitemap, selector.id);
+		this.previewSelectorData(sitemap, selector.uuid);
 	}
 
 	previewSelectorDataFromSelectorEditing() {
 		const sitemap = this.state.currentSitemap.clone();
-		const selector = sitemap.getSelectorById(this.state.currentSelector.id);
+		const selector = sitemap.getSelectorByUid(this.state.currentSelector.uuid);
 		const newSelector = this.getCurrentlyEditedSelector();
 		sitemap.updateSelector(selector, newSelector);
-		this.previewSelectorData(sitemap, newSelector.id);
+		this.previewSelectorData(sitemap, newSelector.uuid);
 	}
 
 	/**
 	 * Returns a list of selector ids that the user has opened
 	 * @returns {Array}
 	 */
-	getStateParentSelectorIds() {
-		const parentSelectorIds = [];
-		this.state.editSitemapBreadcumbsSelectors.forEach(function (selector) {
-			parentSelectorIds.push(selector.id);
-		});
-		return parentSelectorIds;
-	}
 
 	previewSelectorData(sitemap, selectorId) {
 		// data preview will be base on how the selector tree is opened
-		const parentSelectorIds = this.getStateParentSelectorIds();
+
+		const parentSelectorIds = this.state.editSitemapBreadcumbsSelectors.map(sel => sel.uuid);
 
 		const request = {
 			previewSelectorData: true,

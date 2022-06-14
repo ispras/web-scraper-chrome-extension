@@ -40,7 +40,7 @@ export default class SelectorLink extends Selector {
 			return {
 				[this.id]: text,
 				[`${this.id}-href`]: url,
-				_followSelectorId: this.id,
+				_followSelectorId: this.uuid,
 				_follow: url,
 			};
 		});

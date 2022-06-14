@@ -86,17 +86,19 @@ export default class StorePouchDB {
 
 	async getAllSitemaps() {
 		const result = await this.sitemapDb.allDocs({ include_docs: true });
+		if (browser.extension) {
+			// TODO investigate why this is necessary
+			return Array.from(result.rows, row => row.doc);
+		}
 		return Array.from(result.rows, row => {
 			const sitemapObj = row.doc;
-			if (browser.extension) {
-				return sitemapObj;
+			try {
+				return Sitemap.sitemapFromObj(sitemapObj);
+			} catch (error) {
+				console.error('Failed to read sitemap', sitemapObj, error);
+				return null;
 			}
-			const sitemap = Sitemap.sitemapFromObj(sitemapObj);
-			if (sitemapObj._rev) {
-				sitemap._rev = sitemapObj._rev;
-			}
-			return sitemap;
-		});
+		}).filter(Boolean);
 	}
 
 	async getSitemapData(sitemap) {

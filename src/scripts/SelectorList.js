@@ -68,7 +68,7 @@ export default class SelectorList extends Array {
 	}
 
 	push(selector) {
-		if (!this.hasSelector(selector.id)) {
+		if (!this.hasSelector(selector.uuid)) {
 			if (!(selector instanceof Selector)) {
 				selector = SelectorList.createSelector(selector);
 			}
@@ -104,7 +104,7 @@ export default class SelectorList extends Array {
 				if (selector.hasParentSelector(parentSelectorId)) {
 					if (resultSelectors.indexOf(selector) === -1) {
 						resultSelectors.push(selector);
-						getAllChildSelectors(selector.id, resultSelectors);
+						getAllChildSelectors(selector.uuid, resultSelectors);
 					}
 				}
 			});
@@ -156,15 +156,6 @@ export default class SelectorList extends Array {
 		return resultList;
 	}
 
-	getSelector(selectorId) {
-		for (let i = 0; i < this.length; i++) {
-			const selector = this[i];
-			if (selector.id === selectorId) {
-				return selector;
-			}
-		}
-	}
-
 	/**
 	 * Returns all selectors if this selectors including all parent selectors within this page
 	 * @TODO not used any more.
@@ -173,15 +164,15 @@ export default class SelectorList extends Array {
 	 */
 	getOnePageSelectors(selectorId) {
 		let resultList = new SelectorList();
-		const selector = this.getSelector(selectorId);
-		resultList.push(this.getSelector(selectorId));
+		const selector = this.getSelectorByUid(selectorId);
+		resultList.push(this.getSelectorByUid(selectorId));
 
 		// recursively find all parent selectors that could lead to the page where selectorId is used.
 		const findParentSelectors = function (selector) {
 			selector.parentSelectors.forEach(
-				function (parentSelectorId) {
-					if (parentSelectorId === '_root') return;
-					const parentSelector = this.getSelector(parentSelectorId);
+				function (parentSelectorUUID) {
+					if (parentSelectorUUID === '0') return;
+					const parentSelector = this.getSelectorByUid(parentSelectorUUID);
 					if (resultList.indexOf(parentSelector) !== -1) return;
 					if (parentSelector.willReturnElements()) {
 						resultList.push(parentSelector);
@@ -216,14 +207,14 @@ export default class SelectorList extends Array {
 			}
 		}.bind(this);
 
-		const parentSelector = this.getSelector(parentSelectorId);
+		const parentSelector = this.getSelectorByUid(parentSelectorId);
 		addChildSelectors(parentSelector);
 		return resultList;
 	}
 
 	willReturnMultipleRecords(selectorId) {
 		// handle reuqested selector
-		const selector = this.getSelector(selectorId);
+		const selector = this.getSelectorByUid(selectorId);
 		if (selector.mergeIntoList) {
 			return false;
 		}
@@ -255,6 +246,15 @@ export default class SelectorList extends Array {
 		return result;
 	}
 
+	getSelectorByUid(selectorUid) {
+		for (let i = 0; i < this.length; i++) {
+			const selector = this[i];
+			if (selector.uuid === selectorUid) {
+				return selector;
+			}
+		}
+	}
+
 	getSelectorById(selectorId) {
 		for (let i = 0; i < this.length; i++) {
 			const selector = this[i];
@@ -271,7 +271,7 @@ export default class SelectorList extends Array {
 	 * @returns string
 	 */
 	getCSSSelectorWithinOnePage(selectorId, parentSelectorIds) {
-		let CSSSelector = this.getSelector(selectorId).selector;
+		let CSSSelector = this.getSelectorByUid(selectorId).selector;
 		const parentCSSSelector = this.getParentCSSSelectorWithinOnePage(parentSelectorIds);
 		CSSSelector = parentCSSSelector + CSSSelector;
 
@@ -288,7 +288,7 @@ export default class SelectorList extends Array {
 
 		for (let i = parentSelectorIds.length - 1; i > 0; i--) {
 			const parentSelectorId = parentSelectorIds[i];
-			const parentSelector = this.getSelector(parentSelectorId);
+			const parentSelector = this.getSelectorByUid(parentSelectorId);
 			if (parentSelector.willReturnElements()) {
 				CSSSelector = `${parentSelector.selector} ${CSSSelector}`;
 			} else {

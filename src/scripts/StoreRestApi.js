@@ -62,9 +62,20 @@ export default class StoreRestApi {
 		return this.axiosInstance
 			.get('/sitemaps/')
 			.then(response => {
-				return Array.from(response.data, sitemapObj => {
-					return Sitemap.sitemapFromObj(sitemapObj);
+				const sitemaps = [];
+				const failedIds = [];
+				response.data.forEach(sitemapObj => {
+					try {
+						sitemaps.push(Sitemap.sitemapFromObj(sitemapObj));
+					} catch (error) {
+						console.error('Failed to read sitemap', sitemapObj, error);
+						failedIds.push(sitemapObj._id);
+					}
 				});
+				if (failedIds.length) {
+					alert(`StoreApi: failed to read sitemaps ${failedIds.join(', ')}`);
+				}
+				return sitemaps;
 			})
 			.catch(() => {
 				alert('StoreApi: Could not get all sitemaps.');

@@ -1,12 +1,13 @@
 <div id="selector-tree">
 	<ol class="breadcrumb">
 		{{#parentSelectors}}
-		<li><a>{{id}}</a></li>
+		<li><a value="{{uuid}}">{{id}}</a></li>
 		{{/parentSelectors}}
 	</ol>
 	<table class="table table-bordered table-condensed table-hover">
 		<thead>
 			<tr>
+				<th data-i18n="selectorList_uuid"></th>
 				<th data-i18n="selectorList_id"></th>
 				<th data-i18n="selectorList_selector"></th>
 				<th style="width: 140px" data-i18n="selectorList_type"></th>
