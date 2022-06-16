@@ -18,6 +18,8 @@ import Translator from './Translator';
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { authorizationFormInit, checkTLogin, logOut } from './TalismanAuthorization';
+
 export default class SitemapController {
 	constructor(store, templateDir) {
 		this.store = store;
@@ -142,6 +144,7 @@ export default class SitemapController {
 			'ItemCard',
 			'ActionConfirm',
 			'ErrorDevToolsPage',
+			'TalismanAuthorizationPage',
 		];
 
 		return Promise.all(
@@ -310,7 +313,31 @@ export default class SitemapController {
 				click: this.sitemapExportData,
 			},
 		});
-		await this.showSitemaps();
+
+		let request = {
+			storageType: true,
+		};
+		let storageType = await browser.runtime.sendMessage(request);
+
+		if (storageType === 'talisman') {
+			const $talismanAuth = ich.TalismanAuthorizationPage();
+			$('#viewport').html($talismanAuth);
+			let authStatus = await checkTLogin();
+			if (authStatus) {
+				$('#talisman-user-name').show().text(authStatus.preferred_username);
+				$('#talisman-logout-nav-button')
+					.show()
+					.on('click', '#talisman-logout-nav-button', async () => await logOut());
+				Translator.translatePage();
+				await this.showSitemaps();
+			}
+			authorizationFormInit();
+			Translator.translatePage();
+		} else {
+			$('#talisman-user-name').hide();
+			$('#talisman-logout-nav-button').hide();
+			await this.showSitemaps();
+		}
 	}
 
 	clearState() {

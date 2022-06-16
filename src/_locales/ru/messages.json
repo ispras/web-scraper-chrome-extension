@@ -2,6 +2,7 @@
 	"data_preview": { "message": "Предпросмотр данных" },
 	"sitemaps_nav_button": { "message": "Список карт обхода" },
 	"sitemap_nav_button": { "message": "Карта обхода" },
+	"talisman_logout_nav_button": { "message": "Выйти" },
 	"sitemap_selector_list_nav_button": { "message": "Селекторы" },
 	"sitemap_selector_graph_nav_button": { "message": "Граф селекторов" },
 	"sitemap_edit_metadata_nav_button": { "message": "Изменить метаданные" },

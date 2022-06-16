@@ -31,28 +31,6 @@ browser.storage.onChanged.addListener(function () {
 			store = new StoreRestApi(config);
 		} else if (config.storageType === 'talisman') {
 			store = new StoreTalismanApi(config);
-			let loginStatus = await store.initTalismanLogin(config.credential).catch(er => {
-				return er;
-			});
-			if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
-				console.log('browser.runtime.onMessage', loginStatus.message);
-				browser.runtime.connect({ name: 'options' }).postMessage({
-					talismanAuth: {
-						success: false,
-						status: loginStatus.status,
-						message: loginStatus.message,
-					},
-				});
-			} else {
-				store.postInit();
-				browser.runtime.connect({ name: 'options' }).postMessage({
-					talismanAuth: {
-						success: true,
-					},
-				});
-				let tToken = loginStatus.data.access_token;
-				store.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
-			}
 		} else {
 			store = new StorePouchDB(config);
 		}
@@ -85,6 +63,33 @@ const sendToActiveTab = function (request, callback) {
 
 browser.runtime.onMessage.addListener(async request => {
 	console.log('browser.runtime.onMessage', request);
+
+	if (request.talismanLogin) {
+		let loginStatus = await store.initTalismanLogin(request.credential).catch(er => {
+			return er;
+		});
+		if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
+			console.log('browser.runtime.onMessage', loginStatus.message);
+			return {
+				talismanAuth: {
+					success: false,
+					status: loginStatus.status,
+					message: loginStatus.message,
+				},
+			};
+		} else {
+			config.credential = { username: request.credential.username };
+			store.postInit(loginStatus.data.access_token);
+			let tToken = loginStatus.data.access_token;
+			store.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
+			return {
+				talismanAuth: {
+					success: true,
+				},
+			};
+		}
+	}
+
 	if (request.logOut) {
 		if (
 			store.constructor.name === 'StoreTalismanApi' &&
@@ -100,24 +105,31 @@ browser.runtime.onMessage.addListener(async request => {
 			});
 		}
 	}
+
 	if (request.createSitemap) {
 		return store.createSitemap(request.sitemap);
 	}
+
 	if (request.saveSitemap) {
 		return store.saveSitemap(request.sitemap);
 	}
+
 	if (request.deleteSitemap) {
 		return store.deleteSitemap(request.sitemap);
 	}
+
 	if (request.getAllSitemaps) {
 		return store.getAllSitemaps();
 	}
+
 	if (request.sitemapExists) {
 		return store.sitemapExists(request.sitemapId);
 	}
+
 	if (request.getSitemapData) {
 		return store.getSitemapData(Sitemap.sitemapFromObj(request.sitemap));
 	}
+
 	if (request.scrapeSitemap) {
 		const sitemap = Sitemap.sitemapFromObj(request.sitemap);
 		const queue = new Queue();
@@ -153,6 +165,11 @@ browser.runtime.onMessage.addListener(async request => {
 			}
 		});
 	}
+
+	if (request.storageType) {
+		return config.storageType;
+	}
+
 	if (request.previewSelectorData) {
 		const tabs = await browser.tabs.query({ active: true, currentWindow: true });
 		if (tabs.length < 1) {

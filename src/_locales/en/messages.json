@@ -2,6 +2,7 @@
 	"data_preview": { "message": "Data Preview" },
 	"sitemaps_nav_button": { "message": "Sitemaps" },
 	"sitemap_nav_button": { "message": "Sitemap" },
+	"talisman_logout_nav_button": { "message": "Logout" },
 	"sitemap_selector_list_nav_button": { "message": "Selectors" },
 	"sitemap_selector_graph_nav_button": { "message": "Selector graph" },
 	"sitemap_edit_metadata_nav_button": { "message": "Edit metadata" },

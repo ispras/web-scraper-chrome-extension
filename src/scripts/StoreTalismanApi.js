@@ -1,25 +1,15 @@
 import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
+import * as $ from 'jquery';
+import { authorizationFormInit, checkTLogin } from './TalismanAuthorization';
+import Translator from './Translator';
 
 export default class StoreTalismanApi {
 	constructor(config) {
 		this.localDataStore = new StorePouchDB(config);
 		this.axiosInstance = axios.create({
 			baseURL: config.talismanApiUrl,
-		});
-	}
-
-	postInit() {
-		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
-		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
-		this.axiosInstance.interceptors.response.use(response => {
-			const contentType = response.headers['content-type'];
-			if (contentType !== 'application/json') {
-				const error = new Error(`Expected JSON response from API, but got ${contentType}`);
-				return Promise.reject(error);
-			}
-			return response;
 		});
 	}
 
@@ -38,6 +28,19 @@ export default class StoreTalismanApi {
 				},
 			}
 		);
+	}
+
+	postInit(tToken) {
+		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
+		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
+		this.axiosInstance.interceptors.response.use(response => {
+			const contentType = response.headers['content-type'];
+			if (contentType !== 'application/json') {
+				const error = new Error(`Expected JSON response from API, but got ${contentType}`);
+				return Promise.reject(error);
+			}
+			return response;
+		});
 	}
 
 	createSitemap(sitemap) {
