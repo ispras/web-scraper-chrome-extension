@@ -85,20 +85,17 @@ browser.runtime.onMessage.addListener(async request => {
 			return {
 				talismanAuth: {
 					success: true,
+					username: request.credential.username,
 				},
 			};
 		}
 	}
 
 	if (request.logOut) {
-		if (
-			store.constructor.name === 'StoreTalismanApi' &&
-			request.logOut.url === store.axiosInstance.defaults.baseURL
-		) {
+		if (store.constructor.name === 'StoreTalismanApi') {
 			delete store.axiosInstance.defaults.headers.Authorization;
 			await store.axiosInstance.get('/oauth/logout');
 		} else {
-			console.log('IN ELSE LO');
 			await axios({
 				method: 'get',
 				url: `${request.logOut.url}/oauth/logout`,

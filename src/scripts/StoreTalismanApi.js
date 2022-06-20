@@ -1,9 +1,6 @@
 import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
-import * as $ from 'jquery';
-import { authorizationFormInit, checkTLogin } from './TalismanAuthorization';
-import Translator from './Translator';
 
 export default class StoreTalismanApi {
 	constructor(config) {

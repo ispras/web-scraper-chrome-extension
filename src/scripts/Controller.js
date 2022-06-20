@@ -18,7 +18,12 @@ import Translator from './Translator';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { authorizationFormInit, checkTLogin, logOut } from './TalismanAuthorization';
+import {
+	authorizationFormInit,
+	checkTLogin,
+	tAuthFormSubmit,
+	tLogOut,
+} from './TalismanAuthorization';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -312,32 +317,24 @@ export default class SitemapController {
 			'#data-export-generate-file': {
 				click: this.sitemapExportData,
 			},
+			'#talisman-logout-nav-button': {
+				click: () => {
+					tLogOut().finally(() => this.authPage());
+				},
+			},
+			'#talisman_auth_form': {
+				submit: async () => {
+					let userName = await tAuthFormSubmit();
+					if (userName) {
+						$('#talisman-user-name').show().text(userName);
+						$('#talisman-logout-nav-button').show();
+						await this.showSitemaps();
+					}
+				},
+			},
 		});
 
-		let request = {
-			storageType: true,
-		};
-		let storageType = await browser.runtime.sendMessage(request);
-
-		if (storageType === 'talisman') {
-			const $talismanAuth = ich.TalismanAuthorizationPage();
-			$('#viewport').html($talismanAuth);
-			let authStatus = await checkTLogin();
-			if (authStatus) {
-				$('#talisman-user-name').show().text(authStatus.preferred_username);
-				$('#talisman-logout-nav-button')
-					.show()
-					.on('click', '#talisman-logout-nav-button', async () => await logOut());
-				Translator.translatePage();
-				await this.showSitemaps();
-			}
-			authorizationFormInit();
-			Translator.translatePage();
-		} else {
-			$('#talisman-user-name').hide();
-			$('#talisman-logout-nav-button').hide();
-			await this.showSitemaps();
-		}
+		await this.authPage();
 	}
 
 	clearState() {
@@ -671,6 +668,34 @@ export default class SitemapController {
 		window.getSelection().addRange(range);
 		document.execCommand('copy');
 		window.getSelection().removeAllRanges();
+	}
+
+	async authPage() {
+		$('#talisman-user-name').hide();
+		$('#talisman-logout-nav-button').hide();
+
+		let request = {
+			storageType: true,
+		};
+		let storageType = await browser.runtime.sendMessage(request);
+
+		if (storageType === 'talisman') {
+			let authStatus = await checkTLogin();
+
+			if (authStatus) {
+				$('#talisman-user-name').show().text(authStatus.preferred_username);
+				$('#talisman-logout-nav-button').show();
+				Translator.translatePage();
+				await this.showSitemaps();
+			} else {
+				const $talismanAuth = ich.TalismanAuthorizationPage();
+				$('#viewport').html($talismanAuth);
+				authorizationFormInit();
+				Translator.translatePage();
+			}
+		} else {
+			await this.showSitemaps();
+		}
 	}
 
 	async showSitemaps() {

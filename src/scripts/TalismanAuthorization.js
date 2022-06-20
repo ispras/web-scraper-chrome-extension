@@ -44,67 +44,33 @@ export function authorizationFormInit() {
 			$('#talismanUserPassword').attr('type', 'password');
 		}
 	});
-	$('form#talisman_auth_form').submit(function () {
-		const tLogin = $('#talismanUserLogin').val();
-		const tPassword = $('#talismanUserPassword').val();
-		const request = {
-			talismanLogin: true,
-			credential: { username: tLogin, password: tPassword },
-		};
-		browser.runtime.sendMessage(request).then(msg => {
-			console.log('browser.runtime.onMessage', msg);
-			if (msg.talismanAuth.success) {
-				$('.alert')
-					.attr('id', 'success')
-					.text(Translator.getTranslationByKey('options_auth_successful'))
-					.show();
-				Translator.translatePage();
-			} else if (!msg.talismanAuth.success) {
-				$('.alert')
-					.attr('id', 'error')
-					.text(
-						Translator.getTranslationByKey('options_auth_error_updating') +
-							msg.talismanAuth.message
-					)
-					.show();
-				Translator.translatePage();
-			}
-		});
-		return true;
-	});
 }
 
-export async function logOut() {
-	let tUrl = $('#talismanApiURL').val();
-	try {
-		tUrl = new URL(tUrl).origin;
-	} catch (err) {
-		tUrl = 'PLEASE ENTER URL';
-	}
-	let response = await axios({
-		method: 'get',
-		url: `${tUrl}/oauth/token`,
-	});
-	if (response.data.preferred_username) {
-		browser.runtime
-			.sendMessage({ logOut: { url: tUrl } })
-			.then(handleResponse, handleError)
-			.finally(() => {
-				checkTLogin();
-				$('.alert')
-					.attr('id', 'success')
-					.text(Translator.getTranslationByKey('options_logout_successful'))
-					.show();
-			});
-	} else {
-		$('.alert').attr('id', 'error').text('You are not in system').show();
-	}
+export async function tAuthFormSubmit() {
+	const request = {
+		talismanLogin: true,
+		credential: {
+			username: $('#talismanUserLogin').val(),
+			password: $('#talismanUserPassword').val(),
+		},
+	};
 
-	function handleResponse(message) {
-		console.log(`Message from the background script:  ${message.response}`);
-	}
+	const authStatus = await browser.runtime.sendMessage(request);
 
-	function handleError(error) {
-		console.log(`Error: ${error}`);
+	if (authStatus.talismanAuth.success) {
+		return authStatus.talismanAuth.username;
+	} else if (!authStatus.talismanAuth.success) {
+		$('.alert')
+			.attr('id', 'error')
+			.text(
+				Translator.getTranslationByKey('options_auth_error_updating') +
+					authStatus.talismanAuth.message
+			)
+			.show();
+		Translator.translatePage();
 	}
+}
+
+export async function tLogOut() {
+	await browser.runtime.sendMessage({ logOut: { url: config.talismanApiUrl } });
 }
