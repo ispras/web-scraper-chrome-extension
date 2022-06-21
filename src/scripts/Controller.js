@@ -24,6 +24,7 @@ import {
 	tAuthFormSubmit,
 	tLogOut,
 } from './TalismanAuthorization';
+import { right } from 'core-js/internals/array-reduce';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -326,7 +327,7 @@ export default class SitemapController {
 				submit: async () => {
 					let userName = await tAuthFormSubmit();
 					if (userName) {
-						$('#talisman-user-name').show().text(userName);
+						$('#talisman-user-name').show().text(userName.name);
 						$('#talisman-logout-nav-button').show();
 						await this.showSitemaps();
 					}
@@ -671,6 +672,7 @@ export default class SitemapController {
 	}
 
 	async authPage() {
+		$('.nav.navbar-nav').addClass('invisible');
 		$('#talisman-user-name').hide();
 		$('#talisman-logout-nav-button').hide();
 
@@ -680,10 +682,10 @@ export default class SitemapController {
 		let storageType = await browser.runtime.sendMessage(request);
 
 		if (storageType === 'talisman') {
-			let authStatus = await checkTLogin();
+			let authData = await checkTLogin();
 
-			if (authStatus) {
-				$('#talisman-user-name').show().text(authStatus.preferred_username);
+			if (authData) {
+				$('#talisman-user-name').show().text(authData.name);
 				$('#talisman-logout-nav-button').show();
 				Translator.translatePage();
 				await this.showSitemaps();
@@ -717,6 +719,7 @@ export default class SitemapController {
 				$sitemap.data('sitemap', sitemap);
 				$sitemapListPanel.find('tbody').append($sitemap);
 			});
+			$('.nav.navbar-nav').removeClass('invisible');
 			$('#viewport').html($sitemapListPanel);
 			Translator.translatePage();
 		}

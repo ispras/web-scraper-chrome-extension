@@ -58,7 +58,7 @@ export async function tAuthFormSubmit() {
 	const authStatus = await browser.runtime.sendMessage(request);
 
 	if (authStatus.talismanAuth.success) {
-		return authStatus.talismanAuth.username;
+		return await checkTLogin();
 	} else if (!authStatus.talismanAuth.success) {
 		$('.alert')
 			.attr('id', 'error')

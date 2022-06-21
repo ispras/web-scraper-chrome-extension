@@ -1,10 +1,21 @@
 <!-- Navigation -->
 <style>
+	nav {
+		display: flex;
+	}
 	.talisman_auth_nav {
-		right: auto;
+		margin-left: auto;
+		padding-right: 5px;
+	}
+	.talisman_auth_nav > a {
+		color: #777;
+		line-height: 20px;
+		position: relative;
+		display: block;
+		padding: 5px 15px;
 	}
 </style>
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default disabled" role="navigation">
 	<ul class="nav navbar-nav">
 		<li><a id="sitemaps-nav-button" data-i18n="sitemaps_nav_button"></a></li>
 		<li>
@@ -69,11 +80,18 @@
 				</li>
 			</ul>
 		</li>
-		<li class="talisman_auth_nav" disabled="true"><a id="talisman-user-name"></a></li>
-		<li class="talisman_auth_nav">
-			<button id="talisman-logout-nav-button" data-i18n="talisman_logout_nav_button"></button>
-		</li>
 	</ul>
+	<div class="nav navbar-nav talisman_auth_nav dropdown">
+		<a id="talisman_user_name" class="dropdown-toggle" data-toggle="dropdown">
+			<span id="talisman-user-name"></span>
+			<b class="caret"></b>
+		</a>
+		<ul class="dropdown-menu">
+			<li>
+				<a id="talisman-logout-nav-button" data-i18n="talisman_logout_nav_button"></a>
+			</li>
+		</ul>
+	</div>
 </nav>
 
 <div id="messages"></div>
