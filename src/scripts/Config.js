@@ -69,7 +69,6 @@ export default class Config {
 	 * @returns {Promise<void>} Promise
 	 */
 	updateConfiguration(items) {
-		//	browser.storage.sync.get().then(result => {console.log(result);});111111111111111
 		return browser.storage.sync.set(items);
 	}
 }

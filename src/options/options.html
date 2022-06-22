@@ -23,108 +23,113 @@
 		</style>
 	</head>
 	<body>
-		<h1>Web Scraper</h1>
-		<p data-i18n="options_page_title"></p>
-		<br />
-		<form class="form-horizontal" id="storage_configuration">
-			<fieldset>
-				<legend data-i18n="options_plugin_settings"></legend>
-				<div class="form-group">
-					<label
-						for="storageType"
-						class="col-lg-2 control-label"
-						data-i18n="options_storage_type"
-					></label>
-					<div class="col-lg-10">
-						<select name="storageType" id="storageType" class="form-control">
-							<option value="local" data-i18n="options_local_storage"></option>
-							<option value="couchdb" data-i18n="options_couchdb_storage"></option>
-							<option value="rest" data-i18n="options_rest_api_storage"></option>
-							<option
-								value="talisman"
-								data-i18n="options_talisman_api_storage"
-							></option>
-						</select>
+		<div class="container">
+			<h1>Web Scraper</h1>
+			<p data-i18n="options_page_title"></p>
+			<br />
+			<form class="form-horizontal" id="storage_configuration">
+				<fieldset>
+					<legend data-i18n="options_plugin_settings"></legend>
+					<div class="form-group">
+						<label
+							for="storageType"
+							class="col-lg-2 control-label"
+							data-i18n="options_storage_type"
+						></label>
+						<div class="col-lg-10">
+							<select name="storageType" id="storageType" class="form-control">
+								<option value="local" data-i18n="options_local_storage"></option>
+								<option
+									value="couchdb"
+									data-i18n="options_couchdb_storage"
+								></option>
+								<option value="rest" data-i18n="options_rest_api_storage"></option>
+								<option
+									value="talisman"
+									data-i18n="options_talisman_api_storage"
+								></option>
+							</select>
+						</div>
 					</div>
-				</div>
 
-				<!-- COUCH DB-->
-				<div class="form-group couchdb">
-					<label
-						for="sitemapDb"
-						class="col-lg-2 control-label"
-						data-i18n="options_couchdb_db_url"
-					></label>
+					<!-- COUCH DB-->
+					<div class="form-group couchdb">
+						<label
+							for="sitemapDb"
+							class="col-lg-2 control-label"
+							data-i18n="options_couchdb_db_url"
+						></label>
 
-					<div class="col-lg-10">
-						<input
-							type="text"
-							class="form-control"
-							name="sitemapDb"
-							id="sitemapDb"
-							placeholder="options_couchdb_db_url_placeholder"
-						/>
+						<div class="col-lg-10">
+							<input
+								type="text"
+								class="form-control"
+								name="sitemapDb"
+								id="sitemapDb"
+								placeholder="options_couchdb_db_url_placeholder"
+							/>
+						</div>
 					</div>
-				</div>
 
-				<div class="form-group couchdb">
-					<label
-						for="dataDb"
-						class="col-lg-2 control-label"
-						data-i18n="options_couchdb_datadb"
-					></label>
+					<div class="form-group couchdb">
+						<label
+							for="dataDb"
+							class="col-lg-2 control-label"
+							data-i18n="options_couchdb_datadb"
+						></label>
 
-					<div class="col-lg-10">
-						<input type="text" class="form-control" id="dataDb" name="dataDb" />
+						<div class="col-lg-10">
+							<input type="text" class="form-control" id="dataDb" name="dataDb" />
+						</div>
 					</div>
-				</div>
-				<!-- COUCH DB-->
+					<!-- COUCH DB-->
 
-				<!-- REST DB-->
-				<div class="form-group rest">
-					<label
-						for="restUrl"
-						class="col-lg-2 control-label"
-						data-i18n="options_rest_url"
-					></label>
+					<!-- REST DB-->
+					<div class="form-group rest">
+						<label
+							for="restUrl"
+							class="col-lg-2 control-label"
+							data-i18n="options_rest_url"
+						></label>
 
-					<div class="col-lg-10">
-						<input type="text" class="form-control" id="restUrl" name="restUrl" />
+						<div class="col-lg-10">
+							<input type="text" class="form-control" id="restUrl" name="restUrl" />
+						</div>
 					</div>
-				</div>
-				<!-- REST DB-->
+					<!-- REST DB-->
 
-				<!-- TALISMAN DB-->
+					<!-- TALISMAN DB-->
 
-				<div class="form-group talisman">
-					<label
-						for="talismanApiURL"
-						class="col-lg-2 control-label"
-						data-i18n="options_talisman_url"
-					></label>
+					<div class="form-group talisman">
+						<label
+							for="talismanApiURL"
+							class="col-lg-2 control-label"
+							data-i18n="options_talisman_url"
+						></label>
 
-					<div class="col-lg-10">
-						<input
-							type="text"
-							class="form-control"
-							id="talismanApiURL"
-							name="talismanApiURL"
-						/>
+						<div class="col-lg-10">
+							<input
+								type="text"
+								class="form-control"
+								id="talismanApiURL"
+								name="talismanApiURL"
+							/>
+						</div>
 					</div>
-				</div>
-				<!-- TALISMAN DB-->
+					<!-- TALISMAN DB-->
 
-				<div class="form-group">
-					<div class="col-lg-offset-2 col-lg-10">
-						<div class="alert"></div>
-						<button
-							type="submit"
-							class="btn btn-default"
-							data-i18n="options_submit"
-						></button>
+					<div class="form-group">
+						<div class="col-lg-offset-2 col-lg-10">
+							<div class="alert"></div>
+							<button
+								type="submit"
+								class="btn btn-default"
+								data-i18n="options_submit"
+							></button>
+						</div>
 					</div>
-				</div>
-			</fieldset>
-		</form>
+				</fieldset>
+			</form>
+		</div>
 	</body>
 </html>

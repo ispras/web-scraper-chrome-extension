@@ -1169,10 +1169,6 @@ export default class SitemapController {
 	}
 
 	updateCurrentlyEditedSelectorInParentsList() {
-		//	let selector = this.getCurrentlyEditedSelector();
-		//	$('.currently-edited')
-		//		.val(selector.id)
-		//		.text(selector.id);
 		const selector = this.getCurrentlyEditedSelector();
 		const selectorId =
 			selector.id ||

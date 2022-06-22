@@ -188,7 +188,7 @@
 	"options_talisman_login_placeholder": { "message": "Login" },
 	"options_talisman_password_placeholder": { "message": "Password" },
 	"options_talisman_url_popup_title": { "message": "Talisman api url." },
-	"options_talisman_url_popup_content": { "message": "Sitemaps will be syncing with that URL." },
+	"options_talisman_url_popup_content": { "message": "Sitemaps will use this talisman stand." },
 
 	"options_submit": { "message": "Save" },
 
@@ -331,5 +331,8 @@
 		"message": "Copying sitemap <span id='modal-sitemap-id'></span>?"
 	},
 	"modal_confirm_action_message_copy_sitemap": { "message": "Sitemap name" },
-	"modal_confirm_action_input_copy_sitemap": { "message": "Sitemap name" }
+	"modal_confirm_action_input_copy_sitemap": { "message": "Sitemap name" },
+	"get_sitemap_error": {
+		"message": "Error! Please, check your login/pass, or connection availability"
+	}
 }

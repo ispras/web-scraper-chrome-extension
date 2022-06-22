@@ -188,7 +188,7 @@
 
 	"options_talisman_api_storage": { "message": "Хранилище Талисман" },
 	"options_talisman_url": { "message": "Адрес сервера Талисман" },
-	"options_talisman_login": { "message": "Адрес сервера Талисман" },
+	"options_talisman_login": { "message": "Логин" },
 	"options_talisman_password": { "message": "Пароль" },
 	"options_talisman_password_show_checkbox": { "message": " - Показать пароль" },
 	"options_talisman_url_placeholder": { "message": "Адрес сервера Талисман" },
@@ -196,7 +196,7 @@
 	"options_talisman_password_placeholder": { "message": "Пароль" },
 	"options_talisman_url_popup_title": { "message": "URL адрес хранилища Talisman." },
 	"options_talisman_url_popup_content": {
-		"message": "С этим URL будут синхронизироваться ваши карты обхода."
+		"message": "С этим стендом talisman будут синхронизироваться ваши карты обхода."
 	},
 
 	"options_submit": { "message": "Сохранить настройки" },
@@ -366,5 +366,8 @@
 		"message": "Копирование карты <span id='modal-sitemap-id'></span>?"
 	},
 	"modal_confirm_action_message_copy_sitemap": { "message": "Идентификатор карты обхода" },
-	"modal_confirm_action_input_copy_sitemap": { "message": "Идентификатор карты обхода" }
+	"modal_confirm_action_input_copy_sitemap": { "message": "Идентификатор карты обхода" },
+	"get_sitemap_error": {
+		"message": "Ошибка! Пожалуйста, проверьте ваши логин//пароль или соединение"
+	}
 }
