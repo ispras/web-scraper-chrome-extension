@@ -16,16 +16,6 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 
-import { v4 as uuidv4 } from 'uuid';
-
-import {
-	authorizationFormInit,
-	checkTLogin,
-	tAuthFormSubmit,
-	tLogOut,
-} from './TalismanAuthorization';
-import { right } from 'core-js/internals/array-reduce';
-
 export default class SitemapController {
 	constructor(store, templateDir) {
 		this.store = store;
@@ -150,7 +140,7 @@ export default class SitemapController {
 			'ItemCard',
 			'ActionConfirm',
 			'ErrorDevToolsPage',
-			'TalismanAuthorizationPage',
+			'AuthorizationPage',
 		];
 
 		return Promise.all(
@@ -318,24 +308,15 @@ export default class SitemapController {
 			'#data-export-generate-file': {
 				click: this.sitemapExportData,
 			},
-			'#talisman-logout-nav-button': {
-				click: () => {
-					tLogOut().finally(() => this.authPage());
-				},
+			'#logout-nav-button': {
+				click: this.logOutButtonInit,
 			},
-			'#talisman_auth_form': {
-				submit: async () => {
-					let userName = await tAuthFormSubmit();
-					if (userName) {
-						$('#talisman-user-name').show().text(userName.name);
-						$('#talisman-logout-nav-button').show();
-						await this.showSitemaps();
-					}
-				},
+			'#auth_form': {
+				submit: this.authorizationSubmitButtonInit,
 			},
 		});
 
-		await this.authPage();
+		await this.showAuthPage();
 	}
 
 	clearState() {
@@ -671,33 +652,71 @@ export default class SitemapController {
 		window.getSelection().removeAllRanges();
 	}
 
-	async authPage() {
+	async showAuthPage() {
+		let tUserName = $('#user-name');
+		let tLogoutButton = $('#logout-nav-button');
+
 		$('.nav.navbar-nav').addClass('invisible');
-		$('#talisman-user-name').hide();
-		$('#talisman-logout-nav-button').hide();
+		tUserName.hide();
+		tLogoutButton.hide();
 
-		let request = {
-			storageType: true,
-		};
-		let storageType = await browser.runtime.sendMessage(request);
+		const isAuthorized = await this.store.isAuthorized();
 
-		if (storageType === 'talisman') {
-			let authData = await checkTLogin();
-
-			if (authData) {
-				$('#talisman-user-name').show().text(authData.name);
-				$('#talisman-logout-nav-button').show();
+		if (isAuthorized === true) {
+			await this.showSitemaps();
+		} else if (isAuthorized.data) {
+			if (isAuthorized.storeType === 'StoreTalismanApi') {
+				tUserName.show().text(isAuthorized.data.name);
+				tLogoutButton.show();
 				Translator.translatePage();
 				await this.showSitemaps();
-			} else {
-				const $talismanAuth = ich.TalismanAuthorizationPage();
-				$('#viewport').html($talismanAuth);
-				authorizationFormInit();
-				Translator.translatePage();
 			}
 		} else {
-			await this.showSitemaps();
+			const $authorizationPage = ich.AuthorizationPage();
+			$('#viewport').html($authorizationPage);
+			this.authorizationFormInit();
+			Translator.translatePage();
 		}
+	}
+
+	authorizationFormInit() {
+		// Sync storage settings
+		$('body').on('click', '.password-checkbox', function () {
+			if ($(this).is(':checked')) {
+				$('#userPassword').attr('type', 'text');
+			} else {
+				$('#userPassword').attr('type', 'password');
+			}
+		});
+	}
+
+	async authorizationSubmitButtonInit() {
+		const credential = {
+			username: $('#userLogin').val(),
+			password: $('#userPassword').val(),
+		};
+
+		const authStatus = await this.store.authorize(credential);
+
+		if (authStatus.authStatus.success) {
+			const authData = await this.store.isAuthorized();
+			$('#user-name').show().text(authData.data.name);
+			$('#logout-nav-button').show();
+			await this.showSitemaps();
+		} else if (!authStatus.authStatus.success) {
+			$('.alert')
+				.attr('id', 'error')
+				.text(
+					Translator.getTranslationByKey('options_auth_error_updating') +
+						authStatus.authStatus.message
+				)
+				.show();
+			Translator.translatePage();
+		}
+	}
+
+	async logOutButtonInit() {
+		await this.store.logOut().finally(async () => await this.showAuthPage());
 	}
 
 	async showSitemaps() {
@@ -710,7 +729,7 @@ export default class SitemapController {
 		if (sitemaps.error_msg) {
 			$('#sitemaps').hide();
 			$('#viewport').html(
-				'<div>Error! Please, check your login/pass, or connection availability!</div>'
+				'<div class="container"><div data-i18n="get_sitemap_error"></div></div>'
 			);
 			Translator.translatePage();
 		} else {

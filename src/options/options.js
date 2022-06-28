@@ -136,7 +136,6 @@ function initFormSubmit() {
 					.text(Translator.getTranslationByKey('options_error_updating'))
 					.show();
 			});
-
 		return false;
 	});
 }

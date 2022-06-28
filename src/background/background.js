@@ -8,7 +8,6 @@ import Queue from '../scripts/Queue';
 import ChromePopupBrowser from '../scripts/ChromePopupBrowser';
 import Scraper from '../scripts/Scraper';
 import getBackgroundScript from '../scripts/BackgroundScript';
-import axios from 'axios';
 
 const config = new Config();
 let store;
@@ -62,44 +61,46 @@ const sendToActiveTab = function (request, callback) {
 };
 
 browser.runtime.onMessage.addListener(async request => {
-	console.log('browser.runtime.onMessage', request);
-
-	if (request.talismanLogin) {
-		let loginStatus = await store.initTalismanLogin(request.credential).catch(er => {
-			return er;
-		});
-		if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
-			console.log('browser.runtime.onMessage', loginStatus.message);
-			return {
-				talismanAuth: {
-					success: false,
-					status: loginStatus.status,
-					message: loginStatus.message,
-				},
-			};
-		} else {
-			config.credential = { username: request.credential.username };
-			store.postInit(loginStatus.data.access_token);
-			let tToken = loginStatus.data.access_token;
-			store.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
-			return {
-				talismanAuth: {
-					success: true,
-					username: request.credential.username,
-				},
-			};
+	if (request.login) {
+		if (store.constructor.name === 'StoreTalismanApi') {
+			let loginStatus = await store.initTalismanLogin(request.credential).catch(er => {
+				return er;
+			});
+			if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
+				return {
+					authStatus: {
+						success: false,
+						status: loginStatus.status,
+						message: loginStatus.message,
+					},
+				};
+			} else {
+				config.credential = { username: request.credential.username };
+				store.postInit(loginStatus.data.access_token);
+				let tToken = loginStatus.data.access_token;
+				store.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
+				return {
+					authStatus: {
+						success: true,
+						username: request.credential.username,
+					},
+				};
+			}
 		}
 	}
 
 	if (request.logOut) {
+		await store.logOut();
+	}
+
+	if (request.isAuthorized) {
 		if (store.constructor.name === 'StoreTalismanApi') {
-			delete store.axiosInstance.defaults.headers.Authorization;
-			await store.axiosInstance.get('/oauth/logout');
+			return {
+				data: await store.isAuthorized(),
+				storeType: store.constructor.name,
+			};
 		} else {
-			await axios({
-				method: 'get',
-				url: `${request.logOut.url}/oauth/logout`,
-			});
+			return true;
 		}
 	}
 
@@ -161,10 +162,6 @@ browser.runtime.onMessage.addListener(async request => {
 				console.log('Scraper execution cancelled', e);
 			}
 		});
-	}
-
-	if (request.storageType) {
-		return config.storageType;
 	}
 
 	if (request.previewSelectorData) {

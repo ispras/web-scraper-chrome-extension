@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
+import * as $ from 'jquery';
 
 export default class StoreTalismanApi {
 	constructor(config) {
@@ -107,5 +108,34 @@ export default class StoreTalismanApi {
 
 	getSitemapData(sitemap) {
 		return this.localDataStore.getSitemapData(sitemap);
+	}
+
+	async isAuthorized() {
+		let tUrl = this.axiosInstance.defaults.baseURL;
+		try {
+			tUrl = new URL(tUrl).origin;
+		} catch (err) {
+			$('.alert').attr('id', 'error').text(err).show();
+			return false;
+		}
+		let response = await axios({
+			method: 'get',
+			url: `${tUrl}/oauth/token`,
+		});
+		try {
+			if (response.data.preferred_username) {
+				return response.data;
+			} else {
+				return false;
+			}
+		} catch (er) {
+			$('.alert').attr('id', 'error').text(er).show();
+			return false;
+		}
+	}
+
+	async logOut() {
+		delete this.axiosInstance.defaults.headers.Authorization;
+		await this.axiosInstance.get('/oauth/logout');
 	}
 }

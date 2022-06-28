@@ -54,6 +54,28 @@ export default class StoreDevtools {
 		}).filter(Boolean);
 	}
 
+	async isAuthorized() {
+		let request = {
+			isAuthorized: true,
+		};
+		return await browser.runtime.sendMessage(request);
+	}
+
+	async authorize(credential) {
+		let request = {
+			login: true,
+			credential: credential,
+		};
+		return await browser.runtime.sendMessage(request);
+	}
+
+	async logOut() {
+		let request = {
+			logOut: true,
+		};
+		return await browser.runtime.sendMessage(request);
+	}
+
 	getSitemapData(sitemap) {
 		const request = {
 			getSitemapData: true,
