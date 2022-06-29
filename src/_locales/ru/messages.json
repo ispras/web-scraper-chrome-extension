@@ -349,6 +349,6 @@
 	"modal_confirm_action_message_copy_sitemap": { "message": "Идентификатор карты обхода" },
 	"modal_confirm_action_input_copy_sitemap": { "message": "Идентификатор карты обхода" },
 	"popup_ws_version": {
-		"message": "Версия WebScrapper: "
+		"message": "Версия Web Scraper: "
 	}
 }
