@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import * as ich from 'icanhaz/ICanHaz';
 import * as browser from 'webextension-polyfill';
-import * as renderjson from 'renderjson/renderjson';
+import renderjson from 'renderjson/renderjson';
 import * as Papa from 'papaparse';
 import 'sugar';
 import 'jquery-highlight/jquery.highlight';
@@ -75,20 +75,20 @@ export default class SitemapController {
 			return { ...typeObj, title: Translator.getTranslationByKey(typeObj.type) };
 		});
 
-		this.jsonRenderer = renderjson
-			.set_icons('+', '-')
-			.set_show_to_level('all')
-			.set_max_string_length(80)
-			.set_replacer((key, value) => {
-				if (typeof value === 'string') {
-					return value
-						.replace(/(\r\n|\n|\r)/gm, ' ')
-						.replace(/\s+/g, ' ')
-						.trim();
-				}
-				return value;
-			})
-			.set_sort_objects(true);
+		this.jsonRenderer = renderjson;
+		// .set_icons('+', '-')
+		// .set_show_to_level('all')
+		// .set_max_string_length(80)
+		// .set_replacer((key, value) => {
+		// 	if (typeof value === 'string') {
+		// 		return value
+		// 			.replace(/(\r\n|\n|\r)/gm, ' ')
+		// 			.replace(/\s+/g, ' ')
+		// 			.trim();
+		// 	}
+		// 	return value;
+		// })
+		// .set_sort_objects(true);
 		return this.init();
 	}
 

@@ -81,39 +81,49 @@ const config = {
 		new MiniCssExtractPlugin({
 			filename: '[name].css',
 		}),
-		new CopyWebpackPlugin([
-			{ from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
-			{ from: '_locales', to: '_locales' },
-			{ from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
-			{ from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
-			{ from: 'devtools/panel.html', to: 'devtools/panel.html', transform: transformHtml },
-			{ from: 'devtools/views', to: 'devtools/views/', transform: transformHtml },
-			{
-				from: 'content_script/AttachedToolbar.html',
-				to: 'content_script/AttachedToolbar.html',
-				transform: transformHtml,
-			},
-			{
-				from: 'devtools/devtools.html',
-				to: 'devtools/devtools.html',
-				transform: transformHtml,
-			},
-			{
-				from: 'manifest.json',
-				to: 'manifest.json',
-				transform: content => {
-					const jsonContent = JSON.parse(content);
-					jsonContent.version = version;
-
-					if (config.mode === 'development') {
-						jsonContent.content_security_policy =
-							"script-src 'self' 'unsafe-eval'; object-src 'self'";
-					}
-
-					return JSON.stringify(jsonContent, null, 2);
+		new CopyWebpackPlugin({
+			patterns: [
+				{ from: 'icons', to: 'icons', filter: _ => _ !== 'icon.xcf' },
+				{ from: '_locales', to: '_locales' },
+				{ from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
+				{
+					from: 'options/options.html',
+					to: 'options/options.html',
+					transform: transformHtml,
 				},
-			},
-		]),
+				{
+					from: 'devtools/panel.html',
+					to: 'devtools/panel.html',
+					transform: transformHtml,
+				},
+				{ from: 'devtools/views', to: 'devtools/views/', transform: transformHtml },
+				{
+					from: 'content_script/AttachedToolbar.html',
+					to: 'content_script/AttachedToolbar.html',
+					transform: transformHtml,
+				},
+				{
+					from: 'devtools/devtools.html',
+					to: 'devtools/devtools.html',
+					transform: transformHtml,
+				},
+				{
+					from: 'manifest.json',
+					to: 'manifest.json',
+					transform: content => {
+						const jsonContent = JSON.parse(content);
+						jsonContent.version = version;
+
+						if (config.mode === 'development') {
+							jsonContent.content_security_policy =
+								"script-src 'self' 'unsafe-eval'; object-src 'self'";
+						}
+
+						return JSON.stringify(jsonContent, null, 2);
+					},
+				},
+			],
+		}),
 	],
 };
 
