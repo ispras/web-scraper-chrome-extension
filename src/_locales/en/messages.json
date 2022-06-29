@@ -314,5 +314,8 @@
 		"message": "Copying sitemap <span id='modal-sitemap-id'></span>?"
 	},
 	"modal_confirm_action_message_copy_sitemap": { "message": "Sitemap name" },
-	"modal_confirm_action_input_copy_sitemap": { "message": "Sitemap name" }
+	"modal_confirm_action_input_copy_sitemap": { "message": "Sitemap name" },
+	"popup_ws_version": {
+		"message": "Web Scraper version: "
+	}
 }
