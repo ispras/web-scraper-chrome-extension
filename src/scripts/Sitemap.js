@@ -214,6 +214,9 @@ export default class Sitemap {
 		const sitemapObj = JSON.parse(JSON.stringify(this));
 		delete sitemapObj._rev;
 		removeEmpty(sitemapObj);
+		if (sitemapObj['selectors'] === undefined) {
+			sitemapObj['selectors'] = [];
+		}
 		return JSON.stringify(sitemapObj, null, 2);
 	}
 
