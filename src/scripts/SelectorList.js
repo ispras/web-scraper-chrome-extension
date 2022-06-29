@@ -258,7 +258,7 @@ export default class SelectorList extends Array {
 	getSelectorById(selectorId) {
 		for (let i = 0; i < this.length; i++) {
 			const selector = this[i];
-			if (selector.uuid === selectorId) {
+			if (selector.id === selectorId) {
 				return selector;
 			}
 		}

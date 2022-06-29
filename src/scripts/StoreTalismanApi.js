@@ -9,6 +9,8 @@ export default class StoreTalismanApi {
 		this.axiosInstance = axios.create({
 			baseURL: config.talismanApiUrl,
 		});
+		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
+		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
 	}
 
 	async initTalismanLogin(credentials) {
@@ -29,8 +31,6 @@ export default class StoreTalismanApi {
 	}
 
 	postInit(tToken) {
-		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
-		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
 		this.axiosInstance.interceptors.response.use(response => {
 			const contentType = response.headers['content-type'];
 			if (contentType !== 'application/json') {
@@ -43,7 +43,7 @@ export default class StoreTalismanApi {
 
 	createSitemap(sitemap) {
 		return this.axiosInstance
-			.post('/sitemaps/', Sitemap.sitemapFromObj(sitemap).exportSitemap())
+			.post('/api/sitemaps/', Sitemap.sitemapFromObj(sitemap).exportSitemap())
 			.then(response => Sitemap.sitemapFromObj(response.data))
 			.catch(() => {
 				alert('StoreApi: Error creating sitemap.');
@@ -54,7 +54,10 @@ export default class StoreTalismanApi {
 		const sitemapExists = await this.sitemapExists(sitemap._id);
 		if (sitemapExists) {
 			return this.axiosInstance
-				.put(`/sitemaps/${sitemap._id}`, Sitemap.sitemapFromObj(sitemap).exportSitemap())
+				.put(
+					`/api/sitemaps/${sitemap._id}`,
+					Sitemap.sitemapFromObj(sitemap).exportSitemap()
+				)
 				.then(() => {
 					return sitemap;
 				})
@@ -70,7 +73,7 @@ export default class StoreTalismanApi {
 
 	deleteSitemap(sitemap) {
 		return this.axiosInstance
-			.delete(`/sitemaps/${sitemap._id}`)
+			.delete(`/api/sitemaps/${sitemap._id}`)
 			.then(response => {
 				return response.data;
 			})

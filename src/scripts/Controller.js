@@ -800,38 +800,9 @@ export default class SitemapController {
 		} else {
 			let sitemap = Sitemap.sitemapFromObj(sitemapObj);
 			sitemap._id = id;
-
-			if (!sitemap.new_version) {
-				this.transformOldToNew(sitemap);
-			}
-			sitemap.new_version = true;
 			sitemap = await this.store.createSitemap(sitemap);
 			this._editSitemap(sitemap);
 		}
-	}
-
-	// transform old type sitemaps(without uuid) to new type sitemaps(with uuid)
-	transformOldToNew(sitemap) {
-		let parentsDict = { [sitemap.rootSelector.id]: sitemap.rootSelector.uuid };
-		sitemap.selectors.forEach(function (selector, index, listSelectors) {
-			if (selector.canHaveChildSelectors()) {
-				parentsDict[selector.id] = uuidv4().toString();
-			}
-		});
-		sitemap.selectors.forEach(function (selector, index, listSelectors) {
-			selector.uuid =
-				parentsDict[selector.id] !== undefined
-					? parentsDict[selector.id]
-					: uuidv4().toString();
-
-			let parents = Object.keys(parentsDict);
-
-			selector.parentSelectors.forEach(function (parentSelector, pSelectorIndex) {
-				if (parents.indexOf(parentSelector) !== -1) {
-					selector.parentSelectors[pSelectorIndex] = parentsDict[parentSelector];
-				}
-			});
-		});
 	}
 
 	editSitemapMetadata() {
