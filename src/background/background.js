@@ -15,9 +15,10 @@ let store;
 config.loadConfiguration().then(() => {
 	console.log('initial configuration', config);
 	if (config.storageType === 'rest') {
-		store = new StoreRestApi(config);
+		store = new StoreRestApi(config, config.restUrl);
+		store.postInit();
 	} else if (config.storageType === 'talisman') {
-		store = new StoreTalismanApi(config);
+		store = new StoreTalismanApi(config, config.talismanApiUrl);
 	} else {
 		store = new StorePouchDB(config);
 	}
@@ -27,9 +28,10 @@ browser.storage.onChanged.addListener(function () {
 	config.loadConfiguration().then(async () => {
 		console.log('configuration changed', config);
 		if (config.storageType === 'rest') {
-			store = new StoreRestApi(config);
+			store = new StoreRestApi(config, config.restUrl);
+			store.postInit();
 		} else if (config.storageType === 'talisman') {
-			store = new StoreTalismanApi(config);
+			store = new StoreTalismanApi(config, config.talismanApiUrl);
 		} else {
 			store = new StorePouchDB(config);
 		}
@@ -76,7 +78,7 @@ browser.runtime.onMessage.addListener(async request => {
 				};
 			} else {
 				config.credential = { username: request.credential.username };
-				store.postInit(loginStatus.data.access_token);
+				store.postInit();
 				let tToken = loginStatus.data.access_token;
 				store.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
 				return {
