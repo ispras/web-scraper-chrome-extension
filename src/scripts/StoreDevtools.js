@@ -7,6 +7,11 @@ import Sitemap from './Sitemap';
  * @constructor
  */
 export default class StoreDevtools {
+	constructor(storageType) {
+		this.storageType = storageType;
+		this.supportAuth = false;
+	}
+
 	async createSitemap(sitemap) {
 		const request = {
 			createSitemap: true,
@@ -52,28 +57,6 @@ export default class StoreDevtools {
 				return null;
 			}
 		}).filter(Boolean);
-	}
-
-	async isAuthorized() {
-		let request = {
-			isAuthorized: true,
-		};
-		return await browser.runtime.sendMessage(request);
-	}
-
-	async authorize(credential) {
-		let request = {
-			login: true,
-			credential: credential,
-		};
-		return await browser.runtime.sendMessage(request);
-	}
-
-	async logOut() {
-		let request = {
-			logOut: true,
-		};
-		return await browser.runtime.sendMessage(request);
 	}
 
 	getSitemapData(sitemap) {

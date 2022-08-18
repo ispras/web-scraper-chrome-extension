@@ -315,8 +315,11 @@ export default class SitemapController {
 				submit: this.authorizationSubmitButtonInit,
 			},
 		});
-
-		await this.showAuthPage();
+		if (this.store.supportAuth) {
+			await this.showAuthPage();
+		} else {
+			await this.showSitemaps();
+		}
 	}
 
 	clearState() {
@@ -653,24 +656,13 @@ export default class SitemapController {
 	}
 
 	async showAuthPage() {
-		let tUserName = $('#user-name');
-		let tLogoutButton = $('#logout-nav-button');
-
-		$('.nav.navbar-nav').addClass('invisible');
-		tUserName.hide();
-		tLogoutButton.hide();
+		$('.nav').hide();
 
 		const isAuthorized = await this.store.isAuthorized();
-
-		if (isAuthorized === true) {
+		if (isAuthorized) {
+			$('#user-name').text(isAuthorized.data.name);
+			Translator.translatePage();
 			await this.showSitemaps();
-		} else if (isAuthorized.data) {
-			if (isAuthorized.storeType === 'StoreTalismanApi') {
-				tUserName.show().text(isAuthorized.data.name);
-				tLogoutButton.show();
-				Translator.translatePage();
-				await this.showSitemaps();
-			}
 		} else {
 			const $authorizationPage = ich.AuthorizationPage();
 			$('#viewport').html($authorizationPage);
@@ -733,12 +725,17 @@ export default class SitemapController {
 			);
 			Translator.translatePage();
 		} else {
+			$('.nav').show();
+			if (this.store.supportAuth) {
+				$('#auth_nav').css('display', 'block');
+			} else {
+				$('#auth_nav').css('display', 'none');
+			}
 			sitemaps.forEach(sitemap => {
 				const $sitemap = ich.SitemapListItem(sitemap);
 				$sitemap.data('sitemap', sitemap);
 				$sitemapListPanel.find('tbody').append($sitemap);
 			});
-			$('.nav.navbar-nav').removeClass('invisible');
 			$('#viewport').html($sitemapListPanel);
 			Translator.translatePage();
 		}

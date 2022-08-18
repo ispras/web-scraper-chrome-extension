@@ -63,32 +63,14 @@ const sendToActiveTab = function (request, callback) {
 };
 
 browser.runtime.onMessage.addListener(async request => {
+	if (request.getStorageType) {
+		return store.constructor.name;
+	}
+
 	if (request.login) {
-		if (store.constructor.name === 'StoreTalismanApi') {
-			let loginStatus = await store.initTalismanLogin(request.credential).catch(er => {
-				return er;
-			});
-			if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
-				return {
-					authStatus: {
-						success: false,
-						status: loginStatus.status,
-						message: loginStatus.message,
-					},
-				};
-			} else {
-				config.credential = { username: request.credential.username };
-				store.postInit();
-				let tToken = loginStatus.data.access_token;
-				store.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
-				return {
-					authStatus: {
-						success: true,
-						username: request.credential.username,
-					},
-				};
-			}
-		}
+		return await store.initTalismanLogin(request.credential).catch(er => {
+			return er;
+		});
 	}
 
 	if (request.logOut) {
@@ -96,14 +78,8 @@ browser.runtime.onMessage.addListener(async request => {
 	}
 
 	if (request.isAuthorized) {
-		if (store.constructor.name === 'StoreTalismanApi') {
-			return {
-				data: await store.isAuthorized(),
-				storeType: store.constructor.name,
-			};
-		} else {
-			return true;
-		}
+		const storeData = await store.isAuthorized();
+		return storeData ? { data: storeData } : false;
 	}
 
 	if (request.createSitemap) {

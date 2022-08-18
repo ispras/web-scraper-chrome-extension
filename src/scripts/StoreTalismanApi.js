@@ -14,7 +14,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 		let tPassword = credentials.password;
 		bodyForm.append('username', tLogin);
 		bodyForm.append('password', tPassword);
-		return await this.axiosInstance.post(
+		let loginStatus = await this.axiosInstance.post(
 			urlJoin(this.axiosInstance.defaults.baseURL, '/oauth/login'),
 			bodyForm,
 			{
@@ -23,6 +23,27 @@ export default class StoreTalismanApi extends StoreRestApi {
 				},
 			}
 		);
+		if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
+			return {
+				authStatus: {
+					success: false,
+					status: loginStatus.status,
+					message: loginStatus.message,
+				},
+			};
+		} else {
+			let credential = { username: credentials.username };
+			this.postInit();
+			let tToken = loginStatus.data.access_token;
+			this.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
+			return {
+				authStatus: {
+					success: true,
+					username: credentials.username,
+					credential: credential,
+				},
+			};
+		}
 	}
 
 	async isAuthorized() {
