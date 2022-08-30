@@ -334,5 +334,8 @@
 	"modal_confirm_action_input_copy_sitemap": { "message": "Sitemap name" },
 	"get_sitemap_error": {
 		"message": "Error! Please, check your login/pass, or connection availability"
+  },
+	"popup_ws_version": {
+		"message": "Web Scraper version: "
 	}
 }

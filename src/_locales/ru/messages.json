@@ -370,5 +370,8 @@
 	"modal_confirm_action_input_copy_sitemap": { "message": "Идентификатор карты обхода" },
 	"get_sitemap_error": {
 		"message": "Ошибка! Пожалуйста, проверьте ваши логин/пароль или соединение"
+  },
+	"popup_ws_version": {
+		"message": "Версия Web Scraper: "
 	}
 }
