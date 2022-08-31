@@ -139,6 +139,8 @@ export default class SitemapController {
 			'DataPreview',
 			'ItemCard',
 			'ActionConfirm',
+			'ErrorDevToolsPage',
+			'AuthorizationPage',
 		];
 
 		return Promise.all(
@@ -306,8 +308,18 @@ export default class SitemapController {
 			'#data-export-generate-file': {
 				click: this.sitemapExportData,
 			},
+			'#logout-nav-button': {
+				click: this.logOutButtonInit,
+			},
+			'#auth_form': {
+				submit: this.authorizationSubmitButtonInit,
+			},
 		});
-		await this.showSitemaps();
+		if (this.store.supportAuth) {
+			await this.showAuthPage();
+		} else {
+			await this.showSitemaps();
+		}
 	}
 
 	clearState() {
@@ -643,6 +655,62 @@ export default class SitemapController {
 		window.getSelection().removeAllRanges();
 	}
 
+	async showAuthPage() {
+		$('.nav').hide();
+
+		const isAuthorized = await this.store.isAuthorized();
+		if (isAuthorized) {
+			$('#user-name').text(isAuthorized.data.name);
+			Translator.translatePage();
+			await this.showSitemaps();
+		} else {
+			const $authorizationPage = ich.AuthorizationPage();
+			$('#viewport').html($authorizationPage);
+			this.authorizationFormInit();
+			Translator.translatePage();
+		}
+	}
+
+	authorizationFormInit() {
+		// Sync storage settings
+		$('body').on('click', '.password-checkbox', function () {
+			if ($(this).is(':checked')) {
+				$('#userPassword').attr('type', 'text');
+			} else {
+				$('#userPassword').attr('type', 'password');
+			}
+		});
+	}
+
+	async authorizationSubmitButtonInit() {
+		const credential = {
+			username: $('#userLogin').val(),
+			password: $('#userPassword').val(),
+		};
+
+		const authStatus = await this.store.authorize(credential);
+
+		if (authStatus.authStatus.success) {
+			const authData = await this.store.isAuthorized();
+			$('#user-name').show().text(authData.data.name);
+			$('#logout-nav-button').show();
+			await this.showSitemaps();
+		} else if (!authStatus.authStatus.success) {
+			$('.alert')
+				.attr('id', 'error')
+				.text(
+					Translator.getTranslationByKey('options_auth_error_updating') +
+						authStatus.authStatus.message
+				)
+				.show();
+			Translator.translatePage();
+		}
+	}
+
+	async logOutButtonInit() {
+		await this.store.logOut().finally(async () => await this.showAuthPage());
+	}
+
 	async showSitemaps() {
 		this.clearState();
 		this.setActiveNavigationButton('sitemaps');
@@ -650,13 +718,27 @@ export default class SitemapController {
 		const sitemaps = await this.store.getAllSitemaps();
 		const $sitemapListPanel = ich.SitemapList();
 
-		sitemaps.forEach(sitemap => {
-			const $sitemap = ich.SitemapListItem(sitemap);
-			$sitemap.data('sitemap', sitemap);
-			$sitemapListPanel.find('tbody').append($sitemap);
-		});
-		$('#viewport').html($sitemapListPanel);
-		Translator.translatePage();
+		if (sitemaps.error_msg) {
+			$('#sitemaps').hide();
+			$('#viewport').html(
+				'<div class="container"><div data-i18n="get_sitemap_error"></div></div>'
+			);
+			Translator.translatePage();
+		} else {
+			$('.nav').show();
+			if (this.store.supportAuth) {
+				$('#auth_nav').css('display', 'block');
+			} else {
+				$('#auth_nav').css('display', 'none');
+			}
+			sitemaps.forEach(sitemap => {
+				const $sitemap = ich.SitemapListItem(sitemap);
+				$sitemap.data('sitemap', sitemap);
+				$sitemapListPanel.find('tbody').append($sitemap);
+			});
+			$('#viewport').html($sitemapListPanel);
+			Translator.translatePage();
+		}
 	}
 
 	getSitemapFromMetadataForm() {
@@ -1653,7 +1735,7 @@ export default class SitemapController {
 				if (url && attachments.has(url)) {
 					const attachment = { [selector.getUrlColumn()]: url };
 					Object.entries(attachments.get(url)).forEach(([key, value]) => {
-						attachment[`${selector.id}-${key}`] = value;
+						attachment[`${selector.uuid}-${key}`] = value;
 					});
 					return attachment;
 				}

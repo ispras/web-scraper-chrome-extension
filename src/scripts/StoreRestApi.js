@@ -1,15 +1,20 @@
 import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
+import urlJoin from 'url-join';
 
 export default class StoreRestApi {
-	constructor(config) {
+	constructor(config, baseUrl, sitemapsPath = 'sitemaps/') {
 		this.localDataStore = new StorePouchDB(config);
 		this.axiosInstance = axios.create({
-			baseURL: config.restUrl,
+			baseURL: baseUrl,
 		});
 		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
 		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
+		this.sitemapsPath = sitemapsPath;
+	}
+
+	postInit() {
 		this.axiosInstance.interceptors.response.use(response => {
 			const contentType = response.headers['content-type'];
 			if (contentType !== 'application/json') {
@@ -22,7 +27,7 @@ export default class StoreRestApi {
 
 	createSitemap(sitemap) {
 		return this.axiosInstance
-			.post('/sitemaps/', Sitemap.sitemapFromObj(sitemap).exportSitemap())
+			.post(this.sitemapsPath, Sitemap.sitemapFromObj(sitemap).exportSitemap())
 			.then(response => Sitemap.sitemapFromObj(response.data))
 			.catch(() => {
 				alert('StoreApi: Error creating sitemap.');
@@ -33,7 +38,10 @@ export default class StoreRestApi {
 		const sitemapExists = await this.sitemapExists(sitemap._id);
 		if (sitemapExists) {
 			return this.axiosInstance
-				.put(`/sitemaps/${sitemap._id}`, Sitemap.sitemapFromObj(sitemap).exportSitemap())
+				.put(
+					urlJoin(this.sitemapsPath, sitemap._id),
+					Sitemap.sitemapFromObj(sitemap).exportSitemap()
+				)
 				.then(() => {
 					return sitemap;
 				})
@@ -49,7 +57,7 @@ export default class StoreRestApi {
 
 	deleteSitemap(sitemap) {
 		return this.axiosInstance
-			.delete(`/sitemaps/${sitemap._id}`)
+			.delete(urlJoin(this.sitemapsPath, sitemap._id))
 			.then(response => {
 				return response.data;
 			})
@@ -60,7 +68,7 @@ export default class StoreRestApi {
 
 	getAllSitemaps() {
 		return this.axiosInstance
-			.get('/sitemaps/')
+			.get(this.sitemapsPath)
 			.then(response => {
 				const sitemaps = [];
 				const failedIds = [];

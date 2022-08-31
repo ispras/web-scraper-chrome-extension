@@ -1,0 +1,65 @@
+<style>
+	.alert {
+		padding: 20px;
+		color: white;
+		display: none;
+		margin-bottom: 15px;
+	}
+
+	#error {
+		background-color: #f44336;
+	}
+
+	#success {
+		background-color: #4caf50;
+	}
+</style>
+<center>
+	<div class="form-container input-group">
+		<h1 data-i18n="authorization_page_title"></h1>
+		<form class="form-horizontal" id="auth_form">
+			<fieldset>
+				<label
+					for="userLogin"
+					class="col-lg-2 control-label"
+					data-i18n="authorization_login"
+				></label>
+				<div class="col-lg-10">
+					<input
+						type="text"
+						class="form-control"
+						name="userLogin"
+						id="userLogin"
+						placeholder="authorization_login_placeholder"
+					/>
+				</div>
+				<br />
+				<label
+					for="userPassword"
+					class="col-lg-2 control-label"
+					data-i18n="authorization_password"
+				></label>
+				<div class="col-lg-10">
+					<input
+						type="password"
+						class="form-control"
+						name="userPassword"
+						id="userPassword"
+						placeholder="authorization_password_placeholder"
+					/>
+				</div>
+
+				<div class="col-lg-offset-2 col-lg-10">
+					<input type="checkbox" class="password-checkbox" id="password-checkbox" />
+					<label
+						data-i18n="authorization_password_show_checkbox"
+						for="password-checkbox"
+					></label>
+					<br />
+					<button type="submit" class="btn btn-default" data-i18n="login_button"></button>
+				</div>
+			</fieldset>
+			<div class="alert"></div>
+		</form>
+	</div>
+</center>

@@ -2,6 +2,8 @@
 	"data_preview": { "message": "Предпросмотр данных" },
 	"sitemaps_nav_button": { "message": "Список карт обхода" },
 	"sitemap_nav_button": { "message": "Карта обхода" },
+	"logout_nav_button": { "message": "Выйти" },
+	"login_button": { "message": "Войти" },
 	"sitemap_selector_list_nav_button": { "message": "Селекторы" },
 	"sitemap_selector_graph_nav_button": { "message": "Граф селекторов" },
 	"sitemap_edit_metadata_nav_button": { "message": "Изменить метаданные" },
@@ -109,6 +111,7 @@
 	"selector_edit_type_of_html_outer": { "message": "Внешний HTML" },
 	"selector_edit_type_of_html_inner": { "message": "Внутренний HTML" },
 	"selector_edit_merge_into_list": { "message": "Объединить собранные элементы в список" },
+
 	"sitemap_scrape_config_requestInterval": { "message": "Интервал между запросами" },
 	"sitemap_scrape_config_requestIntervalRandomness": { "message": "Случайность между запросами" },
 	"sitemap_scrape_config_pageLoadDelay": { "message": "Задержка при загрузке страницы" },
@@ -183,9 +186,29 @@
 	"options_local_storage": { "message": "Локальное хранилище" },
 	"options_couchdb_storage": { "message": "CouchDB" },
 	"options_rest_api_storage": { "message": "Серверное хранилище" },
+
+	"options_talisman_api_storage": { "message": "Хранилище Талисман" },
+	"options_talisman_url": { "message": "Адрес сервера Талисман" },
+	"authorization_page_title": {
+		"message": "Страница авторизации"
+	},
+	"authorization_login": { "message": "Логин" },
+	"authorization_password": { "message": "Пароль" },
+	"authorization_password_show_checkbox": { "message": " - Показать пароль" },
+	"options_talisman_url_placeholder": { "message": "Адрес сервера Талисман" },
+	"authorization_login_placeholder": { "message": "Логин" },
+	"authorization_password_placeholder": { "message": "Пароль" },
+	"options_talisman_url_popup_title": { "message": "URL адрес хранилища Talisman." },
+	"options_talisman_url_popup_content": {
+		"message": "С этим стендом talisman будут синхронизироваться ваши карты обхода."
+	},
+
 	"options_submit": { "message": "Сохранить настройки" },
+
 	"options_successfully_updated": { "message": "Опции успешно сохранены" },
+	"options_logout_successful": { "message": "Выход из системы прошёл успешно" },
 	"options_error_updating": { "message": "Ошибка при сохранении опций " },
+	"options_auth_error_updating": { "message": "Ошибка при авторизации: " },
 	"options_couchdb_db_url_placeholder": { "message": "Url адрес базы CouchDB" },
 	"options_couchdb_db_url": { "message": "БД карт обхода" },
 	"options_couchdb_datadb": { "message": "БД данных" },
@@ -348,6 +371,9 @@
 	},
 	"modal_confirm_action_message_copy_sitemap": { "message": "Идентификатор карты обхода" },
 	"modal_confirm_action_input_copy_sitemap": { "message": "Идентификатор карты обхода" },
+	"get_sitemap_error": {
+		"message": "Ошибка! Пожалуйста, проверьте ваши логин/пароль или соединение"
+	},
 	"popup_ws_version": {
 		"message": "Версия Web Scraper: "
 	}

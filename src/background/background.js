@@ -2,6 +2,7 @@ import * as browser from 'webextension-polyfill';
 import Config from '../scripts/Config';
 import StorePouchDB from '../scripts/StorePouchDB';
 import StoreRestApi from '../scripts/StoreRestApi';
+import StoreTalismanApi from '../scripts/StoreTalismanApi';
 import Sitemap from '../scripts/Sitemap';
 import Queue from '../scripts/Queue';
 import ChromePopupBrowser from '../scripts/ChromePopupBrowser';
@@ -14,17 +15,23 @@ let store;
 config.loadConfiguration().then(() => {
 	console.log('initial configuration', config);
 	if (config.storageType === 'rest') {
-		store = new StoreRestApi(config);
+		store = new StoreRestApi(config, config.restUrl);
+		store.postInit();
+	} else if (config.storageType === 'talisman') {
+		store = new StoreTalismanApi(config, config.talismanApiUrl);
 	} else {
 		store = new StorePouchDB(config);
 	}
 });
 
 browser.storage.onChanged.addListener(function () {
-	config.loadConfiguration().then(() => {
+	config.loadConfiguration().then(async () => {
 		console.log('configuration changed', config);
 		if (config.storageType === 'rest') {
-			store = new StoreRestApi(config);
+			store = new StoreRestApi(config, config.restUrl);
+			store.postInit();
+		} else if (config.storageType === 'talisman') {
+			store = new StoreTalismanApi(config, config.talismanApiUrl);
 		} else {
 			store = new StorePouchDB(config);
 		}
@@ -48,26 +55,47 @@ const sendToActiveTab = function (request, callback) {
 };
 
 browser.runtime.onMessage.addListener(async request => {
-	console.log('browser.runtime.onMessage', request);
+	if (request.getStorageType) {
+		return store.constructor.name;
+	}
+
+	if (request.login) {
+		return store.initTalismanLogin(request.credential);
+	}
+
+	if (request.logOut) {
+		return await store.logOut();
+	}
+
+	if (request.isAuthorized) {
+		const storeData = await store.isAuthorized();
+		return storeData ? { data: storeData } : false;
+	}
 
 	if (request.createSitemap) {
 		return store.createSitemap(request.sitemap);
 	}
+
 	if (request.saveSitemap) {
 		return store.saveSitemap(request.sitemap);
 	}
+
 	if (request.deleteSitemap) {
 		return store.deleteSitemap(request.sitemap);
 	}
+
 	if (request.getAllSitemaps) {
 		return store.getAllSitemaps();
 	}
+
 	if (request.sitemapExists) {
 		return store.sitemapExists(request.sitemapId);
 	}
+
 	if (request.getSitemapData) {
 		return store.getSitemapData(Sitemap.sitemapFromObj(request.sitemap));
 	}
+
 	if (request.scrapeSitemap) {
 		const sitemap = Sitemap.sitemapFromObj(request.sitemap);
 		const queue = new Queue();
@@ -103,6 +131,7 @@ browser.runtime.onMessage.addListener(async request => {
 			}
 		});
 	}
+
 	if (request.previewSelectorData) {
 		const tabs = await browser.tabs.query({ active: true, currentWindow: true });
 		if (tabs.length < 1) {

@@ -1,6 +1,21 @@
 <!-- Navigation -->
-
-<nav class="navbar navbar-default" role="navigation">
+<style>
+	nav {
+		display: flex;
+	}
+	#auth_nav {
+		margin-left: auto;
+		padding-right: 5px;
+	}
+	#auth_nav > a {
+		color: #777;
+		line-height: 20px;
+		position: relative;
+		display: block;
+		padding: 5px 15px;
+	}
+</style>
+<nav class="navbar navbar-default disabled" role="navigation">
 	<ul class="nav navbar-nav">
 		<li><a id="sitemaps-nav-button" data-i18n="sitemaps_nav_button"></a></li>
 		<li>
@@ -66,6 +81,17 @@
 			</ul>
 		</li>
 	</ul>
+	<div class="nav navbar-nav auth_nav dropdown" id="auth_nav">
+		<a id="user_name" class="dropdown-toggle" data-toggle="dropdown">
+			<span id="user-name"></span>
+			<b class="caret"></b>
+		</a>
+		<ul class="dropdown-menu">
+			<li>
+				<a id="logout-nav-button" data-i18n="logout_nav_button"></a>
+			</li>
+		</ul>
+	</div>
 </nav>
 
 <div id="messages"></div>

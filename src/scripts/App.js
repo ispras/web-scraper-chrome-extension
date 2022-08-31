@@ -5,10 +5,20 @@ import '../devtools/panel.css';
 import 'bootstrap/dist/js/bootstrap';
 import StoreDevtools from './StoreDevtools';
 import SitemapController from './Controller';
+import * as browser from 'webextension-polyfill';
+import TalismanStoreDevtools from './TalismanStoreDevtools';
 
-$(function () {
+$(async function () {
 	// init bootstrap alerts
 	$('.alert').alert();
-
-	new SitemapController(new StoreDevtools(), 'views/');
+	let request = {
+		getStorageType: true,
+	};
+	const storageType = await browser.runtime.sendMessage(request);
+	new SitemapController(
+		storageType === 'StoreTalismanApi'
+			? new TalismanStoreDevtools(storageType)
+			: new StoreDevtools(storageType),
+		'views/'
+	);
 });

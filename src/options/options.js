@@ -46,21 +46,35 @@ function initPopups() {
 		.blur(function () {
 			$(this).popover('hide');
 		});
+
+	$('#talismanApiURL')
+		.popover({
+			title: Translator.getTranslationByKey('options_talisman_url_popup_title'),
+			html: true,
+			content: Translator.getTranslationByKey('options_talisman_url_popup_content'),
+			placement: 'bottom',
+		})
+		.blur(function () {
+			$(this).popover('hide');
+		});
 }
 
 function initConfigSwitch() {
 	// switch between configuration types
+	const couchDbOptionsMenu = $('.form-group.couchdb');
+	const restOptionsMenu = $('.form-group.rest');
+	const talismanOptionsMenu = $('.form-group.talisman');
 	$('select[name=storageType]').change(function () {
+		couchDbOptionsMenu.hide();
+		restOptionsMenu.hide();
+		talismanOptionsMenu.hide();
 		const type = $(this).val();
 		if (type === 'couchdb') {
-			$('.form-group.couchdb').show();
-			$('.form-group.rest').hide();
+			couchDbOptionsMenu.show();
 		} else if (type === 'rest') {
-			$('.form-group.rest').show();
-			$('.form-group.couchdb').hide();
-		} else {
-			$('.form-group.rest').hide();
-			$('.form-group.couchdb').hide();
+			restOptionsMenu.show();
+		} else if (type === 'talisman') {
+			talismanOptionsMenu.show();
 		}
 	});
 }
@@ -72,6 +86,7 @@ function initConfig() {
 		$('#sitemapDb').val(config.sitemapDb);
 		$('#dataDb').val(config.dataDb);
 		$('#restUrl').val(config.restUrl);
+		$('#talismanApiURL').val(config.talismanApiUrl);
 		$('select[name=storageType]').change();
 		if (browser.i18n.getUILanguage() === 'ru' && config.storageType !== 'couchdb') {
 			$('#storageType [value=couchdb]').hide();
@@ -88,6 +103,9 @@ function initFormSubmit() {
 			sitemapDb: '',
 			dataDb: '',
 			restUrl: '',
+			talismanApiUrl: '',
+			credential: '',
+			timestamp: Date.now(),
 		};
 
 		if (storageType === 'couchdb') {
@@ -95,8 +113,9 @@ function initFormSubmit() {
 			newConfig.dataDb = $('#dataDb').val();
 		} else if (storageType === 'rest') {
 			newConfig.restUrl = $('#restUrl').val();
+		} else if (storageType === 'talisman') {
+			newConfig.talismanApiUrl = $('#talismanApiURL').val();
 		}
-
 		config
 			.updateConfiguration(newConfig)
 			.then(() => {
@@ -113,7 +132,6 @@ function initFormSubmit() {
 					.text(Translator.getTranslationByKey('options_error_updating'))
 					.show();
 			});
-
 		return false;
 	});
 }

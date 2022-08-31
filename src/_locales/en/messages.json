@@ -2,6 +2,8 @@
 	"data_preview": { "message": "Data Preview" },
 	"sitemaps_nav_button": { "message": "Sitemaps" },
 	"sitemap_nav_button": { "message": "Sitemap" },
+	"logout_nav_button": { "message": "Logout" },
+	"login_button": { "message": "Login" },
 	"sitemap_selector_list_nav_button": { "message": "Selectors" },
 	"sitemap_selector_graph_nav_button": { "message": "Selector graph" },
 	"sitemap_edit_metadata_nav_button": { "message": "Edit metadata" },
@@ -176,9 +178,27 @@
 	"options_local_storage": { "message": "Local storage" },
 	"options_couchdb_storage": { "message": "CouchDB" },
 	"options_rest_api_storage": { "message": "Rest Api" },
+
+	"options_talisman_api_storage": { "message": "Talisman Api" },
+	"options_talisman_url": { "message": "Talisman server URL" },
+	"authorization_page_title": {
+		"message": "Authorization Page"
+	},
+	"authorization_login": { "message": "Login" },
+	"authorization_password": { "message": "Password" },
+	"authorization_password_show_checkbox": { "message": " - Show password" },
+	"options_talisman_url_placeholder": { "message": "Talisman server URL" },
+	"authorization_login_placeholder": { "message": "Login" },
+	"authorization_password_placeholder": { "message": "Password" },
+	"options_talisman_url_popup_title": { "message": "Talisman api url." },
+	"options_talisman_url_popup_content": { "message": "Sitemaps will use this talisman stand." },
+
 	"options_submit": { "message": "Save" },
-	"options_successfully_updated": { "message": "Options successfully updated." },
+
+	"options_successfully_updated": { "message": "Options successfully updated" },
+	"options_logout_successful": { "message": "Logout successful" },
 	"options_error_updating": { "message": "Failed to save options" },
+	"options_auth_error_updating": { "message": "Failed to login: " },
 	"options_couchdb_db_url_placeholder": { "message": "Database URL" },
 	"options_couchdb_db_url": { "message": "Sitemap DB" },
 	"options_couchdb_datadb": { "message": "Data DB" },
@@ -315,6 +335,9 @@
 	},
 	"modal_confirm_action_message_copy_sitemap": { "message": "Sitemap name" },
 	"modal_confirm_action_input_copy_sitemap": { "message": "Sitemap name" },
+	"get_sitemap_error": {
+		"message": "Error! Please, check your login/pass, or connection availability"
+	},
 	"popup_ws_version": {
 		"message": "Web Scraper version: "
 	}

@@ -7,6 +7,11 @@ import Sitemap from './Sitemap';
  * @constructor
  */
 export default class StoreDevtools {
+	constructor(storageType) {
+		this.storageType = storageType;
+		this.supportAuth = false;
+	}
+
 	async createSitemap(sitemap) {
 		const request = {
 			createSitemap: true,
@@ -40,6 +45,10 @@ export default class StoreDevtools {
 			getAllSitemaps: true,
 		};
 		const response = await browser.runtime.sendMessage(request);
+
+		if (response.error_msg) {
+			return response;
+		}
 		return Array.from(response, sitemapObj => {
 			try {
 				return Sitemap.sitemapFromObj(sitemapObj);

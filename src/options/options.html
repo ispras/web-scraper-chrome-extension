@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title data-i18n="ptions_page_title"></title>
+		<title data-i18n="options_page_title"></title>
 		<link rel="stylesheet" href="options.css" />
 		<script src="options.js"></script>
 		<style>
@@ -44,10 +44,15 @@
 									data-i18n="options_couchdb_storage"
 								></option>
 								<option value="rest" data-i18n="options_rest_api_storage"></option>
+								<option
+									value="talisman"
+									data-i18n="options_talisman_api_storage"
+								></option>
 							</select>
 						</div>
 					</div>
 
+					<!-- COUCH DB-->
 					<div class="form-group couchdb">
 						<label
 							for="sitemapDb"
@@ -77,7 +82,9 @@
 							<input type="text" class="form-control" id="dataDb" name="dataDb" />
 						</div>
 					</div>
+					<!-- COUCH DB-->
 
+					<!-- REST DB-->
 					<div class="form-group rest">
 						<label
 							for="restUrl"
@@ -89,6 +96,27 @@
 							<input type="text" class="form-control" id="restUrl" name="restUrl" />
 						</div>
 					</div>
+					<!-- REST DB-->
+
+					<!-- TALISMAN DB-->
+
+					<div class="form-group talisman">
+						<label
+							for="talismanApiURL"
+							class="col-lg-2 control-label"
+							data-i18n="options_talisman_url"
+						></label>
+
+						<div class="col-lg-10">
+							<input
+								type="text"
+								class="form-control"
+								id="talismanApiURL"
+								name="talismanApiURL"
+							/>
+						</div>
+					</div>
+					<!-- TALISMAN DB-->
 
 					<div class="form-group">
 						<div class="col-lg-offset-2 col-lg-10">
