@@ -65,7 +65,7 @@ export default class Config {
 
 	/**
 	 * Saves configuration to chrome extension sync storage
-	 * @param {{sitemapDb: string, restUrl: string, credential: string, storageType: (*|jQuery), dataDb: string, talismanApiUrl: string}} items
+	 * @param {{sitemapDb: string, restUrl: string, credential: string, storageType: string, dataDb: string, talismanApiUrl: string}} items
 	 * @returns {Promise<void>} Promise
 	 */
 	updateConfiguration(items) {

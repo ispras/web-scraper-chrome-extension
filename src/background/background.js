@@ -35,14 +35,6 @@ browser.storage.onChanged.addListener(function () {
 		} else {
 			store = new StorePouchDB(config);
 		}
-
-		function _handleResponse(message) {
-			alert(`Message from the background script:  ${message.response}`);
-		}
-
-		function _handleError(error) {
-			alert(`Error: ${error}`);
-		}
 	});
 });
 
@@ -68,13 +60,11 @@ browser.runtime.onMessage.addListener(async request => {
 	}
 
 	if (request.login) {
-		return await store.initTalismanLogin(request.credential).catch(er => {
-			return er;
-		});
+		return store.initTalismanLogin(request.credential);
 	}
 
 	if (request.logOut) {
-		await store.logOut();
+		return await store.logOut();
 	}
 
 	if (request.isAuthorized) {

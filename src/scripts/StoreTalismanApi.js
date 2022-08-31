@@ -14,15 +14,13 @@ export default class StoreTalismanApi extends StoreRestApi {
 		let tPassword = credentials.password;
 		bodyForm.append('username', tLogin);
 		bodyForm.append('password', tPassword);
-		let loginStatus = await this.axiosInstance.post(
-			urlJoin(this.axiosInstance.defaults.baseURL, '/oauth/login'),
-			bodyForm,
-			{
+		const loginStatus = await this.axiosInstance
+			.post(urlJoin(this.axiosInstance.defaults.baseURL, '/oauth/login'), bodyForm, {
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
-			}
-		);
+			})
+			.catch(er => er);
 		if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
 			return {
 				authStatus: {

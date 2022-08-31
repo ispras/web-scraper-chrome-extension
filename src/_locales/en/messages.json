@@ -181,6 +181,9 @@
 
 	"options_talisman_api_storage": { "message": "Talisman Api" },
 	"options_talisman_url": { "message": "Talisman server URL" },
+	"authorization_page_title": {
+		"message": "Authorization Page"
+	},
 	"authorization_login": { "message": "Login" },
 	"authorization_password": { "message": "Password" },
 	"authorization_password_show_checkbox": { "message": " - Show password" },
@@ -334,7 +337,7 @@
 	"modal_confirm_action_input_copy_sitemap": { "message": "Sitemap name" },
 	"get_sitemap_error": {
 		"message": "Error! Please, check your login/pass, or connection availability"
-  },
+	},
 	"popup_ws_version": {
 		"message": "Web Scraper version: "
 	}

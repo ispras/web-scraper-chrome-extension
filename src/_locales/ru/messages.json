@@ -189,6 +189,9 @@
 
 	"options_talisman_api_storage": { "message": "Хранилище Талисман" },
 	"options_talisman_url": { "message": "Адрес сервера Талисман" },
+	"authorization_page_title": {
+		"message": "Страница авторизации"
+	},
 	"authorization_login": { "message": "Логин" },
 	"authorization_password": { "message": "Пароль" },
 	"authorization_password_show_checkbox": { "message": " - Показать пароль" },
@@ -370,7 +373,7 @@
 	"modal_confirm_action_input_copy_sitemap": { "message": "Идентификатор карты обхода" },
 	"get_sitemap_error": {
 		"message": "Ошибка! Пожалуйста, проверьте ваши логин/пароль или соединение"
-  },
+	},
 	"popup_ws_version": {
 		"message": "Версия Web Scraper: "
 	}

@@ -61,24 +61,20 @@ function initPopups() {
 
 function initConfigSwitch() {
 	// switch between configuration types
+	const couchDbOptionsMenu = $('.form-group.couchdb');
+	const restOptionsMenu = $('.form-group.rest');
+	const talismanOptionsMenu = $('.form-group.talisman');
 	$('select[name=storageType]').change(function () {
+		couchDbOptionsMenu.hide();
+		restOptionsMenu.hide();
+		talismanOptionsMenu.hide();
 		const type = $(this).val();
 		if (type === 'couchdb') {
-			$('.form-group.couchdb').show();
-			$('.form-group.rest').hide();
-			$('.form-group.talisman').hide();
+			couchDbOptionsMenu.show();
 		} else if (type === 'rest') {
-			$('.form-group.rest').show();
-			$('.form-group.couchdb').hide();
-			$('.form-group.talisman').hide();
+			restOptionsMenu.show();
 		} else if (type === 'talisman') {
-			$('.form-group.rest').hide();
-			$('.form-group.couchdb').hide();
-			$('.form-group.talisman').show();
-		} else {
-			$('.form-group.rest').hide();
-			$('.form-group.couchdb').hide();
-			$('.form-group.talisman').hide();
+			talismanOptionsMenu.show();
 		}
 	});
 }
