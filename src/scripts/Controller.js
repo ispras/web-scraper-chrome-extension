@@ -15,6 +15,8 @@ import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
+import SelectorElement from './Selector/SelectorElement';
+import { slugify } from 'transliteration';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -69,6 +71,9 @@ export default class SitemapController {
 			},
 			{
 				type: 'SelectorGroup',
+			},
+			{
+				type: 'SelectorConcept', // TODO only for tlsmn storage
 			},
 		];
 		this.selectorTypes = this.selectorTypes.map(typeObj => {
@@ -1150,9 +1155,9 @@ export default class SitemapController {
 		});
 	}
 
-	editSelector(button) {
+	async editSelector(button) {
 		const selector = $(button).closest('tr').data('selector');
-		this._editSelector(selector);
+		await this._editSelector(selector);
 	}
 
 	updateCurrentlyEditedSelectorInParentsList() {
@@ -1163,7 +1168,7 @@ export default class SitemapController {
 		$('.currently-edited').val(selector.uuid).text(`${selectorId} - ${selector.uuid}`);
 	}
 
-	_editSelector(selector) {
+	async _editSelector(selector) {
 		const sitemap = this.state.currentSitemap;
 		const selectorIds = sitemap.getPossibleParentSelectorIds();
 
@@ -1175,18 +1180,18 @@ export default class SitemapController {
 		});
 		$('#viewport').html($editSelectorForm);
 
-		$('#selectorId').flexdatalist({
-			init: this.initSelectorValidation(),
-			textProperty: '{fieldName}',
-			valueProperty: 'fieldName',
-			data: [...sitemap.model, { entity: '', field: '', fieldName: selector.id }],
-			searchIn: ['entity', 'field'],
-			visibleProperties: ['entity', 'field'],
-			groupBy: 'entity',
-			searchContain: true,
-			noResultsText: '',
-			minLength: 1,
-		});
+		// $('#selectorId').flexdatalist({
+		// 	init: this.initSelectorValidation(),
+		// 	textProperty: '{fieldName}',
+		// 	valueProperty: 'fieldName',
+		// 	data: [...sitemap.model, { entity: '', field: '', fieldName: selector.id }],
+		// 	searchIn: ['entity', 'field'],
+		// 	visibleProperties: ['entity', 'field'],
+		// 	groupBy: 'entity',
+		// 	searchContain: true,
+		// 	noResultsText: '',
+		// 	minLength: 1,
+		// });
 
 		// mark initially opened selector as currently edited
 		$('#edit-selector #parentSelectors option').each((_, element) => {
@@ -1215,12 +1220,14 @@ export default class SitemapController {
 				.attr('selected', 'selected');
 		});
 
+		this.initSelectorValidation();
+
 		this.state.currentSelector = selector;
-		this.selectorTypeChanged(false);
+		await this.selectorTypeChanged(false);
 		Translator.translatePage();
 	}
 
-	selectorTypeChanged(changeTrigger) {
+	async selectorTypeChanged(changeTrigger) {
 		// let type = $('#edit-selector select[name=type]').val();
 		// add this selector to possible parent selector
 		const selector = this.getCurrentlyEditedSelector();
@@ -1246,6 +1253,96 @@ export default class SitemapController {
 		else {
 			$('#edit-selector #parentSelectors .currently-edited').remove();
 		}
+
+		const $selectorIdInput = $('#selectorId');
+		$selectorIdInput.flexdatalist('destroy');
+		const idDatalistOptions = {
+			textProperty: '{fieldName}',
+			valueProperty: 'fieldName',
+			searchIn: ['entity', 'field'],
+			visibleProperties: ['entity', 'field'],
+			searchContain: true,
+			selectionRequired: false,
+			noResultsText: '',
+			minLength: 1,
+		};
+
+		function makeSelectorId(...conceptsOrProps) {
+			return conceptsOrProps
+				.map(({ id, name }) => slugify(`${name}_id${id}`, { separator: '_' }))
+				.join('_');
+		}
+
+		if (selector.type === 'SelectorConcept') {
+			const concepts = await this.store.listConceptTypes();
+			const hints = concepts.map(concept => ({
+				...concept,
+				fieldName: makeSelectorId(concept),
+			}));
+			$selectorIdInput.flexdatalist({
+				...idDatalistOptions,
+				data: [...hints, { id: '', name: '', fieldName: selector.id }],
+				searchIn: ['id', 'name'],
+				visibleProperties: ['id', 'name'],
+				selectionRequired: true,
+				minLength: 0,
+			});
+			$selectorIdInput.on('select:flexdatalist', (event, item) => {
+				$('#edit-selector [name=conceptTypeId]').val(item.id);
+			});
+		} else {
+			const parentConceptTypeIds = this.getParentConceptTypeIds(selector);
+			if (parentConceptTypeIds.length) {
+				const parentConceptTypes = await Promise.all(
+					parentConceptTypeIds.map(this.store.getConceptType)
+				);
+				const hints = parentConceptTypes.flatMap(concept =>
+					concept.listConceptPropertyType.map(property => ({
+						...property,
+						conceptName: concept.name,
+						fieldName: makeSelectorId(concept, property),
+					}))
+				);
+				$selectorIdInput.flexdatalist({
+					...idDatalistOptions,
+					data: [...hints, { id: '', name: '', conceptName: '', fieldName: selector.id }],
+					searchIn: ['id', 'name', 'conceptName'],
+					visibleProperties: ['id', 'name', 'conceptName'],
+					groupBy: 'conceptName',
+					minLength: 0,
+				});
+			} else {
+				$selectorIdInput.flexdatalist({
+					...idDatalistOptions,
+					data: [
+						...this.state.currentSitemap.model,
+						{ entity: '', field: '', fieldName: selector.id },
+					],
+					groupBy: 'entity',
+				});
+			}
+		}
+	}
+
+	getParentConceptTypeIds(selector) {
+		const sitemap = this.state.currentSitemap;
+		const seenSelectors = new Set([sitemap.rootSelector.uuid, selector.uuid]);
+		const selectorQueue = selector.parentSelectors.filter(uid => !seenSelectors.has(uid));
+		const parentConceptTypeIds = [];
+		while (selectorQueue.length) {
+			const parentSelector = sitemap.getSelectorByUid(selectorQueue.pop());
+			if (parentSelector.type === 'SelectorConcept') {
+				parentConceptTypeIds.push(parentSelector.conceptTypeId);
+			} else {
+				parentSelector.parentSelectors.forEach(uid => {
+					if (!seenSelectors.has(uid)) {
+						seenSelectors.add(uid);
+						selectorQueue.push(uid);
+					}
+				});
+			}
+		}
+		return parentConceptTypeIds;
 	}
 
 	async saveSelector(button) {
@@ -1326,6 +1423,7 @@ export default class SitemapController {
 			regexgroup: $('#edit-selector [name=regexgroup]').val(),
 		};
 		const uuid = $('#edit-selector [name=uuid]').val();
+		const conceptTypeId = $('#edit-selector [name=conceptTypeId]').val();
 
 		$columnHeaders.each(function (i) {
 			const header = $($columnHeaders[i]).val();
@@ -1338,7 +1436,7 @@ export default class SitemapController {
 			});
 		});
 
-		let options = {
+		const options = {
 			id,
 			selector: selectorsSelector,
 			tableHeaderRowSelector,
@@ -1366,6 +1464,7 @@ export default class SitemapController {
 			mergeIntoList,
 			outerHTML,
 			uuid,
+			conceptTypeId,
 		};
 
 		return SelectorList.createSelector(options);

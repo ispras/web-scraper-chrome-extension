@@ -96,6 +96,14 @@ browser.runtime.onMessage.addListener(async request => {
 		return store.getSitemapData(Sitemap.sitemapFromObj(request.sitemap));
 	}
 
+	if (request.listConceptTypes) {
+		return store.listConceptTypes();
+	}
+
+	if (request.getConceptType) {
+		return store.getConceptType(request.conceptTypeId);
+	}
+
 	if (request.scrapeSitemap) {
 		const sitemap = Sitemap.sitemapFromObj(request.sitemap);
 		const queue = new Queue();

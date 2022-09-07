@@ -72,4 +72,36 @@ export default class StoreTalismanApi extends StoreRestApi {
 		delete this.axiosInstance.defaults.headers.Authorization;
 		await this.axiosInstance.get('/oauth/logout');
 	}
+
+	async listConceptTypes() {
+		return this.axiosInstance
+			.post('/graphql', {
+				operationName: 'listConceptTypes',
+				query: 'query listConceptTypes { listConceptType { id name } }',
+			})
+			.then(response => response.data.data.listConceptType);
+	}
+
+	async getConceptType(id) {
+		return this.axiosInstance
+			.post('/graphql', {
+				operationName: 'getConceptType',
+				query: `query getConceptType($id: ID!) {
+					conceptType(id: $id) {
+						id
+						name
+						listConceptPropertyType {
+							id
+							name
+						}
+						listConceptLinkType {
+							id
+							name
+						}
+					}
+				}`,
+				variables: { id },
+			})
+			.then(response => response.data.data.conceptType);
+	}
 }
