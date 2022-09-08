@@ -1,6 +1,7 @@
 import axios from 'axios';
-import StoreRestApi from './StoreRestApi';
 import urlJoin from 'url-join';
+import StoreRestApi from './StoreRestApi';
+import 'sugar';
 
 export default class StoreTalismanApi extends StoreRestApi {
 	constructor(config, baseUrl) {
@@ -73,7 +74,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 		await this.axiosInstance.get('/oauth/logout');
 	}
 
-	async listConceptTypes() {
+	async listAllConceptTypes() {
 		return this.axiosInstance
 			.post('/graphql', {
 				operationName: 'listConceptTypes',
@@ -82,7 +83,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 			.then(response => response.data.data.listConceptType);
 	}
 
-	async getConceptType(id) {
+	async getSingleConceptType(id) {
 		return this.axiosInstance
 			.post('/graphql', {
 				operationName: 'getConceptType',
@@ -103,5 +104,53 @@ export default class StoreTalismanApi extends StoreRestApi {
 				variables: { id },
 			})
 			.then(response => response.data.data.conceptType);
+	}
+
+	async getConceptTypes(ids) {
+		return (
+			await Promise.all(
+				ids.unique().map(id => {
+					return this.getSingleConceptType(id).catch(console.error);
+				})
+			)
+		).compact();
+	}
+
+	async getSingleLinkType(id) {
+		return this.axiosInstance
+			.post('/graphql', {
+				operationName: 'getLinkType',
+				query: `query getLinkType($id: ID!) {
+					conceptLinkType(id: $id) {
+						id
+						name
+						isDirected
+						conceptFromType {
+							id
+							name
+						}
+						conceptToType {
+							id
+							name
+						}
+						listConceptLinkPropertyType {
+							id
+							name
+						}
+					}
+				}`,
+				variables: { id },
+			})
+			.then(response => response.data.data.conceptLinkType);
+	}
+
+	async getLinkTypes(ids) {
+		return (
+			await Promise.all(
+				ids.unique().map(id => {
+					return this.getSingleLinkType(id).catch(console.error);
+				})
+			)
+		).compact();
 	}
 }

@@ -96,12 +96,16 @@ browser.runtime.onMessage.addListener(async request => {
 		return store.getSitemapData(Sitemap.sitemapFromObj(request.sitemap));
 	}
 
-	if (request.listConceptTypes) {
-		return store.listConceptTypes();
+	if (request.listAllConceptTypes) {
+		return store.listAllConceptTypes();
 	}
 
-	if (request.getConceptType) {
-		return store.getConceptType(request.conceptTypeId);
+	if (request.getConceptTypes) {
+		return store.getConceptTypes(request.ids);
+	}
+
+	if (request.getLinkTypes) {
+		return store.getLinkTypes(request.ids);
 	}
 
 	if (request.scrapeSitemap) {

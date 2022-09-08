@@ -8,6 +8,7 @@ import 'jquery-highlight/jquery.highlight';
 import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
+import { slugify } from 'transliteration';
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
@@ -16,7 +17,6 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 import SelectorElement from './Selector/SelectorElement';
-import { slugify } from 'transliteration';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -1254,85 +1254,122 @@ export default class SitemapController {
 			$('#edit-selector #parentSelectors .currently-edited').remove();
 		}
 
+		await this.initSelectorIdHints(selector);
+	}
+
+	async initSelectorIdHints(selector) {
 		const $selectorIdInput = $('#selectorId');
-		$selectorIdInput.flexdatalist('destroy');
+		$selectorIdInput.flexdatalist();
 		const idDatalistOptions = {
 			textProperty: '{fieldName}',
 			valueProperty: 'fieldName',
 			searchIn: ['entity', 'field'],
 			visibleProperties: ['entity', 'field'],
+			groupBy: 'entity',
 			searchContain: true,
 			selectionRequired: false,
 			noResultsText: '',
-			minLength: 1,
+			minLength: 0,
 		};
 
-		function makeSelectorId(...conceptsOrProps) {
-			return conceptsOrProps
-				.map(({ id, name }) => slugify(`${name}_id${id}`, { separator: '_' }))
-				.join('_');
-		}
+		const parentTalismanTypeIds = this.getParentTalismanTypeIds(selector);
+		const conceptTypeIds = parentTalismanTypeIds.filter(({ type }) => type === 'concept');
+		const conceptTypes = await this.store.getConceptTypes(conceptTypeIds.map(({ id }) => id));
+		const linkTypeIds = parentTalismanTypeIds.filter(({ type }) => type === 'link');
+		const linkTypes = await this.store.getLinkTypes(linkTypeIds.map(({ id }) => id));
 
-		if (selector.type === 'SelectorConcept') {
-			const concepts = await this.store.listConceptTypes();
-			const hints = concepts.map(concept => ({
-				...concept,
-				fieldName: makeSelectorId(concept),
-			}));
-			$selectorIdInput.flexdatalist({
-				...idDatalistOptions,
-				data: [...hints, { id: '', name: '', fieldName: selector.id }],
-				searchIn: ['id', 'name'],
-				visibleProperties: ['id', 'name'],
-				selectionRequired: true,
-				minLength: 0,
-			});
-			$selectorIdInput.on('select:flexdatalist', (event, item) => {
-				$('#edit-selector [name=conceptTypeId]').val(item.id);
-			});
-		} else {
-			const parentConceptTypeIds = this.getParentConceptTypeIds(selector);
-			if (parentConceptTypeIds.length) {
-				const parentConceptTypes = await Promise.all(
-					parentConceptTypeIds.map(this.store.getConceptType)
-				);
-				const hints = parentConceptTypes.flatMap(concept =>
-					concept.listConceptPropertyType.map(property => ({
-						...property,
-						conceptName: concept.name,
-						fieldName: makeSelectorId(concept, property),
+		const hints = [];
+
+		if (selector.willReturnElements()) {
+			// may be concept type or link type
+
+			conceptTypes.forEach(conceptType => {
+				hints.push(
+					...conceptType.listConceptLinkType.map(({ id, name }) => ({
+						entity: `Связи типа концепта ${conceptType.name}`,
+						field: `${id} ${name}`,
+						fieldName: this.makeTalismanSelectorId('link', id, name),
 					}))
 				);
-				$selectorIdInput.flexdatalist({
-					...idDatalistOptions,
-					data: [...hints, { id: '', name: '', conceptName: '', fieldName: selector.id }],
-					searchIn: ['id', 'name', 'conceptName'],
-					visibleProperties: ['id', 'name', 'conceptName'],
-					groupBy: 'conceptName',
-					minLength: 0,
-				});
-			} else {
-				$selectorIdInput.flexdatalist({
-					...idDatalistOptions,
-					data: [
-						...this.state.currentSitemap.model,
-						{ entity: '', field: '', fieldName: selector.id },
-					],
-					groupBy: 'entity',
-				});
-			}
+			});
+
+			linkTypes.forEach(linkType => {
+				hints.push(
+					...[linkType.conceptToType, linkType.conceptFromType].map(({ id, name }) => ({
+						entity: `Концепты типа связи ${linkType.name}`,
+						field: `${id} ${name}`,
+						fieldName: this.makeTalismanSelectorId('concept', id, name),
+					}))
+				);
+			});
+
+			// show hints with all concept types
+			const allConceptTypes = await this.store.listAllConceptTypes();
+			hints.push(
+				...allConceptTypes.map(({ id, name }) => ({
+					entity: 'Все типы концептов', // TODO translate
+					field: `${id} ${name}`,
+					fieldName: this.makeTalismanSelectorId('concept', id, name),
+				}))
+			);
+		} else if (parentTalismanTypeIds.length) {
+			// concept or link property
+
+			conceptTypes.forEach(conceptType => {
+				hints.push(
+					...conceptType.listConceptPropertyType.map(({ id, name }) => ({
+						entity: `Характеристики типа концепта ${conceptType.name}`,
+						field: `${id} ${name}`,
+						fieldName: this.makeTalismanSelectorId('property', id, name),
+					}))
+				);
+			});
+
+			linkTypes.forEach(linkType => {
+				hints.push(
+					...linkType.listConceptLinkPropertyType.map(({ id, name }) => ({
+						entity: `Характеристики типа связи ${linkType.name}`,
+						field: `${id} ${name}`,
+						fieldName: this.makeTalismanSelectorId('property', id, name),
+					}))
+				);
+			});
+		} else {
+			hints.push(...this.state.currentSitemap.model, {
+				entity: '',
+				field: '',
+				fieldName: selector.id,
+			});
 		}
+
+		$selectorIdInput.flexdatalist({
+			...idDatalistOptions,
+			data: hints,
+		});
 	}
 
-	getParentConceptTypeIds(selector) {
+	makeTalismanSelectorId(type, id, name) {
+		return `[tlsmn:${type}:${id}] ${name}`;
+	}
+
+	getTalismanTypeId(selector) {
+		const match = /^\[tlsmn:([^:]+):([^:]+)]/.exec(selector.id);
+		if (match) {
+			return { type: match[1], id: match[2] };
+		}
+		return undefined;
+	}
+
+	getParentTalismanTypeIds(selector) {
 		const sitemap = this.state.currentSitemap;
 		const seenSelectors = new Set([sitemap.rootSelector.uuid, selector.uuid]);
 		const selectorQueue = selector.parentSelectors.filter(uid => !seenSelectors.has(uid));
-		const parentConceptTypeIds = [];
+		const parentTypeIds = [];
 		while (selectorQueue.length) {
 			const parentSelector = sitemap.getSelectorByUid(selectorQueue.pop());
-			if (parentSelector.type === 'SelectorConcept') {
-				parentConceptTypeIds.push(parentSelector.conceptTypeId);
+			const typeId = this.getTalismanTypeId(parentSelector);
+			if (typeId && typeId.type !== 'property') {
+				parentTypeIds.push({ ...typeId, selectorUid: parentSelector.uuid });
 			} else {
 				parentSelector.parentSelectors.forEach(uid => {
 					if (!seenSelectors.has(uid)) {
@@ -1342,7 +1379,7 @@ export default class SitemapController {
 				});
 			}
 		}
-		return parentConceptTypeIds;
+		return parentTypeIds;
 	}
 
 	async saveSelector(button) {
