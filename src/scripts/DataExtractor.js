@@ -170,7 +170,11 @@ export default class DataExtractor {
 							newParentElement
 						);
 						deferredChildCommonData.done(function (data) {
-							d.resolve(data);
+							if (selector.dontFlatten) {
+								d.resolve({ [selector.id]: data });
+							} else {
+								d.resolve(data);
+							}
 						});
 					}
 				} else {

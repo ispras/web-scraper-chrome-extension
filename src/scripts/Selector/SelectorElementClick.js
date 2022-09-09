@@ -144,6 +144,7 @@ export default class SelectorElementClick extends Selector {
 			'clickElementUniquenessType',
 			'paginationLimit',
 			'mergeIntoList',
+			'dontFlatten',
 		];
 	}
 }

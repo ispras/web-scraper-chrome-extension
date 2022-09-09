@@ -1437,6 +1437,7 @@ export default class SitemapController {
 		const delay = $('#edit-selector [name=delay]').val();
 		const outerHTML = $('#edit-selector [id=outerHTML]').is(':checked');
 		const mergeIntoList = $('#edit-selector [name=mergeIntoList]').is(':checked');
+		const dontFlatten = $('#edit-selector [name=dontFlatten]').is(':checked');
 		const extractAttribute = $('#edit-selector [name=extractAttribute]').val();
 		const extractStyle = $('#edit-selector [name=extractStyle]').val();
 		const value = $('#edit-selector [name=value]').val();
@@ -1499,6 +1500,7 @@ export default class SitemapController {
 			textmanipulation,
 			stringReplacement,
 			mergeIntoList,
+			dontFlatten,
 			outerHTML,
 			uuid,
 			conceptTypeId,

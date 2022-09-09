@@ -127,38 +127,32 @@ export default class Scraper {
 				const deferredDatamanipulations = [];
 
 				const records = job.getResults();
-				records.forEach(
-					function (record) {
-						// var record = JSON.parse(JSON.stringify(rec));
+				records.forEach(record => {
+					deferredDatamanipulations.push(this.saveFile.bind(this, record));
 
-						deferredDatamanipulations.push(this.saveFile.bind(this, record));
+					const followEntries = Array.from(this.extractFollowEntries(record));
 
-						// @TODO refactor job exstraction to a seperate method
-						if (this.recordCanHaveChildJobs(record)) {
-							// var followSelectorId = record._followSelectorId;
-							const followURL = record._follow;
-							const followSelectorId = record._followSelectorId;
-							delete record._follow;
-							delete record._followSelectorId;
-							const newJob = new Job(followURL, followSelectorId, this, job, record);
-							if (this.queue.canBeAdded(newJob)) {
-								this.queue.add(newJob);
-							}
-							// store already scraped links
-							else {
-								console.log('Ignoring next');
-								console.log(record);
-								//						scrapedRecords.push(record);
-							}
+					if (!followEntries.length) {
+						scrapedRecords.push(record);
+						return;
+					}
+
+					followEntries.forEach(({ followURL, followSelectorId, recordPath }) => {
+						const newJob = new Job(
+							followURL,
+							followSelectorId,
+							this,
+							job,
+							record,
+							recordPath
+						);
+						if (this.queue.canBeAdded(newJob)) {
+							this.queue.add(newJob);
 						} else {
-							if (record._follow !== undefined) {
-								delete record._follow;
-								delete record._followSelectorId;
-							}
-							scrapedRecords.push(record);
+							console.log('Ignoring job', newJob);
 						}
-					}.bind(this)
-				);
+					});
+				});
 
 				$.whenCallSequentially(deferredDatamanipulations).done(
 					function () {
@@ -186,5 +180,28 @@ export default class Scraper {
 				);
 			}.bind(this)
 		);
+	}
+
+	*extractFollowEntries(record, path = []) {
+		if (typeof record !== 'object') {
+			return;
+		}
+
+		const { _follow, _followSelectorId } = record;
+		if (_follow !== undefined) {
+			delete record._follow;
+			delete record._followSelectorId;
+			if (this.recordCanHaveChildJobs({ _follow, _followSelectorId })) {
+				yield {
+					followURL: _follow,
+					followSelectorId: _followSelectorId,
+					recordPath: path,
+				};
+			}
+		}
+
+		for (const key of Object.keys(record)) {
+			yield* this.extractFollowEntries(record[key], [...path, key]);
+		}
 	}
 }
