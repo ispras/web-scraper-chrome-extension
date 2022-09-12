@@ -100,12 +100,12 @@ browser.runtime.onMessage.addListener(async request => {
 		return store.listAllConceptTypes();
 	}
 
-	if (request.getConceptTypes) {
-		return store.getConceptTypes(request.ids);
+	if (request.getConceptType) {
+		return store.getConceptType(request.id);
 	}
 
-	if (request.getLinkTypes) {
-		return store.getLinkTypes(request.ids);
+	if (request.getLinkType) {
+		return store.getLinkType(request.id);
 	}
 
 	if (request.scrapeSitemap) {

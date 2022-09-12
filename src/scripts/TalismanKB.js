@@ -89,7 +89,7 @@ export default class TalismanKB {
 	}
 
 	async getPropertyTypeHintsForConceptType(type) {
-		const conceptType = await this.store.getSingleConceptType(type.id);
+		const conceptType = await this.store.getConceptType(type.id);
 		const entityPrefix = Translator.getTranslationByKey('prop_types_for_concept_type');
 		const entity = `${entityPrefix} ${this.makeHintField({ ...type, ...conceptType })}`;
 		return conceptType.listConceptPropertyType.map(propertyType =>
@@ -103,7 +103,7 @@ export default class TalismanKB {
 	}
 
 	async getLinkTypeHintsForConceptType(type) {
-		const conceptType = await this.store.getSingleConceptType(type.id);
+		const conceptType = await this.store.getConceptType(type.id);
 		const entityPrefix = Translator.getTranslationByKey('link_types_for_concept_type');
 		const entity = `${entityPrefix} ${this.makeHintField({ ...type, ...conceptType })}`;
 		return conceptType.listConceptLinkType.flatMap(linkType => {
@@ -137,7 +137,7 @@ export default class TalismanKB {
 	}
 
 	async getChildConceptTypeHintForLinkType(type) {
-		const linkType = await this.store.getSingleLinkType(type.id);
+		const linkType = await this.store.getLinkType(type.id);
 		const entityPrefix = Translator.getTranslationByKey('concept_types_for_link_type');
 		const entity = `${entityPrefix} ${this.makeHintField({ ...type, ...linkType })}`;
 		const conceptType =
@@ -152,7 +152,7 @@ export default class TalismanKB {
 	}
 
 	async getPropertyTypeHintsForLinkType(type) {
-		const linkType = await this.store.getSingleLinkType(type.id);
+		const linkType = await this.store.getLinkType(type.id);
 		const entityPrefix = Translator.getTranslationByKey('prop_types_for_link_type');
 		const entity = `${entityPrefix} ${this.makeHintField({ ...type, ...linkType })}`;
 		return linkType.listConceptLinkPropertyType.map(propertyType =>

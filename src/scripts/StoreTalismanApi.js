@@ -83,7 +83,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 			.then(response => response.data.data.listConceptType);
 	}
 
-	async getSingleConceptType(id) {
+	async getConceptType(id) {
 		return this.axiosInstance
 			.post('/graphql', {
 				operationName: 'getConceptType',
@@ -113,17 +113,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 			.then(response => response.data.data.conceptType);
 	}
 
-	async getConceptTypes(ids) {
-		return (
-			await Promise.all(
-				ids.unique().map(id => {
-					return this.getSingleConceptType(id).catch(console.error);
-				})
-			)
-		).compact();
-	}
-
-	async getSingleLinkType(id) {
+	async getLinkType(id) {
 		return this.axiosInstance
 			.post('/graphql', {
 				operationName: 'getLinkType',
@@ -149,15 +139,5 @@ export default class StoreTalismanApi extends StoreRestApi {
 				variables: { id },
 			})
 			.then(response => response.data.data.conceptLinkType);
-	}
-
-	async getLinkTypes(ids) {
-		return (
-			await Promise.all(
-				ids.unique().map(id => {
-					return this.getSingleLinkType(id).catch(console.error);
-				})
-			)
-		).compact();
 	}
 }
