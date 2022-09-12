@@ -159,7 +159,6 @@
 	"ConstantValue": { "message": "Константа" },
 	"SelectorInputValue": { "message": "Вставка значения" },
 	"SelectorPageURL": { "message": "URL страницы" },
-	"SelectorConcept": { "message": "Селектор концепта" },
 
 	"sitemap_scrape_requestInterval": { "message": "Интервал между запросами" },
 	"sitemap_scrape_requestIntervalRandomness": { "message": "Случайность между запросами" },

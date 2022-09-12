@@ -151,7 +151,6 @@
 	"SelectorElementClick": { "message": "Element click" },
 	"SelectorGroup": { "message": "Grouped" },
 	"SelectorPageURL": { "message": "Page URL" },
-	"SelectorConcept": { "message": "Concept" },
 
 	"sitemap_scrape_config_requestInterval": { "message": "Request interval" },
 	"sitemap_scrape_config_requestIntervalRandomness": { "message": "Request interval randomness" },
