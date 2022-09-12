@@ -342,5 +342,11 @@
 	},
 	"popup_ws_version": {
 		"message": "Web Scraper version: "
-	}
+	},
+
+	"link_types_for_concept_type": { "message": "Link types for concept type" },
+	"concept_types_for_link_type": { "message": "Concept types for link type" },
+	"prop_types_for_concept_type": { "message": "Property types for concept type" },
+	"prop_types_for_link_type": { "message": "Property types for link type" },
+	"all_concept_types": { "message": "All concept types" }
 }

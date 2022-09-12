@@ -98,6 +98,13 @@ export default class StoreTalismanApi extends StoreRestApi {
 						listConceptLinkType {
 							id
 							name
+							isDirected
+							conceptFromType {
+								id
+							}
+							conceptToType {
+								id
+							}
 						}
 					}
 				}`,

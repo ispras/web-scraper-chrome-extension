@@ -17,6 +17,7 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 import SelectorElement from './Selector/SelectorElement';
+import TalismanKB from './TalismanKB';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -72,9 +73,6 @@ export default class SitemapController {
 			{
 				type: 'SelectorGroup',
 			},
-			{
-				type: 'SelectorConcept', // TODO only for tlsmn storage
-			},
 		];
 		this.selectorTypes = this.selectorTypes.map(typeObj => {
 			return { ...typeObj, title: Translator.getTranslationByKey(typeObj.type) };
@@ -94,6 +92,11 @@ export default class SitemapController {
 				return value;
 			})
 			.set_sort_objects(true);
+
+		if (store.storageType === 'StoreTalismanApi') {
+			this.kb = new TalismanKB(store);
+		}
+
 		return this.init();
 	}
 
@@ -1272,114 +1275,21 @@ export default class SitemapController {
 			minLength: 0,
 		};
 
-		const parentTalismanTypeIds = this.getParentTalismanTypeIds(selector);
-		const conceptTypeIds = parentTalismanTypeIds.filter(({ type }) => type === 'concept');
-		const conceptTypes = await this.store.getConceptTypes(conceptTypeIds.map(({ id }) => id));
-		const linkTypeIds = parentTalismanTypeIds.filter(({ type }) => type === 'link');
-		const linkTypes = await this.store.getLinkTypes(linkTypeIds.map(({ id }) => id));
-
-		const hints = [];
-
-		if (selector.willReturnElements()) {
-			// may be concept type or link type
-
-			conceptTypes.forEach(conceptType => {
-				hints.push(
-					...conceptType.listConceptLinkType.map(({ id, name }) => ({
-						entity: `Связи типа концепта ${conceptType.name}`,
-						field: `${id} ${name}`,
-						fieldName: this.makeTalismanSelectorId('link', id, name),
-					}))
-				);
-			});
-
-			linkTypes.forEach(linkType => {
-				hints.push(
-					...[linkType.conceptToType, linkType.conceptFromType].map(({ id, name }) => ({
-						entity: `Концепты типа связи ${linkType.name}`,
-						field: `${id} ${name}`,
-						fieldName: this.makeTalismanSelectorId('concept', id, name),
-					}))
-				);
-			});
-
-			// show hints with all concept types
-			const allConceptTypes = await this.store.listAllConceptTypes();
-			hints.push(
-				...allConceptTypes.map(({ id, name }) => ({
-					entity: 'Все типы концептов', // TODO translate
-					field: `${id} ${name}`,
-					fieldName: this.makeTalismanSelectorId('concept', id, name),
-				}))
-			);
-		} else if (parentTalismanTypeIds.length) {
-			// concept or link property
-
-			conceptTypes.forEach(conceptType => {
-				hints.push(
-					...conceptType.listConceptPropertyType.map(({ id, name }) => ({
-						entity: `Характеристики типа концепта ${conceptType.name}`,
-						field: `${id} ${name}`,
-						fieldName: this.makeTalismanSelectorId('property', id, name),
-					}))
-				);
-			});
-
-			linkTypes.forEach(linkType => {
-				hints.push(
-					...linkType.listConceptLinkPropertyType.map(({ id, name }) => ({
-						entity: `Характеристики типа связи ${linkType.name}`,
-						field: `${id} ${name}`,
-						fieldName: this.makeTalismanSelectorId('property', id, name),
-					}))
-				);
-			});
-		} else {
-			hints.push(...this.state.currentSitemap.model, {
-				entity: '',
-				field: '',
-				fieldName: selector.id,
-			});
-		}
+		const hints = this.kb
+			? await this.kb.generateIdHints(selector, this.state.currentSitemap)
+			: [
+					...this.state.currentSitemap.model,
+					{
+						entity: '',
+						field: '',
+						fieldName: selector.id,
+					},
+			  ];
 
 		$selectorIdInput.flexdatalist({
 			...idDatalistOptions,
 			data: hints,
 		});
-	}
-
-	makeTalismanSelectorId(type, id, name) {
-		return `[tlsmn:${type}:${id}] ${name}`;
-	}
-
-	getTalismanTypeId(selector) {
-		const match = /^\[tlsmn:([^:]+):([^:]+)]/.exec(selector.id);
-		if (match) {
-			return { type: match[1], id: match[2] };
-		}
-		return undefined;
-	}
-
-	getParentTalismanTypeIds(selector) {
-		const sitemap = this.state.currentSitemap;
-		const seenSelectors = new Set([sitemap.rootSelector.uuid, selector.uuid]);
-		const selectorQueue = selector.parentSelectors.filter(uid => !seenSelectors.has(uid));
-		const parentTypeIds = [];
-		while (selectorQueue.length) {
-			const parentSelector = sitemap.getSelectorByUid(selectorQueue.pop());
-			const typeId = this.getTalismanTypeId(parentSelector);
-			if (typeId && typeId.type !== 'property') {
-				parentTypeIds.push({ ...typeId, selectorUid: parentSelector.uuid });
-			} else {
-				parentSelector.parentSelectors.forEach(uid => {
-					if (!seenSelectors.has(uid)) {
-						seenSelectors.add(uid);
-						selectorQueue.push(uid);
-					}
-				});
-			}
-		}
-		return parentTypeIds;
 	}
 
 	async saveSelector(button) {
