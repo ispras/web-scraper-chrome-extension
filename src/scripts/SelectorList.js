@@ -15,7 +15,6 @@ import SelectorElementScroll from './Selector/SelectorElementScroll';
 import SelectorElementAttribute from './Selector/SelectorElementAttribute';
 import SelectorTable from './Selector/SelectorTable';
 import SelectorPageURL from './Selector/SelectorPageURL';
-import SelectorConcept from './Selector/SelectorConcept';
 
 export default class SelectorList extends Array {
 	static createSelector(options) {
@@ -52,8 +51,6 @@ export default class SelectorList extends Array {
 				return new SelectorTable(options);
 			case 'SelectorText':
 				return new SelectorText(options);
-			case 'SelectorConcept':
-				return new SelectorConcept(options);
 			default:
 				return new SelectorText(options);
 		}
