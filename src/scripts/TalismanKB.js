@@ -85,6 +85,7 @@ export default class TalismanKB {
 			entity,
 			field: this.makeHintField(kbType),
 			fieldName: this.makeSelectorId(kbType),
+			kbHint: true,
 		};
 	}
 

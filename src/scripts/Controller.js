@@ -272,6 +272,7 @@ export default class SitemapController {
 			},
 			'#edit-selector #selectorId': {
 				'change:flexdatalist': this.updateCurrentlyEditedSelectorInParentsList,
+				'select:flexdatalist': this.selectorIdHintSelected,
 			},
 			'#selector-tree button[action=add-selector]': {
 				click: this.addSelector,
@@ -1277,6 +1278,12 @@ export default class SitemapController {
 			...idDatalistOptions,
 			data: hints,
 		});
+	}
+
+	selectorIdHintSelected(selectorIdInput, event, item) {
+		if (item.kbHint) {
+			$('#edit-selector [name=dontFlatten]').prop('checked', true);
+		}
 	}
 
 	async saveSelector(button) {
