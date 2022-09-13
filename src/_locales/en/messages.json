@@ -347,5 +347,6 @@
 	"concept_types_for_link_type": { "message": "Concept types for link type" },
 	"prop_types_for_concept_type": { "message": "Property types for concept type" },
 	"prop_types_for_link_type": { "message": "Property types for link type" },
-	"all_concept_types": { "message": "All concept types" }
+	"all_concept_types": { "message": "All concept types" },
+	"incompatible_kb_parent_type": { "message": "There are incompatible parent KB types" }
 }

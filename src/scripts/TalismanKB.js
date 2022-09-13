@@ -39,16 +39,17 @@ export default class TalismanKB {
 			return undefined;
 		}
 		const [type, id, parentId, direction, childId] = match[1].split(':');
-		if (type === KB_TYPES.CONCEPT) {
-			return { type, id };
+		switch (type) {
+			case KB_TYPES.CONCEPT:
+				return { type, id };
+			case KB_TYPES.LINK:
+				return { type, id, parentId, direction, childId };
+			case KB_TYPES.CONCEPT_PROPERTY:
+			case KB_TYPES.LINK_PROPERTY:
+				return { type, id, parentId };
+			default:
+				return undefined;
 		}
-		if (type === KB_TYPES.LINK) {
-			return { type, id, parentId, direction, childId };
-		}
-		if (type in KB_TYPES) {
-			return { type, id, parentId };
-		}
-		return undefined;
 	}
 
 	getParentKBTypes(selector, sitemap) {
@@ -226,5 +227,53 @@ export default class TalismanKB {
 		// TODO improve error handling
 		const hints = await Promise.all(hintsPromises.map(promise => promise.catch(console.error)));
 		return hints.compact().flatten();
+	}
+
+	isCompatibleWithParentType(kbType, parentKbType) {
+		if (kbType.type === KB_TYPES.CONCEPT && parentKbType.type === KB_TYPES.CONCEPT) {
+			return true;
+		}
+		if (kbType.type === KB_TYPES.CONCEPT && parentKbType.type === KB_TYPES.LINK) {
+			return kbType.id === parentKbType.childId;
+		}
+		if (
+			(kbType.type === KB_TYPES.LINK && parentKbType.type === KB_TYPES.CONCEPT) ||
+			(kbType.type === KB_TYPES.CONCEPT_PROPERTY && parentKbType.type === KB_TYPES.CONCEPT) ||
+			(kbType.type === KB_TYPES.LINK_PROPERTY && parentKbType.type === KB_TYPES.LINK)
+		) {
+			return kbType.parentId === parentKbType.id;
+		}
+		return false;
+	}
+
+	isCompatibleWithParentSelector(kbType, parentSelector, sitemap) {
+		const parentKbType = this.getKBType(parentSelector);
+		if (parentKbType) {
+			return this.isCompatibleWithParentType(kbType, parentKbType);
+		}
+		return this.getParentKBTypes(parentSelector, sitemap).every(ancestorKbType =>
+			this.isCompatibleWithParentType(kbType, ancestorKbType)
+		);
+	}
+
+	validateParentSelectors(selector, sitemap) {
+		const kbType = this.getKBType(selector);
+		if (!kbType) {
+			return true;
+		}
+		for (const parentUid of selector.parentSelectors) {
+			if (parentUid === sitemap.rootSelector.uuid) {
+				continue;
+			}
+			const parentSelector = sitemap.getSelectorByUid(parentUid);
+			if (!this.isCompatibleWithParentSelector(kbType, parentSelector, sitemap)) {
+				// TODO improve validation messages
+				return {
+					valid: false,
+					message: Translator.getTranslationByKey('incompatible_kb_parent_type'),
+				};
+			}
+		}
+		return true;
 	}
 }

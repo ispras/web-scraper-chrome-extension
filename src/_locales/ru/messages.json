@@ -383,5 +383,8 @@
 	"concept_types_for_link_type": { "message": "Типы концептов для типа связи" },
 	"prop_types_for_concept_type": { "message": "Типы характеристик для типа концепта" },
 	"prop_types_for_link_type": { "message": "Типы характеристик для типа связи" },
-	"all_concept_types": { "message": "Все типы концептов" }
+	"all_concept_types": { "message": "Все типы концептов" },
+	"incompatible_kb_parent_type": {
+		"message": "Среди селекторов-предков есть несовместимые типы БЗ"
+	}
 }

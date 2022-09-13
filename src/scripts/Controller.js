@@ -1149,6 +1149,10 @@ export default class SitemapController {
 									}
 								}
 
+								if (this.kb) {
+									return this.kb.validateParentSelectors(newSelector, sitemap);
+								}
+
 								return true;
 							}.bind(this),
 						},
