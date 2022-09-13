@@ -201,7 +201,9 @@ export default class TalismanKB {
 			);
 
 			// show hints with all concept types
-			hintsPromises.push(this.getAllConceptTypeHints());
+			if (!parentLinkTypes.length) {
+				hintsPromises.push(this.getAllConceptTypeHints());
+			}
 		} else if (!selector.canCreateNewJobs()) {
 			// concept or link property
 
@@ -214,6 +216,10 @@ export default class TalismanKB {
 			hintsPromises.push(
 				...parentLinkTypes.map(linkType => this.getPropertyTypeHintsForLinkType(linkType))
 			);
+		}
+
+		if (!hintsPromises.length) {
+			return [];
 		}
 
 		// TODO improve error handling
