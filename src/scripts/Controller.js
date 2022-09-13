@@ -107,10 +107,11 @@ export default class SitemapController {
 					event,
 					selector,
 					(function (selector, event) {
-						return function () {
+						return function (...args) {
 							const continueBubbling = controls[selector][event].call(
 								controller,
-								this
+								this,
+								...args
 							);
 							if (continueBubbling !== true) {
 								return false;
@@ -1181,19 +1182,6 @@ export default class SitemapController {
 		});
 		$('#viewport').html($editSelectorForm);
 
-		// $('#selectorId').flexdatalist({
-		// 	init: this.initSelectorValidation(),
-		// 	textProperty: '{fieldName}',
-		// 	valueProperty: 'fieldName',
-		// 	data: [...sitemap.model, { entity: '', field: '', fieldName: selector.id }],
-		// 	searchIn: ['entity', 'field'],
-		// 	visibleProperties: ['entity', 'field'],
-		// 	groupBy: 'entity',
-		// 	searchContain: true,
-		// 	noResultsText: '',
-		// 	minLength: 1,
-		// });
-
 		// mark initially opened selector as currently edited
 		$('#edit-selector #parentSelectors option').each((_, element) => {
 			if ($(element).val() === selector.uuid) {
@@ -1270,19 +1258,20 @@ export default class SitemapController {
 			searchContain: true,
 			selectionRequired: false,
 			noResultsText: '',
-			minLength: 0,
+			minLength: 1,
 		};
 
-		const hints = this.kb
-			? await this.kb.generateIdHints(selector, this.state.currentSitemap)
-			: [
-					...this.state.currentSitemap.model,
-					{
-						entity: '',
-						field: '',
-						fieldName: selector.id,
-					},
-			  ];
+		const hints = [];
+		if (this.kb) {
+			const kbHints = await this.kb.generateIdHints(selector, this.state.currentSitemap);
+			hints.push(...kbHints);
+		}
+		hints.push(...this.state.currentSitemap.model);
+		hints.push({
+			entity: '',
+			field: '',
+			fieldName: selector.id,
+		});
 
 		$selectorIdInput.flexdatalist({
 			...idDatalistOptions,
