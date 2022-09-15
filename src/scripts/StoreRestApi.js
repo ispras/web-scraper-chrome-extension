@@ -2,6 +2,7 @@ import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
 import urlJoin from 'url-join';
+import * as browser from 'webextension-polyfill';
 
 export default class StoreRestApi {
 	constructor(config, baseUrl, sitemapsPath = 'sitemaps/') {
@@ -15,10 +16,18 @@ export default class StoreRestApi {
 	}
 
 	postInit() {
-		this.axiosInstance.interceptors.response.use(response => {
+		this.axiosInstance.interceptors.response.use(async response => {
+			console.log(response);
 			const contentType = response.headers['content-type'];
-			if (contentType !== 'application/json') {
-				const error = new Error(`Expected JSON response from API, but got ${contentType}`);
+			if (
+				contentType !== 'application/json' &&
+				response.request.responseURL.includes('auth')
+			) {
+				console.log('auth error');
+				await browser.runtime.sendMessage({
+					authError: true,
+				});
+				const error = new Error(`Authentication Error`);
 				return Promise.reject(error);
 			}
 			return response;
@@ -29,8 +38,8 @@ export default class StoreRestApi {
 		return this.axiosInstance
 			.post(this.sitemapsPath, Sitemap.sitemapFromObj(sitemap).exportSitemap())
 			.then(response => Sitemap.sitemapFromObj(response.data))
-			.catch(() => {
-				alert('StoreApi: Error creating sitemap.');
+			.catch(error => {
+				alert(`StoreApi: Error creating sitemap.${error}`);
 			});
 	}
 
@@ -49,7 +58,7 @@ export default class StoreRestApi {
 					if (error.response && error.response.status === 304) {
 						return sitemap;
 					}
-					alert('StoreApi: Error updating sitemap.');
+					alert(`StoreApi: Error updating sitemap.${error}`);
 				});
 		}
 		return this.createSitemap(sitemap);
@@ -61,8 +70,8 @@ export default class StoreRestApi {
 			.then(response => {
 				return response.data;
 			})
-			.catch(() => {
-				alert('StoreApi: Error deleting sitemap.');
+			.catch(error => {
+				alert(`StoreApi: Error deleting sitemap.${error}`);
 			});
 	}
 
@@ -81,12 +90,12 @@ export default class StoreRestApi {
 					}
 				});
 				if (failedIds.length) {
-					alert(`StoreApi: failed to read sitemaps ${failedIds.join(', ')}`);
+					alert(`StoreApi: failed to read sitemaps.${failedIds.join(', ')}`);
 				}
 				return sitemaps;
 			})
-			.catch(() => {
-				alert('StoreApi: Could not get all sitemaps.');
+			.catch(error => {
+				alert(`StoreApi: Could not get all sitemaps. ${error}`);
 			});
 	}
 

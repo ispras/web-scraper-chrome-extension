@@ -18,6 +18,13 @@ import Translator from './Translator';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
+		browser.runtime.onMessage.addListener(async request => {
+			if (request.authError) {
+				$('#confirm-action-modal').remove();
+				$('.modal-backdrop').remove();
+				return this.showAuthPage();
+			}
+		});
 		this.store = store;
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');

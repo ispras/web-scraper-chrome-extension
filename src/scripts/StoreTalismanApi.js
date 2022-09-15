@@ -32,8 +32,6 @@ export default class StoreTalismanApi extends StoreRestApi {
 		} else {
 			let credential = { username: credentials.username };
 			this.postInit();
-			let tToken = loginStatus.data.access_token;
-			this.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
 			return {
 				authStatus: {
 					success: true,
