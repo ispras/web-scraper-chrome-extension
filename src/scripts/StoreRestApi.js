@@ -16,7 +16,7 @@ export default class StoreRestApi {
 	}
 
 	postInit() {
-		this.axiosInstance.interceptors.response.use(async response => {
+		this.axiosInstance.interceptors.response.use(response => {
 			console.log(response);
 			const contentType = response.headers['content-type'];
 			if (
@@ -24,7 +24,7 @@ export default class StoreRestApi {
 				response.request.responseURL.includes('auth')
 			) {
 				console.log('auth error');
-				await browser.runtime.sendMessage({
+				browser.runtime.sendMessage({
 					authError: true,
 				});
 				const error = new Error(`Authentication Error`);
