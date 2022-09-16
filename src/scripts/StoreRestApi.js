@@ -13,20 +13,13 @@ export default class StoreRestApi {
 		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
 		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
 		this.sitemapsPath = sitemapsPath;
+		this.setAxiosInterceptors();
 	}
 
-	postInit() {
+	setAxiosInterceptors() {
 		this.axiosInstance.interceptors.response.use(response => {
-			console.log(response);
 			const contentType = response.headers['content-type'];
-			if (
-				contentType !== 'application/json' &&
-				response.request.responseURL.includes('auth')
-			) {
-				console.log('auth error');
-				browser.runtime.sendMessage({
-					authError: true,
-				});
+			if (contentType !== 'application/json') {
 				const error = new Error(`Authentication Error`);
 				return Promise.reject(error);
 			}
