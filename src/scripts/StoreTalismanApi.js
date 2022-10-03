@@ -10,7 +10,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 	}
 
 	async initTalismanLogin(credentials) {
-		let bodyForm = new FormData();
+		const bodyForm = new FormData();
 		const tLogin = credentials.username;
 		const tPassword = credentials.password;
 		bodyForm.append('username', tLogin);
@@ -43,12 +43,9 @@ export default class StoreTalismanApi extends StoreRestApi {
 	}
 
 	setAxiosInterceptors() {
+		super.setAxiosInterceptors();
 		this.axiosInstance.interceptors.response.use(response => {
-			const contentType = response.headers['content-type'];
-			if (
-				contentType !== 'application/json' &&
-				response.request.responseURL.includes('auth')
-			) {
+			if (response.request.responseURL.includes('auth')) {
 				browser.runtime.sendMessage({
 					authError: true,
 				});

@@ -16,7 +16,6 @@ config.loadConfiguration().then(() => {
 	console.log('initial configuration', config);
 	if (config.storageType === 'rest') {
 		store = new StoreRestApi(config, config.restUrl);
-		store.setAxiosInterceptors();
 	} else if (config.storageType === 'talisman') {
 		store = new StoreTalismanApi(config, config.talismanApiUrl);
 	} else {
@@ -29,7 +28,6 @@ browser.storage.onChanged.addListener(function () {
 		console.log('configuration changed', config);
 		if (config.storageType === 'rest') {
 			store = new StoreRestApi(config, config.restUrl);
-			store.setAxiosInterceptors();
 		} else if (config.storageType === 'talisman') {
 			store = new StoreTalismanApi(config, config.talismanApiUrl);
 		} else {

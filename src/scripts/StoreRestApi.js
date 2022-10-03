@@ -2,7 +2,6 @@ import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
 import urlJoin from 'url-join';
-import * as browser from 'webextension-polyfill';
 
 export default class StoreRestApi {
 	constructor(config, baseUrl, sitemapsPath = 'sitemaps/') {
@@ -20,7 +19,7 @@ export default class StoreRestApi {
 		this.axiosInstance.interceptors.response.use(response => {
 			const contentType = response.headers['content-type'];
 			if (contentType !== 'application/json') {
-				const error = new Error(`Authentication Error`);
+				const error = new Error(`Incorrect response type`);
 				return Promise.reject(error);
 			}
 			return response;
