@@ -75,12 +75,12 @@ export default class StorePouchDB {
 
 	async saveSitemap(sitemap, previousSitemapId) {
 		if (previousSitemapId && previousSitemapId !== sitemap._id) {
-			if (sitemap._rev) {
-				delete sitemap._rev;
-			}
-			const updatedSitemap = await this.createSitemap(sitemap);
+			const { _rev, ...bareSitemap } = sitemap;
+			const updatedSitemap = await this.createSitemap(bareSitemap);
 			await this.moveSitemapData(previousSitemapId, sitemap._id);
-			return updatedSitemap;
+			await this.deleteSitemap({ _rev, _id: previousSitemapId });
+			sitemap._rev = updatedSitemap._rev;
+			return sitemap;
 		}
 		return this.createSitemap(sitemap);
 	}
