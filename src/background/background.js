@@ -77,7 +77,7 @@ browser.runtime.onMessage.addListener(async request => {
 	}
 
 	if (request.saveSitemap) {
-		return store.saveSitemap(request.sitemap);
+		return store.saveSitemap(request.sitemap, request.previousSitemapId);
 	}
 
 	if (request.deleteSitemap) {

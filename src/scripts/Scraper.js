@@ -162,7 +162,7 @@ export default class Scraper {
 
 				$.whenCallSequentially(deferredDatamanipulations).done(
 					function () {
-						this.store.saveSitemap(this.sitemap, function () {});
+						this.store.saveSitemap(this.sitemap);
 						this.resultWriter.writeDocs(scrapedRecords).then(() => {
 							const now = new Date().getTime();
 							// delay next job if needed
