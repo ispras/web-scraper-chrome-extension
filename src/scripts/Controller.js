@@ -122,6 +122,8 @@ export default class SitemapController {
 	async loadTemplates() {
 		const templateIds = [
 			'Viewport',
+			'ProjectList',
+			'ProjectListItem',
 			'SitemapList',
 			'SitemapListItem',
 			'SitemapCreate',
@@ -177,6 +179,9 @@ export default class SitemapController {
 			'#sitemaps-nav-button': {
 				click: this.showSitemaps,
 			},
+			'#projects-nav-button': {
+				click: this.showProjects,
+			},
 			'#create-sitemap-create-nav-button': {
 				click: this.showCreateSitemap,
 			},
@@ -198,7 +203,6 @@ export default class SitemapController {
 			'.copy_sitemap_submit': {
 				click: this.confirmCopySitemap,
 			},
-
 			'#submit-create-sitemap': {
 				click: this.createSitemap,
 			},
@@ -225,6 +229,9 @@ export default class SitemapController {
 			},
 			'#sitemaps tr td:nth-of-type(1)': {
 				click: this.editSitemap,
+			},
+			'#projects tr td:nth-of-type(1)': {
+				click: this.editProject,
 			},
 			'#sitemaps button[action=delete-sitemap]': {
 				click: this.deleteSitemap,
@@ -318,11 +325,13 @@ export default class SitemapController {
 		if (this.store.supportAuth) {
 			await this.showAuthPage();
 		} else {
+			$(`#projects-nav-button`).hide();
 			await this.showSitemaps();
 		}
 	}
 
 	clearState() {
+		$('.open').removeClass('open');
 		this.state = {
 			// sitemap that is currently open
 			currentSitemap: null,
@@ -657,12 +666,11 @@ export default class SitemapController {
 
 	async showAuthPage() {
 		$('.nav').hide();
-
 		const isAuthorized = await this.store.isAuthorized();
 		if (isAuthorized) {
 			$('#user-name').text(isAuthorized.data.name);
 			Translator.translatePage();
-			await this.showSitemaps();
+			await this.showProjects();
 		} else {
 			const $authorizationPage = ich.AuthorizationPage();
 			$('#viewport').html($authorizationPage);
@@ -694,7 +702,7 @@ export default class SitemapController {
 			const authData = await this.store.isAuthorized();
 			$('#user-name').show().text(authData.data.name);
 			$('#logout-nav-button').show();
-			await this.showSitemaps();
+			await this.showProjects();
 		} else if (!authStatus.authStatus.success) {
 			$('.alert')
 				.attr('id', 'error')
@@ -711,12 +719,55 @@ export default class SitemapController {
 		await this.store.logOut().finally(async () => await this.showAuthPage());
 	}
 
-	async showSitemaps() {
+	async showProjects() {
 		this.clearState();
-		this.setActiveNavigationButton('sitemaps');
+		this.setActiveNavigationButton('projects');
 
-		const sitemaps = await this.store.getAllSitemaps();
+		$(`#sitemaps-nav-button`).prop('disabled', true);
+		$('#create-sitemap-nav-button').prop('disabled', true);
+
+		const projects = await this.store.getAllProjects();
+
+		if (projects.error_msg) {
+			$('#sitemaps').hide();
+			$('#viewport').html(
+				'<div class="container"><div data-i18n="get_sitemap_error"></div></div>'
+			);
+			Translator.translatePage();
+		}
+
+		const $projectListPanel = ich.ProjectList();
+
+		$('.nav').show();
+		if (this.store.supportAuth) {
+			$('#auth_nav').css('display', 'block');
+		} else {
+			$('#auth_nav').css('display', 'none');
+		}
+		projects.forEach(project => {
+			const $project = ich.ProjectListItem(project);
+			$project.data('project', project);
+			$projectListPanel.find('tbody').append($project);
+		});
+		$('#viewport').html($projectListPanel);
+		Translator.translatePage();
+	}
+
+	async showSitemaps(projectId) {
+		this.clearState();
+
+		if (typeof projectId === 'string') {
+			$(`#sitemaps-nav-button`).attr('projectid', projectId);
+		} else {
+			projectId = $(`#sitemaps-nav-button`).attr('projectid');
+		}
+
+		const sitemaps = await this.store.getAllSitemaps(projectId);
+
 		const $sitemapListPanel = ich.SitemapList();
+
+		this.setActiveNavigationButton('sitemaps');
+		$(`#sitemaps-nav-button`).prop('disabled', false);
 
 		if (sitemaps.error_msg) {
 			$('#sitemaps').hide();
@@ -736,6 +787,7 @@ export default class SitemapController {
 				$sitemap.data('sitemap', sitemap);
 				$sitemapListPanel.find('tbody').append($sitemap);
 			});
+			$('#create-sitemap-nav-button').prop('disabled', false);
 			$('#viewport').html($sitemapListPanel);
 			Translator.translatePage();
 		}
@@ -857,6 +909,11 @@ export default class SitemapController {
 			this.state.currentSitemap = newSitemap;
 		}
 		this.showSitemapSelectorList();
+	}
+
+	async editProject(td) {
+		const project = $(td).parent().data('project');
+		return await this.showSitemaps(project.id);
 	}
 
 	/**

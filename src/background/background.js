@@ -85,7 +85,14 @@ browser.runtime.onMessage.addListener(async request => {
 	}
 
 	if (request.getAllSitemaps) {
+		if (request.projectId) {
+			return store.getAllSitemaps(request.projectId);
+		}
 		return store.getAllSitemaps();
+	}
+
+	if (request.getAllProjects) {
+		return store.getAllProjects();
 	}
 
 	if (request.sitemapExists) {
