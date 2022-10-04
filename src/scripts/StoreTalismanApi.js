@@ -43,7 +43,6 @@ export default class StoreTalismanApi extends StoreRestApi {
 	}
 
 	setAxiosInterceptors() {
-		super.setAxiosInterceptors();
 		this.axiosInstance.interceptors.response.use(response => {
 			if (response.request.responseURL.includes('auth')) {
 				browser.runtime.sendMessage({
@@ -54,6 +53,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 			}
 			return response;
 		});
+		super.setAxiosInterceptors();
 	}
 
 	async isAuthorized() {
