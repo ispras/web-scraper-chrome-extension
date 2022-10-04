@@ -725,7 +725,7 @@ export default class SitemapController {
 		const sitemaps = await this.store.getAllSitemaps();
 		const $sitemapListPanel = ich.SitemapList();
 
-		if (sitemaps.error_msg) {
+		if (!sitemaps) {
 			$('#sitemaps').hide();
 			$('#viewport').html(
 				'<div class="container"><div data-i18n="get_sitemap_error"></div></div>'
