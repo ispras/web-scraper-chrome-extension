@@ -834,28 +834,11 @@ export default class SitemapController {
 			return false;
 		}
 
-		// just change sitemaps url
-		if (sitemapData.id === sitemap._id) {
-			// change data
-			sitemap.startUrls = sitemapData.startUrls;
-			sitemap.model = new Model(sitemapData.model);
-			await this.store.saveSitemap(sitemap);
-		} else {
-			// id changed. we need to delete the old one and create a new one
-			const oldSitemap = sitemap;
-			const newSitemap = new Sitemap(
-				sitemapData.id,
-				sitemapData.startUrls,
-				sitemapData.model,
-				sitemap.selectors
-			);
-			if (newSitemap._rev) {
-				delete newSitemap._rev;
-			}
-			await this.store.createSitemap(newSitemap);
-			await this.store.deleteSitemap(oldSitemap);
-			this.state.currentSitemap = newSitemap;
-		}
+		const previousSitemapId = sitemap._id;
+		sitemap._id = sitemapData.id;
+		sitemap.startUrls = sitemapData.startUrls;
+		sitemap.model = new Model(sitemapData.model);
+		await this.store.saveSitemap(sitemap, previousSitemapId);
 		this.showSitemapSelectorList();
 	}
 

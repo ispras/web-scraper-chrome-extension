@@ -21,10 +21,11 @@ export default class StoreDevtools {
 		return Sitemap.sitemapFromObj(await browser.runtime.sendMessage(request));
 	}
 
-	async saveSitemap(sitemap) {
+	async saveSitemap(sitemap, previousSitemapId) {
 		const request = {
 			saveSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
+			previousSitemapId,
 		};
 
 		const newSitemap = await browser.runtime.sendMessage(request);
