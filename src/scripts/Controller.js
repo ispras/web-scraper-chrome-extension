@@ -317,7 +317,7 @@ export default class SitemapController {
 		});
 		if (this.store.supportAuth) {
 			browser.runtime.onMessage.addListener(async request => {
-				if (request.authError) {
+				if (request.authError || request.authStatusChanged) {
 					$('#confirm-action-modal').remove();
 					$('.modal-backdrop').remove();
 					return this.showAuthPage();
