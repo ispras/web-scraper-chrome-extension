@@ -217,6 +217,9 @@ export default class Sitemap {
 		if (sitemapObj['selectors'] === undefined) {
 			sitemapObj['selectors'] = [];
 		}
+		if (sitemapObj['model'] === undefined) {
+			sitemapObj['model'] = [];
+		}
 		return JSON.stringify(sitemapObj, null, 2);
 	}
 

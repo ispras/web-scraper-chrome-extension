@@ -31,40 +31,51 @@ export default class StoreRestApi {
 			.post(this.sitemapsPath, Sitemap.sitemapFromObj(sitemap).exportSitemap())
 			.then(response => Sitemap.sitemapFromObj(response.data))
 			.catch(error => {
-				alert(`StoreApi: Error creating sitemap.${error}`);
+				alert(`StoreApi: Error creating sitemap. ${error}`);
 			});
 	}
 
-	async saveSitemap(sitemap) {
-		const sitemapExists = await this.sitemapExists(sitemap._id);
-		if (sitemapExists) {
-			return this.axiosInstance
-				.put(
-					urlJoin(this.sitemapsPath, sitemap._id),
-					Sitemap.sitemapFromObj(sitemap).exportSitemap()
-				)
-				.then(() => {
-					return sitemap;
-				})
-				.catch(error => {
-					if (error.response && error.response.status === 304) {
-						return sitemap;
-					}
-					alert(`StoreApi: Error updating sitemap.${error}`);
-				});
+	async saveSitemap(sitemap, previousSitemapId) {
+		const sitemapId = previousSitemapId || sitemap._id;
+		const sitemapExists = await this.sitemapExists(sitemapId);
+		if (!sitemapExists) {
+			return this.createSitemap(sitemap);
 		}
-		return this.createSitemap(sitemap);
+
+		const result = await this.axiosInstance
+			.put(
+				urlJoin(this.sitemapsPath, sitemapId),
+				Sitemap.sitemapFromObj(sitemap).exportSitemap()
+			)
+			.then(() => {
+				return sitemap;
+			})
+			.catch(error => {
+				if (error.response && error.response.status === 304) {
+					return sitemap;
+				}
+				alert(`StoreApi: Error updating sitemap. ${error}`);
+			});
+
+		if (result && previousSitemapId && previousSitemapId !== sitemap._id) {
+			await this.localDataStore.moveSitemapData(previousSitemapId, sitemap._id);
+		}
+		return result;
 	}
 
-	deleteSitemap(sitemap) {
-		return this.axiosInstance
+	async deleteSitemap(sitemap) {
+		const result = await this.axiosInstance
 			.delete(urlJoin(this.sitemapsPath, sitemap._id))
 			.then(response => {
 				return response.data;
 			})
 			.catch(error => {
-				alert(`StoreApi: Error deleting sitemap.${error}`);
+				alert(`StoreApi: Error deleting sitemap. ${error}`);
 			});
+		if (result) {
+			await this.localDataStore.getSitemapDataDb(sitemap._id).destroy();
+		}
+		return result;
 	}
 
 	getAllSitemaps() {
@@ -82,7 +93,7 @@ export default class StoreRestApi {
 					}
 				});
 				if (failedIds.length) {
-					alert(`StoreApi: failed to read sitemaps.${failedIds.join(', ')}`);
+					alert(`StoreApi: failed to read sitemaps ${failedIds.join(', ')}`);
 				}
 				return sitemaps;
 			})
