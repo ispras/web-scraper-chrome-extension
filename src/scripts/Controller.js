@@ -316,6 +316,13 @@ export default class SitemapController {
 			},
 		});
 		if (this.store.supportAuth) {
+			browser.runtime.onMessage.addListener(async request => {
+				if (request.authError || request.authStatusChanged) {
+					$('#confirm-action-modal').remove();
+					$('.modal-backdrop').remove();
+					return this.showAuthPage();
+				}
+			});
 			await this.showAuthPage();
 		} else {
 			await this.showSitemaps();
@@ -718,7 +725,7 @@ export default class SitemapController {
 		const sitemaps = await this.store.getAllSitemaps();
 		const $sitemapListPanel = ich.SitemapList();
 
-		if (sitemaps.error_msg) {
+		if (!sitemaps) {
 			$('#sitemaps').hide();
 			$('#viewport').html(
 				'<div class="container"><div data-i18n="get_sitemap_error"></div></div>'
@@ -1204,10 +1211,8 @@ export default class SitemapController {
 	}
 
 	selectorTypeChanged(changeTrigger) {
-		// let type = $('#edit-selector select[name=type]').val();
 		// add this selector to possible parent selector
 		const selector = this.getCurrentlyEditedSelector();
-		// this.state.currentSelector = selector;
 		const features = selector.getFeatures();
 		$('#edit-selector .feature').hide();
 		features.forEach(function (feature) {
@@ -1718,7 +1723,7 @@ export default class SitemapController {
 				if (url && attachments.has(url)) {
 					const attachment = { [selector.getUrlColumn()]: url };
 					Object.entries(attachments.get(url)).forEach(([key, value]) => {
-						attachment[`${selector.uuid}-${key}`] = value;
+						attachment[`${selector.id}-${key}`] = value;
 					});
 					return attachment;
 				}

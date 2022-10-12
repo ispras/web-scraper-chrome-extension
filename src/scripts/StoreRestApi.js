@@ -12,13 +12,14 @@ export default class StoreRestApi {
 		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
 		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
 		this.sitemapsPath = sitemapsPath;
+		this.setAxiosInterceptors();
 	}
 
-	postInit() {
+	setAxiosInterceptors() {
 		this.axiosInstance.interceptors.response.use(response => {
 			const contentType = response.headers['content-type'];
 			if (contentType !== 'application/json') {
-				const error = new Error(`Expected JSON response from API, but got ${contentType}`);
+				const error = new Error(`Incorrect response type`);
 				return Promise.reject(error);
 			}
 			return response;
@@ -30,8 +31,7 @@ export default class StoreRestApi {
 			.post(this.sitemapsPath, Sitemap.sitemapFromObj(sitemap).exportSitemap())
 			.then(response => Sitemap.sitemapFromObj(response.data))
 			.catch(error => {
-				console.log(error);
-				alert('StoreApi: Error creating sitemap.');
+				alert(`StoreApi: Error creating sitemap. ${error}`);
 			});
 	}
 
@@ -54,7 +54,7 @@ export default class StoreRestApi {
 				if (error.response && error.response.status === 304) {
 					return sitemap;
 				}
-				alert('StoreApi: Error updating sitemap.');
+				alert(`StoreApi: Error updating sitemap. ${error}`);
 			});
 
 		if (result && previousSitemapId && previousSitemapId !== sitemap._id) {
@@ -69,8 +69,8 @@ export default class StoreRestApi {
 			.then(response => {
 				return response.data;
 			})
-			.catch(() => {
-				alert('StoreApi: Error deleting sitemap.');
+			.catch(error => {
+				alert(`StoreApi: Error deleting sitemap. ${error}`);
 			});
 		if (result) {
 			await this.localDataStore.getSitemapDataDb(sitemap._id).destroy();
@@ -97,8 +97,8 @@ export default class StoreRestApi {
 				}
 				return sitemaps;
 			})
-			.catch(() => {
-				alert('StoreApi: Could not get all sitemaps.');
+			.catch(error => {
+				alert(`StoreApi: Could not get all sitemaps. ${error}`);
 			});
 	}
 

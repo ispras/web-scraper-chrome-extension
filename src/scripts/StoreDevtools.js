@@ -47,7 +47,7 @@ export default class StoreDevtools {
 		};
 		const response = await browser.runtime.sendMessage(request);
 
-		if (response.error_msg) {
+		if (!response) {
 			return response;
 		}
 		return Array.from(response, sitemapObj => {
