@@ -2,6 +2,7 @@ import axios from 'axios';
 import StoreRestApi from './StoreRestApi';
 import urlJoin from 'url-join';
 import Sitemap from './Sitemap';
+import * as browser from 'webextension-polyfill';
 
 export default class StoreTalismanApi extends StoreRestApi {
 	constructor(config, baseUrl) {
@@ -10,9 +11,9 @@ export default class StoreTalismanApi extends StoreRestApi {
 	}
 
 	async initTalismanLogin(credentials) {
-		let bodyForm = new FormData();
-		let tLogin = credentials.username;
-		let tPassword = credentials.password;
+		const bodyForm = new FormData();
+		const tLogin = credentials.username;
+		const tPassword = credentials.password;
 		bodyForm.append('username', tLogin);
 		bodyForm.append('password', tPassword);
 		const loginStatus = await this.axiosInstance
@@ -31,10 +32,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 				},
 			};
 		} else {
-			let credential = { username: credentials.username };
-			this.postInit();
-			let tToken = loginStatus.data.access_token;
-			this.axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + tToken;
+			const credential = { username: credentials.username };
 			return {
 				authStatus: {
 					success: true,
@@ -55,6 +53,20 @@ export default class StoreTalismanApi extends StoreRestApi {
 		}
 	}
 
+	setAxiosInterceptors() {
+		this.axiosInstance.interceptors.response.use(response => {
+			if (response.request.responseURL.includes('auth')) {
+				browser.runtime.sendMessage({
+					authError: true,
+				});
+				const error = new Error(`Authentication Error`);
+				return Promise.reject(error);
+			}
+			return response;
+		});
+		super.setAxiosInterceptors();
+	}
+
 	async isAuthorized() {
 		let tUrl = this.axiosInstance.defaults.baseURL;
 		try {
@@ -63,7 +75,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 			$('.alert').attr('id', 'error').text(err).show();
 			return false;
 		}
-		let response = await axios({
+		const response = await axios({
 			method: 'get',
 			url: `${tUrl}/oauth/token`,
 		});

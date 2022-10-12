@@ -10,7 +10,8 @@
 		"notifications",
 		"storage",
 		"unlimitedStorage",
-		"downloads"
+		"downloads",
+		"webRequest"
 	],
 	"icons": {
 		"16": "icons/icon16.png",

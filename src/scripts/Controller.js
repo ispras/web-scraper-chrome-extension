@@ -323,6 +323,13 @@ export default class SitemapController {
 			},
 		});
 		if (this.store.supportAuth) {
+			browser.runtime.onMessage.addListener(async request => {
+				if (request.authError || request.authStatusChanged) {
+					$('#confirm-action-modal').remove();
+					$('.modal-backdrop').remove();
+					return this.showAuthPage();
+				}
+			});
 			await this.showAuthPage();
 		} else {
 			$(`#projects-nav-button`).hide();
@@ -769,7 +776,7 @@ export default class SitemapController {
 		this.setActiveNavigationButton('sitemaps');
 		$(`#sitemaps-nav-button`).prop('disabled', false);
 
-		if (sitemaps.error_msg) {
+		if (!sitemaps) {
 			$('#sitemaps').hide();
 			$('#viewport').html(
 				'<div class="container"><div data-i18n="get_sitemap_error"></div></div>'
@@ -886,28 +893,11 @@ export default class SitemapController {
 			return false;
 		}
 
-		// just change sitemaps url
-		if (sitemapData.id === sitemap._id) {
-			// change data
-			sitemap.startUrls = sitemapData.startUrls;
-			sitemap.model = new Model(sitemapData.model);
-			await this.store.saveSitemap(sitemap);
-		} else {
-			// id changed. we need to delete the old one and create a new one
-			const oldSitemap = sitemap;
-			const newSitemap = new Sitemap(
-				sitemapData.id,
-				sitemapData.startUrls,
-				sitemapData.model,
-				sitemap.selectors
-			);
-			if (newSitemap._rev) {
-				delete newSitemap._rev;
-			}
-			await this.store.createSitemap(newSitemap);
-			await this.store.deleteSitemap(oldSitemap);
-			this.state.currentSitemap = newSitemap;
-		}
+		const previousSitemapId = sitemap._id;
+		sitemap._id = sitemapData.id;
+		sitemap.startUrls = sitemapData.startUrls;
+		sitemap.model = new Model(sitemapData.model);
+		await this.store.saveSitemap(sitemap, previousSitemapId);
 		this.showSitemapSelectorList();
 	}
 
@@ -1278,10 +1268,8 @@ export default class SitemapController {
 	}
 
 	selectorTypeChanged(changeTrigger) {
-		// let type = $('#edit-selector select[name=type]').val();
 		// add this selector to possible parent selector
 		const selector = this.getCurrentlyEditedSelector();
-		// this.state.currentSelector = selector;
 		const features = selector.getFeatures();
 		$('#edit-selector .feature').hide();
 		features.forEach(function (feature) {
@@ -1792,7 +1780,7 @@ export default class SitemapController {
 				if (url && attachments.has(url)) {
 					const attachment = { [selector.getUrlColumn()]: url };
 					Object.entries(attachments.get(url)).forEach(([key, value]) => {
-						attachment[`${selector.uuid}-${key}`] = value;
+						attachment[`${selector.id}-${key}`] = value;
 					});
 					return attachment;
 				}

@@ -2,11 +2,6 @@ import * as browser from 'webextension-polyfill';
 import StoreDevtools from './StoreDevtools';
 import Sitemap from './Sitemap';
 
-/**
- * From devtools panel there is no possibility to execute XHR requests. So all requests to a remote CouchDb must be
- * handled through Background page. StoreDevtools is a simply a proxy store
- * @constructor
- */
 export default class TalismanStoreDevtools extends StoreDevtools {
 	constructor(storageType) {
 		super(storageType);
@@ -14,14 +9,14 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 	}
 
 	async isAuthorized() {
-		let request = {
+		const request = {
 			isAuthorized: true,
 		};
 		return await browser.runtime.sendMessage(request);
 	}
 
 	async authorize(credential) {
-		let request = {
+		const request = {
 			login: true,
 			credential: credential,
 		};
@@ -29,7 +24,7 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 	}
 
 	async logOut() {
-		let request = {
+		const request = {
 			logOut: true,
 		};
 		return await browser.runtime.sendMessage(request);
