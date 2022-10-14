@@ -316,12 +316,13 @@ export default class SitemapController {
 			},
 		});
 		if (this.store.supportAuth) {
-			browser.runtime.onMessage.addListener(async request => {
+			browser.runtime.onMessage.addListener(request => {
 				if (request.authError || request.authStatusChanged) {
 					$('#confirm-action-modal').remove();
 					$('.modal-backdrop').remove();
 					return this.showAuthPage();
 				}
+				return false;
 			});
 			await this.showAuthPage();
 		} else {
