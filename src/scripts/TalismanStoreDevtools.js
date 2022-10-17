@@ -35,19 +35,7 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 			getAllSitemaps: true,
 			projectId: projectId,
 		};
-		const response = await browser.runtime.sendMessage(request);
-
-		if (response.error_msg) {
-			return response;
-		}
-		return Array.from(response, sitemapObj => {
-			try {
-				return Sitemap.sitemapFromObj(sitemapObj);
-			} catch (error) {
-				console.error('Failed to read sitemap', sitemapObj, error);
-				return null;
-			}
-		}).filter(Boolean);
+		return this._getAllSitemapsResponseHandler(await browser.runtime.sendMessage(request));
 	}
 
 	async getAllProjects() {
@@ -59,19 +47,31 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 			.then(res => res.data.data.paginationProject.listProject);
 	}
 
-	async createSitemap(sitemap) {
+	sitemapExists(sitemapId, projectId) {
+		const request = {
+			sitemapExists: true,
+			sitemapId,
+			projectId,
+		};
+		return browser.runtime.sendMessage(request);
+	}
+
+	async createSitemap(sitemap, projectId) {
 		const request = {
 			createSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
+			projectId,
 		};
 
 		return Sitemap.sitemapFromObj(await browser.runtime.sendMessage(request));
 	}
 
-	async saveSitemap(sitemap) {
+	async saveSitemap(sitemap, projectId, previousSitemapId) {
 		const request = {
 			saveSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
+			previousSitemapId,
+			projectId,
 		};
 
 		const newSitemap = await browser.runtime.sendMessage(request);
@@ -79,10 +79,11 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 		return sitemap;
 	}
 
-	deleteSitemap(sitemap) {
+	deleteSitemap(sitemap, projectId) {
 		const request = {
 			deleteSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
+			projectId,
 		};
 		return browser.runtime.sendMessage(request);
 	}
