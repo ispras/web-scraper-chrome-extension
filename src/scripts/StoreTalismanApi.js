@@ -25,6 +25,9 @@ export default class StoreTalismanApi extends StoreRestApi {
 	constructor(config, baseUrl) {
 		const sitemapsPath = urlJoin('api');
 		super(config, baseUrl, sitemapsPath);
+		this.sitemapsPathInProject = projectId => {
+			return `${this.sitemapsPath}/projects/${projectId}/sitemaps/`;
+		};
 	}
 
 	async initTalismanLogin(credentials) {
@@ -116,7 +119,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 	}
 
 	async getAllSitemaps(projectId) {
-		return this._getAllSitemaps(`${this.sitemapsPath}/projects/${projectId}/sitemaps/`);
+		return this._getAllSitemaps(this.sitemapsPathInProject(projectId));
 	}
 
 	async sitemapExists(sitemapId, projectId) {
@@ -127,11 +130,11 @@ export default class StoreTalismanApi extends StoreRestApi {
 	}
 
 	createSitemap(sitemap, projectId) {
-		return this._createSitemap(sitemap, `${this.sitemapsPath}/projects/${projectId}/sitemaps/`);
+		return this._createSitemap(sitemap, this.sitemapsPathInProject(projectId));
 	}
 
 	deleteSitemap(sitemap, projectId) {
-		return this._deleteSitemap(sitemap, `${this.sitemapsPath}/projects/${projectId}/sitemaps/`);
+		return this._deleteSitemap(sitemap, this.sitemapsPathInProject(projectId));
 	}
 
 	async saveSitemap(sitemap, previousSitemapId, projectId) {
@@ -141,7 +144,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 			sitemap,
 			sitemapId,
 			previousSitemapId,
-			`${this.sitemapsPath}/projects/${projectId}/sitemaps/`,
+			this.sitemapsPathInProject(projectId),
 			sitemapExists
 		);
 	}

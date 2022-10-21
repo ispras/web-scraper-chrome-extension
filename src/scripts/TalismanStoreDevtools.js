@@ -66,7 +66,7 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 		return Sitemap.sitemapFromObj(await browser.runtime.sendMessage(request));
 	}
 
-	async saveSitemap(sitemap, projectId, previousSitemapId) {
+	async saveSitemap(sitemap, previousSitemapId, projectId) {
 		const request = {
 			saveSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
