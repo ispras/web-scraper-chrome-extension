@@ -137,7 +137,7 @@ browser.runtime.onMessage.addListener(async request => {
 	}
 
 	if (request.getSitemapData) {
-		return store.getSitemapData(Sitemap.sitemapFromObj(request.sitemap));
+		return store.getSitemapData(Sitemap.sitemapFromObj(request.sitemap), request.projectId);
 	}
 
 	if (request.scrapeSitemap) {
@@ -155,6 +155,7 @@ browser.runtime.onMessage.addListener(async request => {
 			requestInterval: request.requestInterval,
 			requestIntervalRandomness: request.requestIntervalRandomness,
 			pageLoadDelay: request.pageLoadDelay,
+			projectId: request.projectId,
 		});
 
 		return new Promise(resolve => {

@@ -19,6 +19,7 @@ export default class Scraper {
 		this.requestIntervalRandomness = parseInt(options.requestIntervalRandomness);
 		this.pageLoadDelay = parseInt(options.pageLoadDelay);
 		this.downloadPaths = new Map(); // url -> local path
+		this.projectId = options.projectId || undefined;
 	}
 
 	initFirstJobs() {
@@ -40,10 +41,12 @@ export default class Scraper {
 
 		this.initFirstJobs();
 
-		this.store.initSitemapDataDb(this.sitemap._id).then(function (resultWriter) {
-			scraper.resultWriter = resultWriter;
-			scraper._run();
-		});
+		this.store
+			.initSitemapDataDb(this.sitemap._id, this.projectId)
+			.then(function (resultWriter) {
+				scraper.resultWriter = resultWriter;
+				scraper._run();
+			});
 	}
 
 	recordCanHaveChildJobs(record) {

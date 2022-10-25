@@ -1622,6 +1622,7 @@ export default class SitemapController {
 			requestInterval,
 			pageLoadDelay,
 			requestIntervalRandomness: intervalRandomness,
+			projectId: this.getCurrentProjectId(),
 		};
 
 		// show sitemap scraping panel
@@ -1650,7 +1651,7 @@ export default class SitemapController {
 	browseSitemapData() {
 		this.setActiveNavigationButton('sitemap-browse');
 		const sitemap = this.state.currentSitemap;
-		this.store.getSitemapData(sitemap).then(data => {
+		this.store.getSitemapData(sitemap, this.getCurrentProjectId()).then(data => {
 			const $dataPanel = ich.SitemapBrowseData();
 			$('#viewport').html($dataPanel);
 			Translator.translatePage();
@@ -1847,7 +1848,7 @@ export default class SitemapController {
 		// per default, new line is included at end of lines
 		const append = 'newline' in options && !options.newline ? '' : '\r\n';
 
-		const data = await this.store.getSitemapData(sitemap);
+		const data = await this.store.getSitemapData(sitemap, this.getCurrentProjectId());
 		const attachmentsSelectors = sitemap.selectors.filter(selector =>
 			selector.downloadsAttachments()
 		);
@@ -1874,7 +1875,7 @@ export default class SitemapController {
 		// per default, new line is included at end of lines
 		const append = 'newline' in options && !options.newline ? '' : '\r\n';
 
-		const data = await this.store.getSitemapData(sitemap);
+		const data = await this.store.getSitemapData(sitemap, this.getCurrentProjectId());
 		const jsonlData = prepend + data.map(JSON.stringify).join('\r\n') + append;
 		return new Blob([jsonlData], { type: 'application/x-jsonlines' });
 	}
