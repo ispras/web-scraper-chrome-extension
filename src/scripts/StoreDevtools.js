@@ -12,6 +12,13 @@ export default class StoreDevtools {
 		this.supportAuth = false;
 	}
 
+	async getSubDomain() {
+		const request = {
+			getSubDomain: true,
+		};
+		return await browser.runtime.sendMessage(request);
+	}
+
 	async createSitemap(sitemap) {
 		const request = {
 			createSitemap: true,

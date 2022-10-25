@@ -35,9 +35,16 @@
 		height: 300px;
 	}
 	.login h1 {
+		margin-bottom: unset;
 		color: #035ba9;
 		text-shadow: 0 0 10px rgba(55, 62, 203, 0);
 		letter-spacing: 1px;
+		text-align: center;
+	}
+	.login h3 {
+		margin-top: unset;
+		color: #035ba9;
+		text-shadow: 0 0 10px rgba(55, 62, 203, 0);
 		text-align: center;
 	}
 
@@ -69,6 +76,7 @@
 
 <div class="login">
 	<h1>Talisman</h1>
+	<h3>{{subdomain}}</h3>
 	<form class="form-horizontal" id="auth_form">
 		<input
 			type="text"

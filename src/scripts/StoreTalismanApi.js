@@ -115,7 +115,8 @@ export default class StoreTalismanApi extends StoreRestApi {
 				sortDirection: 'ascending',
 			},
 		};
-		return this.axiosInstance.post('/graphql', queryData);
+		const projects = await this.axiosInstance.post('/graphql', queryData);
+		return projects.data.data.paginationProject.listProject;
 	}
 
 	async getAllSitemaps(projectId) {

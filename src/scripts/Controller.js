@@ -18,9 +18,6 @@ import Translator from './Translator';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
-		this.currentProjectId = () => {
-			return $(`#sitemaps-nav-button`).attr('projectid');
-		};
 		this.store = store;
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');
@@ -686,7 +683,8 @@ export default class SitemapController {
 			Translator.translatePage();
 			await this.showProjects();
 		} else {
-			const $authorizationPage = ich.AuthorizationPage();
+			this.storeSubDomain = await this.store.getSubDomain();
+			const $authorizationPage = ich.AuthorizationPage({ subdomain: this.storeSubDomain });
 			$('#viewport').html($authorizationPage);
 			this.authorizationFormInit();
 			Translator.translatePage();
@@ -741,15 +739,6 @@ export default class SitemapController {
 		$('#create-sitemap-nav-button').prop('disabled', true);
 
 		const projects = await this.store.getAllProjects();
-
-		if (projects.error_msg) {
-			$('#sitemaps').hide();
-			$('#viewport').html(
-				'<div class="container"><div data-i18n="get_sitemap_error"></div></div>'
-			);
-			Translator.translatePage();
-		}
-
 		const $projectListPanel = ich.ProjectList();
 
 		$('.nav').show();
@@ -767,6 +756,10 @@ export default class SitemapController {
 		Translator.translatePage();
 	}
 
+	getCurrentProjectId() {
+		return $(`#sitemaps-nav-button`).attr('projectid');
+	}
+
 	async showSitemaps(projectId, projectTitle) {
 		this.clearState();
 
@@ -774,7 +767,7 @@ export default class SitemapController {
 			$('#sitemaps-nav-button span#navbar-active-project-id').text(`(${projectTitle})`);
 			$(`#sitemaps-nav-button`).attr('projectid', projectId);
 		} else {
-			projectId = this.currentProjectId();
+			projectId = this.getCurrentProjectId();
 		}
 
 		const sitemaps = await this.store.getAllSitemaps(projectId);
@@ -833,14 +826,14 @@ export default class SitemapController {
 		// check whether sitemap with this id already exist
 		const sitemapExists = await this.store.sitemapExists(
 			sitemapData.id,
-			this.currentProjectId()
+			this.getCurrentProjectId()
 		);
 		if (sitemapExists) {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
 			let sitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, []);
-			sitemap = await this.store.createSitemap(sitemap, this.currentProjectId());
+			sitemap = await this.store.createSitemap(sitemap, this.getCurrentProjectId());
 			this._editSitemap(sitemap);
 		}
 	}
@@ -858,14 +851,14 @@ export default class SitemapController {
 		const id = $('input[name=_id]').val() || sitemapObj._id;
 
 		// check whether sitemap with this id already exist
-		const sitemapExists = await this.store.sitemapExists(id, this.currentProjectId());
+		const sitemapExists = await this.store.sitemapExists(id, this.getCurrentProjectId());
 		if (sitemapExists) {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
 			let sitemap = Sitemap.sitemapFromObj(sitemapObj);
 			sitemap._id = id;
-			sitemap = await this.store.createSitemap(sitemap, this.currentProjectId());
+			sitemap = await this.store.createSitemap(sitemap, this.getCurrentProjectId());
 			this._editSitemap(sitemap);
 		}
 	}
@@ -896,7 +889,7 @@ export default class SitemapController {
 		// check whether sitemap with this id already exist
 		const sitemapExists = await this.store.sitemapExists(
 			sitemapData.id,
-			this.currentProjectId()
+			this.getCurrentProjectId()
 		);
 
 		if (sitemap._id !== sitemapData.id && sitemapExists) {
@@ -909,7 +902,7 @@ export default class SitemapController {
 		sitemap._id = sitemapData.id;
 		sitemap.startUrls = sitemapData.startUrls;
 		sitemap.model = new Model(sitemapData.model);
-		await this.store.saveSitemap(sitemap, previousSitemapId, this.currentProjectId());
+		await this.store.saveSitemap(sitemap, previousSitemapId, this.getCurrentProjectId());
 		this.showSitemapSelectorList();
 	}
 
@@ -1323,7 +1316,7 @@ export default class SitemapController {
 		}
 		try {
 			sitemap.updateSelector(selector, newSelector);
-			await this.store.saveSitemap(sitemap, this.currentProjectId());
+			await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -1487,7 +1480,7 @@ export default class SitemapController {
 		if (!this.isValidForm('#confirm-action-modal')) {
 			return false;
 		}
-		const sitemapExist = await this.store.sitemapExists(id, this.currentProjectId());
+		const sitemapExist = await this.store.sitemapExists(id, this.getCurrentProjectId());
 		if (sitemapExist) {
 			const validator = $('#confirm-action-modal').data('bootstrapValidator');
 			validator.updateStatus(
@@ -1498,7 +1491,7 @@ export default class SitemapController {
 			return false;
 		}
 		sitemap = new Sitemap(id, sitemap.startUrls, sitemap.model, sitemap.selectors);
-		sitemap = await this.store.createSitemap(sitemap, this.currentProjectId());
+		sitemap = await this.store.createSitemap(sitemap, this.getCurrentProjectId());
 		this._editSitemap(sitemap);
 		$('#confirm-action-modal').modal('hide');
 	}
@@ -1521,7 +1514,7 @@ export default class SitemapController {
 		const selector = this.state.currentSelector;
 		const sitemap = this.state.currentSitemap;
 		sitemap.deleteSelector(selector);
-		await this.store.saveSitemap(sitemap, this.currentProjectId());
+		await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
 		this.showSitemapSelectorList();
 		$('#confirm-action-modal').modal('hide');
 	}
@@ -1534,7 +1527,7 @@ export default class SitemapController {
 	}
 
 	async confirmDeleteSitemap(button) {
-		await this.store.deleteSitemap(this.state.currentSitemap, this.currentProjectId());
+		await this.store.deleteSitemap(this.state.currentSitemap, this.getCurrentProjectId());
 		await this.showSitemaps();
 		$('#confirm-action-modal').modal('hide');
 	}

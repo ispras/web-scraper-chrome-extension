@@ -42,9 +42,7 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 		const request = {
 			getAllProjects: true,
 		};
-		return await browser.runtime
-			.sendMessage(request)
-			.then(res => res.data.data.paginationProject.listProject);
+		return await browser.runtime.sendMessage(request);
 	}
 
 	sitemapExists(sitemapId, projectId) {
