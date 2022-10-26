@@ -149,12 +149,4 @@ export default class StoreTalismanApi extends StoreRestApi {
 			sitemapExists
 		);
 	}
-
-	initSitemapDataDb(sitemapId, projectId) {
-		return this.localDataStore.initSitemapDataDb(sitemapId, projectId);
-	}
-
-	getSitemapData(sitemap, projectId) {
-		return this.localDataStore.getSitemapData(sitemap, projectId);
-	}
 }

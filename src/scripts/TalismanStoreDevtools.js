@@ -85,14 +85,4 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 		};
 		return browser.runtime.sendMessage(request);
 	}
-
-	getSitemapData(sitemap, projectId) {
-		const request = {
-			getSitemapData: true,
-			sitemap: JSON.parse(JSON.stringify(sitemap)),
-			projectId,
-		};
-
-		return browser.runtime.sendMessage(request);
-	}
 }

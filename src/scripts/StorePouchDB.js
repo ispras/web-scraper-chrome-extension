@@ -30,20 +30,17 @@ export default class StorePouchDB {
 		this.sitemapDb = new PouchDB(this.config.sitemapDb);
 	}
 
-	sanitizeSitemapDataDbName(dbName, projectId) {
-		return `sitemap-data-${projectId.replace(/[^a-z0-9_\$\(\)\+\-/]/gi, '_')}-${dbName.replace(
-			/[^a-z0-9_\$\(\)\+\-/]/gi,
-			'_'
-		)}`;
+	sanitizeSitemapDataDbName(dbName) {
+		return `sitemap-data-${dbName.replace(/[^a-z0-9_\$\(\)\+\-/]/gi, '_')}`;
 	}
 
-	getSitemapDataDbLocation(sitemapId, projectId) {
-		const dbName = this.sanitizeSitemapDataDbName(sitemapId, projectId);
+	getSitemapDataDbLocation(sitemapId) {
+		const dbName = this.sanitizeSitemapDataDbName(sitemapId);
 		return this.config.dataDb + dbName;
 	}
 
-	getSitemapDataDb(sitemapId, projectId) {
-		const dbLocation = this.getSitemapDataDbLocation(sitemapId, projectId);
+	getSitemapDataDb(sitemapId) {
+		const dbLocation = this.getSitemapDataDbLocation(sitemapId);
 		return new PouchDB(dbLocation);
 	}
 
@@ -52,12 +49,12 @@ export default class StorePouchDB {
 	 * @param {type} sitemapId
 	 * @returns {undefined}
 	 */
-	async initSitemapDataDb(sitemapId, projectId) {
+	async initSitemapDataDb(sitemapId) {
 		const store = this;
-		let db = this.getSitemapDataDb(sitemapId, projectId);
+		let db = this.getSitemapDataDb(sitemapId);
 		try {
 			await db.destroy();
-			db = store.getSitemapDataDb(sitemapId, projectId);
+			db = store.getSitemapDataDb(sitemapId);
 			return new StoreScrapeResultWriter(db);
 		} catch (reason) {
 			console.log(reason);
@@ -112,8 +109,8 @@ export default class StorePouchDB {
 		}).filter(Boolean);
 	}
 
-	async getSitemapData(sitemap, projectId) {
-		const db = this.getSitemapDataDb(sitemap._id, projectId);
+	async getSitemapData(sitemap) {
+		const db = this.getSitemapDataDb(sitemap._id);
 		const response = await db.allDocs({ include_docs: true });
 		return Array.from(response.rows, row => {
 			const { doc } = row;
