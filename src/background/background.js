@@ -76,8 +76,8 @@ const sendToActiveTab = function (request, callback) {
 };
 
 browser.runtime.onMessage.addListener(async request => {
-	if (request.getSubDomain) {
-		return new URL(store.axiosInstance.defaults.baseURL).host.split('.')[0];
+	if (request.getStandName) {
+		return store.standName;
 	}
 
 	if (request.getStorageType) {

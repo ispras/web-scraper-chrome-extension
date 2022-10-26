@@ -28,6 +28,15 @@ export default class StoreTalismanApi extends StoreRestApi {
 		this.sitemapsPathInProject = projectId => {
 			return `${this.sitemapsPath}/projects/${projectId}/sitemaps/`;
 		};
+		this.standName = this.getStandName();
+	}
+
+	async getStandName() {
+		const response = await axios({
+			method: 'get',
+			url: urlJoin(this.axiosInstance.defaults.baseURL, 'meta.json'),
+		});
+		return response.data.APP_NAME;
 	}
 
 	async initTalismanLogin(credentials) {

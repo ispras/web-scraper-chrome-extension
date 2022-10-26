@@ -85,4 +85,11 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 		};
 		return browser.runtime.sendMessage(request);
 	}
+
+	async getStandName() {
+		const request = {
+			getStandName: true,
+		};
+		return await browser.runtime.sendMessage(request);
+	}
 }

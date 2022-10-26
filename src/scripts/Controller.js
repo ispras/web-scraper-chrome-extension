@@ -683,8 +683,8 @@ export default class SitemapController {
 			Translator.translatePage();
 			await this.showProjects();
 		} else {
-			this.storeSubDomain = await this.store.getSubDomain();
-			const $authorizationPage = ich.AuthorizationPage({ subdomain: this.storeSubDomain });
+			this.storeStandName = await this.store.getStandName();
+			const $authorizationPage = ich.AuthorizationPage({ standName: this.storeStandName });
 			$('#viewport').html($authorizationPage);
 			this.authorizationFormInit();
 			Translator.translatePage();
