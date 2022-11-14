@@ -17,7 +17,7 @@ export default class StoreRestApi {
 
 	setAxiosInterceptors() {
 		this.axiosInstance.interceptors.response.use(response => {
-			const contentType = response.headers['content-type'];
+			const [contentType] = response.headers['content-type'].split(';');
 			if (contentType !== 'application/json') {
 				const error = new Error(`Incorrect response type`);
 				return Promise.reject(error);
@@ -27,8 +27,12 @@ export default class StoreRestApi {
 	}
 
 	createSitemap(sitemap) {
+		return this._createSitemap(sitemap, this.sitemapsPath);
+	}
+
+	_createSitemap(sitemap, sitemapsPath) {
 		return this.axiosInstance
-			.post(this.sitemapsPath, Sitemap.sitemapFromObj(sitemap).exportSitemap())
+			.post(sitemapsPath, Sitemap.sitemapFromObj(sitemap).exportSitemap())
 			.then(response => Sitemap.sitemapFromObj(response.data))
 			.catch(error => {
 				alert(`StoreApi: Error creating sitemap. ${error}`);
@@ -38,15 +42,22 @@ export default class StoreRestApi {
 	async saveSitemap(sitemap, previousSitemapId) {
 		const sitemapId = previousSitemapId || sitemap._id;
 		const sitemapExists = await this.sitemapExists(sitemapId);
+		return this._saveSitemap(
+			sitemap,
+			sitemapId,
+			previousSitemapId,
+			this.sitemapsPath,
+			sitemapExists
+		);
+	}
+
+	async _saveSitemap(sitemap, sitemapId, previousSitemapId, sitemapsPath, sitemapExists) {
 		if (!sitemapExists) {
 			return this.createSitemap(sitemap);
 		}
 
 		const result = await this.axiosInstance
-			.put(
-				urlJoin(this.sitemapsPath, sitemapId),
-				Sitemap.sitemapFromObj(sitemap).exportSitemap()
-			)
+			.put(urlJoin(sitemapsPath, sitemapId), Sitemap.sitemapFromObj(sitemap).exportSitemap())
 			.then(() => {
 				return sitemap;
 			})
@@ -63,9 +74,13 @@ export default class StoreRestApi {
 		return result;
 	}
 
-	async deleteSitemap(sitemap) {
+	deleteSitemap(sitemap) {
+		return this._deleteSitemap(sitemap, this.sitemapsPath);
+	}
+
+	async _deleteSitemap(sitemap, sitemapsPath) {
 		const result = await this.axiosInstance
-			.delete(urlJoin(this.sitemapsPath, sitemap._id))
+			.delete(urlJoin(sitemapsPath, sitemap._id))
 			.then(response => {
 				return response.data;
 			})
@@ -79,19 +94,23 @@ export default class StoreRestApi {
 	}
 
 	getAllSitemaps() {
+		return this._getAllSitemaps(this.sitemapsPath);
+	}
+
+	_getAllSitemaps(sitemapsPath) {
 		return this.axiosInstance
-			.get(this.sitemapsPath)
+			.get(sitemapsPath)
 			.then(response => {
-				const sitemaps = [];
 				const failedIds = [];
-				response.data.forEach(sitemapObj => {
+				const sitemaps = Array.from(response.data, sitemapObj => {
 					try {
-						sitemaps.push(Sitemap.sitemapFromObj(sitemapObj));
+						return Sitemap.sitemapFromObj(sitemapObj);
 					} catch (error) {
 						console.error('Failed to read sitemap', sitemapObj, error);
 						failedIds.push(sitemapObj._id);
 					}
-				});
+				}).filter(Boolean);
+
 				if (failedIds.length) {
 					alert(`StoreApi: failed to read sitemaps ${failedIds.join(', ')}`);
 				}

@@ -45,18 +45,15 @@ export default class StoreDevtools {
 		const request = {
 			getAllSitemaps: true,
 		};
-		const response = await browser.runtime.sendMessage(request);
+		return this._getAllSitemapsResponseHandler(await browser.runtime.sendMessage(request));
+	}
 
+	_getAllSitemapsResponseHandler(response) {
 		if (!response) {
 			return response;
 		}
 		return Array.from(response, sitemapObj => {
-			try {
-				return Sitemap.sitemapFromObj(sitemapObj);
-			} catch (error) {
-				console.error('Failed to read sitemap', sitemapObj, error);
-				return null;
-			}
+			return Sitemap.sitemapFromObj(sitemapObj);
 		}).filter(Boolean);
 	}
 

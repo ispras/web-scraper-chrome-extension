@@ -76,6 +76,10 @@ const sendToActiveTab = function (request, callback) {
 };
 
 browser.runtime.onMessage.addListener(async request => {
+	if (request.getStandName) {
+		return store.standName;
+	}
+
 	if (request.getStorageType) {
 		return store.constructor.name;
 	}
@@ -94,22 +98,41 @@ browser.runtime.onMessage.addListener(async request => {
 	}
 
 	if (request.createSitemap) {
+		if (request.projectId) {
+			return store.createSitemap(request.sitemap, request.projectId);
+		}
 		return store.createSitemap(request.sitemap);
 	}
 
 	if (request.saveSitemap) {
+		if (request.projectId) {
+			return store.saveSitemap(request.sitemap, request.previousSitemapId, request.projectId);
+		}
 		return store.saveSitemap(request.sitemap, request.previousSitemapId);
 	}
 
 	if (request.deleteSitemap) {
+		if (request.projectId) {
+			return store.deleteSitemap(request.sitemap, request.projectId);
+		}
 		return store.deleteSitemap(request.sitemap);
 	}
 
 	if (request.getAllSitemaps) {
+		if (request.projectId) {
+			return store.getAllSitemaps(request.projectId);
+		}
 		return store.getAllSitemaps();
 	}
 
+	if (request.getAllProjects) {
+		return store.getAllProjects();
+	}
+
 	if (request.sitemapExists) {
+		if (request.projectId) {
+			return store.sitemapExists(request.sitemapId, request.projectId);
+		}
 		return store.sitemapExists(request.sitemapId);
 	}
 
