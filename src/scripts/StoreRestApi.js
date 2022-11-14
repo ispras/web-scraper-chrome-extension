@@ -17,7 +17,7 @@ export default class StoreRestApi {
 
 	setAxiosInterceptors() {
 		this.axiosInstance.interceptors.response.use(response => {
-			const contentType = response.headers['content-type'];
+			const [contentType] = response.headers['content-type'].split(';');
 			if (contentType !== 'application/json') {
 				const error = new Error(`Incorrect response type`);
 				return Promise.reject(error);
