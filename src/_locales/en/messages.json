@@ -1,6 +1,7 @@
 {
 	"data_preview": { "message": "Data Preview" },
 	"sitemaps_nav_button": { "message": "Sitemaps" },
+	"projects_nav_button": { "message": "Projects" },
 	"sitemap_nav_button": { "message": "Sitemap" },
 	"logout_nav_button": { "message": "Logout" },
 	"login_button": { "message": "Login" },
@@ -15,6 +16,8 @@
 	"create_sitemap_create_nav_button": { "message": "Create sitemap" },
 	"create_sitemap_import_nav_button": { "message": "Import sitemap" },
 	"sitemaplist_id": { "message": "ID" },
+	"projectlist_id": { "message": "ID" },
+	"projectName": { "message": "Project name" },
 	"sitemaplist_starturl": { "message": "Start URLs" },
 	"sitemaplist_actions": { "message": "Actions" },
 	"browse_sitemap_data": { "message": "Browse data" },

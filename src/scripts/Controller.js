@@ -129,6 +129,8 @@ export default class SitemapController {
 	async loadTemplates() {
 		const templateIds = [
 			'Viewport',
+			'ProjectList',
+			'ProjectListItem',
 			'SitemapList',
 			'SitemapListItem',
 			'SitemapCreate',
@@ -184,6 +186,9 @@ export default class SitemapController {
 			'#sitemaps-nav-button': {
 				click: this.showSitemaps,
 			},
+			'#projects-nav-button': {
+				click: this.showProjects,
+			},
 			'#create-sitemap-create-nav-button': {
 				click: this.showCreateSitemap,
 			},
@@ -205,7 +210,6 @@ export default class SitemapController {
 			'.copy_sitemap_submit': {
 				click: this.confirmCopySitemap,
 			},
-
 			'#submit-create-sitemap': {
 				click: this.createSitemap,
 			},
@@ -232,6 +236,9 @@ export default class SitemapController {
 			},
 			'#sitemaps tr td:nth-of-type(1)': {
 				click: this.editSitemap,
+			},
+			'#projects tr td': {
+				click: this.editProject,
 			},
 			'#sitemaps button[action=delete-sitemap]': {
 				click: this.deleteSitemap,
@@ -324,13 +331,23 @@ export default class SitemapController {
 			},
 		});
 		if (this.store.supportAuth) {
+			browser.runtime.onMessage.addListener(request => {
+				if (request.authError || request.authStatusChanged) {
+					$('#confirm-action-modal').remove();
+					$('.modal-backdrop').remove();
+					return this.showAuthPage();
+				}
+				return false;
+			});
 			await this.showAuthPage();
 		} else {
+			$(`#projects-nav-button`).hide();
 			await this.showSitemaps();
 		}
 	}
 
 	clearState() {
+		$('.open').removeClass('open');
 		this.state = {
 			// sitemap that is currently open
 			currentSitemap: null,
@@ -356,6 +373,9 @@ export default class SitemapController {
 			navButton.removeClass('disabled');
 			navButton.closest('li').addClass('active');
 			$('#navbar-active-sitemap-id').text(`(${this.state.currentSitemap._id})`);
+		} else if (navigationId.match(/^projects/)) {
+			$('#sitemaps-nav-button span#navbar-active-project-id').text(``);
+			$('#navbar-active-sitemap-id').text('');
 		} else {
 			$('#sitemap-nav-button').addClass('disabled');
 			$('#navbar-active-sitemap-id').text('');
@@ -665,14 +685,14 @@ export default class SitemapController {
 
 	async showAuthPage() {
 		$('.nav').hide();
-
 		const isAuthorized = await this.store.isAuthorized();
 		if (isAuthorized) {
 			$('#user-name').text(isAuthorized.data.name);
 			Translator.translatePage();
-			await this.showSitemaps();
+			await this.showProjects();
 		} else {
-			const $authorizationPage = ich.AuthorizationPage();
+			this.storeStandName = await this.store.getStandName();
+			const $authorizationPage = ich.AuthorizationPage({ standName: this.storeStandName });
 			$('#viewport').html($authorizationPage);
 			this.authorizationFormInit();
 			Translator.translatePage();
@@ -681,7 +701,7 @@ export default class SitemapController {
 
 	authorizationFormInit() {
 		// Sync storage settings
-		$('body').on('click', '.password-checkbox', function () {
+		$('body').on('click', '#password-checkbox', function () {
 			if ($(this).is(':checked')) {
 				$('#userPassword').attr('type', 'text');
 			} else {
@@ -702,7 +722,7 @@ export default class SitemapController {
 			const authData = await this.store.isAuthorized();
 			$('#user-name').show().text(authData.data.name);
 			$('#logout-nav-button').show();
-			await this.showSitemaps();
+			await this.showProjects();
 		} else if (!authStatus.authStatus.success) {
 			$('.alert')
 				.attr('id', 'error')
@@ -719,14 +739,53 @@ export default class SitemapController {
 		await this.store.logOut().finally(async () => await this.showAuthPage());
 	}
 
-	async showSitemaps() {
+	async showProjects() {
 		this.clearState();
-		this.setActiveNavigationButton('sitemaps');
+		this.setActiveNavigationButton('projects');
 
-		const sitemaps = await this.store.getAllSitemaps();
+		$(`#sitemaps-nav-button`).prop('disabled', true);
+		$('#create-sitemap-nav-button').prop('disabled', true);
+
+		const projects = await this.store.getAllProjects();
+		const $projectListPanel = ich.ProjectList();
+
+		$('.nav').show();
+		if (this.store.supportAuth) {
+			$('#auth_nav').css('display', 'block');
+		} else {
+			$('#auth_nav').css('display', 'none');
+		}
+		projects.forEach(project => {
+			const $project = ich.ProjectListItem(project);
+			$project.data('project', project);
+			$projectListPanel.find('tbody').append($project);
+		});
+		$('#viewport').html($projectListPanel);
+		Translator.translatePage();
+	}
+
+	getCurrentProjectId() {
+		return $(`#sitemaps-nav-button`).attr('projectid');
+	}
+
+	async showSitemaps(projectId, projectTitle) {
+		this.clearState();
+
+		if (typeof projectId === 'string') {
+			$('#sitemaps-nav-button span#navbar-active-project-id').text(`(${projectTitle})`);
+			$(`#sitemaps-nav-button`).attr('projectid', projectId);
+		} else {
+			projectId = this.getCurrentProjectId();
+		}
+
+		const sitemaps = await this.store.getAllSitemaps(projectId);
+
 		const $sitemapListPanel = ich.SitemapList();
 
-		if (sitemaps.error_msg) {
+		this.setActiveNavigationButton('sitemaps');
+		$(`#sitemaps-nav-button`).prop('disabled', false);
+
+		if (!sitemaps) {
 			$('#sitemaps').hide();
 			$('#viewport').html(
 				'<div class="container"><div data-i18n="get_sitemap_error"></div></div>'
@@ -744,6 +803,7 @@ export default class SitemapController {
 				$sitemap.data('sitemap', sitemap);
 				$sitemapListPanel.find('tbody').append($sitemap);
 			});
+			$('#create-sitemap-nav-button').prop('disabled', false);
 			$('#viewport').html($sitemapListPanel);
 			Translator.translatePage();
 		}
@@ -770,17 +830,18 @@ export default class SitemapController {
 		if (!this.isValidForm()) {
 			return false;
 		}
-
 		const sitemapData = this.getSitemapFromMetadataForm();
-
 		// check whether sitemap with this id already exist
-		const sitemapExists = await this.store.sitemapExists(sitemapData.id);
+		const sitemapExists = await this.store.sitemapExists(
+			sitemapData.id,
+			this.getCurrentProjectId()
+		);
 		if (sitemapExists) {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
 			let sitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, []);
-			sitemap = await this.store.createSitemap(sitemap);
+			sitemap = await this.store.createSitemap(sitemap, this.getCurrentProjectId());
 			this._editSitemap(sitemap);
 		}
 	}
@@ -798,14 +859,14 @@ export default class SitemapController {
 		const id = $('input[name=_id]').val() || sitemapObj._id;
 
 		// check whether sitemap with this id already exist
-		const sitemapExists = await this.store.sitemapExists(id);
+		const sitemapExists = await this.store.sitemapExists(id, this.getCurrentProjectId());
 		if (sitemapExists) {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
 			let sitemap = Sitemap.sitemapFromObj(sitemapObj);
 			sitemap._id = id;
-			sitemap = await this.store.createSitemap(sitemap);
+			sitemap = await this.store.createSitemap(sitemap, this.getCurrentProjectId());
 			this._editSitemap(sitemap);
 		}
 	}
@@ -834,7 +895,10 @@ export default class SitemapController {
 		}
 
 		// check whether sitemap with this id already exist
-		const sitemapExists = await this.store.sitemapExists(sitemapData.id);
+		const sitemapExists = await this.store.sitemapExists(
+			sitemapData.id,
+			this.getCurrentProjectId()
+		);
 
 		if (sitemap._id !== sitemapData.id && sitemapExists) {
 			const validator = this.getFormValidator();
@@ -842,29 +906,17 @@ export default class SitemapController {
 			return false;
 		}
 
-		// just change sitemaps url
-		if (sitemapData.id === sitemap._id) {
-			// change data
-			sitemap.startUrls = sitemapData.startUrls;
-			sitemap.model = new Model(sitemapData.model);
-			await this.store.saveSitemap(sitemap);
-		} else {
-			// id changed. we need to delete the old one and create a new one
-			const oldSitemap = sitemap;
-			const newSitemap = new Sitemap(
-				sitemapData.id,
-				sitemapData.startUrls,
-				sitemapData.model,
-				sitemap.selectors
-			);
-			if (newSitemap._rev) {
-				delete newSitemap._rev;
-			}
-			await this.store.createSitemap(newSitemap);
-			await this.store.deleteSitemap(oldSitemap);
-			this.state.currentSitemap = newSitemap;
-		}
+		const previousSitemapId = sitemap._id;
+		sitemap._id = sitemapData.id;
+		sitemap.startUrls = sitemapData.startUrls;
+		sitemap.model = new Model(sitemapData.model);
+		await this.store.saveSitemap(sitemap, previousSitemapId, this.getCurrentProjectId());
 		this.showSitemapSelectorList();
+	}
+
+	async editProject(td) {
+		const project = $(td).parent().data('project');
+		return await this.showSitemaps(project.id, project.title);
 	}
 
 	/**
@@ -1222,10 +1274,8 @@ export default class SitemapController {
 	}
 
 	async selectorTypeChanged(changeTrigger) {
-		// let type = $('#edit-selector select[name=type]').val();
 		// add this selector to possible parent selector
 		const selector = this.getCurrentlyEditedSelector();
-		// this.state.currentSelector = selector;
 		const features = selector.getFeatures();
 		$('#edit-selector .feature').hide();
 		features.forEach(function (feature) {
@@ -1308,7 +1358,7 @@ export default class SitemapController {
 		}
 		try {
 			sitemap.updateSelector(selector, newSelector);
-			await this.store.saveSitemap(sitemap);
+			await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -1476,7 +1526,7 @@ export default class SitemapController {
 		if (!this.isValidForm('#confirm-action-modal')) {
 			return false;
 		}
-		const sitemapExist = await this.store.sitemapExists(id);
+		const sitemapExist = await this.store.sitemapExists(id, this.getCurrentProjectId());
 		if (sitemapExist) {
 			const validator = $('#confirm-action-modal').data('bootstrapValidator');
 			validator.updateStatus(
@@ -1487,7 +1537,7 @@ export default class SitemapController {
 			return false;
 		}
 		sitemap = new Sitemap(id, sitemap.startUrls, sitemap.model, sitemap.selectors);
-		sitemap = await this.store.createSitemap(sitemap);
+		sitemap = await this.store.createSitemap(sitemap, this.getCurrentProjectId());
 		this._editSitemap(sitemap);
 		$('#confirm-action-modal').modal('hide');
 	}
@@ -1510,7 +1560,7 @@ export default class SitemapController {
 		const selector = this.state.currentSelector;
 		const sitemap = this.state.currentSitemap;
 		sitemap.deleteSelector(selector);
-		await this.store.saveSitemap(sitemap);
+		await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
 		this.showSitemapSelectorList();
 		$('#confirm-action-modal').modal('hide');
 	}
@@ -1523,7 +1573,7 @@ export default class SitemapController {
 	}
 
 	async confirmDeleteSitemap(button) {
-		await this.store.deleteSitemap(this.state.currentSitemap);
+		await this.store.deleteSitemap(this.state.currentSitemap, this.getCurrentProjectId());
 		await this.showSitemaps();
 		$('#confirm-action-modal').modal('hide');
 	}
@@ -1781,7 +1831,7 @@ export default class SitemapController {
 				if (url && attachments.has(url)) {
 					const attachment = { [selector.getUrlColumn()]: url };
 					Object.entries(attachments.get(url)).forEach(([key, value]) => {
-						attachment[`${selector.uuid}-${key}`] = value;
+						attachment[`${selector.id}-${key}`] = value;
 					});
 					return attachment;
 				}

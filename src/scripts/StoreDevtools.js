@@ -21,10 +21,11 @@ export default class StoreDevtools {
 		return Sitemap.sitemapFromObj(await browser.runtime.sendMessage(request));
 	}
 
-	async saveSitemap(sitemap) {
+	async saveSitemap(sitemap, previousSitemapId) {
 		const request = {
 			saveSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
+			previousSitemapId,
 		};
 
 		const newSitemap = await browser.runtime.sendMessage(request);
@@ -44,18 +45,15 @@ export default class StoreDevtools {
 		const request = {
 			getAllSitemaps: true,
 		};
-		const response = await browser.runtime.sendMessage(request);
+		return this._getAllSitemapsResponseHandler(await browser.runtime.sendMessage(request));
+	}
 
-		if (response.error_msg) {
+	_getAllSitemapsResponseHandler(response) {
+		if (!response) {
 			return response;
 		}
 		return Array.from(response, sitemapObj => {
-			try {
-				return Sitemap.sitemapFromObj(sitemapObj);
-			} catch (error) {
-				console.error('Failed to read sitemap', sitemapObj, error);
-				return null;
-			}
+			return Sitemap.sitemapFromObj(sitemapObj);
 		}).filter(Boolean);
 	}
 

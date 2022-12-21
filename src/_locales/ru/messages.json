@@ -1,6 +1,7 @@
 {
 	"data_preview": { "message": "Предпросмотр данных" },
 	"sitemaps_nav_button": { "message": "Список карт обхода" },
+	"projects_nav_button": { "message": "Список проектов" },
 	"sitemap_nav_button": { "message": "Карта обхода" },
 	"logout_nav_button": { "message": "Выйти" },
 	"login_button": { "message": "Войти" },
@@ -15,6 +16,8 @@
 	"create_sitemap_create_nav_button": { "message": "Создать" },
 	"create_sitemap_import_nav_button": { "message": "Загрузить" },
 	"sitemaplist_id": { "message": "Идентификатор карты" },
+	"projectlist_id": { "message": "Идентификатор проекта" },
+	"projectName": { "message": "Название проекта" },
 	"sitemaplist_starturl": { "message": "Стартовые URL" },
 	"sitemaplist_actions": { "message": "Действия" },
 	"browse_sitemap_data": { "message": "Просмотр данных" },

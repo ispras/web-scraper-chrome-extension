@@ -13,53 +13,93 @@
 	#success {
 		background-color: #4caf50;
 	}
-</style>
-<center>
-	<div class="form-container input-group">
-		<h1 data-i18n="authorization_page_title"></h1>
-		<form class="form-horizontal" id="auth_form">
-			<fieldset>
-				<label
-					for="userLogin"
-					class="col-lg-2 control-label"
-					data-i18n="authorization_login"
-				></label>
-				<div class="col-lg-10">
-					<input
-						type="text"
-						class="form-control"
-						name="userLogin"
-						id="userLogin"
-						placeholder="authorization_login_placeholder"
-					/>
-				</div>
-				<br />
-				<label
-					for="userPassword"
-					class="col-lg-2 control-label"
-					data-i18n="authorization_password"
-				></label>
-				<div class="col-lg-10">
-					<input
-						type="password"
-						class="form-control"
-						name="userPassword"
-						id="userPassword"
-						placeholder="authorization_password_placeholder"
-					/>
-				</div>
 
-				<div class="col-lg-offset-2 col-lg-10">
-					<input type="checkbox" class="password-checkbox" id="password-checkbox" />
-					<label
-						data-i18n="authorization_password_show_checkbox"
-						for="password-checkbox"
-					></label>
-					<br />
-					<button type="submit" class="btn btn-default" data-i18n="login_button"></button>
-				</div>
-			</fieldset>
-			<div class="alert"></div>
-		</form>
-	</div>
-</center>
+	html {
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	body {
+		width: 100%;
+		height: 100%;
+		font-family: 'Open Sans', sans-serif;
+		background: #f0f2f5;
+	}
+	.login {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin: -150px 0 0 -150px;
+		width: 300px;
+		height: 300px;
+	}
+	.login h1 {
+		margin-bottom: unset;
+		color: #035ba9;
+		text-shadow: 0 0 10px rgba(55, 62, 203, 0);
+		letter-spacing: 1px;
+		text-align: center;
+	}
+	.login h3 {
+		margin-top: unset;
+		color: #035ba9;
+		text-shadow: 0 0 10px rgba(55, 62, 203, 0);
+		text-align: center;
+	}
+
+	input:not(#password-checkbox) {
+		width: 100%;
+		margin-bottom: 10px;
+		border: none;
+		outline: none;
+		padding: 10px;
+		font-size: 13px;
+		color: #000000;
+		border: 1px solid rgba(0, 0, 0, 0.3);
+		border-radius: 4px;
+		box-shadow: inset 0 -5px 45px rgba(255, 255, 255, 0.8), 0 1px 1px rgba(255, 255, 255, 0.72);
+		-webkit-transition: box-shadow 0.5s ease;
+		-moz-transition: box-shadow 0.5s ease;
+		-o-transition: box-shadow 0.5s ease;
+		-ms-transition: box-shadow 0.5s ease;
+		transition: box-shadow 0.5s ease;
+	}
+	label.form-check-label {
+		vertical-align: middle;
+	}
+
+	input:focus {
+		box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.4), 0 1px 1px rgba(255, 255, 255, 0.2);
+	}
+</style>
+
+<div class="login">
+	<h1>Talisman</h1>
+	<h3>{{standName}}</h3>
+	<form class="form-horizontal" id="auth_form">
+		<input
+			type="text"
+			name="userLogin"
+			required="required"
+			id="userLogin"
+			placeholder="authorization_login_placeholder"
+		/>
+		<input
+			type="password"
+			name="userPassword"
+			placeholder="authorization_password_placeholder"
+			required="required"
+			id="userPassword"
+		/>
+		<input type="checkbox" id="password-checkbox" />
+		<label class="form-check-label" for="password-checkbox">Show password</label>
+		<button
+			type="submit"
+			class="btn btn-primary btn-block btn-large"
+			data-i18n="login_button"
+		></button>
+		<br />
+		<div class="alert"></div>
+	</form>
+</div>

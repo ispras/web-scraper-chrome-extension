@@ -73,7 +73,15 @@ export default class StorePouchDB {
 		return sitemap;
 	}
 
-	saveSitemap(sitemap) {
+	async saveSitemap(sitemap, previousSitemapId) {
+		if (previousSitemapId && previousSitemapId !== sitemap._id) {
+			const { _rev, ...bareSitemap } = sitemap;
+			const updatedSitemap = await this.createSitemap(bareSitemap);
+			await this.moveSitemapData(previousSitemapId, sitemap._id);
+			await this.deleteSitemap({ _rev, _id: previousSitemapId });
+			sitemap._rev = updatedSitemap._rev;
+			return sitemap;
+		}
 		return this.createSitemap(sitemap);
 	}
 
@@ -112,6 +120,13 @@ export default class StorePouchDB {
 			// these conditions are included for backwards compatibility
 			return Object.isObject(data) && Object.isEmpty(rest) ? data : doc;
 		});
+	}
+
+	async moveSitemapData(fromSitemapId, toSitemapId) {
+		const fromDataDb = this.getSitemapDataDb(fromSitemapId);
+		const toDataDb = this.getSitemapDataDb(toSitemapId);
+		await fromDataDb.replicate.to(toDataDb);
+		await fromDataDb.destroy();
 	}
 
 	async sitemapExists(sitemapId) {

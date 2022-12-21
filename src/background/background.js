@@ -8,33 +8,54 @@ import Queue from '../scripts/Queue';
 import ChromePopupBrowser from '../scripts/ChromePopupBrowser';
 import Scraper from '../scripts/Scraper';
 import getBackgroundScript from '../scripts/BackgroundScript';
+import urlJoin from 'url-join';
 
 const config = new Config();
 let store;
 
-config.loadConfiguration().then(() => {
-	console.log('initial configuration', config);
+async function talismanAuthListener(responseDetails) {
+	async function reloadTabs() {
+		const openTabs = await browser.tabs.query({ url: urlJoin(config.talismanApiUrl, '/*') });
+		openTabs.forEach(tab => {
+			if (tab.id !== responseDetails.tabId) {
+				browser.tabs.reload(tab.id);
+			}
+		});
+	}
+
+	const loginUrl = urlJoin(config.talismanApiUrl, '/oauth/login');
+	const logoutUrl = urlJoin(config.talismanApiUrl, '/oauth/logout');
+	if (responseDetails.url === loginUrl || responseDetails.url === logoutUrl) {
+		await reloadTabs();
+		if (responseDetails.tabId !== -1) {
+			await browser.runtime.sendMessage({ authStatusChanged: true });
+		}
+	}
+}
+
+function setStore() {
+	browser.webRequest.onCompleted.removeListener(talismanAuthListener);
 	if (config.storageType === 'rest') {
 		store = new StoreRestApi(config, config.restUrl);
-		store.postInit();
 	} else if (config.storageType === 'talisman') {
 		store = new StoreTalismanApi(config, config.talismanApiUrl);
+		browser.webRequest.onCompleted.addListener(talismanAuthListener, {
+			urls: [urlJoin(config.talismanApiUrl, '/oauth/*')],
+		});
 	} else {
 		store = new StorePouchDB(config);
 	}
+}
+
+config.loadConfiguration().then(() => {
+	console.log('initial configuration', config);
+	setStore();
 });
 
 browser.storage.onChanged.addListener(function () {
 	config.loadConfiguration().then(async () => {
 		console.log('configuration changed', config);
-		if (config.storageType === 'rest') {
-			store = new StoreRestApi(config, config.restUrl);
-			store.postInit();
-		} else if (config.storageType === 'talisman') {
-			store = new StoreTalismanApi(config, config.talismanApiUrl);
-		} else {
-			store = new StorePouchDB(config);
-		}
+		setStore();
 	});
 });
 
@@ -55,6 +76,10 @@ const sendToActiveTab = function (request, callback) {
 };
 
 browser.runtime.onMessage.addListener(async request => {
+	if (request.getStandName) {
+		return store.standName;
+	}
+
 	if (request.getStorageType) {
 		return store.constructor.name;
 	}
@@ -73,22 +98,41 @@ browser.runtime.onMessage.addListener(async request => {
 	}
 
 	if (request.createSitemap) {
+		if (request.projectId) {
+			return store.createSitemap(request.sitemap, request.projectId);
+		}
 		return store.createSitemap(request.sitemap);
 	}
 
 	if (request.saveSitemap) {
-		return store.saveSitemap(request.sitemap);
+		if (request.projectId) {
+			return store.saveSitemap(request.sitemap, request.previousSitemapId, request.projectId);
+		}
+		return store.saveSitemap(request.sitemap, request.previousSitemapId);
 	}
 
 	if (request.deleteSitemap) {
+		if (request.projectId) {
+			return store.deleteSitemap(request.sitemap, request.projectId);
+		}
 		return store.deleteSitemap(request.sitemap);
 	}
 
 	if (request.getAllSitemaps) {
+		if (request.projectId) {
+			return store.getAllSitemaps(request.projectId);
+		}
 		return store.getAllSitemaps();
 	}
 
+	if (request.getAllProjects) {
+		return store.getAllProjects();
+	}
+
 	if (request.sitemapExists) {
+		if (request.projectId) {
+			return store.sitemapExists(request.sitemapId, request.projectId);
+		}
 		return store.sitemapExists(request.sitemapId);
 	}
 

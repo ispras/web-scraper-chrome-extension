@@ -3,10 +3,12 @@
 	nav {
 		display: flex;
 	}
+
 	#auth_nav {
 		margin-left: auto;
 		padding-right: 5px;
 	}
+
 	#auth_nav > a {
 		color: #777;
 		line-height: 20px;
@@ -17,7 +19,13 @@
 </style>
 <nav class="navbar navbar-default disabled" role="navigation">
 	<ul class="nav navbar-nav">
-		<li><a id="sitemaps-nav-button" data-i18n="sitemaps_nav_button"></a></li>
+		<li><a id="projects-nav-button" data-i18n="projects_nav_button"></a></li>
+		<li>
+			<a id="sitemaps-nav-button" class="disabled">
+				<span data-i18n="sitemaps_nav_button"></span>
+				<span id="navbar-active-project-id"></span>
+			</a>
+		</li>
 		<li>
 			<a id="sitemap-nav-button" class="dropdown-toggle disabled" data-toggle="dropdown">
 				<span data-i18n="sitemap_nav_button"></span>
