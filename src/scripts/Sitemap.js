@@ -173,12 +173,16 @@ export default class Sitemap {
 			this.selectors.splice(index - 1, 1, selector);
 		}
 	}
-	findChildSelectors(parentUuid) {
+
+	createUuidforDeleteList(parentUuid) {
 		let uuidForDelete = [parentUuid];
 		this.selectors.forEach(
 			function (selector) {
 				if (selector.hasParentSelector(parentUuid)) {
-					uuidForDelete.push(...this.findChildSelectors(selector.uuid));
+					selector.removeParentSelector(parentUuid);
+					if (selector.parentSelectors.length === 0) {
+						uuidForDelete.push(...this.createUuidforDeleteList(selector.uuid));
+					}
 				}
 			}.bind(this)
 		);
@@ -186,9 +190,9 @@ export default class Sitemap {
 	}
 
 	deleteSelector(selectorToDelete) {
-		const uuidsTree = this.findChildSelectors(selectorToDelete.uuid);
+		const uuidsList = this.createUuidforDeleteList(selectorToDelete.uuid);
 		this.selectors = new SelectorList(
-			this.selectors.filter(selector => !uuidsTree.includes(selector.uuid))
+			this.selectors.filter(selector => !uuidsList.includes(selector.uuid))
 		);
 	}
 	getDataTableId() {
