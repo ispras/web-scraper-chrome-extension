@@ -174,14 +174,14 @@ export default class Sitemap {
 		}
 	}
 
-	createUuidforDeleteList(parentUuid) {
+	createUuidForDeleteList(parentUuid) {
 		let uuidForDelete = [parentUuid];
 		this.selectors.forEach(
 			function (selector) {
 				if (selector.hasParentSelector(parentUuid)) {
 					selector.removeParentSelector(parentUuid);
 					if (selector.parentSelectors.length === 0) {
-						uuidForDelete.push(...this.createUuidforDeleteList(selector.uuid));
+						uuidForDelete.push(...this.createUuidForDeleteList(selector.uuid));
 					}
 				}
 			}.bind(this)
@@ -190,7 +190,7 @@ export default class Sitemap {
 	}
 
 	deleteSelector(selectorToDelete) {
-		const uuidsList = this.createUuidforDeleteList(selectorToDelete.uuid);
+		const uuidsList = this.createUuidForDeleteList(selectorToDelete.uuid);
 		this.selectors = new SelectorList(
 			this.selectors.filter(selector => !uuidsList.includes(selector.uuid))
 		);
