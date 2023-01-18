@@ -174,26 +174,38 @@ export default class Sitemap {
 		}
 	}
 
-	createUuidForDeleteList(parentUuid) {
-		let uuidForDelete = [parentUuid];
-		this.selectors.forEach(
-			function (selector) {
-				if (selector.hasParentSelector(parentUuid)) {
-					selector.removeParentSelector(parentUuid);
-					if (selector.parentSelectors.length === 0) {
-						uuidForDelete.push(...this.createUuidForDeleteList(selector.uuid));
-					}
+	redundantParentsCleaner(selectorsList) {
+		const currentUuidList = selectorsList.map(selector => selector.uuid);
+		currentUuidList.push(this.rootSelector.uuid);
+		selectorsList.forEach(selector => {
+			selector.parentSelectors = selector.parentSelectors.filter(uuid =>
+				currentUuidList.includes(uuid)
+			);
+		});
+		return selectorsList;
+	}
+	createRemainingSelectorsList(parentSelector) {
+		let newList = [];
+		let selectorsQueue = [this.rootSelector];
+		while (selectorsQueue.length > 0) {
+			let currentSelector = selectorsQueue.shift();
+			const selectorChilds = this.selectors.filter(selector =>
+				selector.parentSelectors.includes(currentSelector.uuid)
+			);
+
+			selectorChilds.forEach(function (child) {
+				if (child.uuid !== parentSelector.uuid) {
+					selectorsQueue.push(child);
+					newList.push(child);
 				}
-			}.bind(this)
-		);
-		return uuidForDelete;
+			});
+		}
+		return this.redundantParentsCleaner(newList);
 	}
 
 	deleteSelector(selectorToDelete) {
-		const uuidsList = this.createUuidForDeleteList(selectorToDelete.uuid);
-		this.selectors = new SelectorList(
-			this.selectors.filter(selector => !uuidsList.includes(selector.uuid))
-		);
+		const newListSelectors = this.createRemainingSelectorsList(selectorToDelete);
+		this.selectors = new SelectorList(newListSelectors);
 	}
 	getDataTableId() {
 		return this._id.replace(/\./g, '_');
