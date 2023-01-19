@@ -143,6 +143,7 @@ export default class SitemapController {
 			'ActionConfirm',
 			'ErrorDevToolsPage',
 			'AuthorizationPage',
+			'ModalDeleteSelectorPanel',
 		];
 
 		return Promise.all(
@@ -1499,11 +1500,23 @@ export default class SitemapController {
 	async deleteSelector(button) {
 		const selector = $(button).closest('tr').data('selector');
 		const sitemap = this.state.currentSitemap;
-		const childCount = sitemap.getDirectChildSelectors(selector.uuid).length;
+		const clearSelectorList = sitemap.createRemainingSelectorsList(selector);
+		const filteredChildren = sitemap.selectors
+			.filter(selector => !clearSelectorList.includes(selector))
+			.map(selector => {
+				return { uuid: selector.uuid, id: selector.id };
+			});
+		const childCount = filteredChildren.length;
 		this.initConfirmActionPanel({ action: 'delete_selector' });
 		$('#modal-selector-id').text(selector.id);
 		if (childCount) {
 			$('#modal-child-count').text(childCount);
+			$('#modal-message').after('<ul id="list-deleted-children"></ul>');
+			filteredChildren.forEach(child => {
+				const $child = $('<li></li>');
+				$child.text(`${child.id} - ${child.uuid}`);
+				$('#list-deleted-children').append($child);
+			});
 			$('#modal-message').show();
 		}
 		this.state.currentSelector = selector;
