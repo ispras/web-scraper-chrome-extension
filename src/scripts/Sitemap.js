@@ -190,11 +190,11 @@ export default class Sitemap {
 		const selectorsQueue = [this.rootSelector];
 		while (selectorsQueue.length > 0) {
 			const currentSelector = selectorsQueue.shift();
-			const selectorChilds = this.selectors.filter(selector =>
+			const selectorChildren = this.selectors.filter(selector =>
 				selector.parentSelectors.includes(currentSelector.uuid)
 			);
 
-			selectorChilds.forEach(child => {
+			selectorChildren.forEach(child => {
 				if (child.uuid !== selectorToDelete.uuid && !newList.includes(child)) {
 					selectorsQueue.push(child);
 					newList.push(child);
