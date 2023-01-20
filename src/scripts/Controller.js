@@ -143,7 +143,6 @@ export default class SitemapController {
 			'ActionConfirm',
 			'ErrorDevToolsPage',
 			'AuthorizationPage',
-			'ModalDeleteSelectorPanel',
 		];
 
 		return Promise.all(
@@ -1514,7 +1513,7 @@ export default class SitemapController {
 			$('#modal-message').after('<ul id="list-deleted-children"></ul>');
 			filteredChildren.forEach(child => {
 				const $child = $('<li></li>');
-				$child.text(`${child.id} - ${child.uuid}`);
+				$child.text(`#${child.uuid} ${child.id}`);
 				$('#list-deleted-children').append($child);
 			});
 			$('#modal-message').show();

@@ -201,11 +201,13 @@ export default class Sitemap {
 				}
 			});
 		}
-		return this.cleanRedundantParents(newList);
+		return newList;
 	}
 
 	deleteSelector(selectorToDelete) {
-		const newListSelectors = this.createRemainingSelectorsList(selectorToDelete);
+		const newListSelectors = this.cleanRedundantParents(
+			this.createRemainingSelectorsList(selectorToDelete)
+		);
 		this.selectors = new SelectorList(newListSelectors);
 	}
 
