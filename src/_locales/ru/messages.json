@@ -360,7 +360,7 @@
 		"message": "Вы действительно хотите удалить карту обхода <span id='modal-sitemap-id'></span>?"
 	},
 	"modal_confirm_action_message_delete_selector": {
-		"message": "У удаляемого селектора имеются дочерние (<span id='modal-child-count'></span> шт.), которые будут удалены"
+		"message": "Будут удалены следующие селекторы (<span id='modal-child-count'></span> шт.):"
 	},
 	"modal_confirm_action_submit_delete_selector": { "message": "Подтвердить" },
 	"modal_confirm_action_cancel_delete_selector": { "message": "Отмена" },
