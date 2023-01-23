@@ -1,11 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import 'jquery-flexdatalist/jquery.flexdatalist.css';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator.css';
+import 'bootstrap-select/dist/css/bootstrap-select.css';
 import '../devtools/panel.css';
 import 'bootstrap/dist/js/bootstrap';
+import * as browser from 'webextension-polyfill';
 import StoreDevtools from './StoreDevtools';
 import SitemapController from './Controller';
-import * as browser from 'webextension-polyfill';
 import TalismanStoreDevtools from './TalismanStoreDevtools';
 
 $(async function () {

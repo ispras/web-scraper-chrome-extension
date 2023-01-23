@@ -11,7 +11,7 @@ export default class Selector {
 	 * @param features
 	 */
 	updateData(data, features) {
-		let allowedKeys = ['id', 'type', 'selector', 'parentSelectors', 'uuid'];
+		let allowedKeys = ['id', 'type', 'selector', 'parentSelectors', 'uuid', 'kbType'];
 		allowedKeys = allowedKeys.concat(features);
 
 		// update data

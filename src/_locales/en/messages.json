@@ -52,6 +52,7 @@
 	"selectorList_add_selector_button": { "message": "Add new selector" },
 	"selector_edit_id_field": { "message": "ID" },
 	"selector_edit_type_placeholder": { "message": "Type" },
+	"selector_edit_kb_type": { "message": "Attach KB Type" },
 	"selector_edit_selector_css_field": { "message": "Selector" },
 	"selector_edit_data_preview_button": { "message": "Data preview" },
 	"selector_edit_scroll_selector": { "message": "Scroll to selector" },
@@ -351,5 +352,6 @@
 	"prop_types_for_concept_type": { "message": "Property types for concept type" },
 	"prop_types_for_link_type": { "message": "Property types for link type" },
 	"all_concept_types": { "message": "All concept types" },
-	"incompatible_kb_parent_type": { "message": "There are incompatible parent KB types" }
+	"incompatible_kb_parent_type": { "message": "There are incompatible parent KB types" },
+	"kb_type_none_option": { "message": "None" }
 }

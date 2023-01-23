@@ -389,5 +389,6 @@
 	"all_concept_types": { "message": "Все типы концептов" },
 	"incompatible_kb_parent_type": {
 		"message": "Среди селекторов-предков есть несовместимые типы БЗ"
-	}
+	},
+	"kb_type_none_option": { "message": "Нет" }
 }

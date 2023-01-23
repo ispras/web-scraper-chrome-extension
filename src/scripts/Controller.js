@@ -8,6 +8,7 @@ import 'jquery-highlight/jquery.highlight';
 import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
+import 'bootstrap-select/dist/js/bootstrap-select';
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
@@ -279,7 +280,9 @@ export default class SitemapController {
 			},
 			'#edit-selector #selectorId': {
 				'change:flexdatalist': this.updateCurrentlyEditedSelectorInParentsList,
-				'select:flexdatalist': this.selectorIdHintSelected,
+			},
+			'#edit-selector #kbType': {
+				change: this.selectorKbTypeChanged,
 			},
 			'#selector-tree button[action=add-selector]': {
 				click: this.addSelector,
@@ -1239,6 +1242,19 @@ export default class SitemapController {
 		});
 		$('#viewport').html($editSelectorForm);
 
+		$('#selectorId').flexdatalist({
+			init: this.initSelectorValidation(),
+			textProperty: '{fieldName}',
+			valueProperty: 'fieldName',
+			data: [...sitemap.model, { entity: '', field: '', fieldName: selector.id }],
+			searchIn: ['entity', 'field'],
+			visibleProperties: ['entity', 'field'],
+			groupBy: 'entity',
+			searchContain: true,
+			noResultsText: '',
+			minLength: 1,
+		});
+
 		// mark initially opened selector as currently edited
 		$('#edit-selector #parentSelectors option').each((_, element) => {
 			if ($(element).val() === selector.uuid) {
@@ -1269,8 +1285,22 @@ export default class SitemapController {
 		this.initSelectorValidation();
 
 		this.state.currentSelector = selector;
+
+		if (this.kb) {
+			$('#kbType').selectpicker({
+				liveSearch: true,
+				// style: '',
+				// styleBase: 'form-control',
+			});
+		}
+
 		await this.selectorTypeChanged(false);
 		Translator.translatePage();
+
+		if (selector.kbType) {
+			$('#kbType').selectpicker('val', selector.kbType);
+		}
+		$('select:not(#kbType):not([multiple])').selectpicker(); // enforce consistent styles for selects
 	}
 
 	async selectorTypeChanged(changeTrigger) {
@@ -1298,46 +1328,48 @@ export default class SitemapController {
 			$('#edit-selector #parentSelectors .currently-edited').remove();
 		}
 
-		await this.initSelectorIdHints(selector);
-	}
-
-	async initSelectorIdHints(selector) {
-		const $selectorIdInput = $('#selectorId');
-		$selectorIdInput.flexdatalist();
-		const idDatalistOptions = {
-			textProperty: '{fieldName}',
-			valueProperty: 'fieldName',
-			searchIn: ['entity', 'field'],
-			visibleProperties: ['entity', 'field'],
-			groupBy: 'entity',
-			searchContain: true,
-			selectionRequired: false,
-			noResultsText: '',
-			minLength: 1,
-		};
-
-		const hints = [];
 		if (this.kb) {
-			const kbHints = await this.kb.generateIdHints(selector, this.state.currentSitemap);
-			hints.push(...kbHints);
+			await this.initKbTypeOptions(selector);
 		}
-		hints.push(...this.state.currentSitemap.model);
-		hints.push({
-			entity: '',
-			field: '',
-			fieldName: selector.id,
-		});
-
-		$selectorIdInput.flexdatalist({
-			...idDatalistOptions,
-			data: hints,
-		});
 	}
 
-	selectorIdHintSelected(selectorIdInput, event, item) {
-		if (item.kbHint) {
-			$('#edit-selector [name=dontFlatten]').prop('checked', true);
+	async initKbTypeOptions(selector) {
+		const $kbType = $('#kbType');
+		$kbType.empty();
+		$kbType.append(
+			`<option value=''>${Translator.getTranslationByKey('kb_type_none_option')}</option>`
+		);
+
+		const hints = await this.kb.generateIdHints(selector, this.state.currentSitemap);
+		console.log(hints);
+		if (!hints.length) {
+			return;
 		}
+		$('#edit-selector .feature-kbType').show();
+
+		const groupNames = hints.map(hint => hint.entity).unique();
+		const groups = Object.fromEntries(groupNames.map(name => [name, []]));
+		for (const hint of hints) {
+			groups[hint.entity].push({ value: hint.fieldName, label: hint.field });
+		}
+
+		for (const groupName of groupNames) {
+			const $group = $(`<optgroup label='${groupName}'></optgroup>`);
+			for (const hint of groups[groupName]) {
+				$group.append(`<option value='${hint.value}'>${hint.label}</option>`);
+			}
+			$group.appendTo($kbType);
+		}
+
+		if (selector.kbType) {
+			$kbType.selectpicker('val', selector.kbType);
+		}
+
+		$kbType.selectpicker('refresh');
+	}
+
+	selectorKbTypeChanged(selectorIdInput, event, item) {
+		$('#edit-selector [name=dontFlatten]').prop('checked', true);
 	}
 
 	async saveSelector(button) {
@@ -1419,7 +1451,7 @@ export default class SitemapController {
 			regexgroup: $('#edit-selector [name=regexgroup]').val(),
 		};
 		const uuid = $('#edit-selector [name=uuid]').val();
-		const conceptTypeId = $('#edit-selector [name=conceptTypeId]').val();
+		const kbType = $('#edit-selector [name=kbType]').val();
 
 		$columnHeaders.each(function (i) {
 			const header = $($columnHeaders[i]).val();
@@ -1461,7 +1493,7 @@ export default class SitemapController {
 			dontFlatten,
 			outerHTML,
 			uuid,
-			conceptTypeId,
+			kbType,
 		};
 
 		return SelectorList.createSelector(options);

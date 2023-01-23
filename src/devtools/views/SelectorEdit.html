@@ -1,5 +1,9 @@
 <form class="form-horizontal" role="form" id="edit-selector">
 	<div class="form-group">
+		<input type="hidden" name="uuid" value="{{selector.uuid}}" disabled />
+	</div>
+
+	<div class="form-group">
 		<label
 			for="selectorId"
 			class="col-sm-2 control-label"
@@ -33,8 +37,16 @@
 		</div>
 	</div>
 
-	<div class="form-group">
-		<input type="hidden" name="uuid" value="{{selector.uuid}}" disabled />
+	<div class="form-group feature feature-kbType">
+		<label
+			for="kbType"
+			class="col-sm-2 control-label"
+			data-i18n="selector_edit_kb_type"
+		></label>
+
+		<div class="input-group col-sm-8">
+			<select class="form-control" id="kbType" name="kbType"></select>
+		</div>
 	</div>
 
 	<div class="form-group feature feature-selector">
