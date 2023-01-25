@@ -114,6 +114,7 @@
 	"selector_edit_type_of_html_outer": { "message": "Внешний HTML" },
 	"selector_edit_type_of_html_inner": { "message": "Внутренний HTML" },
 	"selector_edit_merge_into_list": { "message": "Объединить собранные элементы в список" },
+	"selector_edit_dont_flatten": { "message": "Не приводить данные к плоскому виду" },
 
 	"sitemap_scrape_config_requestInterval": { "message": "Интервал между запросами" },
 	"sitemap_scrape_config_requestIntervalRandomness": { "message": "Случайность между запросами" },
@@ -379,5 +380,15 @@
 	},
 	"popup_ws_version": {
 		"message": "Версия Web Scraper: "
-	}
+	},
+
+	"link_types_for_concept_type": { "message": "Типы связей для типа концепта" },
+	"concept_types_for_link_type": { "message": "Типы концептов для типа связи" },
+	"prop_types_for_concept_type": { "message": "Типы характеристик для типа концепта" },
+	"prop_types_for_link_type": { "message": "Типы характеристик для типа связи" },
+	"all_concept_types": { "message": "Все типы концептов" },
+	"incompatible_kb_parent_type": {
+		"message": "Среди селекторов-предков есть несовместимые типы БЗ"
+	},
+	"kb_type_none_option": { "message": "Нет" }
 }

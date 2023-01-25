@@ -290,7 +290,9 @@ export default class SelectorList extends Array {
 			const parentSelectorId = parentSelectorIds[i];
 			const parentSelector = this.getSelectorByUid(parentSelectorId);
 			if (parentSelector.willReturnElements()) {
-				CSSSelector = `${parentSelector.selector} ${CSSSelector}`;
+				if (parentSelector.selector !== '_parent_') {
+					CSSSelector = `${parentSelector.selector} ${CSSSelector}`;
+				}
 			} else {
 				break;
 			}

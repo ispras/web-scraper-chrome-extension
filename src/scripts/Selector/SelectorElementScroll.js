@@ -101,6 +101,7 @@ export default class SelectorElementScroll extends Selector {
 			'delay',
 			'paginationLimit',
 			'mergeIntoList',
+			'dontFlatten',
 		];
 	}
 }

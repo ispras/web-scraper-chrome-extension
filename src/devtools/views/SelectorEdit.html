@@ -1,5 +1,9 @@
 <form class="form-horizontal" role="form" id="edit-selector">
 	<div class="form-group">
+		<input type="hidden" name="uuid" value="{{selector.uuid}}" disabled />
+	</div>
+
+	<div class="form-group">
 		<label
 			for="selectorId"
 			class="col-sm-2 control-label"
@@ -32,8 +36,17 @@
 			</select>
 		</div>
 	</div>
-	<div class="form-group">
-		<input type="hidden" name="uuid" value="{{selector.uuid}}" disabled />
+
+	<div class="form-group feature feature-kbType">
+		<label
+			for="kbType"
+			class="col-sm-2 control-label"
+			data-i18n="selector_edit_kb_type"
+		></label>
+
+		<div class="input-group col-sm-8">
+			<select class="form-control" id="kbType" name="kbType"></select>
+		</div>
 	</div>
 
 	<div class="form-group feature feature-selector">
@@ -557,6 +570,23 @@
 				<label>
 					<input type="checkbox" id="mergeIntoList" name="mergeIntoList"
 					{{#selector.mergeIntoList}}checked="checked" {{/selector.mergeIntoList}}/>
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group feature feature-dontFlatten">
+		<label
+			for="dontFlatten"
+			class="col-sm-2 control-label"
+			data-i18n="selector_edit_dont_flatten"
+		></label>
+
+		<div class="col-sm-8">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" id="dontFlatten" name="dontFlatten"
+					{{#selector.dontFlatten}}checked="checked" {{/selector.dontFlatten}}/>
 				</label>
 			</div>
 		</div>

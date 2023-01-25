@@ -52,6 +52,7 @@
 	"selectorList_add_selector_button": { "message": "Add new selector" },
 	"selector_edit_id_field": { "message": "ID" },
 	"selector_edit_type_placeholder": { "message": "Type" },
+	"selector_edit_kb_type": { "message": "Attach KB Type" },
 	"selector_edit_selector_css_field": { "message": "Selector" },
 	"selector_edit_data_preview_button": { "message": "Data preview" },
 	"selector_edit_scroll_selector": { "message": "Scroll to selector" },
@@ -110,6 +111,7 @@
 	"selector_edit_type_of_html_outer": { "message": "Outer HTML" },
 	"selector_edit_type_of_html_inner": { "message": "Inner HTML" },
 	"selector_edit_merge_into_list": { "message": "Merge collected items into list" },
+	"selector_edit_dont_flatten": { "message": "Dont flatten results" },
 	"sitemap_scrape_config_request_interval_label": { "message": "Request interval (ms)" },
 	"sitemap_scrape_config_request_interval_randomness_label": {
 		"message": "Request interval randomness (ms)"
@@ -343,5 +345,13 @@
 	},
 	"popup_ws_version": {
 		"message": "Web Scraper version: "
-	}
+	},
+
+	"link_types_for_concept_type": { "message": "Link types for concept type" },
+	"concept_types_for_link_type": { "message": "Concept types for link type" },
+	"prop_types_for_concept_type": { "message": "Property types for concept type" },
+	"prop_types_for_link_type": { "message": "Property types for link type" },
+	"all_concept_types": { "message": "All concept types" },
+	"incompatible_kb_parent_type": { "message": "There are incompatible parent KB types" },
+	"kb_type_none_option": { "message": "None" }
 }

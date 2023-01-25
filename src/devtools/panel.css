@@ -182,3 +182,7 @@ select[size] {
 	font-style: normal;
 	font-weight: normal;
 }
+
+.bootstrap-select .dropdown-menu {
+	font-size: 12px;
+}

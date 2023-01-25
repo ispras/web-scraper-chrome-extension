@@ -1,5 +1,5 @@
 export default class Job {
-	constructor(url, parentSelector, scraper, parentJob, baseData) {
+	constructor(url, parentSelector, scraper, parentJob, baseData, baseDataPath) {
 		if (parentJob !== undefined) {
 			this.url = this.combineUrls(parentJob.url, url);
 		} else {
@@ -9,6 +9,7 @@ export default class Job {
 		this.scraper = scraper;
 		this.dataItems = [];
 		this.baseData = baseData || {};
+		this.baseDataPath = baseDataPath || [];
 	}
 
 	combineUrls(parentUrl, childUrl) {
@@ -69,17 +70,12 @@ export default class Job {
 			this.url,
 			sitemap,
 			this.parentSelector,
-			function (results) {
+			results => {
 				// merge data with data from initialization
-				for (const i in results) {
-					const result = results[i];
-					for (const key in this.baseData) {
-						if (!(key in result)) {
-							result[key] = this.baseData[key];
-						}
-					}
-					this.dataItems.push(result);
-				}
+				results.forEach(result => {
+					const mergedResult = this.mergeWithBaseData(result);
+					this.dataItems.push(mergedResult);
+				});
 
 				if (sitemap) {
 					// table selector can dynamically add columns (addMissingColumns Feature)
@@ -88,9 +84,18 @@ export default class Job {
 
 				console.log(job);
 				callback(job);
-			}.bind(this),
+			},
 			this
 		);
+	}
+
+	mergeWithBaseData(result) {
+		const mergedData = structuredClone(this.baseData);
+		const { _url, _timestamp, ...resultData } = result;
+		const insertAt = this.baseDataPath.reduce((data, key) => data[key] || {}, mergedData);
+		Object.assign(mergedData, { _url, _timestamp });
+		Object.assign(insertAt, resultData);
+		return mergedData;
 	}
 
 	getResults() {
