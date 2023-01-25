@@ -34,7 +34,7 @@ export default class TalismanKB {
 	}
 
 	getKBType(selector) {
-		const match = /^\[tlsmn:(.+?)]/.exec(selector.id);
+		const match = /^\[tlsmn:(.+?)]/.exec(selector.kbType);
 		if (!match) {
 			return undefined;
 		}
