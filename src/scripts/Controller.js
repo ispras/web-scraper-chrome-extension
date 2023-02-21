@@ -1320,8 +1320,9 @@ export default class SitemapController {
 		if (this.kb) {
 			const kbHints = await this.kb.generateIdHints(selector, this.state.currentSitemap);
 			hints.push(...kbHints);
+		} else {
+			hints.push(...this.state.currentSitemap.model);
 		}
-		hints.push(...this.state.currentSitemap.model);
 		hints.push({
 			entity: '',
 			field: '',
