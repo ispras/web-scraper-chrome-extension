@@ -174,24 +174,41 @@ export default class Sitemap {
 		}
 	}
 
-	deleteSelector(selectorToDelete) {
-		this.selectors.forEach(
-			function (selector) {
-				if (selector.hasParentSelector(selectorToDelete.uuid)) {
-					selector.removeParentSelector(selectorToDelete.uuid);
-					if (selector.parentSelectors.length === 0) {
-						this.deleteSelector(selector);
-					}
-				}
-			}.bind(this)
-		);
+	cleanRedundantParents(selectorsList) {
+		const currentUuidList = selectorsList.map(selector => selector.uuid);
+		currentUuidList.push(this.rootSelector.uuid);
+		selectorsList.forEach(selector => {
+			selector.parentSelectors = selector.parentSelectors.filter(uuid =>
+				currentUuidList.includes(uuid)
+			);
+		});
+		return selectorsList;
+	}
 
-		for (const i in this.selectors) {
-			if (this.selectors[i].uuid === selectorToDelete.uuid) {
-				this.selectors.splice(i, 1);
-				break;
-			}
+	createRemainingSelectorsList(selectorToDelete) {
+		const newList = [];
+		const selectorsQueue = [this.rootSelector];
+		while (selectorsQueue.length > 0) {
+			const currentSelector = selectorsQueue.shift();
+			const selectorChildren = this.selectors.filter(selector =>
+				selector.parentSelectors.includes(currentSelector.uuid)
+			);
+
+			selectorChildren.forEach(child => {
+				if (child.uuid !== selectorToDelete.uuid && !newList.includes(child)) {
+					selectorsQueue.push(child);
+					newList.push(child);
+				}
+			});
 		}
+		return newList;
+	}
+
+	deleteSelector(selectorToDelete) {
+		const newListSelectors = this.cleanRedundantParents(
+			this.createRemainingSelectorsList(selectorToDelete)
+		);
+		this.selectors = new SelectorList(newListSelectors);
 	}
 
 	getDataTableId() {
@@ -216,9 +233,6 @@ export default class Sitemap {
 		removeEmpty(sitemapObj);
 		if (sitemapObj['selectors'] === undefined) {
 			sitemapObj['selectors'] = [];
-		}
-		if (sitemapObj['model'] === undefined) {
-			sitemapObj['model'] = [];
 		}
 		return JSON.stringify(sitemapObj, null, 2);
 	}
