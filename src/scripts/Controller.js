@@ -224,6 +224,9 @@ export default class SitemapController {
 			'button#submit-edit-sitemap': {
 				click: this.editSitemapMetadataSave,
 			},
+			'[name=sitemapType]': {
+				change: this.sitemapTypeChanged,
+			},
 			'#edit-sitemap-metadata-form': {
 				submit: () => false,
 			},
@@ -441,6 +444,28 @@ export default class SitemapController {
 						},
 					},
 				},
+				urlPattern: {
+					validators: {
+						notEmpty: {
+							message: Translator.getTranslationByKey(
+								'sitemap_url_pattern_empty_message'
+							),
+						},
+						callback: {
+							message: Translator.getTranslationByKey(
+								'sitemap_url_pattern_invalid_message'
+							),
+							callback(value) {
+								try {
+									new RegExp(value);
+									return true;
+								} catch (e) {
+									return false;
+								}
+							},
+						},
+					},
+				},
 				model: {
 					validators: {
 						callback: {
@@ -477,7 +502,22 @@ export default class SitemapController {
 		$('#viewport').html(sitemapForm);
 		this.initSitemapValidation();
 		Translator.translatePage();
+		// this.sitemapTypeChanged();
 		return true;
+	}
+
+	sitemapTypeChanged() {
+		const type = $('#viewport [name=sitemapType]').val();
+		if (type === 'full') {
+			$('#viewport .start-url-block').show();
+			$('#viewport .url-pattern-block').hide();
+		} else {
+			$('#viewport .start-url-block').hide();
+			$('#viewport .url-pattern-block').show();
+		}
+		// const validator = this.getFormValidator();
+		// validator.revalidateField('startUrls');
+		// validator.revalidateField('urlPattern');
 	}
 
 	initCopySitemapValidation() {
@@ -802,18 +842,24 @@ export default class SitemapController {
 	}
 
 	getSitemapFromMetadataForm() {
-		const id = $('#viewport form input[name=_id]').val();
-		const $startUrlInputs = $('#viewport form .input-start-url');
-		const startUrls = $startUrlInputs
-			.val()
-			.split(',')
-			.map(item => item.trim());
-		const modelStr = $('#viewport .input-model').val();
-		return {
-			id,
-			startUrls,
-			model: modelStr ? JSON.parse(modelStr) : undefined,
-		};
+		const metadata = {};
+		const $form = $('#viewport form');
+		metadata.id = $form.find('input[name=_id]').val();
+		const sitemapType = $form.find('[name=sitemapType]').val();
+		if (sitemapType === 'full') {
+			metadata.startUrls = $form
+				.find('.input-start-url')
+				.val()
+				.split(',')
+				.map(item => item.trim());
+		} else {
+			metadata.urlPattern = $form.find('.input-url-pattern').val();
+		}
+		const modelStr = $form.find('.input-model').val();
+		if (modelStr) {
+			metadata.model = JSON.parse(modelStr);
+		}
+		return metadata;
 	}
 
 	async createSitemap() {
@@ -832,7 +878,13 @@ export default class SitemapController {
 			const validator = this.getFormValidator();
 			validator.updateStatus('_id', 'INVALID', 'callback');
 		} else {
-			let sitemap = new Sitemap(sitemapData.id, sitemapData.startUrls, sitemapData.model, []);
+			let sitemap = new Sitemap(
+				sitemapData.id,
+				sitemapData.startUrls,
+				sitemapData.urlPattern,
+				sitemapData.model,
+				[]
+			);
 			sitemap = await this.store.createSitemap(sitemap, this.getCurrentProjectId());
 			this._editSitemap(sitemap);
 		}
@@ -874,6 +926,8 @@ export default class SitemapController {
 		$('#viewport').html($sitemapMetadataForm);
 		this.initSitemapValidation();
 		Translator.translatePage();
+		// $('#viewport [name=sitemapType]').val(sitemap.urlPattern ? 'partial' : 'full');
+		// this.sitemapTypeChanged();
 		return true;
 	}
 
@@ -901,6 +955,7 @@ export default class SitemapController {
 		const previousSitemapId = sitemap._id;
 		sitemap._id = sitemapData.id;
 		sitemap.startUrls = sitemapData.startUrls;
+		sitemap.urlPattern = sitemapData.urlPattern;
 		sitemap.model = new Model(sitemapData.model);
 		await this.store.saveSitemap(sitemap, previousSitemapId, this.getCurrentProjectId());
 		this.showSitemapSelectorList();
@@ -1490,7 +1545,13 @@ export default class SitemapController {
 			);
 			return false;
 		}
-		sitemap = new Sitemap(id, sitemap.startUrls, sitemap.model, sitemap.selectors);
+		sitemap = new Sitemap(
+			id,
+			sitemap.startUrls,
+			sitemap.urlPattern,
+			sitemap.model,
+			sitemap.selectors
+		);
 		sitemap = await this.store.createSitemap(sitemap, this.getCurrentProjectId());
 		this._editSitemap(sitemap);
 		$('#confirm-action-modal').modal('hide');

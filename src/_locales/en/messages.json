@@ -121,10 +121,17 @@
 	},
 	"sitemap_edit_metadata_submit_model": { "message": "Save Sitemap" },
 	"sitemap_edit_metadata_edit_sitemap_id": { "message": "Sitemap name" },
+	"sitemap_edit_metadata_type": { "message": "Sitemap type" },
+	"sitemap_edit_metadata_full_sitemap": { "message": "Full sitemap" },
+	"sitemap_edit_metadata_partial_sitemap": { "message": "Partial sitemap" },
 	"sitemap_edit_metadata_start_url": { "message": "Start URLs" },
+	"sitemap_edit_metadata_url_pattern": { "message": "URL pattern" },
 	"sitemap_edit_metadata_sitemap_model": { "message": "Sitemap Model" },
 	"sitemap_edit_metadata_sitemap_name_placeholder": { "message": "Sitemap name" },
 	"sitemap_edit_metadata_url_list_placeholder": { "message": "URL List" },
+	"sitemap_edit_metadata_url_pattern_placeholder": {
+		"message": "URL regular expression pattern"
+	},
 	"sitemap_create_id": { "message": "Sitemap name" },
 	"sitemap_create_start_url_block_label": { "message": "Start URLs" },
 	"sitemap_create_sitemap_model": { "message": "Sitemap Model" },
@@ -234,6 +241,12 @@
 	"sitemapmodel_empty_message": { "message": "Empty value is possible model" },
 	"sitemapjson_invalid_message": { "message": "JSON is not valid" },
 	"sitemapjson_empty_message": { "message": "Sitemap JSON is required and cannot be empty" },
+	"sitemap_url_pattern_empty_message": {
+		"message": "URL pattern is required and can't be empty"
+	},
+	"sitemap_url_pattern_invalid_message": {
+		"message": "URL pattern must be a valid regular expression"
+	},
 	"selecting_file_error": { "message": "Please select a file!" },
 	"sitemap_valid_message": { "message": "Valid sitemap" },
 	"selectorid_underscore": { "message": "Selector id cannot start with an underscore _" },

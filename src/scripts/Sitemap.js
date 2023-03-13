@@ -4,10 +4,11 @@ import Model from './Model';
 import SitemapSpecMigrationManager from './SitemapSpecMigration/Manager';
 
 export default class Sitemap {
-	constructor(id, startUrls, model, selectors) {
+	constructor(id, startUrls, urlPattern, model, selectors) {
 		this.rootSelector = { id: '_root', uuid: '0' };
 		this._id = id;
 		this.startUrls = startUrls;
+		this.urlPattern = urlPattern;
 		this.model = new Model(model);
 		this.selectors = new SelectorList(selectors || []);
 		this.sitemapSpecificationVersion = SitemapSpecMigrationManager.currentVersion();
@@ -18,6 +19,7 @@ export default class Sitemap {
 		const sitemap = new Sitemap(
 			sitemapObj._id,
 			sitemapObj.startUrls,
+			sitemapObj.urlPattern,
 			sitemapObj.model,
 			sitemapObj.selectors
 		);
@@ -265,6 +267,7 @@ export default class Sitemap {
 		return new Sitemap(
 			clonedObj._id,
 			clonedObj.startUrls,
+			clonedObj.urlPattern,
 			clonedObj.model,
 			clonedObj.selectors
 		);

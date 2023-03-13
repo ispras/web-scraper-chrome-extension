@@ -18,6 +18,22 @@
 				/>
 			</div>
 		</div>
+		<div class="form-group sitemap-type">
+			<label class="col-lg-1 control-label" data-i18n="sitemap_edit_metadata_type"></label>
+			<div class="input-group col-sm-8">
+				<select class="form-control" name="sitemapType">
+					<option
+						selected
+						value="full"
+						data-i18n="sitemap_edit_metadata_full_sitemap"
+					></option>
+					<option
+						value="partial"
+						data-i18n="sitemap_edit_metadata_partial_sitemap"
+					></option>
+				</select>
+			</div>
+		</div>
 		<div class="form-group start-url-block">
 			<label
 				class="col-lg-1 control-label"
@@ -37,6 +53,21 @@
 				</div>
 			</div>
 			<div class="col-lg-10 col-lg-offset-1" data-i18n="url_patterns_hints"></div>
+		</div>
+		<div class="form-group url-pattern-block">
+			<label
+				class="col-lg-1 control-label"
+				data-i18n="sitemap_edit_metadata_url_pattern"
+			></label>
+			<div class="col-lg-10">
+				<input
+					type="text"
+					class="form-control input-url-pattern"
+					name="urlPattern"
+					placeholder="sitemap_edit_metadata_url_pattern_placeholder"
+					value="{{urlPattern}}"
+				/>
+			</div>
 		</div>
 		<div class="form-group model">
 			<label
