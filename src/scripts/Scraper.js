@@ -12,6 +12,7 @@ export default class Scraper {
 		this.sitemap = options.sitemap;
 		this.store = options.store;
 		this.browser = options.browser;
+		this.startUrl = options.startUrl;
 		this.resultWriter = null; // db instance for scraped data writing
 		this.requestInterval = 2000;
 		this._timeNextScrapeAvailable = 0;
@@ -22,7 +23,7 @@ export default class Scraper {
 	}
 
 	initFirstJobs() {
-		const urls = this.sitemap.getStartUrls();
+		const urls = this.startUrl ? [this.startUrl] : this.sitemap.getStartUrls();
 
 		urls.forEach(
 			function (url) {

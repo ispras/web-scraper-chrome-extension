@@ -224,7 +224,7 @@ export default class SitemapController {
 			'button#submit-edit-sitemap': {
 				click: this.editSitemapMetadataSave,
 			},
-			'[name=sitemapType]': {
+			'form [name=sitemapType]': {
 				change: this.sitemapTypeChanged,
 			},
 			'#edit-sitemap-metadata-form': {
@@ -502,22 +502,23 @@ export default class SitemapController {
 		$('#viewport').html(sitemapForm);
 		this.initSitemapValidation();
 		Translator.translatePage();
-		// this.sitemapTypeChanged();
+		this.sitemapTypeChanged();
 		return true;
 	}
 
 	sitemapTypeChanged() {
-		const type = $('#viewport [name=sitemapType]').val();
+		const $form = $('#viewport form');
+		const validator = this.getFormValidator();
+		const type = $form.find('[name=sitemapType]').val();
 		if (type === 'full') {
-			$('#viewport .start-url-block').show();
-			$('#viewport .url-pattern-block').hide();
+			$form.find('.start-url-block').show();
+			$form.find('.url-pattern-block').hide();
+			validator.resetField('startUrls');
 		} else {
-			$('#viewport .start-url-block').hide();
-			$('#viewport .url-pattern-block').show();
+			$form.find('.start-url-block').hide();
+			$form.find('.url-pattern-block').show();
+			validator.resetField('urlPattern');
 		}
-		// const validator = this.getFormValidator();
-		// validator.revalidateField('startUrls');
-		// validator.revalidateField('urlPattern');
 	}
 
 	initCopySitemapValidation() {
@@ -926,8 +927,8 @@ export default class SitemapController {
 		$('#viewport').html($sitemapMetadataForm);
 		this.initSitemapValidation();
 		Translator.translatePage();
-		// $('#viewport [name=sitemapType]').val(sitemap.urlPattern ? 'partial' : 'full');
-		// this.sitemapTypeChanged();
+		$('#viewport form [name=sitemapType]').val(sitemap.urlPattern ? 'partial' : 'full');
+		this.sitemapTypeChanged();
 		return true;
 	}
 
@@ -1606,8 +1607,30 @@ export default class SitemapController {
 	}
 
 	initScrapeSitemapConfigValidation() {
+		const sitemap = this.state.currentSitemap;
 		$('#viewport form').bootstrapValidator({
 			fields: {
+				startUrl: {
+					validators: {
+						notEmpty: {
+							message: Translator.getTranslationByKey(
+								'partial_sitemap_scrape_start_url_empty_message'
+							),
+						},
+						regexp: {
+							regexp: new RegExp(sitemap.urlPattern),
+							message: `${Translator.getTranslationByKey(
+								'partial_sitemap_scrape_start_url_mismatch_message'
+							)} <i>${sitemap.urlPattern}</i>`,
+						},
+						callback: {
+							callback: value => Sitemap.isUrlValid(value),
+							message: Translator.getTranslationByKey(
+								'partial_sitemap_scrape_start_url_invalid_message'
+							),
+						},
+					},
+				},
 				requestInterval: {
 					validators: {
 						notEmpty: {
@@ -1672,10 +1695,14 @@ export default class SitemapController {
 
 	showScrapeSitemapConfigPanel() {
 		this.setActiveNavigationButton('sitemap-scrape');
-		const scrapeConfigPanel = ich.SitemapScrapeConfig();
-		$('#viewport').html(scrapeConfigPanel);
-		this.initScrapeSitemapConfigValidation();
-		Translator.translatePage();
+		const sitemap = this.state.currentSitemap;
+		browser.tabs.query({ active: true, lastFocusedWindow: true }).then(tabs => {
+			const url = tabs.length ? tabs[0].url : undefined;
+			const scrapeConfigPanel = ich.SitemapScrapeConfig({ sitemap, url });
+			$('#viewport').html(scrapeConfigPanel);
+			this.initScrapeSitemapConfigValidation();
+			Translator.translatePage();
+		});
 		return true;
 	}
 
@@ -1687,11 +1714,13 @@ export default class SitemapController {
 		const requestInterval = $('input[name=requestInterval]').val();
 		const pageLoadDelay = $('input[name=pageLoadDelay]').val();
 		const intervalRandomness = $('input[name=requestIntervalRandomness]').val();
+		const startUrl = $('input[name=startUrl]').val();
 
 		const sitemap = this.state.currentSitemap;
 		const request = {
 			scrapeSitemap: true,
 			sitemap: JSON.parse(JSON.stringify(sitemap)),
+			startUrl,
 			requestInterval,
 			pageLoadDelay,
 			requestIntervalRandomness: intervalRandomness,

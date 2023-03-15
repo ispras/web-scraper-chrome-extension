@@ -152,6 +152,7 @@ browser.runtime.onMessage.addListener(async request => {
 			sitemap,
 			browser: browserTab,
 			store,
+			startUrl: request.startUrl,
 			requestInterval: request.requestInterval,
 			requestIntervalRandomness: request.requestIntervalRandomness,
 			pageLoadDelay: request.pageLoadDelay,
