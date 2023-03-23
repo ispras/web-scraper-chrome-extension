@@ -18,7 +18,7 @@
 	"sitemaplist_id": { "message": "Идентификатор карты" },
 	"projectlist_id": { "message": "Идентификатор проекта" },
 	"projectName": { "message": "Название проекта" },
-	"sitemaplist_starturl": { "message": "Стартовые URL" },
+	"sitemaplist_starturl": { "message": "Стартовые URL / Шаблон URL" },
 	"sitemaplist_actions": { "message": "Действия" },
 	"browse_sitemap_data": { "message": "Просмотр данных" },
 	"delete_sitemap": { "message": "Удалить" },
@@ -123,6 +123,8 @@
 		"message": "Случайность между запросами (мс)"
 	},
 	"sitemap_scrape_config_page_load_delay": { "message": "Задержка при загрузке страницы (мс)" },
+	"sitemap_scrape_config_start_url_label": { "message": "Стартовый URL" },
+	"sitemap_scrape_config_start_url_placeholder": { "message": "Стартовый URL" },
 	"sitemap_scrape_config_submit_scraping": { "message": "Запустить тестовый сбор" },
 	"sitemap_scrape_config_alert_success": {
 		"message": "Сбор в процессе. Закройте всплывающее окно для того, чтобы остановить сбор. <br/> Когда сбор завершится вы можете посмотреть собранные данные и выгрузить их в CSV или JSON Lines."
@@ -137,6 +139,15 @@
 	"sitemap_create_start_url_block_label": { "message": "Стартовые URL" },
 	"sitemap_create_sitemap_model": { "message": "Модель карты обхода" },
 	"sitemap_create_submit_create_sitemap": { "message": "Создать карту обхода" },
+
+	"sitemap_type_label": { "message": "Тип карты обхода" },
+	"sitemap_type_full_sitemap": { "message": "Полная карта обхода" },
+	"sitemap_type_partial_sitemap": { "message": "Частичная карта обхода" },
+
+	"sitemap_url_pattern_label": { "message": "Шаблон URL" },
+	"sitemap_url_pattern_placeholder": {
+		"message": "Реглярное выражение для URL"
+	},
 
 	"url_patterns_hints": {
 		"message": "<div class=\"col_lg_10 col_lg_offset_1\">\n\t\t\tПоддерживаемые шаблоны URL:<br />\n\t\t\t1. <b>Числовой</b> с опциональным шагом и дозаполнением нулями – [<i>START</i>_<i>END</i>:<i>STEP</i>] – [001_010:10]<br />\n\t\t\t2. <b>На основе дат</b> – [date&lt;<i>PATTERN</i>&gt;&lt;<i>START</i>&gt;&lt;<i>END</i>&gt;] – [date&lt;dd.MM.yyyy&gt;&lt;01.01.2017&gt;&lt;now&gt;]<br />\n\t\t\t<ul>\n\t\t\t\tвместо дат можно использовать\n\t\t\t\t<b>yesterday</b\n\t\t\t\t>(вчера) /\n\t\t\t\t<b>now</b\n\t\t\t\t>(сейчас) /\n\t\t\t\t<b>tomorrow</b\n\t\t\t\t>(завтра)<br />\n\t\t\t\tостальные шаблоны (в стиле Java)\n\t\t\t\t<ul>\n\t\t\t\t\t<table border=\"0\">\n\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yyyy</td>\n\t\t\t\t\t\t\t\t<td>полный год (4 digits)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yy</td>\n\t\t\t\t\t\t\t\t<td>последние 2 цифры года</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MMM &emsp;</td>\n\t\t\t\t\t\t\t\t<td>Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MM</td>\n\t\t\t\t\t\t\t\t<td>номер месяца (01_12)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>dd</td>\n\t\t\t\t\t\t\t\t<td>день месяца</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t</table>\n\t\t\t\t</ul>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n"
@@ -256,6 +267,10 @@
 	"sitemapjson_empty_message": {
 		"message": "JSON карта обхода обязателен и не может быть пустым"
 	},
+	"sitemap_url_pattern_empty_message": { "message": "Шаблон URL не может быть пустым" },
+	"sitemap_url_pattern_invalid_message": {
+		"message": "Шаблон URL должен быть корректным регулярным выражением"
+	},
 	"selecting_file_error": { "message": "Пожалуйста, выберите файл!" },
 	"sitemap_valid_message": { "message": "Правильная карта обхода" },
 	"selectorid_underscore": {
@@ -296,6 +311,15 @@
 	},
 	"some_child_can_create_new_jobs_error_message": {
 		"message": "Нельзя использовать объединение записей в список, если есть потомки-ссылки"
+	},
+	"partial_sitemap_scrape_start_url_empty_message": {
+		"message": "Стартовый URL не может быть пустым"
+	},
+	"partial_sitemap_scrape_start_url_mismatch_message": {
+		"message": "URL не соответсвует шаблону"
+	},
+	"partial_sitemap_scrape_start_url_invalid_message": {
+		"message": "Значение не является валидным URL"
 	},
 	"request_interval_empty_message": {
 		"message": "Задержка между запросами обязательна и не может быть пустой."

@@ -1,6 +1,6 @@
 <tr>
 	<td class="id">{{_id}}</td>
-	<td>{{#startUrls}} {{.}}, {{/startUrls}}</td>
+	<td>{{#startUrls}} {{.}}, {{/startUrls}}{{^startUrls}}{{urlPattern}}{{/startUrls}}</td>
 	<td>
 		<div class="actions-block">
 			<button

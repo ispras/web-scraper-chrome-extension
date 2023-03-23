@@ -1,5 +1,24 @@
 <div id="scrape-sitemap-config">
 	<form class="form-horizontal" role="form" id="submit-scrape-sitemap-form">
+		{{^sitemap.startUrls}}
+		<div class="form-group">
+			<label
+				for="startUrl"
+				class="col-lg-1 control-label"
+				data-i18n="sitemap_scrape_config_start_url_label"
+			></label>
+			<div class="col-lg-10">
+				<input
+					type="text"
+					class="form-control"
+					name="startUrl"
+					id="startUrl"
+					placeholder="sitemap_scrape_config_start_url_placeholder"
+					value="{{url}}"
+				/>
+			</div>
+		</div>
+		{{/sitemap.startUrls}}
 		<div class="form-group">
 			<label
 				for="requestInterval"

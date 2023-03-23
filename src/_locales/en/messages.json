@@ -18,7 +18,7 @@
 	"sitemaplist_id": { "message": "ID" },
 	"projectlist_id": { "message": "ID" },
 	"projectName": { "message": "Project name" },
-	"sitemaplist_starturl": { "message": "Start URLs" },
+	"sitemaplist_starturl": { "message": "Start URLs / URL pattern" },
 	"sitemaplist_actions": { "message": "Actions" },
 	"browse_sitemap_data": { "message": "Browse data" },
 	"delete_sitemap": { "message": "Delete" },
@@ -115,6 +115,8 @@
 		"message": "Request interval randomness (ms)"
 	},
 	"sitemap_scrape_config_page_load_delay": { "message": "Page load delay (ms)" },
+	"sitemap_scrape_config_start_url_label": { "message": "Start URL" },
+	"sitemap_scrape_config_start_url_placeholder": { "message": "Start URL" },
 	"sitemap_scrape_config_submit_scraping": { "message": "Start scraping" },
 	"sitemap_scrape_config_alert_success": {
 		"message": "Scraping in progress. Close the popup to stop scraping. <br/> When scraping is finished you can browse the data or export it as CSV or JSON Lines."
@@ -129,6 +131,15 @@
 	"sitemap_create_start_url_block_label": { "message": "Start URLs" },
 	"sitemap_create_sitemap_model": { "message": "Sitemap Model" },
 	"sitemap_create_submit_create_sitemap": { "message": "Create Sitemap" },
+
+	"sitemap_type_label": { "message": "Sitemap type" },
+	"sitemap_type_full_sitemap": { "message": "Full sitemap" },
+	"sitemap_type_partial_sitemap": { "message": "Partial sitemap" },
+
+	"sitemap_url_pattern_label": { "message": "URL pattern" },
+	"sitemap_url_pattern_placeholder": {
+		"message": "URL regular expression pattern"
+	},
 
 	"url_patterns_hints": {
 		"message": "<div class=\"col_lg_10 col_lg_offset_1\">\n\t\t\tSupported URL patterns:<br />\n\t\t\t1. <b>Numeric</b> with optional step and zero padding – [<i>START</i>_<i>END</i>:<i>STEP</i>] – [001_010:10]<br />\n\t\t\t2. <b>Date interval</b> – [date&lt;<i>PATTERN</i>&gt;&lt;<i>START</i>&gt;&lt;<i>END</i>&gt;] – [date&lt;dd.MM.yyyy&gt;&lt;01.01.2017&gt;&lt;now&gt;]<br />\n\t\t\t<ul>\n\t\t\t\tdate placeholder may be\n\t\t\t\t<b>yesterday</b>\n\t\t\t\t/\n\t\t\t\t<b>now</b>\n\t\t\t\t/\n\t\t\t\t<b>tomorrow</b\n\t\t\t\t><br />\n\t\t\t\tother template components (in Java style)\n\t\t\t\t<ul>\n\t\t\t\t\t<table border=\"0\">\n\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yyyy</td>\n\t\t\t\t\t\t\t\t<td>full year (4 digits)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>yy</td>\n\t\t\t\t\t\t\t\t<td>last 2 digits of year</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MMM &emsp;</td>\n\t\t\t\t\t\t\t\t<td>Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>MM</td>\n\t\t\t\t\t\t\t\t<td>month number (01_12)</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>dd</td>\n\t\t\t\t\t\t\t\t<td>day of month</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t</table>\n\t\t\t\t</ul>\n\t\t\t</ul>\n\t\t</div>\n\t</div>"
@@ -234,6 +245,12 @@
 	"sitemapmodel_empty_message": { "message": "Empty value is possible model" },
 	"sitemapjson_invalid_message": { "message": "JSON is not valid" },
 	"sitemapjson_empty_message": { "message": "Sitemap JSON is required and cannot be empty" },
+	"sitemap_url_pattern_empty_message": {
+		"message": "URL pattern is required and can't be empty"
+	},
+	"sitemap_url_pattern_invalid_message": {
+		"message": "URL pattern must be a valid regular expression"
+	},
 	"selecting_file_error": { "message": "Please select a file!" },
 	"sitemap_valid_message": { "message": "Valid sitemap" },
 	"selectorid_underscore": { "message": "Selector id cannot start with an underscore _" },
@@ -262,6 +279,15 @@
 	},
 	"some_child_can_create_new_jobs_error_message": {
 		"message": "Can't merge elements into list if selector has link-like descendants"
+	},
+	"partial_sitemap_scrape_start_url_empty_message": {
+		"message": "Start URL is required"
+	},
+	"partial_sitemap_scrape_start_url_mismatch_message": {
+		"message": "URL does not match pattern"
+	},
+	"partial_sitemap_scrape_start_url_invalid_message": {
+		"message": "URL is invalid"
 	},
 	"request_interval_empty_message": {
 		"message": "The request interval is required and cannot be empty"
