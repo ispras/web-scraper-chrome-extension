@@ -13,9 +13,13 @@
 		</div>
 	</div>
 	<div class="form-group sitemap-type">
-		<label class="col-lg-1 control-label" data-i18n="sitemap_type_label"></label>
+		<label
+			class="col-lg-1 control-label"
+			data-i18n="sitemap_type_label"
+			for="sitemapType"
+		></label>
 		<div class="input-group col-lg-10">
-			<select class="form-control" name="sitemapType">
+			<select class="form-control" name="sitemapType" id="sitemapType">
 				<option selected value="full" data-i18n="sitemap_type_full_sitemap"></option>
 				<option value="partial" data-i18n="sitemap_type_partial_sitemap"></option>
 			</select>
@@ -25,11 +29,14 @@
 		<label
 			class="col-lg-1 control-label"
 			data-i18n="sitemap_create_start_url_block_label"
+			for="startUrls"
 		></label>
 		<div>
 			<div class="input-group col-lg-10">
 				<textarea
+					id="startUrls"
 					rows="5"
+					cols="100"
 					class="form-control input-start-url"
 					name="startUrls"
 					placeholder="sitemap_create_startUrls"
@@ -39,9 +46,14 @@
 		<div class="col-lg-10 col-lg-offset-1" data-i18n="url_patterns_hints"></div>
 	</div>
 	<div class="form-group url-pattern-block">
-		<label class="col-lg-1 control-label" data-i18n="sitemap_url_pattern_label"></label>
+		<label
+			class="col-lg-1 control-label"
+			data-i18n="sitemap_url_pattern_label"
+			for="urlPattern"
+		></label>
 		<div class="col-lg-10">
 			<input
+				id="urlPattern"
 				type="text"
 				class="form-control input-url-pattern"
 				name="urlPattern"
@@ -60,6 +72,7 @@
 			<div class="input-group col-lg-10">
 				<textarea
 					rows="20"
+					cols="100"
 					class="form-control input-model"
 					id="model"
 					name="model"
