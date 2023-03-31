@@ -927,8 +927,13 @@ export default class SitemapController {
 		$('#viewport').html($sitemapMetadataForm);
 		this.initSitemapValidation();
 		Translator.translatePage();
-		$('#viewport form [name=sitemapType]').val(sitemap.urlPattern ? 'partial' : 'full');
+
+		const $sitemapTypeGroup = $('#viewport form .sitemap-type');
+		$sitemapTypeGroup.find('[name=sitemapType]').val(sitemap.urlPattern ? 'partial' : 'full');
 		this.sitemapTypeChanged();
+		if (this.store.storageType === 'StoreTalismanApi') {
+			$sitemapTypeGroup.hide();
+		}
 		return true;
 	}
 
