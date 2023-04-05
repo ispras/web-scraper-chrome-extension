@@ -1,6 +1,7 @@
 import axios from 'axios';
-import StoreRestApi from './StoreRestApi';
 import urlJoin from 'url-join';
+import StoreRestApi from './StoreRestApi';
+import 'sugar';
 import Sitemap from './Sitemap';
 import * as browser from 'webextension-polyfill';
 
@@ -157,5 +158,72 @@ export default class StoreTalismanApi extends StoreRestApi {
 			this.sitemapsPathInProject(projectId),
 			sitemapExists
 		);
+	}
+
+	async listAllConceptTypes() {
+		return this.axiosInstance
+			.post('/graphql', {
+				operationName: 'listConceptTypes',
+				query: 'query listConceptTypes { listConceptType { id name } }',
+			})
+			.then(response => response.data.data.listConceptType);
+	}
+
+	async getConceptType(id) {
+		return this.axiosInstance
+			.post('/graphql', {
+				operationName: 'getConceptType',
+				query: `query getConceptType($id: ID!) {
+					conceptType(id: $id) {
+						id
+						name
+						listConceptPropertyType {
+							id
+							name
+						}
+						listConceptLinkType {
+							id
+							name
+							isDirected
+							conceptFromType {
+								id
+							}
+							conceptToType {
+								id
+							}
+						}
+					}
+				}`,
+				variables: { id },
+			})
+			.then(response => response.data.data.conceptType);
+	}
+
+	async getLinkType(id) {
+		return this.axiosInstance
+			.post('/graphql', {
+				operationName: 'getLinkType',
+				query: `query getLinkType($id: ID!) {
+					conceptLinkType(id: $id) {
+						id
+						name
+						isDirected
+						conceptFromType {
+							id
+							name
+						}
+						conceptToType {
+							id
+							name
+						}
+						listConceptLinkPropertyType {
+							id
+							name
+						}
+					}
+				}`,
+				variables: { id },
+			})
+			.then(response => response.data.data.conceptLinkType);
 	}
 }

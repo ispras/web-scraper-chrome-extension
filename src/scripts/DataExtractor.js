@@ -170,7 +170,11 @@ export default class DataExtractor {
 							newParentElement
 						);
 						deferredChildCommonData.done(function (data) {
-							d.resolve(data);
+							if (selector.dontFlatten) {
+								d.resolve({ [selector.id]: data });
+							} else {
+								d.resolve(data);
+							}
 						});
 					}
 				} else {
@@ -214,7 +218,9 @@ export default class DataExtractor {
 
 				selectorData.forEach(
 					function (element) {
-						const newCommonData = Object.clone(commonData, true);
+						const newCommonData = selector.dontFlatten
+							? {}
+							: Object.clone(commonData, true);
 						const childRecordDeferredCall = this.getSelectorTreeData.bind(
 							this,
 							selectors,
@@ -231,7 +237,12 @@ export default class DataExtractor {
 					responses.forEach(function (childRecordList) {
 						childRecordList.forEach(function (childRecord) {
 							const rec = {};
-							Object.merge(rec, childRecord, true);
+							if (selector.dontFlatten) {
+								Object.merge(rec, commonData, true);
+								Object.merge(rec, { [selector.id]: childRecord }, true);
+							} else {
+								Object.merge(rec, childRecord, true);
+							}
 							resultData.push(rec);
 						});
 					});

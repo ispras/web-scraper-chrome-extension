@@ -140,6 +140,18 @@ browser.runtime.onMessage.addListener(async request => {
 		return store.getSitemapData(Sitemap.sitemapFromObj(request.sitemap));
 	}
 
+	if (request.listAllConceptTypes) {
+		return store.listAllConceptTypes();
+	}
+
+	if (request.getConceptType) {
+		return store.getConceptType(request.id);
+	}
+
+	if (request.getLinkType) {
+		return store.getLinkType(request.id);
+	}
+
 	if (request.scrapeSitemap) {
 		const sitemap = Sitemap.sitemapFromObj(request.sitemap);
 		const queue = new Queue();

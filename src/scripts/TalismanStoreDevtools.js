@@ -92,4 +92,16 @@ export default class TalismanStoreDevtools extends StoreDevtools {
 		};
 		return await browser.runtime.sendMessage(request);
 	}
+
+	async listAllConceptTypes() {
+		return browser.runtime.sendMessage({ listAllConceptTypes: true });
+	}
+
+	async getConceptType(id) {
+		return browser.runtime.sendMessage({ getConceptType: true, id });
+	}
+
+	async getLinkType(id) {
+		return browser.runtime.sendMessage({ getLinkType: true, id });
+	}
 }

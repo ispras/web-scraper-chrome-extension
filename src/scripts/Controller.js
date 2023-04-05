@@ -15,6 +15,7 @@ import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
+import TalismanKB from './TalismanKB';
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -89,6 +90,11 @@ export default class SitemapController {
 				return value;
 			})
 			.set_sort_objects(true);
+
+		if (store.storageType === 'StoreTalismanApi') {
+			this.kb = new TalismanKB(store);
+		}
+
 		return this.init();
 	}
 
@@ -101,10 +107,11 @@ export default class SitemapController {
 					event,
 					selector,
 					(function (selector, event) {
-						return function () {
+						return function (...args) {
 							const continueBubbling = controls[selector][event].call(
 								controller,
-								this
+								this,
+								...args
 							);
 							if (continueBubbling !== true) {
 								return false;
@@ -275,6 +282,7 @@ export default class SitemapController {
 			},
 			'#edit-selector #selectorId': {
 				'change:flexdatalist': this.updateCurrentlyEditedSelectorInParentsList,
+				'select:flexdatalist': this.selectorIdHintSelected,
 			},
 			'#selector-tree button[action=add-selector]': {
 				click: this.addSelector,
@@ -1254,6 +1262,10 @@ export default class SitemapController {
 									}
 								}
 
+								if (this.kb) {
+									return this.kb.validateParentSelectors(newSelector, sitemap);
+								}
+
 								return true;
 							}.bind(this),
 						},
@@ -1263,9 +1275,9 @@ export default class SitemapController {
 		});
 	}
 
-	editSelector(button) {
+	async editSelector(button) {
 		const selector = $(button).closest('tr').data('selector');
-		this._editSelector(selector);
+		await this._editSelector(selector);
 	}
 
 	updateCurrentlyEditedSelectorInParentsList() {
@@ -1276,7 +1288,7 @@ export default class SitemapController {
 		$('.currently-edited').val(selector.uuid).text(`${selectorId} - ${selector.uuid}`);
 	}
 
-	_editSelector(selector) {
+	async _editSelector(selector) {
 		const sitemap = this.state.currentSitemap;
 		const selectorIds = sitemap.getPossibleParentSelectorIds();
 
@@ -1287,19 +1299,6 @@ export default class SitemapController {
 			selectorTypes: this.selectorTypes,
 		});
 		$('#viewport').html($editSelectorForm);
-
-		$('#selectorId').flexdatalist({
-			init: this.initSelectorValidation(),
-			textProperty: '{fieldName}',
-			valueProperty: 'fieldName',
-			data: [...sitemap.model, { entity: '', field: '', fieldName: selector.id }],
-			searchIn: ['entity', 'field'],
-			visibleProperties: ['entity', 'field'],
-			groupBy: 'entity',
-			searchContain: true,
-			noResultsText: '',
-			minLength: 1,
-		});
 
 		// mark initially opened selector as currently edited
 		$('#edit-selector #parentSelectors option').each((_, element) => {
@@ -1328,12 +1327,14 @@ export default class SitemapController {
 				.attr('selected', 'selected');
 		});
 
+		this.initSelectorValidation();
+
 		this.state.currentSelector = selector;
-		this.selectorTypeChanged(false);
+		await this.selectorTypeChanged(false);
 		Translator.translatePage();
 	}
 
-	selectorTypeChanged(changeTrigger) {
+	async selectorTypeChanged(changeTrigger) {
 		// add this selector to possible parent selector
 		const selector = this.getCurrentlyEditedSelector();
 		const features = selector.getFeatures();
@@ -1356,6 +1357,48 @@ export default class SitemapController {
 		// remove if type doesn't allow to have child selectors
 		else {
 			$('#edit-selector #parentSelectors .currently-edited').remove();
+		}
+
+		await this.initSelectorIdHints(selector);
+	}
+
+	async initSelectorIdHints(selector) {
+		const $selectorIdInput = $('#selectorId');
+		$selectorIdInput.flexdatalist();
+		const idDatalistOptions = {
+			textProperty: '{fieldName}',
+			valueProperty: 'fieldName',
+			searchIn: ['entity', 'field'],
+			visibleProperties: ['entity', 'field'],
+			groupBy: 'entity',
+			searchContain: true,
+			selectionRequired: false,
+			noResultsText: '',
+			minLength: 1,
+		};
+
+		const hints = [];
+		if (this.kb) {
+			const kbHints = await this.kb.generateIdHints(selector, this.state.currentSitemap);
+			hints.push(...kbHints);
+		} else {
+			hints.push(...this.state.currentSitemap.model);
+		}
+		hints.push({
+			entity: '',
+			field: '',
+			fieldName: selector.id,
+		});
+
+		$selectorIdInput.flexdatalist({
+			...idDatalistOptions,
+			data: hints,
+		});
+	}
+
+	selectorIdHintSelected(selectorIdInput, event, item) {
+		if (item.kbHint) {
+			$('#edit-selector [name=dontFlatten]').prop('checked', true);
 		}
 	}
 
@@ -1414,6 +1457,7 @@ export default class SitemapController {
 		const delay = $('#edit-selector [name=delay]').val();
 		const outerHTML = $('#edit-selector [id=outerHTML]').is(':checked');
 		const mergeIntoList = $('#edit-selector [name=mergeIntoList]').is(':checked');
+		const dontFlatten = $('#edit-selector [name=dontFlatten]').is(':checked');
 		const extractAttribute = $('#edit-selector [name=extractAttribute]').val();
 		const extractStyle = $('#edit-selector [name=extractStyle]').val();
 		const value = $('#edit-selector [name=value]').val();
@@ -1437,6 +1481,7 @@ export default class SitemapController {
 			regexgroup: $('#edit-selector [name=regexgroup]').val(),
 		};
 		const uuid = $('#edit-selector [name=uuid]').val();
+		const conceptTypeId = $('#edit-selector [name=conceptTypeId]').val();
 
 		$columnHeaders.each(function (i) {
 			const header = $($columnHeaders[i]).val();
@@ -1449,7 +1494,7 @@ export default class SitemapController {
 			});
 		});
 
-		let options = {
+		const options = {
 			id,
 			selector: selectorsSelector,
 			tableHeaderRowSelector,
@@ -1475,8 +1520,10 @@ export default class SitemapController {
 			textmanipulation,
 			stringReplacement,
 			mergeIntoList,
+			dontFlatten,
 			outerHTML,
 			uuid,
+			conceptTypeId,
 		};
 
 		return SelectorList.createSelector(options);
