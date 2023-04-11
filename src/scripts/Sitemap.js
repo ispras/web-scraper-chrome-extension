@@ -48,6 +48,15 @@ export default class Sitemap {
 		return startUrls.map(item => item.trim()).every(this.isUrlValid);
 	}
 
+	static validateUrlPattern(urlPattern) {
+		try {
+			new RegExp(urlPattern);
+			return true;
+		} catch (e) {
+			return false;
+		}
+	}
+
 	/**
 	 * Returns all selectors or recursively find and return all child selectors of a parent selector.
 	 * @param parentSelectorId
