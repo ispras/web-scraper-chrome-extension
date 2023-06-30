@@ -1,10 +1,10 @@
 import axios from 'axios';
 import StoreRestApi from './StoreRestApi';
 import urlJoin from 'url-join';
-import Sitemap from './Sitemap';
 import * as browser from 'webextension-polyfill';
 
 const PROJECTS_LIMIT = 10000;
+const SITEMAPS_IN_PROJECT_LIMIT = 10000;
 
 const GET_ALL_PROJECTS_QUERY = `query getProjects($sortDirection: SortDirection $sortField: ProjectSorting $limit:Int) {
  					paginationProject(
@@ -129,7 +129,9 @@ export default class StoreTalismanApi extends StoreRestApi {
 	}
 
 	async getAllSitemaps(projectId) {
-		return this._getAllSitemaps(this.sitemapsPathInProject(projectId));
+		return this._getAllSitemaps(
+			`${this.sitemapsPathInProject(projectId)}?limit=${SITEMAPS_IN_PROJECT_LIMIT}`
+		);
 	}
 
 	async sitemapExists(sitemapId, projectId) {
