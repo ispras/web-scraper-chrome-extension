@@ -271,6 +271,9 @@
 	"sitemap_url_pattern_invalid_message": {
 		"message": "Шаблон URL должен быть корректным регулярным выражением"
 	},
+	"sitemap_either_start_urls_and_pattern": {
+		"message": "В карте обхода должны быть либо стартовые URL, либо шаблон URL"
+	},
 	"selecting_file_error": { "message": "Пожалуйста, выберите файл!" },
 	"sitemap_valid_message": { "message": "Правильная карта обхода" },
 	"selectorid_underscore": {

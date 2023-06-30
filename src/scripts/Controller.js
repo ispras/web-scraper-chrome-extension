@@ -455,14 +455,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey(
 								'sitemap_url_pattern_invalid_message'
 							),
-							callback(value) {
-								try {
-									new RegExp(value);
-									return true;
-								} catch (e) {
-									return false;
-								}
-							},
+							callback: Sitemap.validateUrlPattern,
 						},
 					},
 				},
@@ -617,20 +610,40 @@ export default class SitemapController {
 										}
 									}
 
-									// check for start urls
-									if (!sitemap.hasOwnProperty('startUrls')) {
+									// check for start urls or url pattern
+									if (
+										Object.hasOwn(sitemap, 'startUrls') &&
+										Object.hasOwn(sitemap, 'urlPattern')
+									) {
 										return {
 											valid: false,
 											message: Translator.getTranslationByKey(
-												'sitemapurl_empty_message'
+												'sitemap_either_start_urls_and_pattern'
 											),
 										};
-									}
-									if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
+									} else if (Object.hasOwn(sitemap, 'startUrls')) {
+										if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
+											return {
+												valid: false,
+												message: Translator.getTranslationByKey(
+													'sitemapurl_invalid_message'
+												),
+											};
+										}
+									} else if (Object.hasOwn(sitemap, 'urlPattern')) {
+										if (!Sitemap.validateUrlPattern(sitemap.urlPattern)) {
+											return {
+												valid: false,
+												message: Translator.getTranslationByKey(
+													'sitemap_url_pattern_invalid_message'
+												),
+											};
+										}
+									} else {
 										return {
 											valid: false,
 											message: Translator.getTranslationByKey(
-												'sitemapurl_invalid_message'
+												'sitemap_either_start_urls_and_pattern'
 											),
 										};
 									}

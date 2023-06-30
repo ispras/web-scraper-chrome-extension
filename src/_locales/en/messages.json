@@ -251,6 +251,9 @@
 	"sitemap_url_pattern_invalid_message": {
 		"message": "URL pattern must be a valid regular expression"
 	},
+	"sitemap_either_start_urls_and_pattern": {
+		"message": "Sitemap must have either start URLs or URL pattern"
+	},
 	"selecting_file_error": { "message": "Please select a file!" },
 	"sitemap_valid_message": { "message": "Valid sitemap" },
 	"selectorid_underscore": { "message": "Selector id cannot start with an underscore _" },
