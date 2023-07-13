@@ -1312,6 +1312,10 @@ export default class SitemapController {
 			searchContain: true,
 			noResultsText: '',
 			minLength: 1,
+			// Disable cache since our data is an array, and we don't make remote requests.
+			// Note that when enabled, this might lead to errors creating new selectors when sitemap name
+			//  contains 'global' or 'flex0', because Flexdatalist will try to parse localStorage keys set by PouchDB.
+			cache: false,
 		});
 
 		// mark initially opened selector as currently edited
