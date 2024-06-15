@@ -419,7 +419,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
-							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
+							regexp: /^[a-z][a-z0-9_\$\(\)\+\-]+$/,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						// placeholder for sitemap id existance validation
@@ -527,7 +527,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
-							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
+							regexp: /^[a-z][a-z0-9_\$\(\)\+\-]+$/,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						callback: {
@@ -552,7 +552,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
-							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
+							regexp: /^[a-z][a-z0-9_\$\(\)\+\-]+$/,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						// placeholder for sitemap id existance validation
