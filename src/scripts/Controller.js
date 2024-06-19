@@ -407,6 +407,7 @@ export default class SitemapController {
 	 */
 
 	initSitemapValidation() {
+		const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/
 		$('#viewport form').bootstrapValidator({
 			fields: {
 				_id: {
@@ -419,7 +420,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
-							regexp: /^[a-z][a-z0-9_\$\(\)\+\-]+$/,
+							regexp: SITEMAP_ID_REGEXP,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						// placeholder for sitemap id existance validation
@@ -515,6 +516,7 @@ export default class SitemapController {
 	}
 
 	initCopySitemapValidation() {
+		const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/
 		$('#confirm-action-modal').bootstrapValidator({
 			fields: {
 				modal_confirm_action_input_copy_sitemap: {
@@ -527,7 +529,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
-							regexp: /^[a-z][a-z0-9_\$\(\)\+\-]+$/,
+							regexp: SITEMAP_ID_REGEXP,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						callback: {
@@ -543,6 +545,7 @@ export default class SitemapController {
 	}
 
 	initImportSitemapValidation() {
+		const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/
 		$('#viewport form').bootstrapValidator({
 			fields: {
 				_id: {
@@ -552,7 +555,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
-							regexp: /^[a-z][a-z0-9_\$\(\)\+\-]+$/,
+							regexp: SITEMAP_ID_REGEXP,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						// placeholder for sitemap id existance validation
@@ -598,7 +601,7 @@ export default class SitemapController {
 											};
 										}
 										if (
-											!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-/]+$')
+											!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-]+$')
 										) {
 											return {
 												valid: false,
