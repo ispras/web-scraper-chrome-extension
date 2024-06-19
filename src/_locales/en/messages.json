@@ -234,7 +234,7 @@
 
 	"sitemapid_short_message": { "message": "The sitemap id should be at least 3 characters long" },
 	"sitemapid_invalid_char": {
-		"message": "Only lowercase characters (a_z), digits (0_9), or any of the characters _, $, (, ), +, _, and / are allowed. Must begin with a letter."
+		"message": "Only lowercase characters (a_z), digits (0_9), or any of the characters _, $, (, ), +, _, are allowed. Must begin with a letter."
 	},
 	"sitemapid_repeated_id": { "message": "Sitemap with this id already exists" },
 	"sitemapid_empty_message": { "message": "The sitemap id is required and cannot be empty" },
