@@ -16,8 +16,10 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 
-export default class SitemapController {
-	constructor(store, templateDir) {
+export const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/
+
+export default class SitemapController {	
+	constructor(store, templateDir) {		
 		this.store = store;
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');
@@ -407,7 +409,6 @@ export default class SitemapController {
 	 */
 
 	initSitemapValidation() {
-		const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/
 		$('#viewport form').bootstrapValidator({
 			fields: {
 				_id: {
@@ -516,7 +517,6 @@ export default class SitemapController {
 	}
 
 	initCopySitemapValidation() {
-		const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/
 		$('#confirm-action-modal').bootstrapValidator({
 			fields: {
 				modal_confirm_action_input_copy_sitemap: {
@@ -545,7 +545,6 @@ export default class SitemapController {
 	}
 
 	initImportSitemapValidation() {
-		const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/
 		$('#viewport form').bootstrapValidator({
 			fields: {
 				_id: {
@@ -601,7 +600,7 @@ export default class SitemapController {
 											};
 										}
 										if (
-											!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-]+$')
+											!sitemap._id.match(SITEMAP_ID_REGEXP)
 										) {
 											return {
 												valid: false,
