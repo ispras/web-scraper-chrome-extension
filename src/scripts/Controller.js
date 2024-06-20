@@ -16,8 +16,10 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 
-export default class SitemapController {
-	constructor(store, templateDir) {
+export const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/
+
+export default class SitemapController {	
+	constructor(store, templateDir) {		
 		this.store = store;
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');
@@ -419,7 +421,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
-							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
+							regexp: SITEMAP_ID_REGEXP,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						// placeholder for sitemap id existance validation
@@ -527,7 +529,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
-							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
+							regexp: SITEMAP_ID_REGEXP,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						callback: {
@@ -552,7 +554,7 @@ export default class SitemapController {
 							message: Translator.getTranslationByKey('sitemapid_short_message'),
 						},
 						regexp: {
-							regexp: /^[a-z][a-z0-9_\$\(\)\+\-/]+$/,
+							regexp: SITEMAP_ID_REGEXP,
 							message: Translator.getTranslationByKey('sitemapid_invalid_char'),
 						},
 						// placeholder for sitemap id existance validation
@@ -598,7 +600,7 @@ export default class SitemapController {
 											};
 										}
 										if (
-											!sitemap._id.match('^[a-z][a-z0-9_\\$\\(\\)\\+\\-/]+$')
+											!sitemap._id.match(SITEMAP_ID_REGEXP)
 										) {
 											return {
 												valid: false,
