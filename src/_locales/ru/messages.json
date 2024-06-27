@@ -256,7 +256,7 @@
 	},
 	"sitemapid_repeated_id": { "message": "Карта обхода с таким идентификатором уже существует" },
 	"sitemapid_empty_message": {
-		"message": "Идентификатор карты обхода обязателен и не может быть пустым"
+		"message": "Идентификатор селектора обязателен и не может быть пустым"
 	},
 	"sitemapurl_empty_message": { "message": "Стартовый URL обязателен и не может быть пустым" },
 	"sitemapurl_invalid_message": {
