@@ -267,6 +267,9 @@
 	"sitemapjson_empty_message": {
 		"message": "JSON карта обхода обязателен и не может быть пустым"
 	},
+	"sitemap_invalid_specificationVersion": {
+		"message": "Версия карты обхода новее чем версия плагина. Пожалуйста обновите плагин"
+	},
 	"sitemap_url_pattern_empty_message": { "message": "Шаблон URL не может быть пустым" },
 	"sitemap_url_pattern_invalid_message": {
 		"message": "Шаблон URL должен быть корректным регулярным выражением"

@@ -245,6 +245,9 @@
 	"sitemapmodel_empty_message": { "message": "Empty value is possible model" },
 	"sitemapjson_invalid_message": { "message": "JSON is not valid" },
 	"sitemapjson_empty_message": { "message": "Sitemap JSON is required and cannot be empty" },
+	"sitemap_invalid_specificationVersion": {
+		"message": "The version of the sitemap is younger than the plugin version. Please update the plugin"
+	},
 	"sitemap_url_pattern_empty_message": {
 		"message": "URL pattern is required and can't be empty"
 	},
