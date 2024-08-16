@@ -16,10 +16,10 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 
-export const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/
+export const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/;
 
-export default class SitemapController {	
-	constructor(store, templateDir) {		
+export default class SitemapController {
+	constructor(store, templateDir) {
 		this.store = store;
 		this.templateDir = templateDir;
 		this.contentScript = getContentScript('DevTools');
@@ -599,9 +599,7 @@ export default class SitemapController {
 													),
 											};
 										}
-										if (
-											!sitemap._id.match(SITEMAP_ID_REGEXP)
-										) {
+										if (!sitemap._id.match(SITEMAP_ID_REGEXP)) {
 											return {
 												valid: false,
 												message:
@@ -1070,11 +1068,11 @@ export default class SitemapController {
 				id: {
 					validators: {
 						notEmpty: {
-							message: Translator.getTranslationByKey('sitemapid_empty_message'),
+							message: Translator.getTranslationByKey('selectorid_empty_message'),
 						},
 						stringLength: {
 							min: 3,
-							message: Translator.getTranslationByKey('sitemapid_short_message'),
+							message: Translator.getTranslationByKey('selectorid_short_message'),
 						},
 						regexp: {
 							regexp: /^[^_].*$/,
