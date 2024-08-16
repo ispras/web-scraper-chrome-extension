@@ -256,7 +256,7 @@
 	},
 	"sitemapid_repeated_id": { "message": "Карта обхода с таким идентификатором уже существует" },
 	"sitemapid_empty_message": {
-		"message": "Идентификатор селектора обязателен и не может быть пустым"
+		"message": "Идентификатор карты обхода обязателен и не может быть пустым"
 	},
 	"sitemapurl_empty_message": { "message": "Стартовый URL обязателен и не может быть пустым" },
 	"sitemapurl_invalid_message": {
@@ -276,6 +276,12 @@
 	},
 	"selecting_file_error": { "message": "Пожалуйста, выберите файл!" },
 	"sitemap_valid_message": { "message": "Правильная карта обхода" },
+	"selectorid_empty_message": {
+		"message": "Идентификатор селектора обязателен и не может быть пустым"
+	},
+	"selectorid_short_message": {
+		"message": "Длина идентификатора селектора должна быть как минимум 3 символа"
+	},
 	"selectorid_underscore": {
 		"message": "Идентификатор не может начинаться с нижнего подчеркивания _"
 	},
