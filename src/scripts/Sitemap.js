@@ -155,10 +155,20 @@ export default class Sitemap {
 	updateSelector(selector, selectorData) {
 		// selector is undefined when creating a new one and delete old one, if it exist
 		if (selector === undefined || selector.type !== selectorData.type) {
+			var CanHaveChilds = selector.canHaveChildSelectors()	
 			if (selector) {
+				if (CanHaveChilds) {            
+					var CopyOfChilds = this.selectors.filter(selectorFromList =>
+								  selectorFromList.parentSelectors.includes(selector.uuid)).map(obj => JSON.parse(JSON.stringify(obj)));
+					CopyOfChilds.forEach(child => child.parentSelectors.splice(child.parentSelectors.indexOf(selector.uuid), 1)) //delete old parent	
+					}
 				this.deleteSelector(selector);
 			}
 			selector = SelectorList.createSelector(selectorData);
+			if (CanHaveChilds){  //Since deleteSelector() also deletes all child selectors, a copy of those selectors is created and assigned to a new parent
+				CopyOfChilds.forEach(child => child.parentSelectors.push(selector.uuid))
+				CopyOfChilds.forEach(child => this.selectors.push(child))				
+			}
 		}
 
 		// update child selectors
