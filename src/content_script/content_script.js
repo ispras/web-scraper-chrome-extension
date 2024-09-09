@@ -39,7 +39,7 @@ browser.runtime.onMessage.addListener(request => {
 			console.log('received ContentScript request', request);
 
 			const deferredResponse = contentScript[request.fn](request.request);
-			deferredResponse.done(function (response) {
+			deferredResponse.then(function (response) {
 				resolve(response, null);
 			});
 

@@ -1,5 +1,5 @@
 {
-	"manifest_version": 2,
+	"manifest_version": 3,
 	"version": "",
 	"name": "__MSG_extension_name__",
 	"short_name": "__MSG_extension_short_name__",
@@ -13,6 +13,7 @@
 		"downloads",
 		"webRequest"
 	],
+	"host_permissions": ["<all_urls>"],
 	"icons": {
 		"16": "icons/icon16.png",
 		"48": "icons/icon48.png",
@@ -33,15 +34,20 @@
 	},
 	"devtools_page": "devtools/devtools.html",
 	"background": {
-		"scripts": ["background/background.js"]
+		"service_worker": "background/background.js"
 	},
 	"web_accessible_resources": [
-		"icons/icon16.png",
-		"icons/icon19.png",
-		"icons/icon38.png",
-		"icons/icon48.png",
-		"icons/icon128.png",
-		"content_script/AttachedToolbar.html"
+		{
+			"resources": [
+				"icons/icon16.png",
+				"icons/icon19.png",
+				"icons/icon38.png",
+				"icons/icon48.png",
+				"icons/icon128.png",
+				"content_script/AttachedToolbar.html"
+			],
+			"matches": ["*://*/*"]
+		}
 	],
 	"content_scripts": [
 		{

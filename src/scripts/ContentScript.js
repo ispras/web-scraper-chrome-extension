@@ -1,3 +1,4 @@
+import * as $ from 'jquery';
 import getBackgroundScript from './BackgroundScript';
 import ContentSelector from './ContentSelector';
 
@@ -11,10 +12,8 @@ const ContentScript = {
 	 * @returns $.Deferred()
 	 */
 	getHTML(request) {
-		const deferredHTML = $.Deferred();
 		const html = $(request.CSSSelector).clone().wrap('<p>').parent().html();
-		deferredHTML.resolve(html);
-		return deferredHTML.promise();
+		return Promise.resolve(html);
 	},
 
 	/**
@@ -22,17 +21,13 @@ const ContentScript = {
 	 * @returns $.Deferred()
 	 */
 	removeCurrentContentSelector() {
-		const deferredResponse = $.Deferred();
 		const contentSelector = window.cs;
 		if (contentSelector === undefined) {
-			deferredResponse.resolve();
-		} else {
-			contentSelector.removeGUI();
-			window.cs = undefined;
-			deferredResponse.resolve();
+			return Promise.resolve();
 		}
-
-		return deferredResponse.promise();
+		contentSelector.removeGUI();
+		window.cs = undefined;
+		return Promise.resolve();
 	},
 
 	/**
@@ -41,34 +36,32 @@ const ContentScript = {
 	 * @param request.allowedElements
 	 */
 	selectSelector(request) {
-		const deferredResponse = $.Deferred();
-
-		this.removeCurrentContentSelector().done(
-			function () {
-				const contentSelector = new ContentSelector({
-					parentCSSSelector: request.parentCSSSelector,
-					allowedElements: request.allowedElements,
-				});
-				window.cs = contentSelector;
-
-				const deferredCSSSelector = contentSelector.getCSSSelector();
-				deferredCSSSelector
-					.done(
-						function (response) {
-							this.removeCurrentContentSelector().done(function () {
-								deferredResponse.resolve(response);
-								window.cs = undefined;
-							});
-						}.bind(this)
-					)
-					.fail(function (message) {
-						deferredResponse.reject(message);
-						window.cs = undefined;
+		return new Promise((resolve, reject) => {
+			this.removeCurrentContentSelector().then(
+				function() {
+					const contentSelector = new ContentSelector({
+						parentCSSSelector: request.parentCSSSelector,
+						allowedElements: request.allowedElements,
 					});
-			}.bind(this)
-		);
+					window.cs = contentSelector;
 
-		return deferredResponse.promise();
+					const deferredCSSSelector = contentSelector.getCSSSelector();
+					deferredCSSSelector
+						.then(
+							function(response) {
+								this.removeCurrentContentSelector().then(function() {
+									resolve(response);
+									window.cs = undefined;
+								});
+							}.bind(this)
+						)
+						.catch(function(message) {
+							reject(message);
+							window.cs = undefined;
+						});
+				}.bind(this)
+			);
+		});
 	},
 
 	/**
@@ -77,26 +70,26 @@ const ContentScript = {
 	 * @param request.elementCSSSelector
 	 */
 	previewSelector(request) {
-		const deferredResponse = $.Deferred();
-		this.removeCurrentContentSelector().done(function () {
-			const contentSelector = new ContentSelector({
-				parentCSSSelector: request.parentCSSSelector,
-			});
-			window.cs = contentSelector;
-
-			const deferredSelectorPreview = contentSelector.previewSelector(
-				request.elementCSSSelector
-			);
-			deferredSelectorPreview
-				.done(function () {
-					deferredResponse.resolve();
-				})
-				.fail(function (message) {
-					deferredResponse.reject(message);
-					window.cs = undefined;
+		return new Promise((resolve, reject) => {
+			this.removeCurrentContentSelector().then(function() {
+				const contentSelector = new ContentSelector({
+					parentCSSSelector: request.parentCSSSelector,
 				});
+				window.cs = contentSelector;
+
+				const deferredSelectorPreview = contentSelector.previewSelector(
+					request.elementCSSSelector
+				);
+				deferredSelectorPreview
+					.then(function() {
+						resolve();
+					})
+					.catch(function(message) {
+						reject(message);
+						window.cs = undefined;
+					});
+			});
 		});
-		return deferredResponse;
 	},
 };
 
