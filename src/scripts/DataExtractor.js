@@ -129,7 +129,7 @@ export default class DataExtractor {
 		);
 
 		const deferredResponse = $.Deferred();
-		$.whenCallSequentially(deferredDataCalls).done(function (responses) {
+		$.whenCallSequentially(deferredDataCalls).then(function (responses) {
 			let commonData = {};
 			responses.forEach(function (data) {
 				commonData = Object.merge(commonData, data);
@@ -159,7 +159,7 @@ export default class DataExtractor {
 									);
 								}.bind(this)
 							)
-						).done(function (results) {
+						).then(function (results) {
 							d.resolve({ [selector.id]: results.flat() });
 						});
 					} else {
@@ -226,7 +226,7 @@ export default class DataExtractor {
 					}.bind(this)
 				);
 
-				$.whenCallSequentially(deferredDataCalls).done(function (responses) {
+				$.whenCallSequentially(deferredDataCalls).then(function (responses) {
 					const resultData = [];
 					responses.forEach(function (childRecordList) {
 						childRecordList.forEach(function (childRecord) {
@@ -275,7 +275,7 @@ export default class DataExtractor {
 				);
 
 				// merge all data records together
-				$.whenCallSequentially(dataDeferredCalls).done(function (responses) {
+				$.whenCallSequentially(dataDeferredCalls).then(function (responses) {
 					const resultData = [];
 					responses.forEach(function (childRecords) {
 						childRecords.forEach(function (childRecord) {
@@ -356,7 +356,7 @@ export default class DataExtractor {
 		);
 
 		const responseDeferred = $.Deferred();
-		$.whenCallSequentially(dataDeferredCalls).done(
+		$.whenCallSequentially(dataDeferredCalls).then(
 			function (responses) {
 				let results = [];
 				responses.forEach(function (dataResults) {
