@@ -103,6 +103,10 @@ export default class Scraper {
 				return attachment;
 			}
 		});
+		Promise.all(downloads).then(attachments => {
+			record._attachments = attachments;
+		});
+		return Promise.resolve();
 	}
 
 	// @TODO remove recursion and add an iterative way to run these jobs.
