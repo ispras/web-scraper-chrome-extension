@@ -860,6 +860,9 @@ export default class SitemapController {
 	}
 
 	initSearchbar(searchbarLocation) {
+		document.querySelector('input.searchbar').placeholder = Translator.getTranslationByKey(
+			'searchbar_placeholder_message'
+		);
 		document.querySelector('.searchbar').addEventListener('input', event => {
 			let AllRows = [];
 			try {

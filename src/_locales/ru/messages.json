@@ -412,5 +412,8 @@
 	},
 	"popup_ws_version": {
 		"message": "Версия Web Scraper: "
+	},
+	"searchbar_placeholder_message": {
+		"message": "Поиск..."
 	}
 }
