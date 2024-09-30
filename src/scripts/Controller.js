@@ -809,6 +809,8 @@ export default class SitemapController {
 		});
 		$('#viewport').html($projectListPanel);
 		Translator.translatePage();
+
+		this.initSearchbar('projects');
 	}
 
 	getCurrentProjectId() {
@@ -854,8 +856,53 @@ export default class SitemapController {
 			$('#viewport').html($sitemapListPanel);
 			Translator.translatePage();
 		}
+		this.initSearchbar('sitemaps');
 	}
 
+	initSearchbar(searchbarLocation) {
+		document.querySelector('.searchbar').addEventListener('input', event => {
+			let AllRows = [];
+			try {
+				if (searchbarLocation === 'sitemaps') {
+					AllRows = Array.from(document.querySelectorAll('td.id')).map(
+						td => td.parentElement
+					);
+					AllRows.forEach(row => {
+						if (
+							row
+								.querySelector('.id')
+								.innerText.toLowerCase()
+								.startsWith(event.target.value.toLowerCase())
+						) {
+							row.style.display = 'table-row';
+						} else {
+							row.style.display = 'none';
+						}
+					});
+				} else if (searchbarLocation === 'projects') {
+					AllRows = Array.from(document.querySelectorAll('td.projTitle')).map(
+						td => td.parentElement
+					);
+					AllRows.forEach(row => {
+						if (
+							row
+								.querySelector('td.projTitle')
+								.innerText.toLowerCase()
+								.startsWith(event.target.value.toLowerCase())
+						) {
+							row.style.display = 'table-row';
+						} else {
+							row.style.display = 'none';
+						}
+					});
+				} else {
+					throw { message: "initSearchbar can't understand the type of table" };
+				}
+			} catch (error) {
+				console.log(error.message);
+			}
+		});
+	}
 	getSitemapFromMetadataForm() {
 		const metadata = {};
 		const $form = $('#viewport form');
