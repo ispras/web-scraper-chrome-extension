@@ -5,7 +5,7 @@ import * as browser from 'webextension-polyfill';
  */
 const BackgroundScript = {
 	dummy() {
-		return $.Deferred().resolve('dummy').promise();
+		return new Promise.resolve('dummy');
 	},
 
 	/**
@@ -42,17 +42,9 @@ const BackgroundScript = {
 			fn: request.fn,
 			request: request.request,
 		};
-		const deferredResponse = $.Deferred();
-		this.getActiveTabId()
-			.then(tabId => {
-				browser.tabs
-					.sendMessage(tabId, reqToContentScript)
-					.then(deferredResponse.resolve)
-					.catch(deferredResponse.reject);
-			})
-			.catch(deferredResponse.reject);
-
-		return deferredResponse;
+		return this.getActiveTabId().then(tabId =>
+			browser.tabs.sendMessage(tabId, reqToContentScript)
+		);
 	},
 };
 
@@ -77,15 +69,7 @@ export default function getBackgroundScript(location) {
 						fn: attr,
 						request,
 					};
-
-					const deferredResponse = $.Deferred();
-
-					browser.runtime
-						.sendMessage(reqToBackgroundScript)
-						.then(deferredResponse.resolve)
-						.catch(deferredResponse.reject);
-
-					return deferredResponse;
+					return browser.runtime.sendMessage(reqToBackgroundScript);
 				};
 			} else {
 				backgroundScript[attr] = BackgroundScript[attr];
