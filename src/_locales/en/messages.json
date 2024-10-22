@@ -379,7 +379,7 @@
 	"popup_ws_version": {
 		"message": "Web Scraper version: "
 	},
-	"searchbar_placeholder_message": {
-		"message": "Search..."
+	"searchbar_placeholder_message_for_sitemaps": {
+		"message": "Sitemap id..."
 	}
 }

@@ -413,7 +413,7 @@
 	"popup_ws_version": {
 		"message": "Версия Web Scraper: "
 	},
-	"searchbar_placeholder_message": {
-		"message": "Поиск..."
+	"searchbar_placeholder_message_for_sitemaps": {
+		"message": "Id карты обхода..."
 	}
 }
