@@ -78,12 +78,14 @@ export default class StoreTalismanApi extends StoreRestApi {
 	setAxiosInterceptors() {
 		this.axiosInstance.interceptors.response.use(response => {
 			// response.request.responseURL is not returned with current axios config, mb it's return when we change axios to fetch
-			if (response.request.responseURL.includes('auth')) {
-				browser.runtime.sendMessage({
-					authError: true,
-				});
-				const error = new Error(`Authentication Error`);
-				return Promise.reject(error);
+			if (response.request.responseURL) {
+				if (response.request.responseURL.includes('auth')) {
+					browser.runtime.sendMessage({
+						authError: true,
+					});
+					const error = new Error(`Authentication Error`);
+					return Promise.reject(error);
+				}
 			}
 			return response;
 		});

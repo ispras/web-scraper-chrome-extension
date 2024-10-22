@@ -20,14 +20,14 @@ export default class StoreRestApi {
 	setAxiosInterceptors() {
 		this.axiosInstance.interceptors.response.use(response => {
 			//TODO return it when change axios to fetch
-			const [contentType] = response.headers['content-type'].split(';');
-			if (contentType !== 'application/json') {
-				const error = new Error(`Incorrect response type`);
-				return Promise.reject(error);
-			}
-			if (response.headers['content-type']) {
-				console.log(response.headers['content-type']);
-			}
+			// const [contentType] = response.headers['content-type'].split(';');
+			// if (contentType !== 'application/json') {
+			// 	const error = new Error(`Incorrect response type`);
+			// 	return Promise.reject(error);
+			// }
+			// if (response.headers['content-type']) {
+			// 	console.log(response.headers['content-type']);
+			// }
 			return response;
 		});
 	}
