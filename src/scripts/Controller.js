@@ -811,6 +811,8 @@ export default class SitemapController {
 		Translator.translatePage();
 
 		this.initSearchbar('projects');
+		document.querySelector('input.searchbar').placeholder =
+			Translator.getTranslationByKey('projectName') + '...';
 	}
 
 	getCurrentProjectId() {
@@ -857,6 +859,9 @@ export default class SitemapController {
 			Translator.translatePage();
 		}
 		this.initSearchbar('sitemaps');
+		document.querySelector('input.searchbar').placeholder = Translator.getTranslationByKey(
+			'searchbar_placeholder_message_for_sitemaps'
+		);
 	}
 
 	initSearchbar(searchbarLocation) {
@@ -864,9 +869,6 @@ export default class SitemapController {
 			let AllRows = [];
 			const inputText = event.target.value.toLowerCase();
 			if (searchbarLocation === 'sitemaps') {
-				document.querySelector('input.searchbar').placeholder =
-					Translator.getTranslationByKey('searchbar_placeholder_message_for_sitemaps');
-
 				AllRows = Array.from(document.querySelectorAll('td.id')).map(
 					td => td.parentElement
 				);
@@ -886,9 +888,6 @@ export default class SitemapController {
 					}
 				});
 			} else if (searchbarLocation === 'projects') {
-				document.querySelector('input.searchbar').placeholder =
-					Translator.getTranslationByKey('projectName') + '...';
-
 				AllRows = Array.from(document.querySelectorAll('td.projTitle')).map(
 					td => td.parentElement
 				);
