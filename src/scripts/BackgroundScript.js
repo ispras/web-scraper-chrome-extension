@@ -5,7 +5,7 @@ import * as browser from 'webextension-polyfill';
  */
 const BackgroundScript = {
 	dummy() {
-		return new Promise.resolve('dummy');
+		return Promise.resolve('dummy');
 	},
 
 	/**

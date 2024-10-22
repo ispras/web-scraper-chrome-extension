@@ -81,7 +81,6 @@ export default class Scraper {
 	 * @param record
 	 */
 	saveFile(record) {
-		//const deferredResponse = $.Deferred();
 		if (!('_attachments' in record)) {
 			return Promise.resolve();
 		}
