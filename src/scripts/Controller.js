@@ -865,44 +865,50 @@ export default class SitemapController {
 		);
 		document.querySelector('.searchbar').addEventListener('input', event => {
 			let AllRows = [];
-			try {
-				if (searchbarLocation === 'sitemaps') {
-					AllRows = Array.from(document.querySelectorAll('td.id')).map(
-						td => td.parentElement
-					);
-					AllRows.forEach(row => {
-						if (
-							row
-								.querySelector('.id')
-								.innerText.toLowerCase()
-								.startsWith(event.target.value.toLowerCase())
-						) {
-							row.style.display = 'table-row';
-						} else {
-							row.style.display = 'none';
+			const inputText = event.target.value.toLowerCase();
+			if (searchbarLocation === 'sitemaps') {
+				AllRows = Array.from(document.querySelectorAll('td.id')).map(
+					td => td.parentElement
+				);
+				AllRows.forEach(row => {
+					const rowText = row.querySelector('.id').innerText.toLowerCase();
+					if (rowText.includes(inputText)) {
+						row.style.display = 'table-row';
+						let regex = RegExp(inputText, 'gi');
+						if (!inputText) {
+							regex = /$^/; // will never is valid
 						}
-					});
-				} else if (searchbarLocation === 'projects') {
-					AllRows = Array.from(document.querySelectorAll('td.projTitle')).map(
-						td => td.parentElement
-					);
-					AllRows.forEach(row => {
-						if (
-							row
-								.querySelector('td.projTitle')
-								.innerText.toLowerCase()
-								.startsWith(event.target.value.toLowerCase())
-						) {
-							row.style.display = 'table-row';
-						} else {
-							row.style.display = 'none';
+						row.querySelector('td.id').innerHTML = rowText.replace(regex, match => {
+							return `<mark class="highlight">${match}</mark>`;
+						});
+					} else {
+						row.style.display = 'none';
+					}
+				});
+			} else if (searchbarLocation === 'projects') {
+				AllRows = Array.from(document.querySelectorAll('td.projTitle')).map(
+					td => td.parentElement
+				);
+				AllRows.forEach(row => {
+					const rowText = row.querySelector('td.projTitle').innerText;
+					if (rowText.toLowerCase().includes(inputText)) {
+						row.style.display = 'table-row';
+						let regex = RegExp(inputText, 'gi');
+						if (!inputText) {
+							regex = /$^/; // will never is valid
 						}
-					});
-				} else {
-					throw { message: "initSearchbar can't understand the type of table" };
-				}
-			} catch (error) {
-				console.log(error.message);
+						row.querySelector('td.projTitle').innerHTML = rowText.replace(
+							regex,
+							match => {
+								return `<mark class="highlight">${match}</mark>`;
+							}
+						);
+					} else {
+						row.style.display = 'none';
+					}
+				});
+			} else {
+				throw { message: "initSearchbar can't understand the type of table" };
 			}
 		});
 	}

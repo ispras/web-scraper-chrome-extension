@@ -189,3 +189,7 @@ select[size] {
 		font-style: italic;
 	}
 }
+mark {
+	margin: 0;
+	padding: 0;
+}
