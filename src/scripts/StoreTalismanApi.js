@@ -52,7 +52,6 @@ export default class StoreTalismanApi extends StoreRestApi {
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
-				adapter: fetchAdapter,
 			})
 			.catch(er => er);
 		if (loginStatus.isAxiosError || loginStatus.data.access_token === undefined) {
@@ -131,9 +130,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 				sortDirection: 'ascending',
 			},
 		};
-		const projects = await this.axiosInstance.post('/graphql', queryData, {
-			adapter: fetchAdapter,
-		});
+		const projects = await this.axiosInstance.post('/graphql', queryData);
 		return projects.data.data.paginationProject.listProject;
 	}
 
