@@ -1389,7 +1389,7 @@ export default class SitemapController {
 		}
 		// cancel possible element selection
 		try {
-			await this.contentScript.removeCurrentContentSelector().promise();
+			await this.contentScript.removeCurrentContentSelector();
 		} catch (err) {
 			console.error(err);
 		}
@@ -1514,7 +1514,7 @@ export default class SitemapController {
 	async cancelSelectorEditing() {
 		// cancel possible element selection
 		try {
-			await this.contentScript.removeCurrentContentSelector().promise();
+			await this.contentScript.removeCurrentContentSelector();
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -2143,7 +2143,7 @@ export default class SitemapController {
 			});
 		} else {
 			try {
-				await this.contentScript.removeCurrentContentSelector().promise();
+				await this.contentScript.removeCurrentContentSelector();
 			} catch (err) {
 				console.error(err);
 			} finally {
@@ -2172,7 +2172,7 @@ export default class SitemapController {
 			});
 		} else {
 			try {
-				await this.contentScript.removeCurrentContentSelector().promise();
+				await this.contentScript.removeCurrentContentSelector();
 			} catch (err) {
 				console.error(err);
 			} finally {
@@ -2202,7 +2202,7 @@ export default class SitemapController {
 			});
 		} else {
 			try {
-				await this.contentScript.removeCurrentContentSelector().promise();
+				await this.contentScript.removeCurrentContentSelector();
 			} catch (err) {
 				console.error(err);
 			} finally {
@@ -2229,7 +2229,7 @@ export default class SitemapController {
 			});
 		} else {
 			try {
-				await this.contentScript.removeCurrentContentSelector().promise();
+				await this.contentScript.removeCurrentContentSelector();
 			} catch (err) {
 				console.error(err);
 			} finally {
