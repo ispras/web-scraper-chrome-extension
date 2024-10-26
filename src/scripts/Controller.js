@@ -810,7 +810,7 @@ export default class SitemapController {
 		$('#viewport').html($projectListPanel);
 		Translator.translatePage();
 
-		this.initSearchbar('projects');
+		this.initSearchbar('td.projTitle');
 		document.querySelector('input.searchbar').placeholder =
 			Translator.getTranslationByKey('projectName') + '...';
 	}
@@ -858,60 +858,34 @@ export default class SitemapController {
 			$('#viewport').html($sitemapListPanel);
 			Translator.translatePage();
 		}
-		this.initSearchbar('sitemaps');
+		this.initSearchbar('td.id');
 		document.querySelector('input.searchbar').placeholder = Translator.getTranslationByKey(
 			'searchbar_placeholder_message_for_sitemaps'
 		);
 	}
 
-	initSearchbar(searchbarLocation) {
+	initSearchbar(rowSelector) {
 		document.querySelector('.searchbar').addEventListener('input', event => {
 			let AllRows = [];
 			const inputText = event.target.value.toLowerCase();
-			if (searchbarLocation === 'sitemaps') {
-				AllRows = Array.from(document.querySelectorAll('td.id')).map(
-					td => td.parentElement
-				);
-				AllRows.forEach(row => {
-					const rowText = row.querySelector('.id').innerText.toLowerCase();
-					if (rowText.includes(inputText)) {
-						row.style.display = 'table-row';
-						let regex = RegExp(inputText, 'gi');
-						if (!inputText) {
-							regex = /$^/; // will never is valid
-						}
-						row.querySelector('td.id').innerHTML = rowText.replace(regex, match => {
-							return `<mark class="highlight">${match}</mark>`;
-						});
-					} else {
-						row.style.display = 'none';
+			AllRows = Array.from(document.querySelectorAll(rowSelector)).map(
+				td => td.parentElement
+			);
+			AllRows.forEach(row => {
+				const rowText = row.querySelector(rowSelector).innerText;
+				if (rowText.toLowerCase().includes(inputText)) {
+					row.style.display = 'table-row';
+					let regex = RegExp(inputText, 'gi');
+					if (!inputText) {
+						regex = /$^/; // will never is valid and returns []
 					}
-				});
-			} else if (searchbarLocation === 'projects') {
-				AllRows = Array.from(document.querySelectorAll('td.projTitle')).map(
-					td => td.parentElement
-				);
-				AllRows.forEach(row => {
-					const rowText = row.querySelector('td.projTitle').innerText;
-					if (rowText.toLowerCase().includes(inputText)) {
-						row.style.display = 'table-row';
-						let regex = RegExp(inputText, 'gi');
-						if (!inputText) {
-							regex = /$^/; // will never is valid
-						}
-						row.querySelector('td.projTitle').innerHTML = rowText.replace(
-							regex,
-							match => {
-								return `<mark class="highlight">${match}</mark>`;
-							}
-						);
-					} else {
-						row.style.display = 'none';
-					}
-				});
-			} else {
-				throw { message: "initSearchbar can't understand the type of table" };
-			}
+					row.querySelector(rowSelector).innerHTML = rowText.replace(regex, match => {
+						return `<mark class="highlight">${match}</mark>`;
+					});
+				} else {
+					row.style.display = 'none';
+				}
+			});
 		});
 	}
 	getSitemapFromMetadataForm() {
