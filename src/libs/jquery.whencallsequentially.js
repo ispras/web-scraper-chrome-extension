@@ -1,47 +1,14 @@
-/**
- * @author Martins Balodis
- *
- * An alternative version of $.when which can be used to execute asynchronous
- * calls sequentially one after another.
- *
- * @returns $.Deferred().promise()
- */
 $.whenCallSequentially = function (functionCalls) {
-	const deferredResonse = $.Deferred();
-	const resultData = new Array();
+	let promiseChain = Promise.resolve([]);
 
-	// nothing to do
-	if (functionCalls.length === 0) {
-		return deferredResonse.resolve(resultData).promise();
-	}
-
-	let currentDeferred = functionCalls.shift()();
-	// execute synchronous calls synchronously
-	while (currentDeferred.state() === 'resolved') {
-		currentDeferred.done(function (data) {
-			resultData.push(data);
-		});
-		if (functionCalls.length === 0) {
-			return deferredResonse.resolve(resultData).promise();
-		}
-		currentDeferred = functionCalls.shift()();
-	}
-
-	// handle async calls
-	var interval = setInterval(function () {
-		// handle mixed sync calls
-		while (currentDeferred.state() === 'resolved') {
-			currentDeferred.done(function (data) {
+	functionCalls.forEach(func => {
+		promiseChain = promiseChain.then(resultData => {
+			return func().then(data => {
 				resultData.push(data);
+				return resultData;
 			});
-			if (functionCalls.length === 0) {
-				clearInterval(interval);
-				deferredResonse.resolve(resultData);
-				break;
-			}
-			currentDeferred = functionCalls.shift()();
-		}
-	}, 10);
+		});
+	});
 
-	return deferredResonse.promise();
+	return promiseChain;
 };

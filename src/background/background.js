@@ -190,7 +190,7 @@ browser.runtime.onMessage.addListener(async request => {
 			const backgroundScript = getBackgroundScript('BackgroundScript');
 			// TODO change to promises
 			const deferredResponse = backgroundScript[request.fn](request.request);
-			deferredResponse.done(resolve).catch(reject);
+			deferredResponse.then(resolve).catch(reject);
 		});
 	}
 });

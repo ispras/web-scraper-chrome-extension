@@ -621,7 +621,8 @@ export default class SitemapController {
 												'sitemap_either_start_urls_and_pattern'
 											),
 										};
-									} else if (Object.hasOwn(sitemap, 'startUrls')) {
+									}
+									if (Object.hasOwn(sitemap, 'startUrls')) {
 										if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
 											return {
 												valid: false,
@@ -808,6 +809,10 @@ export default class SitemapController {
 		});
 		$('#viewport').html($projectListPanel);
 		Translator.translatePage();
+
+		this.initSearchbar('td.projTitle');
+		document.querySelector('input.searchbar').placeholder =
+			Translator.getTranslationByKey('projectName') + '...';
 	}
 
 	getCurrentProjectId() {
@@ -853,8 +858,36 @@ export default class SitemapController {
 			$('#viewport').html($sitemapListPanel);
 			Translator.translatePage();
 		}
+		this.initSearchbar('td.id');
+		document.querySelector('input.searchbar').placeholder = Translator.getTranslationByKey(
+			'searchbar_placeholder_message_for_sitemaps'
+		);
 	}
 
+	initSearchbar(rowSelector) {
+		document.querySelector('.searchbar').addEventListener('input', event => {
+			let AllRows = [];
+			const inputText = event.target.value.toLowerCase();
+			AllRows = Array.from(document.querySelectorAll(rowSelector)).map(
+				td => td.parentElement
+			);
+			AllRows.forEach(row => {
+				const rowText = row.querySelector(rowSelector).innerText;
+				if (rowText.toLowerCase().includes(inputText)) {
+					row.style.display = 'table-row';
+					let regex = RegExp(inputText, 'gi');
+					if (!inputText) {
+						regex = /$^/; // will never is valid and returns []
+					}
+					row.querySelector(rowSelector).innerHTML = rowText.replace(regex, match => {
+						return `<mark class="highlight">${match}</mark>`;
+					});
+				} else {
+					row.style.display = 'none';
+				}
+			});
+		});
+	}
 	getSitemapFromMetadataForm() {
 		const metadata = {};
 		const $form = $('#viewport form');
@@ -1466,7 +1499,7 @@ export default class SitemapController {
 			});
 		});
 
-		let options = {
+		const options = {
 			id,
 			selector: selectorsSelector,
 			tableHeaderRowSelector,
@@ -2012,12 +2045,10 @@ export default class SitemapController {
 			currentStateParentSelectorIds
 		);
 
-		const result = await this.contentScript
-			.selectSelector({
-				parentCSSSelector,
-				allowedElements: selector.getItemCSSSelector(),
-			})
-			.promise();
+		const result = await this.contentScript.selectSelector({
+			parentCSSSelector,
+			allowedElements: selector.getItemCSSSelector(),
+		});
 
 		selector = this.getCurrentlyEditedSelector();
 		await selector.afterSelect(result.CSSSelector, this, input.attr('id'));
@@ -2059,12 +2090,10 @@ export default class SitemapController {
 			currentStateParentSelectorIds
 		);
 
-		const result = await this.contentScript
-			.selectSelector({
-				parentCSSSelector,
-				allowedElements: 'tr',
-			})
-			.promise();
+		const result = await this.contentScript.selectSelector({
+			parentCSSSelector,
+			allowedElements: 'tr',
+		});
 
 		const tableHeaderRowSelector = result.CSSSelector;
 		selector.tableHeaderRowSelector = tableHeaderRowSelector;
@@ -2089,12 +2118,10 @@ export default class SitemapController {
 			currentStateParentSelectorIds
 		);
 
-		const result = await this.contentScript
-			.selectSelector({
-				parentCSSSelector,
-				allowedElements: 'tr',
-			})
-			.promise();
+		const result = await this.contentScript.selectSelector({
+			parentCSSSelector,
+			allowedElements: 'tr',
+		});
 
 		// update validation for selector field
 		const input = $(button).closest('.form-group').find('input.selector-value');
@@ -2143,7 +2170,7 @@ export default class SitemapController {
 				elementCSSSelector: selector.selector,
 			});
 
-			deferredSelectorPreview.done(function () {
+			deferredSelectorPreview.then(function () {
 				$(button).addClass('preview');
 			});
 		} else {
@@ -2172,7 +2199,7 @@ export default class SitemapController {
 				elementCSSSelector: selector[inputName],
 			});
 
-			deferredSelectorPreview.done(function () {
+			deferredSelectorPreview.then(function () {
 				$(button).addClass('preview');
 			});
 		} else {
@@ -2202,7 +2229,7 @@ export default class SitemapController {
 				elementCSSSelector: rowSelector,
 			});
 
-			deferredSelectorPreview.done(function () {
+			deferredSelectorPreview.then(function () {
 				$(button).addClass('preview');
 			});
 		} else {
@@ -2229,7 +2256,7 @@ export default class SitemapController {
 				elementCSSSelector: selector.selector,
 			});
 
-			deferredSelectorPreview.done(function () {
+			deferredSelectorPreview.then(function () {
 				$(button).addClass('preview');
 			});
 		} else {
