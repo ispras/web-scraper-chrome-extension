@@ -1,7 +1,7 @@
+import * as $ from 'jquery';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap';
 import * as browser from 'webextension-polyfill';
-import * as $ from 'jquery';
 import Config from '../scripts/Config';
 import Translator from '../scripts/Translator';
 

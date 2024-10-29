@@ -81,10 +81,8 @@ export default class Scraper {
 	 * @param record
 	 */
 	saveFile(record) {
-		const deferredResponse = $.Deferred();
 		if (!('_attachments' in record)) {
-			deferredResponse.resolve();
-			return deferredResponse.promise();
+			return Promise.resolve();
 		}
 
 		const downloads = record._attachments.map(async attachment => {
@@ -104,12 +102,10 @@ export default class Scraper {
 				return attachment;
 			}
 		});
-
 		Promise.all(downloads).then(attachments => {
 			record._attachments = attachments;
-			deferredResponse.resolve();
 		});
-		return deferredResponse.promise();
+		return Promise.resolve();
 	}
 
 	// @TODO remove recursion and add an iterative way to run these jobs.
@@ -161,7 +157,7 @@ export default class Scraper {
 					}.bind(this)
 				);
 
-				$.whenCallSequentially(deferredDatamanipulations).done(
+				$.whenCallSequentially(deferredDatamanipulations).then(
 					function () {
 						this.resultWriter.writeDocs(scrapedRecords).then(() => {
 							const now = new Date().getTime();

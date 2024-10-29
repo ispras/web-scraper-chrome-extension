@@ -30,6 +30,7 @@ const config = {
 	resolve: {
 		extensions: ['.js'],
 	},
+	devtool: 'source-map',
 	module: {
 		rules: [
 			{
@@ -76,7 +77,7 @@ const config = {
 			'window.jQuery': 'jquery',
 		}),
 		new webpack.DefinePlugin({
-			global: 'window',
+			global: 'self',
 		}),
 		new MiniCssExtractPlugin({
 			filename: '[name].css',
@@ -106,8 +107,9 @@ const config = {
 					jsonContent.version = version;
 
 					if (config.mode === 'development') {
-						jsonContent.content_security_policy =
-							"script-src 'self' 'unsafe-eval'; object-src 'self'";
+						jsonContent.content_security_policy = {
+							extension_pages: "script-src 'self'; object-src 'self'",
+						};
 					}
 
 					return JSON.stringify(jsonContent, null, 2);

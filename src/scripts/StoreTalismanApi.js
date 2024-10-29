@@ -1,4 +1,5 @@
 import axios from 'axios';
+import fetchAdapter from '@vespaiach/axios-fetch-adapter';
 import StoreRestApi from './StoreRestApi';
 import urlJoin from 'url-join';
 import * as browser from 'webextension-polyfill';
@@ -35,6 +36,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 		const response = await axios({
 			method: 'get',
 			url: urlJoin(this.axiosInstance.defaults.baseURL, 'meta.json'),
+			adapter: fetchAdapter,
 		});
 		return response.data.APP_NAME;
 	}
@@ -74,12 +76,15 @@ export default class StoreTalismanApi extends StoreRestApi {
 
 	setAxiosInterceptors() {
 		this.axiosInstance.interceptors.response.use(response => {
-			if (response.request.responseURL.includes('auth')) {
-				browser.runtime.sendMessage({
-					authError: true,
-				});
-				const error = new Error(`Authentication Error`);
-				return Promise.reject(error);
+			// response.request.responseURL is not returned with current axios config, mb it's return when we change axios to fetch
+			if (response.request.responseURL) {
+				if (response.request.responseURL.includes('auth')) {
+					browser.runtime.sendMessage({
+						authError: true,
+					});
+					const error = new Error(`Authentication Error`);
+					return Promise.reject(error);
+				}
 			}
 			return response;
 		});
@@ -97,6 +102,7 @@ export default class StoreTalismanApi extends StoreRestApi {
 		const response = await axios({
 			method: 'get',
 			url: `${tUrl}/oauth/token`,
+			adapter: fetchAdapter,
 		});
 		try {
 			if (response.data.preferred_username) {

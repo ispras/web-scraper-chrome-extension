@@ -621,7 +621,8 @@ export default class SitemapController {
 												'sitemap_either_start_urls_and_pattern'
 											),
 										};
-									} else if (Object.hasOwn(sitemap, 'startUrls')) {
+									}
+									if (Object.hasOwn(sitemap, 'startUrls')) {
 										if (!Sitemap.validateStartUrls(sitemap.startUrls)) {
 											return {
 												valid: false,
@@ -1388,7 +1389,7 @@ export default class SitemapController {
 		}
 		// cancel possible element selection
 		try {
-			await this.contentScript.removeCurrentContentSelector().promise();
+			await this.contentScript.removeCurrentContentSelector();
 		} catch (err) {
 			console.error(err);
 		}
@@ -1466,7 +1467,7 @@ export default class SitemapController {
 			});
 		});
 
-		let options = {
+		const options = {
 			id,
 			selector: selectorsSelector,
 			tableHeaderRowSelector,
@@ -1513,7 +1514,7 @@ export default class SitemapController {
 	async cancelSelectorEditing() {
 		// cancel possible element selection
 		try {
-			await this.contentScript.removeCurrentContentSelector().promise();
+			await this.contentScript.removeCurrentContentSelector();
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -2012,12 +2013,10 @@ export default class SitemapController {
 			currentStateParentSelectorIds
 		);
 
-		const result = await this.contentScript
-			.selectSelector({
-				parentCSSSelector,
-				allowedElements: selector.getItemCSSSelector(),
-			})
-			.promise();
+		const result = await this.contentScript.selectSelector({
+			parentCSSSelector,
+			allowedElements: selector.getItemCSSSelector(),
+		});
 
 		selector = this.getCurrentlyEditedSelector();
 		await selector.afterSelect(result.CSSSelector, this, input.attr('id'));
@@ -2059,12 +2058,10 @@ export default class SitemapController {
 			currentStateParentSelectorIds
 		);
 
-		const result = await this.contentScript
-			.selectSelector({
-				parentCSSSelector,
-				allowedElements: 'tr',
-			})
-			.promise();
+		const result = await this.contentScript.selectSelector({
+			parentCSSSelector,
+			allowedElements: 'tr',
+		});
 
 		const tableHeaderRowSelector = result.CSSSelector;
 		selector.tableHeaderRowSelector = tableHeaderRowSelector;
@@ -2089,12 +2086,10 @@ export default class SitemapController {
 			currentStateParentSelectorIds
 		);
 
-		const result = await this.contentScript
-			.selectSelector({
-				parentCSSSelector,
-				allowedElements: 'tr',
-			})
-			.promise();
+		const result = await this.contentScript.selectSelector({
+			parentCSSSelector,
+			allowedElements: 'tr',
+		});
 
 		// update validation for selector field
 		const input = $(button).closest('.form-group').find('input.selector-value');
@@ -2143,12 +2138,12 @@ export default class SitemapController {
 				elementCSSSelector: selector.selector,
 			});
 
-			deferredSelectorPreview.done(function () {
+			deferredSelectorPreview.then(function () {
 				$(button).addClass('preview');
 			});
 		} else {
 			try {
-				await this.contentScript.removeCurrentContentSelector().promise();
+				await this.contentScript.removeCurrentContentSelector();
 			} catch (err) {
 				console.error(err);
 			} finally {
@@ -2172,12 +2167,12 @@ export default class SitemapController {
 				elementCSSSelector: selector[inputName],
 			});
 
-			deferredSelectorPreview.done(function () {
+			deferredSelectorPreview.then(function () {
 				$(button).addClass('preview');
 			});
 		} else {
 			try {
-				await this.contentScript.removeCurrentContentSelector().promise();
+				await this.contentScript.removeCurrentContentSelector();
 			} catch (err) {
 				console.error(err);
 			} finally {
@@ -2202,12 +2197,12 @@ export default class SitemapController {
 				elementCSSSelector: rowSelector,
 			});
 
-			deferredSelectorPreview.done(function () {
+			deferredSelectorPreview.then(function () {
 				$(button).addClass('preview');
 			});
 		} else {
 			try {
-				await this.contentScript.removeCurrentContentSelector().promise();
+				await this.contentScript.removeCurrentContentSelector();
 			} catch (err) {
 				console.error(err);
 			} finally {
@@ -2229,12 +2224,12 @@ export default class SitemapController {
 				elementCSSSelector: selector.selector,
 			});
 
-			deferredSelectorPreview.done(function () {
+			deferredSelectorPreview.then(function () {
 				$(button).addClass('preview');
 			});
 		} else {
 			try {
-				await this.contentScript.removeCurrentContentSelector().promise();
+				await this.contentScript.removeCurrentContentSelector();
 			} catch (err) {
 				console.error(err);
 			} finally {
