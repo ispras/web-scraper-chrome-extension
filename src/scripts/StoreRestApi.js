@@ -2,14 +2,12 @@ import axios from 'axios';
 import Sitemap from './Sitemap';
 import StorePouchDB from './StorePouchDB';
 import urlJoin from 'url-join';
-import fetchAdapter from '@vespaiach/axios-fetch-adapter';
 
 export default class StoreRestApi {
 	constructor(config, baseUrl, sitemapsPath = 'sitemaps/') {
 		this.localDataStore = new StorePouchDB(config);
 		this.axiosInstance = axios.create({
 			baseURL: baseUrl,
-			adapter: fetchAdapter,
 		});
 		this.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
 		this.axiosInstance.defaults.headers.put['Content-Type'] = 'application/json';
@@ -19,15 +17,11 @@ export default class StoreRestApi {
 
 	setAxiosInterceptors() {
 		this.axiosInstance.interceptors.response.use(response => {
-			//TODO return it when change axios to fetch
-			// const [contentType] = response.headers['content-type'].split(';');
-			// if (contentType !== 'application/json') {
-			// 	const error = new Error(`Incorrect response type`);
-			// 	return Promise.reject(error);
-			// }
-			// if (response.headers['content-type']) {
-			// 	console.log(response.headers['content-type']);
-			// }
+			const [contentType] = response.headers['content-type'].split(';');
+			if (contentType !== 'application/json') {
+				const error = new Error(`Incorrect response type`);
+				return Promise.reject(error);
+			}
 			return response;
 		});
 	}

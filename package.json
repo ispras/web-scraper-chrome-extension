@@ -1,6 +1,6 @@
 {
 	"name": "web-scraper-chrome-extension",
-	"version": "0.5",
+	"version": "0.5.1",
 	"description": "Web data extraction tool implemented as chrome extension",
 	"scripts": {
 		"lint": "eslint --ext .js src",
@@ -18,9 +18,8 @@
 		}
 	},
 	"dependencies": {
-		"@vespaiach/axios-fetch-adapter": "^0.3.1",
 		"@babel/runtime": "^7.10.5",
-		"axios": "^0.26.1",
+		"axios": "1.7.7",
 		"bootstrap": "3.4.1",
 		"d3": "^3.3.8",
 		"icanhaz": "0.10.3",
