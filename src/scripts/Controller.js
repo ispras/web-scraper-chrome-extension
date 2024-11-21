@@ -8,7 +8,6 @@ import 'jquery-highlight/jquery.highlight';
 import 'jquery-searcher/dist/jquery.searcher.min';
 import 'jquery-flexdatalist/jquery.flexdatalist';
 import '../libs/jquery.bootstrapvalidator/bootstrapValidator';
-import '../libs/urlToSitemapName';
 import getContentScript from './ContentScript';
 import Sitemap from './Sitemap';
 import SelectorGraphv2 from './SelectorGraphv2';
@@ -17,6 +16,7 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 import urlToSitemapName from '../libs/urlToSitemapName';
+import Template from '../libs/sitemapTemplate';
 
 export const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/;
 
@@ -706,11 +706,14 @@ export default class SitemapController {
 	}
 	showTemplateSitemapPanel() {
 		this.showImportSitemapPanel();
-		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+		const url = chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
 			const currentTab = tabs[0];
 			if (currentTab && currentTab.url) {
 				document.getElementById('edit_sitemap_id').value = urlToSitemapName(currentTab.url);
 			}
+			const sitemapTemplate = Template;
+			sitemapTemplate.startUrls = [currentTab.url];
+			$('#sitemapJSON').text(JSON.stringify(sitemapTemplate));
 		});
 		return true;
 	}
