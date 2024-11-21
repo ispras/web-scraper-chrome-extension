@@ -190,6 +190,9 @@ export default class SitemapController {
 			'#create-sitemap-import-nav-button': {
 				click: this.showImportSitemapPanel,
 			},
+			'#sitemap-template-create-nav-button': {
+				click: this.showTemplateSitemapPanel,
+			},
 			'#sitemap-export-nav-button': {
 				click: this.showSitemapExportPanel,
 			},
@@ -697,6 +700,16 @@ export default class SitemapController {
 		$('#viewport').html(sitemapForm);
 		this.initImportSitemapValidation();
 		Translator.translatePage();
+		return true;
+	}
+	showTemplateSitemapPanel() {
+		this.showImportSitemapPanel();
+		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+			const currentTab = tabs[0];
+			if (currentTab && currentTab.url) {
+				document.getElementById('edit_sitemap_id').value = currentTab.url;
+			}
+		});
 		return true;
 	}
 
