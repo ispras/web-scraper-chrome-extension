@@ -16,9 +16,9 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 import urlToSitemapName from '../libs/urlToSitemapName';
-import Template from '../libs/sitemapTemplate';
 
 export const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/;
+const sitemapTemplate = require('../sitemaps_templates/sitemapTemplate.json');
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -704,14 +704,14 @@ export default class SitemapController {
 		Translator.translatePage();
 		return true;
 	}
+
 	showTemplateSitemapPanel() {
 		this.showImportSitemapPanel();
-		const url = chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
 			const currentTab = tabs[0];
 			if (currentTab && currentTab.url) {
 				document.getElementById('edit_sitemap_id').value = urlToSitemapName(currentTab.url);
 			}
-			const sitemapTemplate = Template;
 			sitemapTemplate.startUrls = [currentTab.url];
 			$('#sitemapJSON').text(JSON.stringify(sitemapTemplate));
 		});
