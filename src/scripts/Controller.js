@@ -15,8 +15,10 @@ import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
+import urlToSitemapName from '../libs/urlToSitemapName';
 
 export const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/;
+const sitemapTemplate = require('../sitemaps_templates/sitemapTemplate.json');
 
 export default class SitemapController {
 	constructor(store, templateDir) {
@@ -189,6 +191,9 @@ export default class SitemapController {
 			},
 			'#create-sitemap-import-nav-button': {
 				click: this.showImportSitemapPanel,
+			},
+			'#sitemap-template-create-nav-button': {
+				click: this.showTemplateSitemapPanel,
 			},
 			'#sitemap-export-nav-button': {
 				click: this.showSitemapExportPanel,
@@ -697,6 +702,19 @@ export default class SitemapController {
 		$('#viewport').html(sitemapForm);
 		this.initImportSitemapValidation();
 		Translator.translatePage();
+		return true;
+	}
+
+	showTemplateSitemapPanel() {
+		this.showImportSitemapPanel();
+		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+			const currentTab = tabs[0];
+			if (currentTab && currentTab.url) {
+				document.getElementById('edit_sitemap_id').value = urlToSitemapName(currentTab.url);
+			}
+			sitemapTemplate.startUrls = [currentTab.url];
+			$('#sitemapJSON').text(JSON.stringify(sitemapTemplate));
+		});
 		return true;
 	}
 
