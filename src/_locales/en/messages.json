@@ -380,6 +380,6 @@
 		"message": "Web Scraper version: "
 	},
 	"sitemap_template_create_nav_button": {
-		"message": "template"
+		"message": "Load news template"
 	}
 }
