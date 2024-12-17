@@ -15,6 +15,7 @@ import SelectorList from './SelectorList';
 import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
+import SitemapSpecMigrationManager from './SitemapSpecMigration/Manager';
 
 export const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/;
 
@@ -609,7 +610,22 @@ export default class SitemapController {
 											};
 										}
 									}
-
+									// check sitemapSpecificationVersion not younger than plugin version
+									if (sitemap.hasOwnProperty('sitemapSpecificationVersion')) {
+										const versionOfSitemap =
+											sitemap.sitemapSpecificationVersion;
+										if (
+											versionOfSitemap >
+											SitemapSpecMigrationManager.currentVersion()
+										) {
+											return {
+												valid: false,
+												message: Translator.getTranslationByKey(
+													'sitemap_invalid_specificationVersion'
+												),
+											};
+										}
+									}
 									// check for start urls or url pattern
 									if (
 										Object.hasOwn(sitemap, 'startUrls') &&
