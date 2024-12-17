@@ -412,5 +412,8 @@
 	},
 	"popup_ws_version": {
 		"message": "Версия Web Scraper: "
+	},
+	"sitemap_invalid_specificationVersion": {
+		"message": "Версия карты обхода новее чем версия плагина. Пожалуйста обновите плагин"
 	}
 }

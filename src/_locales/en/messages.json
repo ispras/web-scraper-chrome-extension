@@ -378,5 +378,8 @@
 	},
 	"popup_ws_version": {
 		"message": "Web Scraper version: "
+	},
+	"sitemap_invalid_specificationVersion": {
+		"message": "The version of the sitemap is younger than the plugin version. Please update the plugin"
 	}
 }
