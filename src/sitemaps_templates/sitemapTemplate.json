@@ -13,7 +13,6 @@
 			"multiple": true,
 			"extractAttribute": "href",
 			"parentSelectors": ["0"],
-			"delay": "15000",
 			"uuid": "1"
 		},
 		{
@@ -21,8 +20,7 @@
 			"type": "SelectorText",
 			"uuid": "2",
 			"id": "title",
-			"selector": "h1",
-			"delay": "12000"
+			"selector": "h1"
 		},
 		{
 			"parentSelectors": ["1"],
@@ -30,8 +28,7 @@
 			"multiple": true,
 			"uuid": "3",
 			"id": "text",
-			"selector": "p",
-			"delay": "12000"
+			"selector": "p"
 		},
 		{
 			"id": "main_photo",
@@ -39,7 +36,6 @@
 			"type": "SelectorElementAttribute",
 			"extractAttribute": "content",
 			"parentSelectors": ["1"],
-			"delay": "12000",
 			"uuid": "4"
 		},
 		{
@@ -47,7 +43,6 @@
 			"selector": "a.tags",
 			"type": "SelectorText",
 			"parentSelectors": ["1"],
-			"delay": "12000",
 			"uuid": "5"
 		},
 		{
@@ -56,7 +51,6 @@
 			"type": "SelectorElement",
 			"multiple": true,
 			"parentSelectors": ["1"],
-			"delay": "12000",
 			"mergeIntoList": true,
 			"uuid": "6"
 		},
@@ -65,7 +59,6 @@
 			"selector": "div.article__date",
 			"type": "SelectorText",
 			"parentSelectors": ["1"],
-			"delay": "12000",
 			"uuid": "7"
 		}
 	],
