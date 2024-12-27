@@ -156,9 +156,23 @@ export default class Sitemap {
 		// selector is undefined when creating a new one and delete old one, if it exist
 		if (selector === undefined || selector.type !== selectorData.type) {
 			if (selector) {
-				this.deleteSelector(selector);
+				if (selector.canHaveChildSelectors()) {
+					const children = this.selectors.filter(selectorFromList =>
+						selectorFromList.parentSelectors.includes(selector.uuid)
+					);
+					const newSelector = SelectorList.createSelector(selectorData);
+					children.forEach(child => {
+						const parentUuidIndex = child.parentSelectors.indexOf(selector.uuid);
+						console.log(child.parentSelector);
+						child.parentSelector[parentUuidIndex] = newSelector.uuid;
+					});
+					selector = newSelector;
+				} else {
+					this.deleteSelector(selector);
+				}
+			} else {
+				selector = SelectorList.createSelector(selectorData);
 			}
-			selector = SelectorList.createSelector(selectorData);
 		}
 
 		// update child selectors
