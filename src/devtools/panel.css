@@ -184,8 +184,21 @@ select[size] {
 }
 .searchbar {
 	margin: 5px;
+	width: 20em;
+	padding: 0.5em 1em;
+	border: 2px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	font-size: 1em;
+	color: #333;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	&:focus {
+		border-color: #007bff;
+		box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+		outline: none;
+	}
 	&::placeholder {
-		color: grey;
+		color: #888;
 		font-style: italic;
 	}
 }
