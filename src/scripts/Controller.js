@@ -887,6 +887,7 @@ export default class SitemapController {
 		}
 		$('table').searcher({
 			inputSelector: '#searchbar',
+			textSelector: 'td:not(td.actions)',
 			toggle: (item, containsText) => {
 				$(item).unhighlight();
 				$(item).toggle(containsText);
