@@ -1,0 +1,66 @@
+{
+	"rootSelector": {
+		"id": "_root",
+		"uuid": "0"
+	},
+	"_id": "example",
+	"startUrls": ["https://www.vesti.ru/"],
+	"selectors": [
+		{
+			"id": "news_link",
+			"selector": "h3 a",
+			"type": "SelectorLink",
+			"multiple": true,
+			"extractAttribute": "href",
+			"parentSelectors": ["0"],
+			"uuid": "1"
+		},
+		{
+			"parentSelectors": ["1"],
+			"type": "SelectorText",
+			"uuid": "2",
+			"id": "title",
+			"selector": "h1"
+		},
+		{
+			"parentSelectors": ["1"],
+			"type": "SelectorText",
+			"multiple": true,
+			"uuid": "3",
+			"id": "text",
+			"selector": "p"
+		},
+		{
+			"id": "main_photo",
+			"selector": "meta[property=\"og:image\"]",
+			"type": "SelectorElementAttribute",
+			"extractAttribute": "content",
+			"parentSelectors": ["1"],
+			"uuid": "4"
+		},
+		{
+			"id": "tags",
+			"selector": "a.tags",
+			"type": "SelectorText",
+			"parentSelectors": ["1"],
+			"uuid": "5"
+		},
+		{
+			"id": "author",
+			"selector": "html",
+			"type": "SelectorElement",
+			"multiple": true,
+			"parentSelectors": ["1"],
+			"mergeIntoList": true,
+			"uuid": "6"
+		},
+		{
+			"id": "publication_date",
+			"selector": "div.article__date",
+			"type": "SelectorText",
+			"parentSelectors": ["1"],
+			"uuid": "7"
+		}
+	],
+	"sitemapSpecificationVersion": 1
+}
