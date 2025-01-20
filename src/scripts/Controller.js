@@ -810,9 +810,18 @@ export default class SitemapController {
 		$('#viewport').html($projectListPanel);
 		Translator.translatePage();
 
-		this.initSearchbar('td.projTitle');
-		document.querySelector('input.searchbar').placeholder =
-			Translator.getTranslationByKey('projectName') + '...';
+		$('table').searcher({
+			inputSelector: '#searchbar',
+			toggle: (item, containsText) => {
+				$(item).unhighlight();
+				$(item).toggle(containsText);
+				$(item).highlight($('#searchbar').val());
+			},
+		});
+		$('#searchbar').attr(
+			'placeholder',
+			Translator.getTranslationByKey('searchbar_placeholder_message_for_projects')
+		);
 	}
 
 	getCurrentProjectId() {
@@ -858,35 +867,18 @@ export default class SitemapController {
 			$('#viewport').html($sitemapListPanel);
 			Translator.translatePage();
 		}
-		this.initSearchbar('td.id');
-		document.querySelector('input.searchbar').placeholder = Translator.getTranslationByKey(
-			'searchbar_placeholder_message_for_sitemaps'
-		);
-	}
-
-	initSearchbar(rowSelector) {
-		document.querySelector('.searchbar').addEventListener('input', event => {
-			let AllRows = [];
-			const inputText = event.target.value.toLowerCase();
-			AllRows = Array.from(document.querySelectorAll(rowSelector)).map(
-				td => td.parentElement
-			);
-			AllRows.forEach(row => {
-				const rowText = row.querySelector(rowSelector).innerText;
-				if (rowText.toLowerCase().includes(inputText)) {
-					row.style.display = 'table-row';
-					let regex = RegExp(inputText, 'gi');
-					if (!inputText) {
-						regex = /$^/; // will never is valid and returns []
-					}
-					row.querySelector(rowSelector).innerHTML = rowText.replace(regex, match => {
-						return `<mark class="highlight">${match}</mark>`;
-					});
-				} else {
-					row.style.display = 'none';
-				}
-			});
+		$('table').searcher({
+			inputSelector: '#searchbar',
+			toggle: (item, containsText) => {
+				$(item).unhighlight();
+				$(item).toggle(containsText);
+				$(item).highlight($('#searchbar').val());
+			},
 		});
+		$('#searchbar').attr(
+			'placeholder',
+			Translator.getTranslationByKey('searchbar_placeholder_message_for_sitemaps')
+		);
 	}
 	getSitemapFromMetadataForm() {
 		const metadata = {};

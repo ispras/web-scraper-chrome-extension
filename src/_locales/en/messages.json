@@ -380,6 +380,9 @@
 		"message": "Web Scraper version: "
 	},
 	"searchbar_placeholder_message_for_sitemaps": {
-		"message": "Sitemap id..."
+		"message": "Search for sitemaps..."
+	},
+	"searchbar_placeholder_message_for_projects": {
+		"message": "Search for projects..."
 	}
 }

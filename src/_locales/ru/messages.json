@@ -414,6 +414,9 @@
 		"message": "Версия Web Scraper: "
 	},
 	"searchbar_placeholder_message_for_sitemaps": {
-		"message": "Id карты обхода..."
+		"message": "Поиск карт обхода..."
+	},
+	"searchbar_placeholder_message_for_projects": {
+		"message": "Поиск проектов..."
 	}
 }
