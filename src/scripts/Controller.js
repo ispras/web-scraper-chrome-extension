@@ -891,7 +891,11 @@ export default class SitemapController {
 			toggle: (item, containsText) => {
 				$(item).unhighlight();
 				$(item).toggle(containsText);
-				$(item).highlight($('#searchbar').val());
+				$(item)
+					.find('td:not(.actions)')
+					.each(function () {
+						$(this).highlight($('#searchbar').val());
+					});
 			},
 		});
 		$('#searchbar').attr(
