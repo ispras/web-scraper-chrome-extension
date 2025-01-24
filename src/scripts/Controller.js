@@ -827,6 +827,19 @@ export default class SitemapController {
 		});
 		$('#viewport').html($projectListPanel);
 		Translator.translatePage();
+
+		$('table').searcher({
+			inputSelector: '#searchbar',
+			toggle: (item, containsText) => {
+				$(item).unhighlight();
+				$(item).toggle(containsText);
+				$(item).highlight($('#searchbar').val());
+			},
+		});
+		$('#searchbar').attr(
+			'placeholder',
+			Translator.getTranslationByKey('searchbar_placeholder_message_for_projects')
+		);
 	}
 
 	getCurrentProjectId() {
@@ -872,8 +885,24 @@ export default class SitemapController {
 			$('#viewport').html($sitemapListPanel);
 			Translator.translatePage();
 		}
+		$('table').searcher({
+			inputSelector: '#searchbar',
+			textSelector: 'td:not(td.actions)',
+			toggle: (item, containsText) => {
+				$(item).unhighlight();
+				$(item).toggle(containsText);
+				$(item)
+					.find('td:not(.actions)')
+					.each(function () {
+						$(this).highlight($('#searchbar').val());
+					});
+			},
+		});
+		$('#searchbar').attr(
+			'placeholder',
+			Translator.getTranslationByKey('searchbar_placeholder_message_for_sitemaps')
+		);
 	}
-
 	getSitemapFromMetadataForm() {
 		const metadata = {};
 		const $form = $('#viewport form');
