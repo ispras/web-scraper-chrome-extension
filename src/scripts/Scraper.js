@@ -1,7 +1,6 @@
+import { nanoid } from 'nanoid';
 import Job from './Job';
 import '../libs/jquery.whencallsequentially';
-import Base64 from './Base64';
-import * as nanoid from 'nanoid';
 
 export default class Scraper {
 	/**
@@ -92,8 +91,7 @@ export default class Scraper {
 			}
 			const downloadPath = this.generateDownloadPath(filename);
 			try {
-				const blob = await Base64.base64ToBlob(fileBase64, mimeType);
-				const downloadUrl = window.URL.createObjectURL(blob);
+				const downloadUrl = `data:${mimeType};base64,${fileBase64}`;
 				await this.browser.downloadFile(downloadUrl, downloadPath);
 				this.downloadPaths.set(url, downloadPath);
 				return { url, filename, checksum, path: downloadPath };
