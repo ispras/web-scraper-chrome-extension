@@ -378,5 +378,14 @@
 	},
 	"popup_ws_version": {
 		"message": "Web Scraper version: "
+	},
+	"sitemap_template_create_nav_button": {
+		"message": "Load news template"
+	},
+	"searchbar_placeholder_message_for_sitemaps": {
+		"message": "Search for sitemaps..."
+	},
+	"searchbar_placeholder_message_for_projects": {
+		"message": "Search for projects..."
 	}
 }
