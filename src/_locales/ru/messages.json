@@ -413,7 +413,16 @@
 	"popup_ws_version": {
 		"message": "Версия Web Scraper: "
 	},
+	"sitemap_template_create_nav_button": {
+		"message": "Загрузить новостной шаблон"
+	},
+	"searchbar_placeholder_message_for_sitemaps": {
+		"message": "Поиск карт обхода..."
+	},
+	"searchbar_placeholder_message_for_projects": {
+		"message": "Поиск проектов..."
+	},
 	"sitemap_invalid_specificationVersion": {
-		"message": "Версия карты обхода новее чем версия плагина. Пожалуйста обновите плагин"
+		"message": "Версия карты обхода новее чем версия плагина. Пожалуйста, обновите плагин"
 	}
 }

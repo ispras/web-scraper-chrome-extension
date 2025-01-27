@@ -1,5 +1,4 @@
 import axios from 'axios';
-import fetchAdapter from '@vespaiach/axios-fetch-adapter';
 import StoreRestApi from './StoreRestApi';
 import urlJoin from 'url-join';
 import * as browser from 'webextension-polyfill';
@@ -36,7 +35,6 @@ export default class StoreTalismanApi extends StoreRestApi {
 		const response = await axios({
 			method: 'get',
 			url: urlJoin(this.axiosInstance.defaults.baseURL, 'meta.json'),
-			adapter: fetchAdapter,
 		});
 		return response.data.APP_NAME;
 	}
@@ -102,7 +100,6 @@ export default class StoreTalismanApi extends StoreRestApi {
 		const response = await axios({
 			method: 'get',
 			url: `${tUrl}/oauth/token`,
-			adapter: fetchAdapter,
 		});
 		try {
 			if (response.data.preferred_username) {
