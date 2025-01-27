@@ -421,5 +421,8 @@
 	},
 	"searchbar_placeholder_message_for_projects": {
 		"message": "Поиск проектов..."
+	},
+	"sitemap_invalid_specificationVersion": {
+		"message": "Версия карты обхода новее чем версия плагина. Пожалуйста, обновите плагин"
 	}
 }

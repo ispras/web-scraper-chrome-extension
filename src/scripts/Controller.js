@@ -16,6 +16,7 @@ import SelectorTable from './Selector/SelectorTable';
 import Model from './Model';
 import Translator from './Translator';
 import urlToSitemapName from '../libs/urlToSitemapName';
+import SitemapSpecMigrationManager from './SitemapSpecMigration/Manager';
 
 export const SITEMAP_ID_REGEXP = /^[a-z][a-z0-9_\$\(\)\+\-]+$/;
 const sitemapTemplate = require('../sitemaps_templates/sitemapTemplate.json');
@@ -614,7 +615,22 @@ export default class SitemapController {
 											};
 										}
 									}
-
+									// check sitemapSpecificationVersion not newer than plugin version
+									if (sitemap.hasOwnProperty('sitemapSpecificationVersion')) {
+										const versionOfSitemap =
+											sitemap.sitemapSpecificationVersion;
+										if (
+											versionOfSitemap >
+											SitemapSpecMigrationManager.currentVersion()
+										) {
+											return {
+												valid: false,
+												message: Translator.getTranslationByKey(
+													'sitemap_invalid_specificationVersion'
+												),
+											};
+										}
+									}
 									// check for start urls or url pattern
 									if (
 										Object.hasOwn(sitemap, 'startUrls') &&
@@ -903,6 +919,7 @@ export default class SitemapController {
 			Translator.getTranslationByKey('searchbar_placeholder_message_for_sitemaps')
 		);
 	}
+
 	getSitemapFromMetadataForm() {
 		const metadata = {};
 		const $form = $('#viewport form');

@@ -387,5 +387,8 @@
 	},
 	"searchbar_placeholder_message_for_projects": {
 		"message": "Search for projects..."
+	},
+	"sitemap_invalid_specificationVersion": {
+		"message": "The version of the sitemap is newer than the plugin version. Please update the plugin"
 	}
 }
