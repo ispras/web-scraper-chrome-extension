@@ -395,6 +395,19 @@
 	"modal_confirm_action_message_delete_selector": {
 		"message": "Будут удалены следующие селекторы (<span id='modal-child-count'></span> шт.):"
 	},
+	"modal_confirm_action_message_update_selector": {
+		"message": "Дочерние селекторы (<span id='modal-child-count'></span> obj):"
+	},
+	"modal_confirm_action_title_update_selector": {
+		"message": "Новый тип селектора не поддерживает дочерние селекторы. Удалить существующие дочерние селекторы?"
+	},
+	"modal_confirm_action_title_update_selector_can_have_child": {
+		"message": "Новый тип селектора поддерживает дочерние селекторы. Удалить или сохранить существующие дочерние селекторы?"
+	},
+	"modal_confirm_action_submit_update_selector": { "message": "Удалить селекторы" },
+	"modal_confirm_action_submit_update_save_selector": { "message": "Сохранить селекторы" },
+	"modal_confirm_action_cancel_update_selector": { "message": "Отмена" },
+
 	"modal_confirm_action_submit_delete_selector": { "message": "Подтвердить" },
 	"modal_confirm_action_cancel_delete_selector": { "message": "Отмена" },
 	"modal_confirm_action_submit_delete_sitemap": { "message": "Подтвердить" },

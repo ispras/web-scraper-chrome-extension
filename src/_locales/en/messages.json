@@ -356,10 +356,10 @@
 		"message": "Are you sure you want to delete selector <span id='modal-selector-id'></span>?"
 	},
 	"modal_confirm_action_title_update_selector": {
-		"message": "Новый тип селектора не поддерживает дочерние селекторы. Удалить существующие дочерние селекторы?"
+		"message": "The new selector type does not support additional selectors. Remove additional child selectors?"
 	},
 	"modal_confirm_action_title_update_selector_can_have_child": {
-		"message": "Новый тип селектора поддерживает дочерние селекторы. Удалить или сохранить существующие дочерние селекторы?"
+		"message": "The new selector type supports child selectors. Remove or keep existing child selectors?"
 	},
 	"modal_confirm_action_title_delete_sitemap": {
 		"message": "Are you sure you want to delete sitemap <span id='modal-sitemap-id'></span>?"
@@ -368,11 +368,11 @@
 		"message": "The following selectors will be removed (<span id='modal-child-count'></span> obj):"
 	},
 	"modal_confirm_action_message_update_selector": {
-		"message": "Дочерние селекторы (<span id='modal-child-count'></span> obj):"
+		"message": "Child selectors (<span id='modal-child-count'></span> obj):"
 	},
 	"modal_confirm_action_submit_delete_selector": { "message": "Confirm" },
-	"modal_confirm_action_submit_update_selector": { "message": "Удалить селекторы" },
-	"modal_confirm_action_submit_update_save_selector": { "message": "Сохранить селекторы" },
+	"modal_confirm_action_submit_update_selector": { "message": "Delete selectors" },
+	"modal_confirm_action_submit_update_save_selector": { "message": "Save selectors" },
 	"modal_confirm_action_cancel_update_selector": { "message": "Cancel" },
 	"modal_confirm_action_cancel_delete_selector": { "message": "Cancel" },
 	"modal_confirm_action_submit_delete_sitemap": { "message": "Confirm" },
