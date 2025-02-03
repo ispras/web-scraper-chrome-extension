@@ -1408,7 +1408,7 @@ export default class SitemapController {
 		const validator = this.getFormValidator();
 		validator.revalidateField('id');
 		// cancel submit if invalid form
-		if (selector.canHaveChildSelectors()) {
+		if (selector.type !== newSelector.type) {
 			const children = sitemap.selectors.filter(selectorFromList =>
 				selectorFromList.parentSelectors.includes(selector.uuid)
 			);
