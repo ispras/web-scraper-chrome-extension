@@ -205,6 +205,12 @@ export default class SitemapController {
 			'.delete_selector_submit': {
 				click: this.confirmDeleteSelector,
 			},
+			'.update_selector_submit': {
+				click: this.confirmDeleteChildSelectors,
+			},
+			'#modal-save-child-selectors': {
+				click: this.confirmSaveChildSelectors,
+			},
 			'.delete_sitemap_submit': {
 				click: this.confirmDeleteSitemap,
 			},
@@ -1447,7 +1453,38 @@ export default class SitemapController {
 		const newSelector = this.getCurrentlyEditedSelector();
 		const validator = this.getFormValidator();
 		validator.revalidateField('id');
-		// cancel submit if invalid form
+		if (selector.type !== newSelector.type) {
+			const children = sitemap.selectors.filter(selectorFromList =>
+				selectorFromList.parentSelectors.includes(selector.uuid)
+			);
+			if (children.length > 0) {
+				this.initConfirmActionPanel({ action: 'update_selector' });
+				if (newSelector.canHaveChildSelectors()) {
+					const saveSelectorsBtn = $('<button/>', {
+						class: 'btn btn-primary',
+						id: 'modal-save-child-selectors',
+						text: Translator.getTranslationByKey(
+							'modal_confirm_action_submit_update_save_selector'
+						),
+					});
+					$('.modal-footer').append(saveSelectorsBtn);
+					$('#modal-title').text(
+						Translator.getTranslationByKey(
+							'modal_confirm_action_title_update_selector_can_have_child'
+						)
+					);
+				}
+				$('#modal-child-count').text(children.length);
+				$('#modal-message').after('<ul id="list-deleted-children"></ul>');
+				children.forEach(child => {
+					const $child = $('<li></li>');
+					$child.text(`#${child.uuid} ${child.id}`);
+					$('#list-deleted-children').append($child);
+				});
+				$('#modal-message').show();
+				return true;
+			}
+		}
 		if (!this.isValidForm()) {
 			return false;
 		}
@@ -1457,8 +1494,14 @@ export default class SitemapController {
 		} catch (err) {
 			console.error(err);
 		}
+		await this.updateSelector();
+	}
+	async updateSelector(saveChildSelectors = false) {
+		const sitemap = this.state.currentSitemap;
+		const selector = this.state.currentSelector;
+		const newSelector = this.getCurrentlyEditedSelector();
 		try {
-			sitemap.updateSelector(selector, newSelector);
+			sitemap.updateSelector(selector, newSelector, saveChildSelectors);
 			await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
 		} catch (err) {
 			console.error(err);
@@ -1466,7 +1509,14 @@ export default class SitemapController {
 			this.showSitemapSelectorList();
 		}
 	}
-
+	async confirmSaveChildSelectors(button) {
+		await this.updateSelector(true);
+		$('#confirm-action-modal').modal('hide');
+	}
+	async confirmDeleteChildSelectors(button) {
+		await this.updateSelector(false);
+		$('#confirm-action-modal').modal('hide');
+	}
 	/**
 	 * Get selector from selector editing form
 	 */
