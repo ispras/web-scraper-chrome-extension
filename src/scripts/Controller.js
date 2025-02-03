@@ -1407,7 +1407,6 @@ export default class SitemapController {
 		const newSelector = this.getCurrentlyEditedSelector();
 		const validator = this.getFormValidator();
 		validator.revalidateField('id');
-		// cancel submit if invalid form
 		if (selector.type !== newSelector.type) {
 			const children = sitemap.selectors.filter(selectorFromList =>
 				selectorFromList.parentSelectors.includes(selector.uuid)
@@ -1449,8 +1448,14 @@ export default class SitemapController {
 		} catch (err) {
 			console.error(err);
 		}
+		await this.updateSelector();
+	}
+	async updateSelector(saveChildSelectors = false) {
+		const sitemap = this.state.currentSitemap;
+		const selector = this.state.currentSelector;
+		const newSelector = this.getCurrentlyEditedSelector();
 		try {
-			sitemap.updateSelector(selector, newSelector);
+			sitemap.updateSelector(selector, newSelector, saveChildSelectors);
 			await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
 		} catch (err) {
 			console.error(err);
@@ -1459,31 +1464,11 @@ export default class SitemapController {
 		}
 	}
 	async confirmSaveChildSelectors(button) {
-		const sitemap = this.state.currentSitemap;
-		const selector = this.state.currentSelector;
-		const newSelector = this.getCurrentlyEditedSelector();
-		try {
-			sitemap.updateSelector(selector, newSelector, true);
-			await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
-		} catch (err) {
-			console.error(err);
-		} finally {
-			this.showSitemapSelectorList();
-		}
+		await this.updateSelector(true);
 		$('#confirm-action-modal').modal('hide');
 	}
 	async confirmDeleteChildSelectors(button) {
-		const sitemap = this.state.currentSitemap;
-		const selector = this.state.currentSelector;
-		const newSelector = this.getCurrentlyEditedSelector();
-		try {
-			sitemap.updateSelector(selector, newSelector, false);
-			await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
-		} catch (err) {
-			console.error(err);
-		} finally {
-			this.showSitemapSelectorList();
-		}
+		await this.updateSelector(false);
 		$('#confirm-action-modal').modal('hide');
 	}
 	/**
