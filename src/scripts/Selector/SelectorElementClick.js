@@ -36,10 +36,8 @@ export default class SelectorElementClick extends Selector {
 		const cssSelector = this.getElementCSSSelector(clickElement);
 		// this function will trigger the click from browser land
 		// TODO do we really need to inject a script instead of document.querySelector(...).click()?
-		const script = document.createElement('script');
-		script.type = 'text/javascript';
-		script.text = `{ document.querySelector('${cssSelector}').click(); }`;
-		document.body.appendChild(script);
+		// I don't know for sure, but it seems to work
+		document.querySelector(cssSelector).click();
 	}
 
 	getClickElementUniquenessType() {
