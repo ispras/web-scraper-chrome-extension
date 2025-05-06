@@ -18,9 +18,8 @@
 		}
 	},
 	"dependencies": {
-		"@vespaiach/axios-fetch-adapter": "^0.3.1",
 		"@babel/runtime": "^7.10.5",
-		"axios": "^0.26.1",
+		"axios": "1.7.7",
 		"bootstrap": "3.4.1",
 		"d3": "^3.3.8",
 		"icanhaz": "0.10.3",
@@ -28,7 +27,7 @@
 		"jquery-flexdatalist": "^2.2.4",
 		"jquery-highlight": "^3.5.0",
 		"jquery-searcher": "^0.3.0",
-		"nanoid": "^2.1.11",
+		"nanoid": "^3.3.8",
 		"papaparse": "^5.2.0",
 		"pouchdb": "^7.1.1",
 		"renderjson": "^1.4.0",
