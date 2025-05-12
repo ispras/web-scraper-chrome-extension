@@ -1453,6 +1453,15 @@ export default class SitemapController {
 		const newSelector = this.getCurrentlyEditedSelector();
 		const validator = this.getFormValidator();
 		validator.revalidateField('id');
+		if (!this.isValidForm()) {
+			return false;
+		}
+		// cancel possible element selection
+		try {
+			await this.contentScript.removeCurrentContentSelector();
+		} catch (err) {
+			console.error(err);
+		}
 		if (selector.type !== newSelector.type) {
 			const children = sitemap.selectors.filter(selectorFromList =>
 				selectorFromList.parentSelectors.includes(selector.uuid)
@@ -1474,34 +1483,31 @@ export default class SitemapController {
 						)
 					);
 				}
-				$('#modal-child-count').text(children.length);
-				$('#modal-message').after('<ul id="list-deleted-children"></ul>');
-				children.forEach(child => {
-					const $child = $('<li></li>');
-					$child.text(`#${child.uuid} ${child.id}`);
-					$('#list-deleted-children').append($child);
-				});
+				this.displayChildrenInModalWindow(children);
 				$('#modal-message').show();
 				return true;
 			}
 		}
-		if (!this.isValidForm()) {
-			return false;
-		}
-		// cancel possible element selection
-		try {
-			await this.contentScript.removeCurrentContentSelector();
-		} catch (err) {
-			console.error(err);
-		}
+
 		await this.updateSelector();
 	}
-	async updateSelector(saveChildSelectors = false) {
+
+	displayChildrenInModalWindow(children) {
+		$('#modal-child-count').text(children.length);
+		$('#modal-message').after('<ul id="list-deleted-children"></ul>');
+		children.forEach(child => {
+			const $child = $('<li></li>');
+			$child.text(`#${child.uuid} ${child.id}`);
+			$('#list-deleted-children').append($child);
+		});
+	}
+
+	async updateSelector(saveChildrenForNewType = false) {
 		const sitemap = this.state.currentSitemap;
 		const selector = this.state.currentSelector;
 		const newSelector = this.getCurrentlyEditedSelector();
 		try {
-			sitemap.updateSelector(selector, newSelector, saveChildSelectors);
+			sitemap.updateSelector(selector, newSelector, saveChildrenForNewType);
 			await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
 		} catch (err) {
 			console.error(err);
@@ -1509,14 +1515,17 @@ export default class SitemapController {
 			this.showSitemapSelectorList();
 		}
 	}
+
 	async confirmSaveChildSelectors(button) {
 		await this.updateSelector(true);
 		$('#confirm-action-modal').modal('hide');
 	}
+
 	async confirmDeleteChildSelectors(button) {
 		await this.updateSelector(false);
 		$('#confirm-action-modal').modal('hide');
 	}
+
 	/**
 	 * Get selector from selector editing form
 	 */
@@ -1708,13 +1717,7 @@ export default class SitemapController {
 		this.initConfirmActionPanel({ action: 'delete_selector' });
 		$('#modal-selector-id').text(selector.id);
 		if (childCount) {
-			$('#modal-child-count').text(childCount);
-			$('#modal-message').after('<ul id="list-deleted-children"></ul>');
-			filteredChildren.forEach(child => {
-				const $child = $('<li></li>');
-				$child.text(`#${child.uuid} ${child.id}`);
-				$('#list-deleted-children').append($child);
-			});
+			this.displayChildrenInModalWindow(filteredChildren);
 			$('#modal-message').show();
 		}
 		this.state.currentSelector = selector;

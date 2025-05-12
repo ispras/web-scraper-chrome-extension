@@ -356,7 +356,7 @@
 		"message": "Are you sure you want to delete selector <span id='modal-selector-id'></span>?"
 	},
 	"modal_confirm_action_title_update_selector": {
-		"message": "The new selector type does not support additional selectors. Remove additional child selectors?"
+		"message": "The new selector type does not support child selectors. Remove existing child selectors?"
 	},
 	"modal_confirm_action_title_update_selector_can_have_child": {
 		"message": "The new selector type supports child selectors. Remove or keep existing child selectors?"

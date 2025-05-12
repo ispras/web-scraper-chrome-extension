@@ -152,16 +152,16 @@ export default class Sitemap {
 		return urls;
 	}
 
-	updateSelector(selector, selectorData, saveChildSelectors = false) {
+	updateSelector(selector, newSelectorData, saveChildrenForNewType = false) {
 		// selector is undefined when creating a new one and delete old one, if it exist
-		if (selector === undefined || selector.type !== selectorData.type) {
+		if (selector === undefined || selector.type !== newSelectorData.type) {
 			if (selector) {
 				if (
 					selector.canHaveChildSelectors() &&
 					selectorData.canHaveChildSelectors() &&
-					saveChildSelectors
+					saveChildrenForNewType
 				) {
-					//custom logic: we don’t delete children, but redefined them a parent
+					// custom logic: we don’t delete children, but redefined them a parent
 					const children = this.selectors.filter(selectorFromList =>
 						selectorFromList.parentSelectors.includes(selector.uuid)
 					);
