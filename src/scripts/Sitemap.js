@@ -152,13 +152,32 @@ export default class Sitemap {
 		return urls;
 	}
 
-	updateSelector(selector, selectorData) {
+	updateSelector(selector, newSelectorData, saveChildrenForNewType = false) {
 		// selector is undefined when creating a new one and delete old one, if it exist
-		if (selector === undefined || selector.type !== selectorData.type) {
+		if (selector === undefined || selector.type !== newSelectorData.type) {
 			if (selector) {
-				this.deleteSelector(selector);
+				if (
+					selector.canHaveChildSelectors() &&
+					selectorData.canHaveChildSelectors() &&
+					saveChildrenForNewType
+				) {
+					// custom logic: we don’t delete children, but redefined them a parent
+					const children = this.selectors.filter(selectorFromList =>
+						selectorFromList.parentSelectors.includes(selector.uuid)
+					);
+					const newSelector = SelectorList.createSelector(selectorData);
+					children.forEach(child => {
+						const parentUuidIndex = child.parentSelectors.indexOf(selector.uuid);
+						child.parentSelectors[parentUuidIndex] = newSelector.uuid;
+					});
+					selector = newSelector;
+				} else {
+					this.deleteSelector(selector);
+					selector = SelectorList.createSelector(selectorData);
+				}
+			} else {
+				selector = SelectorList.createSelector(selectorData);
 			}
-			selector = SelectorList.createSelector(selectorData);
 		}
 
 		// update child selectors
