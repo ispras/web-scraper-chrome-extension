@@ -205,6 +205,12 @@ export default class SitemapController {
 			'.delete_selector_submit': {
 				click: this.confirmDeleteSelector,
 			},
+			'.update_selector_submit': {
+				click: this.confirmDeleteChildSelectors,
+			},
+			'#modal-save-child-selectors': {
+				click: this.confirmSaveChildSelectors,
+			},
 			'.delete_sitemap_submit': {
 				click: this.confirmDeleteSitemap,
 			},
@@ -1443,11 +1449,11 @@ export default class SitemapController {
 
 	async saveSelector(button) {
 		const sitemap = this.state.currentSitemap;
-		const selector = this.state.currentSelector;
+		const selectorUuid = this.state.currentSelector.uuid;
+		const selector = sitemap.getSelectorByUid(selectorUuid) || this.state.currentSelector;
 		const newSelector = this.getCurrentlyEditedSelector();
 		const validator = this.getFormValidator();
 		validator.revalidateField('id');
-		// cancel submit if invalid form
 		if (!this.isValidForm()) {
 			return false;
 		}
@@ -1457,14 +1463,69 @@ export default class SitemapController {
 		} catch (err) {
 			console.error(err);
 		}
+		if (selector.type !== newSelector.type) {
+			const children = sitemap.selectors.filter(selectorFromList =>
+				selectorFromList.parentSelectors.includes(selector.uuid)
+			);
+			if (children.length > 0) {
+				this.initConfirmActionPanel({ action: 'update_selector' });
+				if (newSelector.canHaveChildSelectors()) {
+					const saveSelectorsBtn = $('<button/>', {
+						class: 'btn btn-primary',
+						id: 'modal-save-child-selectors',
+						text: Translator.getTranslationByKey(
+							'modal_confirm_action_submit_update_save_selector'
+						),
+					});
+					$('.modal-footer').append(saveSelectorsBtn);
+					$('#modal-title').text(
+						Translator.getTranslationByKey(
+							'modal_confirm_action_title_update_selector_can_have_child'
+						)
+					);
+				}
+				this.displayChildrenInModalWindow(children);
+				$('#modal-message').show();
+				return true;
+			}
+		}
+
+		await this.updateSelector();
+	}
+
+	displayChildrenInModalWindow(children) {
+		$('#modal-child-count').text(children.length);
+		$('#modal-message').after('<ul id="list-deleted-children"></ul>');
+		children.forEach(child => {
+			const $child = $('<li></li>');
+			$child.text(`#${child.uuid} ${child.id}`);
+			$('#list-deleted-children').append($child);
+		});
+	}
+
+	async updateSelector(saveChildrenForNewType = false) {
+		const sitemap = this.state.currentSitemap;
+		const selectorUuid = this.state.currentSelector.uuid;
+		const selector = sitemap.getSelectorByUid(selectorUuid) || this.state.currentSelector;
+		const newSelector = this.getCurrentlyEditedSelector();
 		try {
-			sitemap.updateSelector(selector, newSelector);
+			sitemap.updateSelector(selector, newSelector, saveChildrenForNewType);
 			await this.store.saveSitemap(sitemap, undefined, this.getCurrentProjectId());
 		} catch (err) {
 			console.error(err);
 		} finally {
 			this.showSitemapSelectorList();
 		}
+	}
+
+	async confirmSaveChildSelectors(button) {
+		await this.updateSelector(true);
+		$('#confirm-action-modal').modal('hide');
+	}
+
+	async confirmDeleteChildSelectors(button) {
+		await this.updateSelector(false);
+		$('#confirm-action-modal').modal('hide');
 	}
 
 	/**
@@ -1658,13 +1719,7 @@ export default class SitemapController {
 		this.initConfirmActionPanel({ action: 'delete_selector' });
 		$('#modal-selector-id').text(selector.id);
 		if (childCount) {
-			$('#modal-child-count').text(childCount);
-			$('#modal-message').after('<ul id="list-deleted-children"></ul>');
-			filteredChildren.forEach(child => {
-				const $child = $('<li></li>');
-				$child.text(`#${child.uuid} ${child.id}`);
-				$('#list-deleted-children').append($child);
-			});
+			this.displayChildrenInModalWindow(filteredChildren);
 			$('#modal-message').show();
 		}
 		this.state.currentSelector = selector;
