@@ -1449,7 +1449,8 @@ export default class SitemapController {
 
 	async saveSelector(button) {
 		const sitemap = this.state.currentSitemap;
-		const selector = this.state.currentSelector;
+		const selectorUuid = this.state.currentSelector.uuid;
+		const selector = sitemap.getSelectorByUid(selectorUuid) || this.state.currentSelector;
 		const newSelector = this.getCurrentlyEditedSelector();
 		const validator = this.getFormValidator();
 		validator.revalidateField('id');
@@ -1504,7 +1505,8 @@ export default class SitemapController {
 
 	async updateSelector(saveChildrenForNewType = false) {
 		const sitemap = this.state.currentSitemap;
-		const selector = this.state.currentSelector;
+		const selectorUuid = this.state.currentSelector.uuid;
+		const selector = sitemap.getSelectorByUid(selectorUuid) || this.state.currentSelector;
 		const newSelector = this.getCurrentlyEditedSelector();
 		try {
 			sitemap.updateSelector(selector, newSelector, saveChildrenForNewType);
