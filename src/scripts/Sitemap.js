@@ -152,29 +152,48 @@ export default class Sitemap {
 		return urls;
 	}
 
-	updateSelector(selector, selectorData) {
+	updateSelector(selector, newSelectorData, saveChildrenForNewType = false) {
 		// selector is undefined when creating a new one and delete old one, if it exist
-		if (selector === undefined || selector.type !== selectorData.type) {
+		if (selector === undefined || selector.type !== newSelectorData.type) {
 			if (selector) {
-				this.deleteSelector(selector);
+				if (
+					selector.canHaveChildSelectors() &&
+					newSelectorData.canHaveChildSelectors() &&
+					saveChildrenForNewType
+				) {
+					// custom logic: we don’t delete children, but redefined them a parent
+					const children = this.selectors.filter(selectorFromList =>
+						selectorFromList.parentSelectors.includes(selector.uuid)
+					);
+					const newSelector = SelectorList.createSelector(newSelectorData);
+					children.forEach(child => {
+						const parentUuidIndex = child.parentSelectors.indexOf(selector.uuid);
+						child.parentSelectors[parentUuidIndex] = newSelector.uuid;
+					});
+					selector = newSelector;
+				} else {
+					this.deleteSelector(selector);
+					selector = SelectorList.createSelector(newSelectorData);
+				}
+			} else {
+				selector = SelectorList.createSelector(newSelectorData);
 			}
-			selector = SelectorList.createSelector(selectorData);
 		}
 
 		// update child selectors
-		if (selector.uuid !== undefined && selector.uuid !== selectorData.uuid) {
+		if (selector.uuid !== undefined && selector.uuid !== newSelectorData.uuid) {
 			this.selectors.forEach(function (currentSelector) {
-				currentSelector.renameParentSelector(selector.uuid, selectorData.uuid);
+				currentSelector.renameParentSelector(selector.uuid, newSelectorData.uuid);
 			});
 
 			// update cyclic selector
-			const pos = selectorData.parentSelectors.indexOf(selector.uuid);
+			const pos = newSelectorData.parentSelectors.indexOf(selector.uuid);
 			if (pos !== -1) {
-				selectorData.parentSelectors.splice(pos, 1, selectorData.uuid);
+				newSelectorData.parentSelectors.splice(pos, 1, newSelectorData.uuid);
 			}
 		}
 
-		selector.updateData(selectorData, selectorData.getFeatures());
+		selector.updateData(newSelectorData, newSelectorData.getFeatures());
 
 		const index = this.getSelectorUUIDs().indexOf(selector.uuid);
 		if (index === -1) {
