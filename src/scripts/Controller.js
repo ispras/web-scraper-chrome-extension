@@ -2186,7 +2186,7 @@ export default class SitemapController {
 			selector.uuid,
 			currentStateParentSelectorIds
 		);
-		return this.contentScript.getHTML({ CSSSelector }).promise();
+		return this.contentScript.getHTML({ CSSSelector });
 	}
 
 	async previewSelector(button) {
