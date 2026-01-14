@@ -1,0 +1,374 @@
+/* Modern Web Scraper Popup Styles */
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html,
+body {
+	width: 800px;
+	height: 600px;
+	overflow: hidden;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+		sans-serif;
+	font-size: 14px;
+	color: #333;
+	background: #f8f9fa;
+}
+
+.web-scraper-container {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	background: #ffffff;
+}
+
+/* Header Styles */
+.ws-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	flex-shrink: 0;
+}
+
+.ws-logo {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.ws-logo img {
+	width: 32px;
+	height: 32px;
+	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.ws-logo h1 {
+	font-size: 20px;
+	font-weight: 600;
+	margin: 0;
+	letter-spacing: -0.5px;
+}
+
+.ws-actions {
+	display: flex;
+	gap: 8px;
+}
+
+.btn-icon {
+	background: rgba(255, 255, 255, 0.2);
+	border: none;
+	color: white;
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+	padding: 0;
+}
+
+.btn-icon:hover {
+	background: rgba(255, 255, 255, 0.3);
+	transform: translateY(-1px);
+}
+
+.btn-icon:active {
+	transform: translateY(0);
+}
+
+/* Viewport Styles */
+.ws-viewport {
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+	background: #f8f9fa;
+	padding: 0;
+}
+
+/* Scrollbar Styles */
+.ws-viewport::-webkit-scrollbar {
+	width: 8px;
+}
+
+.ws-viewport::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+.ws-viewport::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 4px;
+}
+
+.ws-viewport::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+/* Import panel.css for existing component styles */
+@import '../devtools/panel.css';
+
+/* Override some panel styles for popup context */
+#viewport {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+}
+
+/* Adjust Bootstrap container for popup */
+.container-fluid {
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 20px;
+}
+
+/* Card improvements */
+.card {
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	margin-bottom: 16px;
+	transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+	background: #f8f9fa;
+	border-bottom: 1px solid #e0e0e0;
+	padding: 12px 16px;
+	font-weight: 600;
+	border-radius: 8px 8px 0 0 !important;
+}
+
+.card-body {
+	padding: 16px;
+}
+
+/* Button improvements */
+.btn {
+	border-radius: 6px;
+	font-weight: 500;
+	padding: 8px 16px;
+	transition: all 0.2s ease;
+	border: none;
+}
+
+.btn-primary {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+}
+
+.btn-primary:hover {
+	background: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-success {
+	background: #10b981;
+}
+
+.btn-success:hover {
+	background: #059669;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-danger {
+	background: #ef4444;
+}
+
+.btn-danger:hover {
+	background: #dc2626;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+.btn-info {
+	background: #3b82f6;
+}
+
+.btn-info:hover {
+	background: #2563eb;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+.btn-warning {
+	background: #f59e0b;
+	color: white;
+}
+
+.btn-warning:hover {
+	background: #d97706;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+}
+
+/* Table improvements */
+.table {
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.table thead th {
+	background: #f8f9fa;
+	border-bottom: 2px solid #e0e0e0;
+	font-weight: 600;
+	color: #555;
+	text-transform: uppercase;
+	font-size: 12px;
+	letter-spacing: 0.5px;
+}
+
+.table tbody tr:hover {
+	background: #f8f9fa;
+}
+
+/* Form improvements */
+.form-control {
+	border-radius: 6px;
+	border: 1px solid #d1d5db;
+	padding: 8px 12px;
+	transition: all 0.2s ease;
+}
+
+.form-control:focus {
+	border-color: #667eea;
+	box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+	outline: none;
+}
+
+.form-label {
+	font-weight: 500;
+	margin-bottom: 6px;
+	color: #555;
+}
+
+/* Alert improvements */
+.alert {
+	border-radius: 8px;
+	border: none;
+	padding: 12px 16px;
+	margin-bottom: 16px;
+}
+
+.alert-success {
+	background: #d1fae5;
+	color: #065f46;
+}
+
+.alert-danger {
+	background: #fee2e2;
+	color: #991b1b;
+}
+
+.alert-info {
+	background: #dbeafe;
+	color: #1e40af;
+}
+
+.alert-warning {
+	background: #fef3c7;
+	color: #92400e;
+}
+
+/* Badge improvements */
+.badge {
+	border-radius: 4px;
+	padding: 4px 8px;
+	font-weight: 500;
+	font-size: 11px;
+}
+
+/* List group improvements */
+.list-group-item {
+	border: 1px solid #e0e0e0;
+	padding: 12px 16px;
+	transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+	background: #f8f9fa;
+	cursor: pointer;
+}
+
+.list-group-item:first-child {
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+}
+
+.list-group-item:last-child {
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+
+/* Modal improvements */
+.modal-content {
+	border-radius: 12px;
+	border: none;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+	border-bottom: 1px solid #e0e0e0;
+	padding: 16px 20px;
+	border-radius: 12px 12px 0 0;
+	background: #f8f9fa;
+}
+
+.modal-title {
+	font-weight: 600;
+	font-size: 18px;
+}
+
+.modal-body {
+	padding: 20px;
+}
+
+.modal-footer {
+	border-top: 1px solid #e0e0e0;
+	padding: 16px 20px;
+	border-radius: 0 0 12px 12px;
+}
+
+/* Loading spinner */
+.spinner-border {
+	color: #667eea;
+}
+
+/* Empty state */
+.empty-state {
+	text-align: center;
+	padding: 40px 20px;
+	color: #9ca3af;
+}
+
+.empty-state svg {
+	width: 64px;
+	height: 64px;
+	margin-bottom: 16px;
+	opacity: 0.5;
+}
+
+.empty-state h3 {
+	font-size: 18px;
+	font-weight: 600;
+	margin-bottom: 8px;
+	color: #6b7280;
+}
+
+.empty-state p {
+	font-size: 14px;
+	color: #9ca3af;
+}

@@ -31,7 +31,6 @@
 		"open_in_tab": true,
 		"browser_style": false
 	},
-	"devtools_page": "devtools/devtools.html",
 	"background": {
 		"service_worker": "background/background.js"
 	},
